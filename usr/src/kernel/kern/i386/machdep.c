@@ -148,7 +148,7 @@ cpu_startup(void)
 	/*
 	 * Good {morning,afternoon,evening,night}.
 	 */
-	printf("%s [1.0.%s]\n", copyright1, version+9);
+	printf("%s [2.0.%s]\n", copyright1, version+9);
 	printf(copyright2);
 
 	/*

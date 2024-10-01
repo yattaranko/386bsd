@@ -54,7 +54,7 @@ static char *kern_config =
 
 
 char	copyright1[] =
-"386BSD Release 1.0 by William & Lynne Jolitz.";
+"386BSD Release 2.0 by William & Lynne Jolitz.";
 char	copyright2[] =
 "Copyright (c) 1989-1994 William F. Jolitz. All rights reserved.\n";
 
