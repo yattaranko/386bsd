@@ -1,10 +1,3 @@
 {
-    "files.associations": {
-        "NDH6SA~M.C": "cpp",
-        "CR23RR~9.C": "cpp",
-        "CR23RR~A.C": "cpp",
-        "CR23RR~B.C": "cpp",
-        "CR23RR~4.C": "cpp",
-        "AHY9U3~9.C": "cpp"
-    }
+    "C_Cpp.errorSquiggles": "disabled"
 }

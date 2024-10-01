@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/usr/src/include/",
+                "${workspaceFolder}/usr/src/kernel/include/",
+                "${workspaceFolder}/usr/src/kernel/include/dev/",
+                "${workspaceFolder}/usr/src/kernel/include/domain/",
+                "${workspaceFolder}/usr/src/kernel/include/fs/",
+                "${workspaceFolder}/usr/src/kernel/include/machine/",
+                "${workspaceFolder}/usr/src/kernel/include/sys/"
+            ],
+            "defines": [
+                "KERNEL",
+                "i386",
+                "i486",
+                "TCP_COMPAT_42",
+                "INET"
+            ],
+            "compilerPath": "",
+            "intelliSenseMode": "macos-clang-x86"
+        }
+    ],
+    "version": 4
+}
