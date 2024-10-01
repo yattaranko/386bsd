@@ -176,7 +176,7 @@ main()
 
 	/* process rescheduling clock interval */
 	if (hz < 10 || hz > 1000)
-		hz = 100;
+		hz = 10;
 	tick = 1000000/hz;	/* microseconds in a clock "tick" */
 	tickadj = 240000/(60*hz); /* microseconds of adjustment in a minute */
 
