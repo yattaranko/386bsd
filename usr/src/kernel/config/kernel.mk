@@ -12,7 +12,7 @@ CC?=	cc
 CPP?=	cpp
 
 # XXX overkill, revise include scheme
-INCLUDES= -I$S/include
+INCLUDES= -I$S/include -I$S/obj -I$S/../include
 
 COPTS+=	${INCLUDES} ${IDENT} -DKERNEL -Di386
 DEPEND= depend_mk
@@ -20,10 +20,10 @@ DEPEND= depend_mk
 ASFLAGS= ${DEBUG}
 .if defined(GDB)
 # CFLAGS=	-m486 -O ${COPTS} -g
-CFLAGS=	-O ${COPTS} -g
+CFLAGS=	-O ${COPTS} -g -fgnu89-inline -fcommon -fno-builtin -nostdinc -nostdlib
 .else
 # CFLAGS=	-m486 -O ${COPTS}
-CFLAGS=	-O ${COPTS}
+CFLAGS=	-O ${COPTS} -fgnu89-inline -fcommon -fno-builtin -nostdinc -nostdlib
 .endif
 DBGCFLAGS= -O ${COPTS}
 
@@ -103,7 +103,7 @@ ${KERNEL}: Makefile symbols.sort ${FIRSTOBJ} ${OBJS} isym.o
 	nroff -mandoc ${.IMPSRC} > ${.TARGET}
 
 clean:
-	rm -f eddep 386bsd* tags ${OBJS} errs linterrs makelinks
+	rm -f eddep 386bsd* tags ${OBJS} errs linterrs makelinks vers.o isym.o *.0 .depend ${DEPEND} ${.TARGET}
 
 depend: ${DEPEND}
 	cat ${DEPEND} >> .depend
