@@ -5,29 +5,31 @@
 
 .PATH:	$S/kern/subr
 KERN_SRCS+= \
-	disklabel.c disksort.c esym.c nullop.c printf.c ring.c rlist.c uio.c
+	disklabel.c disksort.c esym.c nullop.c printf.c ring.c rlist.c uio.c rel.c
 
-KERN_SRCS+= strcat.c strcpy.c strncpy.c strcmp.c # strlen.c
+KERN_SRCS+= strcat.c strcpy.c strncpy.c strcmp.c strlen.c memcmp.c
 # XXX should be conditional.
 MACH_SRCS_S+= \
-	memmove_${MACHINE}.s scanc_${MACHINE}.s skpc_${MACHINE}.s locc_${MACHINE}.s
+	memmove_${MACHINE}.S scanc_${MACHINE}.S skpc_${MACHINE}.S locc_${MACHINE}.S
 	
 # check for possible inline, C, or assembler machine-dependant versions first.
 
 .if exists(addupc_${MACHINE}.c)
 MACH_SRCS+= addupc_${MACHINE}.c
-.elif exists(addupc_${MACHINE}.s)
-MACH_SRCS_S+= addupc_${MACHINE}.s
+.elif exists(addupc_${MACHINE}.S)
+MACH_SRCS_S+= addupc_${MACHINE}.S
 .else
 KERN_SRCS+= addupc.c
 .endif
+
+KERN_SRCS+= ffs.c
 
 # .if exists(../../include/${MACHINE}/inline/kernel/copyinstr.h)
 # do nothing
 # .elif exists(copyinstr_${MACHINE}.c)
 # MACH_SRCS+= copyinstr_${MACHINE}.c
-# .elif exists(copyinstr_${MACHINE}.s)
-# MACH_SRCS_S+= copyinstr_${MACHINE}.s
+# .elif exists(copyinstr_${MACHINE}.S)
+# MACH_SRCS_S+= copyinstr_${MACHINE}.S
 # .else
 # KERN_SRCS+= copyinstr.c
 # .endif

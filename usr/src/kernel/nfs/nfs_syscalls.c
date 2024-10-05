@@ -71,6 +71,8 @@ extern struct proc *nfs_iodwant[NFS_MAXASYNCDAEMON];
 extern int nfs_tcpnodelay;
 struct mbuf *nfs_compress();
 
+extern int getsock(struct filedesc *fdp, int fdes, struct file **fpp);
+
 #define	TRUE	1
 #define	FALSE	0
 

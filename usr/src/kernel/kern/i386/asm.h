@@ -7,7 +7,7 @@
  */
 
 #define	ENTRY(name) \
-	.globl _/**/name; .align 4;  _/**/name:
+	.globl name; .align 4;  name:
 #define	ALTENTRY(name) \
-	.globl _/**/name; _/**/name:
+	.globl name; name:
 

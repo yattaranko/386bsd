@@ -77,6 +77,7 @@ struct	vmspace vmspace0, kernspace;
 struct	pstats pstat0;
 struct	proc *curproc = &proc0;
 struct	proc *initproc, *pageproc;
+struct	timeval boottime;
 
 int	cmask = CMASK;
 extern	struct user *proc0paddr;
@@ -133,7 +134,7 @@ int nmbclusters = NMBCLUSTERS;	/* number of mbuf clusters in free pool*/
  * routines including startup(), which does memory initialization
  * and autoconfiguration.
  */
-void main()
+void _main()
 {
 	int i;
 	struct proc *p;

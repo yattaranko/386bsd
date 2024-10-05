@@ -34,8 +34,28 @@ OBJS+=  ${MACH_SRCS_S:R:S/$/.${KMODULE}mo/g}
 .c.${KMODULE}mdo:
 	${MACH_DBGC}
 
-.s.${KMODULE}mo:
-	${MACH_AS}
+memmove_${MACHINE}.${KMODULE}mo:
+	${CC} -E -traditional -I. -I$S/kern/${MACHINE} -DLOCORE ${COPTS} $S/kern/${MACHINE}/memmove_${MACHINE}.S | \
+	${AS} ${ASFLAGS} -o ${.TARGET}
+
+scanc_${MACHINE}.${KMODULE}mo:
+	${CC} -E -traditional -I. -I$S/kern/${MACHINE} -DLOCORE ${COPTS} $S/kern/${MACHINE}/scanc_${MACHINE}.S | \
+	${AS} ${ASFLAGS} -o ${.TARGET}
+
+skpc_${MACHINE}.${KMODULE}mo:
+	${CC} -E -traditional -I. -I$S/kern/${MACHINE} -DLOCORE ${COPTS} $S/kern/${MACHINE}/skpc_${MACHINE}.S | \
+	${AS} ${ASFLAGS} -o ${.TARGET}
+
+locc_${MACHINE}.${KMODULE}mo:
+	${CC} -E -traditional -I. -I$S/kern/${MACHINE} -DLOCORE ${COPTS} $S/kern/${MACHINE}/locc_${MACHINE}.S | \
+	${AS} ${ASFLAGS} -o ${.TARGET}
+
+addupc_${MACHINE}.${KMODULE}mo:
+	${CC} -E -traditional -I. -I$S/kern/${MACHINE} -DLOCORE ${COPTS} $S/kern/${MACHINE}/addupc_${MACHINE}.S | \
+	${AS} ${ASFLAGS} -o ${.TARGET}
+
+#.s.${KMODULE}mo:
+#	${MACH_AS}
 
 DEPEND+= depend_kern depend_mach
 

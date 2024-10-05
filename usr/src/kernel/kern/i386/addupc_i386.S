@@ -33,7 +33,7 @@ ENTRY(addupc)
 	addl PR_BASE(%edx),%eax		/* praddr += up-> pr_base */
 	movl 16(%ebp),%ecx		/* ticks */
 
-	movl _curproc, %edx
+	movl curproc, %edx
 	movl $proffault, PMD_ONFAULT(%edx)
 	addw %cx, (%eax)		/* storage location += ticks */
 	movl $0, PMD_ONFAULT(%edx)

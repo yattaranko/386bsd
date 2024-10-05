@@ -113,14 +113,14 @@ typedef struct clock_frame clockframe;
 #define	cpu_signotify(p)	(p)->p_md.md_flags |= MDP_AST
 
 extern int	sclkpending;	/* need to do a softclock() on return to basepri */
-extern int	netpending;	/* need to do a netintr() on return to basepri */
+extern int	netpending;		/* need to do a netintr() on return to basepri */
 extern volatile int	cpl;	/* current priority level(mask) of interrupt controller */
 
 /* global bit vector of options */
 extern int	cpu_option;
 
 /* various processor dependant options, referenced during execution */
-#define	CPU_386_KR	0x00000001	/* simulate kernel read protection */
+#define	CPU_386_KR		0x00000001	/* simulate kernel read protection */
 #define	CPU_486_INVC	0x00000002	/* use instructions to invalidate cache on I/O */
 #define	CPU_486_INVTLB	0x00000004	/* invalidate TLB cache by pages */
 #define	CPU_486_NPXEXCP	0x00000008	/* npx exception instead of interrupt */

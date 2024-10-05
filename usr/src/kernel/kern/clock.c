@@ -84,6 +84,9 @@
 	} \
 }
 
+int				phz;
+struct timeval	time;
+
 /*
  * The hz hardware interval timer.
  * We update the events relating to real time.

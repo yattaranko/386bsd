@@ -75,6 +75,8 @@ int	db_max_width = 79;		/* output line width */
 
 extern void	db_check_interrupt();
 
+static void db_printf_guts(register const char *fmt, va_list ap);
+
 /*
  * Force pending whitespace.
  */
@@ -206,7 +208,7 @@ db_ksprintn(ul, base, lenp)
 	return (p);
 }
 
-db_printf_guts(fmt, ap)
+static void db_printf_guts(fmt, ap)
 	register const char *fmt;
 	va_list ap;
 {

@@ -33,7 +33,9 @@
  *	$Id: strlen.c,v 1.1 94/10/19 18:33:45 bill Exp $
  */
 
-strlen(char *s1)
+#include <sys/types.h>
+
+size_t strlen(char *s1)
 {
 	int len;
 

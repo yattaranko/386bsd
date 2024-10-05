@@ -8,16 +8,20 @@
 
 __INLINE int
 memcmp(const void *s1, const void *s2, size_t len) {
-	extern const int zero;		/* compiler bug workaround */
-	const void *s2p = s2 + zero;	/* compiler bug workaround */
+//	extern const int zero;		/* compiler bug workaround */
+//	const void *s2p = s2 + zero;	/* compiler bug workaround */
 
 	/* compare by words, then by bytes */
 	asm volatile ("cld ; repe ; cmpsl ; jne 1f" :
-	    "=D" (s1), "=S" (s2p) :
-	    "0" (s1), "1" (s2p), "c" (len / 4));
+	/*    "=D" (s1), "=S" (s2p) :
+	    "0" (s1), "1" (s2p), "c" (len / 4)); */
+	    "=D" (s1), "=S" (s2) :
+	    "0" (s1), "1" (s2), "c" (len / 4));
 	asm volatile ("repe ; cmpsb ; jne 1f" :
-	    "=D" (s1), "=S" (s2p) :
-	    "0" (s1), "1" (s2p), "c" (len & 3));
+	/*    "=D" (s1), "=S" (s2p) :
+	    "0" (s1), "1" (s2p), "c" (len & 3)); */
+	    "=D" (s1), "=S" (s2) :
+	    "0" (s1), "1" (s2), "c" (len & 3));
 
 	return (0);	/* exact match */
 

@@ -50,6 +50,7 @@
  * Primitive routines for operating on sockets and socket buffers
  */
 
+#if 0
 /* strings for sleep message: */
 char	netio[] = "netio";
 char	netcon[] = "netcon";
@@ -249,6 +250,7 @@ socantsendmore(so)
 	so->so_state |= SS_CANTSENDMORE;
 	sowwakeup(so);
 }
+#endif
 
 socantrcvmore(so)
 	struct socket *so;
@@ -262,6 +264,7 @@ socantrcvmore(so)
  * Socket select/wakeup routines.
  */
 
+#if 0
 /*
  * Queue a process for a select on a socket buffer.
  */
@@ -311,6 +314,7 @@ sb_lock(sb)
 	sb->sb_flags |= SB_LOCK;
 	return (0);
 }
+#endif
 
 /*
  * Wakeup processes waiting on a socket buffer.
@@ -380,6 +384,7 @@ sowakeup(struct socket *so, struct sockbuf *sb)
  * should be released by calling sbrelease() when the socket is destroyed.
  */
 
+#if 0
 soreserve(so, sndcc, rcvcc)
 	register struct socket *so;
 	u_long sndcc, rcvcc;
@@ -463,7 +468,7 @@ sbrelease(sb)
  * the mbuf chain is recorded in sb.  Empty mbufs are
  * discarded and mbufs are compacted where possible.
  */
-sbappend(sb, m)
+void sbappend(sb, m)
 	struct sockbuf *sb;
 	struct mbuf *m;
 {
@@ -787,3 +792,4 @@ sbdroprecord(sb)
 		} while (m = mn);
 	}
 }
+#endif

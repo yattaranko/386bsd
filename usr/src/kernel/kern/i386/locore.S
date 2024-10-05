@@ -46,7 +46,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	$Id: locore.s,v 1.1 94/10/19 17:39:58 bill Exp Locker: bill $
+ *	$Id: locore.S,v 1.1 94/10/19 17:39:58 bill Exp Locker: bill $
  *
  * Assembly code for kernel program entry from bootstrap and kernel
  * primatives.
@@ -78,41 +78,44 @@
  * Within PTmap, the page directory can be found (third indirection).
  */
 	.set	PDRPDROFF, SYSPDROFF - 1 /* page dir index of page dir */
-	.globl	_PTmap, _PTD, _PTDpde, _Sysmap
-	.set	_PTmap, PDRTOV(PDRPDROFF)
-	.set	_PTD, _PTmap | (PDRPDROFF<<12)
-	.set	_Sysmap, _PTD + NBPG  /* historical: start of kernel's map */
-	.set	_PTDpde, _PTD + 4*PDRPDROFF
+	.globl	PTmap, PTD, PTDpde, _Sysmap
+	.set	PTmap, PDRTOV(PDRPDROFF)
+	.set	PTD, PTmap | (PDRPDROFF<<12)
+	.set	_Sysmap, PTD + NBPG  /* historical: start of kernel's map */
+	.set	PTDpde, PTD + 4*PDRPDROFF
 
 /*
  * APTmap is the alternate recursive pagemap.
  * It's used when modifying a process's page tables from a different process.
  */
 	.set	APDRPDROFF, 0x3FF	/* page dir index of alt page dir */
-	.globl	_APTmap, _APTD, _APTDpde
-	.set	_APTmap, 0xFFC00000
+	.globl	APTmap, _APTD, APTDpde
+	.set	APTmap, 0xFFC00000
 	.set	_APTD, 0xFFFFF000
-	.set	_APTDpde, _PTD + 4*APDRPDROFF
+	.set	APTDpde, PTD + 4*APDRPDROFF
 
 /*
  * Initialization
  */
 	.data
-	.globl _Exit_stack, _cold, _boothowto, _bootdev, _atdevbase
-	.globl _atdevphys, _zero, _VAKernelPTD, _KernelPTD, _KPTphys
+	.globl Exit_stack, cold, boothowto, bootdev, _atdevbase
+	.globl _atdevphys, zero, VAKernelPTD, KernelPTD, KPTphys
+	.globl sclkpending, netpending
 
 	.space	NBPG
-_Exit_stack:	/* Temporary stack to take interrupts on during exit */
+Exit_stack:	/* Temporary stack to take interrupts on during exit */
 
-_cold:		.long 1	/* cold till we are not */
-_atdevbase:	.long 0	/* location of start of iomem in virtual */
-_atdevphys:	.long 0	/* location of device mapping ptes (phys) */
-_zero:		.long 0
-_VAKernelPTD:	.long 0
-_KernelPTD:	.long 0
-_KPTphys:	.long 0
-_bootdev:	.long 0
-_boothowto:	.long 0
+cold:			.long 1	/* cold till we are not */
+_atdevbase:		.long 0	/* location of start of iomem in virtual */
+_atdevphys:		.long 0	/* location of device mapping ptes (phys) */
+zero:			.long 0
+VAKernelPTD:	.long 0
+KernelPTD:		.long 0
+KPTphys:		.long 0
+bootdev:		.long 0
+boothowto:		.long 0
+sclkpending:	.long 0 /* need to do a softclock() on return to basepri */
+netpending:		.long 0	/* need to do a netintr() on return to basepri */
 
 /*
  * run-time start-off of the kernel. the bootstrap has placed the
@@ -138,17 +141,17 @@ start:
  * (if we want to hold onto /boot, it's physical %esp up to _end)
  */
 
-	/* movl	12(%esp), %ebp	/* must be obtained first */
+	/* movl	12(%esp), %ebp */	/* must be obtained first */
 	movl	$0x90000, %ebp
 	movl	4(%esp), %edx
-	movl	$_boothowto-KERNBASE, %eax
+	movl	$boothowto-KERNBASE, %eax
 	call	reloc
 	movl	%edx, (%eax)
 	movl	8(%esp), %edx
-	movl	$_bootdev-KERNBASE, %eax
+	movl	$bootdev-KERNBASE, %eax
 	call	reloc
 	movl	%edx, (%eax)
-	/* movl	$_Exit_stack-KERNBASE, %esp */
+	/* movl	$Exit_stack-KERNBASE, %esp */
 
 	/* count up memory after kernel image */
 	movl	$_end - KERNBASE, %eax
@@ -180,7 +183,7 @@ start:
 	/* save last page frame */
 	shrl	$12, %eax
 	movl	%eax, %edx
-	movl	$_maxmem - KERNBASE, %eax
+	movl	$maxmem - KERNBASE, %eax
 	call	reloc
 	movl	%edx, (%eax)
 3:
@@ -231,27 +234,27 @@ start:
 	movl	%esi, %eax
 	call	reloc
 	movl	%eax, %edx
-	movl	$_KernelPTD-KERNBASE, %eax
+	movl	$KernelPTD-KERNBASE, %eax
 	call	reloc
 	movl	%edx, (%eax)
 
 	/* virtual address of Kernel PTD */
 	movl	%esi, %edx
 	addl	$KERNBASE, %edx
-	movl	$_VAKernelPTD-KERNBASE, %eax
+	movl	$VAKernelPTD-KERNBASE, %eax
 	call	reloc
 	movl	%edx, (%eax)
 
 	/* logical address of proc 0 pcb/stk */
 	lea	NBPG(%esi), %eax
 	lea	KERNBASE(%eax), %edx
-	movl	$_proc0paddr - KERNBASE, %eax
+	movl	$proc0paddr - KERNBASE, %eax
 	call	reloc
 	movl	%edx, (%eax)
 
 	/* logical address of kernel PT */
 	lea	(UPAGES+1)*NBPG(%esi), %ebx
-	movl	$_KPTphys - KERNBASE, %eax
+	movl	$KPTphys - KERNBASE, %eax
 	call	reloc
 	movl	%ebx, (%eax)
 
@@ -315,7 +318,7 @@ start:
 	movl	%eax, %cr0		/* enter paged mode with this instr. */
 
 	/* assign stack for proc 0, at the end of it's pcb */
-	movl	_proc0paddr, %eax
+	movl	proc0paddr, %eax
  	addl	$UPAGES*NBPG-4*12, %eax /* XXX 4*12 is for printf's sake */
  	movl	%eax, %esp
 
@@ -327,16 +330,16 @@ begin:
 	/* now running relocated at KERNBASE where the system is linked to run */
 
 	/* XXX shuffle console address mapping */
-	.globl _Crtat
-	movl	_Crtat, %eax
+	.globl Crtat
+	movl	Crtat, %eax
 	subl	$0xfe0a0000, %eax
 	movl	_atdevphys, %edx	/* get pte PA */
-	subl	_KPTphys, %edx		/* remove virt base of ptes */
+	subl	KPTphys, %edx		/* remove virt base of ptes */
 	shll	$PGSHIFT-2, %edx
 	addl	$KERNBASE, %edx
 	movl	%edx, _atdevbase	/* save virt addr */
 	addl	%eax, %edx
-	movl	%edx, _Crtat
+	movl	%edx, Crtat
 
 	/* clear bss */
 	movl	$_end, %ecx /* find end of kernel image */
@@ -349,7 +352,7 @@ begin:
 
 	/* clear first kernel stack */
 	movl	$(UPAGES * NBPG)/4, %ecx
-	movl	_proc0paddr, %edi
+	movl	proc0paddr, %edi
 	xorl	%eax, %eax
 	cld
 	rep
@@ -366,18 +369,18 @@ begin:
 	movw	%ax, %fs	/* bootstrap could have used these, zero */
 	movw	%ax, %gs
 
-	movl	$0, _PTD /* blow away temporary "low" directory entry? */
+	movl	$0, PTD /* blow away temporary "low" directory entry? */
 
 	/* bootstrap processor - void init386(int firstphys) */
-	call	_init386
+	call	init386
 	popl	%esi
 
 	/* void main(void) */
 	call 	_main
 
-	.globl	__ucodesel, __udatasel
-	movzwl	__ucodesel, %eax
-	movzwl	__udatasel, %ecx
+	.globl	_ucodesel, _udatasel
+	movzwl	_ucodesel, %eax
+	movzwl	_udatasel, %ecx
 
 	/* build an outer stack frame to enter user mode to execute proc 0 */
 	pushl	%ecx		/* user ss */
@@ -391,7 +394,7 @@ begin:
 
 #ifdef	DIAGNOSTIC
 	pushl	$1f	/* lret failed - "should never get here!" */
-	call	_panic
+	call	panic
 1:
 	.asciz	"lret"
 #endif
@@ -458,21 +461,21 @@ ___main:	ret		/* gcc 2 errata */
 
 	.set	execve, 59
 	.set	exit, 1
-	.globl	_icode
-	.globl	_szicode
+	.globl	icode
+	.globl	szicode
 
 /*
  * Icode is copied out to process 1 to exec /sbin/init.
  * If the execve() fails, process 1 exits.
  */
-_icode:
+icode:
 	pushl	$0		/* empty env, for now */
 	movl	$argv, %eax
-	subl	$_icode, %eax
+	subl	$icode, %eax
 	pushl	%eax
 
 	movl	$init, %eax
-	subl	$_icode, %eax
+	subl	$icode, %eax
 	pushl	%eax
 
 	pushl	%eax		/* place holder for return address */
@@ -489,29 +492,29 @@ init:
 	.asciz	"/sbin/init"
 	.align	2
 argv:
-	.long	init+6-_icode	/* argv[0] = "init" ("/sbin/init" + 6) */
-	.long	eicode - _icode	/* argv[1] follows icode after copyout */
+	.long	init+6-icode	/* argv[0] = "init" ("/sbin/init" + 6) */
+	.long	eicode - icode	/* argv[1] follows icode after copyout */
 	.long	0
 eicode:	/* main appends a string(s) here ... */
 
-_szicode:
-	.long	_szicode - _icode
+szicode:
+	.long	szicode - icode
 
 /*
  * Code placed in each process (top of stack) to bounce signal into C,
  * and force a re-entry  into the kernel with a system call.
  */
-	.globl	_sigcode, _szsigcode
-_sigcode:
-	call	12(%esp)
+	.globl	sigcode, szsigcode
+sigcode:
+	call	*12(%esp)
 	xorl	%eax, %eax	/* smaller movl $103, %eax */
 	movb	$103, %al
 	/* enter kernel with args on stack */
 	lcall	$iBCSSYSCALLSEL, $0	/* sigreturn(); */
 	hlt			/* never gets here */
 
-_szsigcode:
-	.long	_szsigcode - _sigcode
+szsigcode:
+	.long	szsigcode - sigcode
 
 /*
  * Convienent function to convert a descriptor from a software palitable
@@ -553,15 +556,15 @@ ENTRY(ssdtosd)
  * int copyout_4(int value, void *addr);
  */
 ENTRY(copyout_4)
-	movl	_curproc, %ecx
+	movl	curproc, %ecx
 	movl	$copyout_fault1, PMD_ONFAULT(%ecx)	/* in case of fault */
 	movl	8(%esp), %edx
-	cmpl	$_PTmap, %edx	/* out of user space */
+	cmpl	$PTmap, %edx	/* out of user space */
 	jae	copyout_fault1
 
 	shrl	$IDXSHIFT, %edx	/* fetch pte associated with address */
 	andb	$0xfc, %dl
-	movl	_PTmap(%edx), %edx
+	movl	PTmap(%edx), %edx
 
 	andb	$7, %dl		/* if we are the one case that won't trap... */
 	cmpb	$5, %dl
@@ -570,7 +573,7 @@ ENTRY(copyout_4)
 	pushl	8(%esp)
 	call	_trapwrite	/* trapwrite(addr) */
 	popl	%edx
-	movl	_curproc, %ecx
+	movl	curproc, %ecx
 	cmpl	$0, %eax	/* if not ok, return */
 	jne	copyout_fault1
 1:
@@ -586,15 +589,15 @@ ENTRY(copyout_4)
  * int copyout_2(short value, void *addr);
  */
 ENTRY(copyout_2)
-	movl	_curproc, %ecx
+	movl	curproc, %ecx
 	movl	$copyout_fault1, PMD_ONFAULT(%ecx)	/* in case of fault */
 	movl	8(%esp), %edx
-	cmpl	$_PTmap, %edx	/* out of user space */
+	cmpl	$PTmap, %edx	/* out of user space */
 	jae	copyout_fault1
 
 	shrl	$IDXSHIFT, %edx	/* calculate pte address */
 	andb	$0xfc, %dl
-	movl	_PTmap(%edx), %edx
+	movl	PTmap(%edx), %edx
 	andb	$7, %dl		/* if we are the one case that won't trap... */
 	cmpb	$5, %dl
 	jne	1f
@@ -602,7 +605,7 @@ ENTRY(copyout_2)
 	pushl	8(%esp)
 	call	_trapwrite	/* trapwrite(addr) */
 	popl	%edx
-	movl	_curproc, %ecx	# restore trashed registers
+	movl	curproc, %ecx	# restore trashed registers
 	cmpl	$0, %eax	/* if not ok, return */
 	jne	copyout_fault1
 1:
@@ -618,15 +621,15 @@ ENTRY(copyout_2)
  * int copyout_1(short value, void *addr);
  */
 ENTRY(copyout_1)
-	movl	_curproc,%ecx
+	movl	curproc,%ecx
 	movl	$copyout_fault1, PMD_ONFAULT(%ecx)	/* in case of fault */
 	movl	8(%esp),%edx
-	cmpl	$_PTmap, %edx	/* out of user space */
+	cmpl	$PTmap, %edx	/* out of user space */
 	jae	copyout_fault1
 
 	shrl	$IDXSHIFT, %edx	/* calculate pte address */
 	andb	$0xfc, %dl
-	movl	_PTmap(%edx), %edx
+	movl	PTmap(%edx), %edx
 	andb	$7, %dl		/* if we are the one case that won't trap... */
 	cmpb	$5, %dl
 	jne	1f
@@ -634,7 +637,7 @@ ENTRY(copyout_1)
 	pushl	8(%esp)
 	call	_trapwrite	/* trapwrite(addr) */
 	popl	%edx
-	movl	_curproc, %ecx	# restore trashed registers
+	movl	curproc, %ecx	# restore trashed registers
 	cmpl	$0, %eax	/* if not ok, return */
 	jne	copyout_fault1
 1:
@@ -666,17 +669,17 @@ ENTRY(copyoutstr)
 	movl	24(%esp), %edi	/* to */
 	movl	28(%esp), %ebx	/* size */
 
-	cmpl	$_PTmap, %edi	/* out of user space */
+	cmpl	$PTmap, %edi	/* out of user space */
 	jae	9f
 	movl	%edi, %eax
 	addl	%ebx, %eax
-	cmpl	$_PTmap, %eax
+	cmpl	$PTmap, %eax
 	jae	9f
  				/* first, check to see if "write fault" */
 1:	movl	%edi, %eax
 	shrl	$IDXSHIFT, %eax	/* fetch pte associated with address */
 	andb	$0xfc, %al
-	movl	_PTmap(%eax), %eax
+	movl	PTmap(%eax), %eax
 
 	andb	$7, %al		/* if we are the one case that won't trap... */
 	cmpb	$5, %al
@@ -751,17 +754,17 @@ ENTRY(copyout)
 	movl	24(%esp), %edi	/* udest */
 	movl	28(%esp), %ebx	/* sz */
 
-	cmpl	$_PTmap, %edi	/* out of user space */
+	cmpl	$PTmap, %edi	/* out of user space */
 	jae	9f
 	movl	%edi, %eax
 	addl	%ebx, %eax
-	cmpl	$_PTmap, %eax
+	cmpl	$PTmap, %eax
 	jae	9f
  				/* first, check to see if "write fault" */
 1:	movl	%edi, %eax
 	shrl	$IDXSHIFT, %eax	/* fetch pte associated with address */
 	andb	$0xfc, %al
-	movl	_PTmap(%eax), %eax
+	movl	PTmap(%eax), %eax
 
 	andb	$7, %al		/* if we are the one case that won't trap... */
 	cmpb	$5, %al
@@ -813,7 +816,7 @@ ENTRY(copyout)
 
 /*
  * The following primitives manipulate the run queues.
- * _whichqs tells which of the 32 queues _qs
+ * whichqs tells which of the 32 queues qs
  * have processes in them.  Setrq puts processes into queues, Remrq
  * removes them from queues.  The running process is on no queue,
  * other processes are on a queue related to p->p_pri, divided by 4
@@ -821,7 +824,7 @@ ENTRY(copyout)
  * queues.
  */
 
-	.globl	_whichqs, _qs, _cnt, _panic
+	.globl	whichqs, qs, cnt, panic
 	.comm	_noproc, 4
 /*
  * When no processes are on the runq, swtch() branches to idle
@@ -830,10 +833,10 @@ ENTRY(copyout)
 	.globl	Idle
 	.align 4
 Idle:
-	call	_splnone	/* idle with all interrupts unmasked */
-	cmpl	$0, _whichqs	/* if any process ready on queue, */
+	call	splnone	/* idle with all interrupts unmasked */
+	cmpl	$0, whichqs	/* if any process ready on queue, */
 	jne	swtch_selq	/*  reenter scheduler after saves. */
-	cmpl	$0, _dma_active	/* don't use hlt if DMA is active */
+	cmpl	$0, dma_active	/* don't use hlt if DMA is active */
 	jne	Idle
 	hlt			/* wait for interrupt */
 	jmp	Idle
@@ -845,11 +848,11 @@ Idle:
 ENTRY(swtch)
 ALTENTRY(final_swtch)
 	PROC_ENTRY
-	incl	_cnt+V_SWTCH
+	incl	cnt+V_SWTCH
 
 	/* mark as not in a process, remembering "old" process */
 	xorl	%eax, %eax
-	xchgl	%eax, _curproc
+	xchgl	%eax, curproc
 	pushl	%eax
 
 	/* now find highest priority full process queue or idle */
@@ -857,15 +860,15 @@ ALTENTRY(final_swtch)
 	pushl %esi
 
 swtch_selq:
-	bsfl	_whichqs, %eax		/* find a full queue */
+	bsfl	whichqs, %eax		/* find a full queue */
 	jz      Idle                    /* if none, idle */
 
-	btrl	%eax, _whichqs		/* clear queue full status */
+	btrl	%eax, whichqs		/* clear queue full status */
 	jnc	swtch_selq		/* if it was clear, look for another */
 	cli				/* interrupts off until after swtch() */
 	movl	%eax, %ebx		/* save queue head index */
 	shll	$3, %eax		/* select associated queue */
-	addl	$_qs, %eax
+	addl	$qs, %eax
 	movl	%eax, %esi		/* save queue head pointer */
 
 #ifdef	DIAGNOSTIC
@@ -884,7 +887,7 @@ swtch_selq:
 	/* if queue is still full, set full status in queue status word */
 	cmpl	P_LINK(%ecx), %esi
 	je	1f
-	btsl	%ebx, _whichqs
+	btsl	%ebx, whichqs
 1:
 
 	xorl	%eax, %eax
@@ -911,14 +914,14 @@ swtch_selq:
 	cmpl	%ecx, %eax
 	je	1f
 
-	ljmp	PMD_TSEL - 4(%ecx)
-1:	movl	%eax, _curproc		/* into next process */
+	ljmp	*(PMD_TSEL - 4)(%ecx)
+1:	movl	%eax, curproc		/* into next process */
 	ret
 
 #ifdef DIAGNOSTIC
 2:
 	pushl	$3f
-	call	_panic
+	call	panic
 3:
 	.asciz	"swtch"
 #endif
@@ -930,11 +933,11 @@ swtch_selq:
  */
 ENTRY(qswtch)
 	PROC_ENTRY
-	incl	_cnt+V_SWTCH
+	incl	cnt+V_SWTCH
 
 	/* mark as not in a process, remembering "old" process */
 	xorl	%eax, %eax
-	xchgl	%eax, _curproc
+	xchgl	%eax, curproc
 	pushl	%eax
 
 	pushl %ebx
@@ -949,9 +952,9 @@ ENTRY(qswtch)
 	andl	$~MDP_RESCHED, PMD_FLAGS(%eax)
 	movzbl	P_PRI(%eax), %edx
 	shrl	$2, %edx
-	btsl	%edx, _whichqs		/* set q full bit */
+	btsl	%edx, whichqs		/* set q full bit */
 	shll	$3, %edx
-	addl	$_qs, %edx		/* locate q hdr */
+	addl	$qs, %edx		/* locate q hdr */
 	movl	%edx, P_LINK(%eax)	/* link process on tail of q */
 	movl	P_RLINK(%edx), %ecx
 	movl	%ecx, P_RLINK(%eax)
@@ -961,17 +964,17 @@ ENTRY(qswtch)
 
 #ifdef	DIAGNOSTIC
 1:	pushl	$2f
-	call	_panic
+	call	panic
 2:
 	.asciz	"qswtch"
 #endif
 
 	.data
-	.globl	_proc0paddr
-_proc0paddr:	.long	0	/* process 0 address of kstack. */
+	.globl	proc0paddr
+proc0paddr:	.long	0	/* process 0 address of kstack. */
 	.space 4
-	.globl	_intrnames, _eintrnames, _intrcnt, _eintrcnt
-_intrnames:	.space 16*4
+	.globl	intrnames, _eintrnames, _intrcnt, _eintrcnt
+intrnames:	.space 16*4
 _eintrnames:
 _intrcnt:	.space 16*4
 _eintrcnt:
@@ -989,42 +992,42 @@ _eintrcnt:
  */
 
 /* Trap and fault vector macros.  */ 
-#define	IDTVEC(name)	.align 4; .globl _X/**/name; _X/**/name:
 #define	TRAP(a)		pushl $(a) ; jmp common_traps
 
-IDTVEC(div)	pushl $0; TRAP(T_DIVIDE)
-IDTVEC(dbg)	pushl $0; TRAP(T_TRCTRAP)
-IDTVEC(nmi)	pushl $0; TRAP(T_NMI)
-IDTVEC(bpt)	pushl $0; TRAP(T_BPTFLT)
-IDTVEC(ofl)	pushl $0; TRAP(T_OFLOW)
-IDTVEC(bnd)	pushl $0; TRAP(T_BOUND)
-IDTVEC(ill)	pushl $0; TRAP(T_PRIVINFLT)
-IDTVEC(dna)	pushl $0; TRAP(T_DNA)
-IDTVEC(dble)	TRAP(T_DOUBLEFLT)
-IDTVEC(fpusegm)	pushl $0; TRAP(T_FPOPFLT)
-IDTVEC(tss)	TRAP(T_TSSFLT)
-IDTVEC(missing)	TRAP(T_SEGNPFLT)
-IDTVEC(stk)	TRAP(T_STKFLT)
-IDTVEC(prot)	TRAP(T_PROTFLT)
-IDTVEC(page)	TRAP(T_PAGEFLT)
-IDTVEC(rsvd)	pushl $0; TRAP(T_RESERVED)
-IDTVEC(fpu)	pushl $0; TRAP(T_ARITHTRAP)
-	/* 17 - 31 reserved for future exp */
-IDTVEC(rsvd0)	pushl $0; TRAP(17)
-IDTVEC(rsvd1)	pushl $0; TRAP(18)
-IDTVEC(rsvd2)	pushl $0; TRAP(19)
-IDTVEC(rsvd3)	pushl $0; TRAP(20)
-IDTVEC(rsvd4)	pushl $0; TRAP(21)
-IDTVEC(rsvd5)	pushl $0; TRAP(22)
-IDTVEC(rsvd6)	pushl $0; TRAP(23)
-IDTVEC(rsvd7)	pushl $0; TRAP(24)
-IDTVEC(rsvd8)	pushl $0; TRAP(25)
-IDTVEC(rsvd9)	pushl $0; TRAP(26)
-IDTVEC(rsvd10)	pushl $0; TRAP(27)
-IDTVEC(rsvd11)	pushl $0; TRAP(28)
-IDTVEC(rsvd12)	pushl $0; TRAP(29)
-IDTVEC(rsvd13)	pushl $0; TRAP(30)
-IDTVEC(rsvd14)	pushl $0; TRAP(31)
+.align 4; .globl Xdiv;     Xdiv:     pushl $0; TRAP(T_DIVIDE)
+.align 4; .globl Xdbg;     Xdbg:     pushl $0; TRAP(T_TRCTRAP)
+.align 4; .globl Xnmi;     Xnmi:     pushl $0; TRAP(T_NMI)
+.align 4; .globl Xbpt;     Xbpt:     pushl $0; TRAP(T_BPTFLT)
+.align 4; .globl Xofl;     Xofl:     pushl $0; TRAP(T_OFLOW)
+.align 4; .globl Xbnd;     Xbnd:     pushl $0; TRAP(T_BOUND)
+.align 4; .globl Xill;     Xill:     pushl $0; TRAP(T_PRIVINFLT)
+.align 4; .globl Xdna;     Xdna:     pushl $0; TRAP(T_DNA)
+.align 4; .globl Xdble;    Xdble:              TRAP(T_DOUBLEFLT)
+.align 4; .globl Xfpusegm; Xfpusegm: pushl $0; TRAP(T_FPOPFLT)
+.align 4; .globl Xtss;     Xtss:               TRAP(T_TSSFLT)
+.align 4; .globl Xmissing; Xmissing:           TRAP(T_SEGNPFLT)
+.align 4; .globl Xstk;     Xstk:               TRAP(T_STKFLT)
+.align 4; .globl Xprot;    Xprot:              TRAP(T_PROTFLT)
+.align 4; .globl Xpage;    Xpage:              TRAP(T_PAGEFLT)
+.align 4; .globl Xrsvd;    Xrsvd:    pushl $0; TRAP(T_RESERVED)
+.align 4; .globl Xfpu;     Xfpu:     pushl $0; TRAP(T_ARITHTRAP)
+
+/* 17 - 31 reserved for future exp */
+.align 4; .globl Xrsvd0;   Xrsvd0:   pushl $0; TRAP(17)
+.align 4; .globl Xrsvd1;   Xrsvd1:   pushl $0; TRAP(18)
+.align 4; .globl Xrsvd2;   Xrsvd2:   pushl $0; TRAP(19)
+.align 4; .globl Xrsvd3;   Xrsvd3:   pushl $0; TRAP(20)
+.align 4; .globl Xrsvd4;   Xrsvd4:   pushl $0; TRAP(21)
+.align 4; .globl Xrsvd5;   Xrsvd5:   pushl $0; TRAP(22)
+.align 4; .globl Xrsvd6;   Xrsvd6:   pushl $0; TRAP(23)
+.align 4; .globl Xrsvd7;   Xrsvd7:   pushl $0; TRAP(24)
+.align 4; .globl Xrsvd8;   Xrsvd8:   pushl $0; TRAP(25)
+.align 4; .globl Xrsvd9;   Xrsvd9:   pushl $0; TRAP(26)
+.align 4; .globl Xrsvd10;  Xrsvd10:  pushl $0; TRAP(27)
+.align 4; .globl Xrsvd11;  Xrsvd11:  pushl $0; TRAP(28)
+.align 4; .globl Xrsvd12;  Xrsvd12:  pushl $0; TRAP(29)
+.align 4; .globl Xrsvd13;  Xrsvd13:  pushl $0; TRAP(30)
+.align 4; .globl Xrsvd14;  Xrsvd14:  pushl $0; TRAP(31)
 
 /* common code for all traps. */
 common_traps:
@@ -1035,16 +1038,16 @@ common_traps:
 	movw	$KDSEL, %ax
 	movw	%ax,%ds
 	movw	%ax,%es
-	incl	_cnt+V_TRAP
-	call	_trap
-	movl	_cpl, %ecx
+	incl	cnt+V_TRAP
+	call	trap
+	movl	cpl, %ecx
 	jmp	trap_exit
 
 /*
  * Interrupts, otherwise known as asynchronous traps.
  */
 	/* hardware interrupt catcher (IDT 32 - 47) */
-	.globl	_isa_strayintr
+	.globl	isa_strayintr
 
 /*
  * Macro's for interrupt level priority masks (used in interrupt vector entry)
@@ -1062,7 +1065,7 @@ common_traps:
 
 /* If this is an old 386 that requires recovery time on the 8259, add nops */
 #define	NOP	/* none with modern machines */
-/* #define	NOP	inb $0x84, %al ; /* some with old machines */
+/* #define	NOP	inb $0x84, %al ; */ /* some with old machines */
 
 /* Processor/Bus chip set has write buffers to be forced out. */
 #define	WRPOST	inb $0x84, %al
@@ -1089,14 +1092,14 @@ common_traps:
 	movw	$KDSEL, %ax ;	/* ... and reload with kernel's own */ \
 	movw	%ax, %ds ; \
 	movw	%ax, %es ; \
-	movl	_cpl, %eax ; \
+	movl	cpl, %eax ; \
 	pushl	%eax ; \
 	shll	$8, %edx ; \
 	movb	$unit, %dl ; \
 	pushl	%edx ; \
 	orw	mask, %ax ; \
-	movl	%eax,_cpl ; \
-	orw	_imen, %ax ; \
+	movl	%eax,cpl ; \
+	orw	imen, %ax ; \
 	outb	%al, $IO_ICU1+1 ; \
 	NOP ;			/* wait for 8259 recovery */ \
 	movb	%ah, %al ; \
@@ -1104,7 +1107,7 @@ common_traps:
 	NOP ;			/* wait for 8259 recovery */ \
 	WRPOST ; /* do write post */ \
 	sti ; \
-	call	_isa_strayintr ; \
+	call	isa_strayintr ; \
 	jmp	common_int_return
 
 #define	INTRSTRAY2(unit, mask, offst) \
@@ -1133,45 +1136,45 @@ common_traps:
 	movw	$KDSEL, %ax ;	/* ... and reload with kernel's own */ \
 	movw	%ax, %ds ; \
 	movw	%ax, %es ; \
-	movl	_cpl, %eax ; \
+	movl	cpl, %eax ; \
 	pushl	%eax ; \
 	shll	$8, %edx ; \
 	movb	$unit, %dl ; \
 	pushl	%edx ; \
 	orw	mask, %ax ; \
-	movl	%eax,_cpl ; \
-	orw	_imen, %ax ; \
+	movl	%eax,cpl ; \
+	orw	imen, %ax ; \
 	outb	%al, $IO_ICU1+1 ; \
 	NOP ;			/* wait for 8259 recovery */ \
 	movb	%ah, %al ; \
 	outb	%al, $IO_ICU2+1	; \
 	WRPOST ; /* do write post */ \
 	sti ; \
-	call	_isa_strayintr ; \
+	call	isa_strayintr ; \
 	jmp	common_int_return
 
 /*
  * Stray Interrupt Catcher Table
  */
-IDTVEC(intr0)	INTRSTRAY1(0, _highmask, 0)
-IDTVEC(intr1)	INTRSTRAY1(1, _highmask, 1)
-IDTVEC(intr2)	INTRSTRAY1(2, _highmask, 2)
-IDTVEC(intr3)	INTRSTRAY1(3, _highmask, 3)
-IDTVEC(intr4)	INTRSTRAY1(4, _highmask, 4)
-IDTVEC(intr5)	INTRSTRAY1(5, _highmask, 5)
-IDTVEC(intr6)	INTRSTRAY1(6, _highmask, 6)
-IDTVEC(intr7)	INTRSTRAY1(7, _highmask, 7)
-IDTVEC(intr8)	INTRSTRAY2(8, _highmask, 8)
-IDTVEC(intr9)	INTRSTRAY2(9, _highmask, 9)
-IDTVEC(intr10)	INTRSTRAY2(10, _highmask, 10)
-IDTVEC(intr11)	INTRSTRAY2(11, _highmask, 11)
-IDTVEC(intr12)	INTRSTRAY2(12, _highmask, 12)
-IDTVEC(intr13)	INTRSTRAY2(13, _highmask, 13)
-IDTVEC(intr14)	INTRSTRAY2(14, _highmask, 14)
-IDTVEC(intr15)	INTRSTRAY2(15, _highmask, 15)
+.align 4; .globl Xintr0;  Xintr0:  INTRSTRAY1(0, _highmask, 0)
+.align 4; .globl Xintr1;  Xintr1:  INTRSTRAY1(1, _highmask, 1)
+.align 4; .globl Xintr2;  Xintr2:  INTRSTRAY1(2, _highmask, 2)
+.align 4; .globl Xintr3;  Xintr3:  INTRSTRAY1(3, _highmask, 3)
+.align 4; .globl Xintr4;  Xintr4:  INTRSTRAY1(4, _highmask, 4)
+.align 4; .globl Xintr5;  Xintr5:  INTRSTRAY1(5, _highmask, 5)
+.align 4; .globl Xintr6;  Xintr6:  INTRSTRAY1(6, _highmask, 6)
+.align 4; .globl Xintr7;  Xintr7:  INTRSTRAY1(7, _highmask, 7)
+.align 4; .globl Xintr8;  Xintr8:  INTRSTRAY2(8, _highmask, 8)
+.align 4; .globl Xintr9;  Xintr9:  INTRSTRAY2(9, _highmask, 9)
+.align 4; .globl Xintr10; Xintr10: INTRSTRAY2(10, _highmask, 10)
+.align 4; .globl Xintr11; Xintr11: INTRSTRAY2(11, _highmask, 11)
+.align 4; .globl Xintr12; Xintr12: INTRSTRAY2(12, _highmask, 12)
+.align 4; .globl Xintr13; Xintr13: INTRSTRAY2(13, _highmask, 13)
+.align 4; .globl Xintr14; Xintr14: INTRSTRAY2(14, _highmask, 14)
+.align 4; .globl Xintr15; Xintr15: INTRSTRAY2(15, _highmask, 15)
 
 /* all interrupts after first 16 */
-IDTVEC(intrdefault) INTRSTRAY2(255, _highmask, 255)
+.align 4; .globl Xintrdefault;	Xintrdefault: INTRSTRAY2(255, _highmask, 255)
 
 /*
  * 386 ISA 
@@ -1191,21 +1194,21 @@ IDTVEC(intrdefault) INTRSTRAY2(255, _highmask, 255)
 	movw	$0x10, %ax;	/* ... and reload with kernel's own */ \
 	movw	%ax, %ds; \
 	movw	%ax, %es; \
-	incl	_cnt+V_INTR;	/* tally interrupts */ \
+	incl	cnt+V_INTR;	/* tally interrupts */ \
 	incl	_intrcnt+offst*4; \
-	movl	_cpl, %eax; \
+	movl	cpl, %eax; \
 	pushl	%eax; \
-	pushl	_isa_unit+offst*4; \
-	orw	_isa_mask+offst*2, %ax; \
-	movl	%eax, _cpl; \
-	orw	_imen, %ax; \
+	pushl	isa_unit+offst*4; \
+	orw		isa_mask+offst*2, %ax; \
+	movl	%eax, cpl; \
+	orw	imen, %ax; \
 	NOP ; \
 	outb	%al, $IO_ICU1+1; \
 	movb	%ah, %al; \
 	outb	%al, $IO_ICU2+1; \
 	WRPOST ; /* do write post */ \
 	sti; \
-	call	*(_isa_vec+(offst*4)); \
+	call	*(isa_vec+(offst*4)); \
 	jmp	common_int_return
 
 /* Mask a group of interrupts atomically */
@@ -1223,59 +1226,59 @@ IDTVEC(intrdefault) INTRSTRAY2(255, _highmask, 255)
 	movw	$0x10, %ax;	/* ... and reload with kernel's own */ \
 	movw	%ax, %ds; \
 	movw	%ax, %es; \
-	incl	_cnt+V_INTR;	/* tally interrupts */ \
+	incl	cnt+V_INTR;	/* tally interrupts */ \
 	incl	_intrcnt+offst*4; \
-	movl	_cpl,%eax; \
+	movl	cpl,%eax; \
 	pushl	%eax; \
-	pushl	_isa_unit+offst*4; \
-	orw	_isa_mask+offst*2, %ax; \
-	movl	%ax, _cpl; \
-	orw	_imen, %ax; \
+	pushl	isa_unit+offst*4; \
+	orw		isa_mask+offst*2, %ax; \
+	movw	%ax, cpl; \
+	orw		imen, %ax; \
 	outb	%al, $IO_ICU1+1; \
 	NOP ; \
 	movb	%ah, %al; \
 	outb	%al, $IO_ICU2+1; \
 	WRPOST ; /* do write post */ \
 	sti; \
-	call	*(_isa_vec+offst*4); \
-	jmp	common_int_return
+	call	*(isa_vec+offst*4); \
+	jmp		common_int_return
 
 /*
  * Interrupt vector table:
  */
-IDTVEC(irq0)	INTR1(0)
-IDTVEC(irq1)	INTR1(1)
-IDTVEC(irq2)	INTR1(2)
-IDTVEC(irq3)	INTR1(3)
-IDTVEC(irq4)	INTR1(4)
-IDTVEC(irq5)	INTR1(5)
-IDTVEC(irq6)	INTR1(6)
-IDTVEC(irq7)	INTR1(7)
-IDTVEC(irq8)	INTR2(8)
-IDTVEC(irq9)	INTR2(9)
-IDTVEC(irq10)	INTR2(10)
-IDTVEC(irq11)	INTR2(11)
-IDTVEC(irq12)	INTR2(12)
-IDTVEC(irq13)	INTR2(13)
-IDTVEC(irq14)	INTR2(14)
-IDTVEC(irq15)	INTR2(15)
+.align 4; .globl Xirq0;  Xirq0:  INTR1(0)
+.align 4; .globl Xirq1;  Xirq1:  INTR1(1)
+.align 4; .globl Xirq2;  Xirq2:  INTR1(2)
+.align 4; .globl Xirq3;  Xirq3:  INTR1(3)
+.align 4; .globl Xirq4;  Xirq4:  INTR1(4)
+.align 4; .globl Xirq5;  Xirq5:  INTR1(5)
+.align 4; .globl Xirq6;  Xirq6:  INTR1(6)
+.align 4; .globl Xirq7;  Xirq7:  INTR1(7)
+.align 4; .globl Xirq8;  Xirq8:  INTR2(8)
+.align 4; .globl Xirq9;  Xirq9:  INTR2(9)
+.align 4; .globl Xirq10; Xirq10: INTR2(10)
+.align 4; .globl Xirq11; Xirq11: INTR2(11)
+.align 4; .globl Xirq12; Xirq12: INTR2(12)
+.align 4; .globl Xirq13; Xirq13: INTR2(13)
+.align 4; .globl Xirq14; Xirq14: INTR2(14)
+.align 4; .globl Xirq15; Xirq15: INTR2(15)
 
 	.data
-	.globl	_imen, _cpl
+	.globl	imen, cpl
 	.long 0
-_cpl:	.long	IRHIGH - 2	/* current priority level (all off) */
-_imen:	.word	0xffff - 2	/* interrupt mask enable (all off) */
+cpl:	.long	IRHIGH - 2	/* current priority level (all off) */
+imen:	.word	0xffff - 2	/* interrupt mask enable (all off) */
 
 netsirqsem: .word 0	/* network software interrupt request semaphore */
 
 	.globl	_highmask
 _highmask:	.long	IRHIGH - 2
-	.globl	_ttymask
-_ttymask:	.long	0
-	.globl	_biomask
-_biomask:	.long	0
-	.globl	_netmask
-_netmask:	.long	0
+	.globl	ttymask
+ttymask:	.long	0
+	.globl	biomask
+biomask:	.long	0
+	.globl	netmask
+netmask:	.long	0
 
 /*
  * low-level interrupt semaphore operations
@@ -1323,8 +1326,8 @@ common_int_return:
 	/* return to previous priority level */
 	movl	%eax, %ecx
 	cli
-	movl	%eax, _cpl
-	orw	_imen, %ax
+	movl	%eax, cpl
+	orw	imen, %ax
 	outb	%al, $IO_ICU1+1		/* re-enable intr? */
 	NOP
 	movb	%ah, %al
@@ -1344,21 +1347,21 @@ trap_exit:
 	popal
 	nop
 	addl	$8, %esp
-	.globl	_iret
-_iret:
+	.globl	iret
+iret:
 	iret
 
 9:
 	DISFAILSAFE
 
 	cli
-	movl	$0, _cpl	/* force back to ipl 0 */
+	movl	$0, cpl	/* force back to ipl 0 */
 
 	/* first, look for asts ... */
 	/* testw $0x3, 13*4(%esp) */
 	cmpw	$0x1f, 13*4(%esp)
 	jne	1f			/* no asts, move on to swintrs */
-	movl	_curproc, %edx		/* have we a process? */
+	movl	curproc, %edx		/* have we a process? */
 	/* testl	%edx, %edx	must have if going back to user 
 	je	1f */
 /*testl	%edx, %edx	
@@ -1369,13 +1372,13 @@ je	9f*/
 	/* then network software interrupts */
 1:
 	xorl	%ebx, %ebx
-	xchgl	%ebx, _netisr
+	xchgl	%ebx, netisr
 	testl	%ebx, %ebx
 	jne	4f
 
 3:	/* next, look for softclocks. */
 	xorl	%eax, %eax
-	xchgl	%eax, _sclkpending
+	xchgl	%eax, sclkpending
 	testl	%eax, %eax
 	jne	5f
 
@@ -1385,14 +1388,14 @@ je	9f*/
 #include "netisr.h"
 
 4:
-	movl	$IRNET|IRSCLK, _cpl	/* mask net and softclock */
+	movl	$IRNET|IRSCLK, cpl	/* mask net and softclock */
 	sti
-	.globl _netintr
+	.globl netintr
 #define DONET(s, c)	; \
 	.globl	c ;  \
 	btrl	$ s , %ebx ;  \
 	jnc	1f ; \
-	incl	_cnt+V_SOFT ; \
+	incl	cnt+V_SOFT ; \
 	call	c ; \
 1:
 
@@ -1402,8 +1405,8 @@ je	9f*/
 	jz 1f	;			\
 	btrl	tmp , isr ; 		\
 	jnc	1f ; 			\
-	incl	_cnt + V_SOFT ;		\
-	call	*_netintr(, tmp ,4) ;	\
+	incl	cnt + V_SOFT ;		\
+	call	*netintr(, tmp ,4) ;	\
 	jmp	1b ;			\
 1:
 	
@@ -1424,28 +1427,28 @@ je	9f*/
 	jmp 9b
 
 5:	/* simulate a hardware interrupt for softclock() */
-	movl	$IRSCLK, _cpl	/* mask softclock */
+	movl	$IRSCLK, cpl	/* mask softclock */
 	sti
-	incl	_cnt+V_SOFT
+	incl	cnt+V_SOFT
 
 	pushl	13*4(%esp)		/* cs */
 	pushl	13*4(%esp)		/* eip */
 	pushl	$0			/* basepri */
-	call	_softclock		/* softclock(clockframe); */
+	call	softclock		/* softclock(clockframe); */
 	addl	$12, %esp
 	jmp 9b
 
 6:	/* have an AST to deliver */
 	sti
-	incl	_cnt+V_TRAP
-	/* movl	%eax, 11*4(%esp)	/* error code contains md_flags */
+	incl	cnt+V_TRAP
+	/* movl	%eax, 11*4(%esp) */	/* error code contains md_flags */
 	movl	$T_ASTFLT, 10*4(%esp)
-	call	_trap			/* trap(struct trapframe); */
+	call	trap			/* trap(struct trapframe); */
 	jmp 9b
 
 #ifdef	DIAGNOSTIC
 9:	pushl	$1f
-	call	_panic
+	call	panic
 1:
 	.asciz	"trapexit"
 #endif
@@ -1455,61 +1458,61 @@ je	9f*/
  */
 #define	COMMON_SPL							\
 	movl	%eax, %edx ;						\
-	orw	_imen, %ax ;	/* mask off those not enabled yet */	\
+	orw	imen, %ax ;	/* mask off those not enabled yet */	\
 	outb	%al, $IO_ICU1+1 ;	/* update icu's */		\
 	NOP ; \
 	movb	%ah, %al ;						\
 	outb	%al, $IO_ICU2+1 ;					\
 	WRPOST ;	 /* write post before restoring interrupts */	\
-	xchgl	%edx, _cpl ;	 /* exchange old/new priority level */	\
+	xchgl	%edx, cpl ;	 /* exchange old/new priority level */	\
 	movl %edx, %eax ; \
 	sti ;				/* enable interrupts */		\
 	/* WUP(3) ; */ \
 	ret
 
-	.globl	_splhigh
-_splhigh:
+	.globl	splhigh
+splhigh:
 	movl	$IRHIGH, %eax	/* set new priority level with interrupts off */
 	cli
 	COMMON_SPL
 
-	.globl	_splclock
-_splclock:
-	movl	_cpl, %eax
+	.globl	splclock
+splclock:
+	movl	cpl, %eax
 	orb	$IRQ0, %al	/* set new priority level with interrupts off */
 	cli
 	COMMON_SPL
 
-	.globl	_spltty
-_spltty:
-	movl	_cpl, %eax
-	orw	_ttymask, %ax
+	.globl	spltty
+spltty:
+	movl	cpl, %eax
+	orw		ttymask, %ax
 	cli				# disable interrupts
 	COMMON_SPL
 
-	.globl	_splimp, __splimp
+	.globl	splimp, _splimp
+splimp:
 _splimp:
-__splimp:
 	cli				# disable interrupts
 	DISFAILSAFE
-	movl	_cpl, %eax
-	orw	_netmask, %ax
+	movl	cpl, %eax
+	orw	netmask, %ax
 	COMMON_SPL
 
-	.globl	_splbio	
-_splbio:
+	.globl	splbio	
+splbio:
 	cli				# disable interrupts
 	DISFAILSAFE
-	movl	_cpl, %eax
-	orw	_biomask, %ax
+	movl	cpl, %eax
+	orw	biomask, %ax
 	COMMON_SPL
 
-	.globl	_splsoftclock
-_splsoftclock:
+	.globl	splsoftclock
+splsoftclock:
 	PROC_ENTRY
 	cli
-	pushl	_cpl			/* save old priority */
-	movw	_imen, %ax		/* mask off those not enabled yet */
+	pushl	cpl			/* save old priority */
+	movw	imen, %ax		/* mask off those not enabled yet */
 	outb	%al, $IO_ICU1+1		/* update icu's */
 	NOP
 	movb	%ah, %al
@@ -1520,8 +1523,8 @@ _splsoftclock:
 	pushl	%ebx
 9:
 	xorl	%ebx, %ebx
-	xchgl	%ebx, _netisr
-	movl	$IRNET|IRSCLK, _cpl	# set new priority level
+	xchgl	%ebx, netisr
+	movl	$IRNET|IRSCLK, cpl	# set new priority level
 
 	testl	%ebx, %ebx
 	je	2f
@@ -1544,7 +1547,7 @@ _splsoftclock:
 	jmp 9b
 2:
 #endif
-	movl	$IRSCLK, _cpl		/* set new priority level */
+	movl	$IRSCLK, cpl		/* set new priority level */
 	sti
 	/* popl	%ebx */
 	popl	%eax			/* return old priority */
@@ -1552,18 +1555,18 @@ _splsoftclock:
 	ret
 
 
-	.globl	_splnet
-_splnet:
+	.globl	splnet
+splnet:
 	cli
 	movl	$IRNET|IRSCLK, %eax
 	COMMON_SPL
 
-	.globl _splnone
-_splnone:
+	.globl splnone
+splnone:
 	PROC_ENTRY
 	cli
-	pushl	_cpl			/* save old priority */
-	movw	_imen, %ax		/* mask off those not enabled yet */
+	pushl	cpl			/* save old priority */
+	movw	imen, %ax		/* mask off those not enabled yet */
 	outb	%al, $IO_ICU1+1		/* update icu's */
 	NOP
 	movb	%ah, %al
@@ -1573,8 +1576,8 @@ _splnone:
 	pushl	%ebx
 
 9:	xorl	%ebx, %ebx
-	xchgl	%ebx, _netisr
-	movl	$IRNET|IRSCLK, _cpl	# set new priority level
+	xchgl	%ebx, netisr
+	movl	$IRNET|IRSCLK, cpl	# set new priority level
 
 	testl	%ebx, %ebx
 	je	5f
@@ -1599,8 +1602,8 @@ _splnone:
 5:
 #ifdef notdef
 	xorl	%ebx, %ebx
-	xchgl	%ebx, _sclkpending
-	movl	$IRSCLK, _cpl		/* set new priority level */
+	xchgl	%ebx, sclkpending
+	movl	$IRSCLK, cpl		/* set new priority level */
 
 	testl	%ebx, %ebx
 	je	1f
@@ -1610,52 +1613,52 @@ _splnone:
 	pushl	$KCSEL			/* cs */
 	pushl	3*4(%esp)		/* eip */
 	pushl	$0			/* basepri */
-	call	_softclock		/* softclock(clockframe); */
+	call	softclock		/* softclock(clockframe); */
 	addl	$12, %esp
 	cli
 	jmp	9b
 
 1:
 #endif
-	movl	$0, _cpl		/* set new priority level */
+	movl	$0, cpl		/* set new priority level */
 	sti
 	popl	%ebx
 	popl	%eax			/* return old priority */
 	PROC_EXIT
 	ret
 
-	.globl _splx
-_splx:
+	.globl splx
+splx:
 	movl	4(%esp), %eax		# new priority level
 	cmpl	$0, %eax
-	je	_splnone		# going to "zero level" is special
+	je	splnone		# going to "zero level" is special
 	cmpl	$IRSCLK, %eax
-	je	_splsoftclock		# going to "softclock level" is special
+	je	splsoftclock		# going to "softclock level" is special
 
 	cli
 	COMMON_SPL
 	
-	.globl	_syscall_entry, _syscall_lret
+	.globl	syscall_entry, syscall_lret
 /*
  * System call interface (in iBCS2, done via call gates).
  */
-IDTVEC(syscall)
-_syscall_entry:
+.align 4;	.globl Xsyscall;	Xsyscall:
+syscall_entry:
 	pushfl
 	pushal
 	nop
 	movw	$KDSEL, %ax	/* reload kernel selectors */
 	movw	%ax, %ds
 	movw	%ax, %es
-	movw	__udatasel, %ax	 /* reload user selectors */
+	movw	_udatasel, %ax	 /* reload user selectors */
 	movw	%ax, %gs
-	incl	_cnt+V_SYSCALL
-	call	_syscall
+	incl	cnt+V_SYSCALL
+	call	syscall
 
 9:
 	/* snatch values for softints */
 	cli
-	movl	_curproc, %edx
+	movl	curproc, %edx
 	btrl	$0, PMD_FLAGS(%edx)
 	
 	/* an ast? */
@@ -1663,19 +1666,19 @@ _syscall_entry:
 
 	/* any network software interrupts present? */
 	xorl	%ebx, %ebx
-	xchgl	%ebx, _netisr
+	xchgl	%ebx, netisr
 	testl	%ebx, %ebx
 	jne	5f
 
 	/* need a software clock interrupt? */
 	xorl	%edi, %edi
-	xchgl	%edi, _sclkpending
+	xchgl	%edi, sclkpending
 	testl	%edi, %edi
 	jne	6f
 
-	movl	$0, _cpl
+	movl	$0, cpl
 	/* WUP(2) */
-	movw	__udatasel, %ax	 /* reload user selectors */
+	movw	_udatasel, %ax	 /* reload user selectors */
 	movw	%ax, %ds
 	movw	%ax, %es
 	movw	%ax, %gs
@@ -1683,12 +1686,12 @@ _syscall_entry:
 	nop
 	popfl
 
-_syscall_lret:
+syscall_lret:
 	lret
 
 	/* attempt to process network software interrupts prior to return */
 5:
-	movl	$IRNET|IRSCLK, _cpl
+	movl	$IRNET|IRSCLK, cpl
 	sti
 #ifdef nope
 #ifdef INET
@@ -1706,19 +1709,19 @@ _syscall_lret:
 	jmp	9b
 
 6:	/* simulate a hardware interrupt */
-	incl	_cnt+V_SOFT
-	movl	$IRSCLK, _cpl
+	incl	cnt+V_SOFT
+	movl	$IRSCLK, cpl
 	sti
 
 	pushl	10*4(%esp)		/* cs */
 	pushl   10*4(%esp)              /* eip */
 	pushl	$0			/* basepri */
-	call	_softclock		/* softclock(clockframe); */
+	call	softclock		/* softclock(clockframe); */
 	addl	$12, %esp
 	jmp	9b
 
 7:
 	sti
-	incl	_cnt+V_TRAP
-	call	_systrap		/* systrap(struct syscframe); */
+	incl	cnt+V_TRAP
+	call	systrap		/* systrap(struct syscframe); */
 	jmp 9b

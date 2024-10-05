@@ -56,10 +56,10 @@ static char	netio[] = "netio";
 
 u_long	sb_max = SB_MAX;	/* patchable administrative size limit */
 
-static void sbflush(struct sockbuf *sb);
+extern void sbflush(struct sockbuf *sb);
+extern void sbdrop(struct sockbuf *sb, int len);
 static void sbappendrecord(struct sockbuf *sb, struct mbuf *m0);
 static void sbcompress(struct sockbuf *sb, struct mbuf *m, struct mbuf *p);
-static void sbdrop(struct sockbuf *sb, int len);
 
 /*
  * Commit storage to sockbuf to allow the desired largest logical
@@ -98,7 +98,7 @@ sbrelease(struct sockbuf *sb)
 }
 
 /* Free all mbufs in a socket buffer. */
-static void
+void
 sbflush(struct sockbuf *sb)
 {
 
@@ -464,7 +464,7 @@ sbcompress(struct sockbuf *sb, struct mbuf *m, struct mbuf *p)
  * Reclaim "len" bytes of data from the head of a sockbuf. Used by
  * protocol and socket delivery code to consume queue contents.
  */
-static void
+void
 sbdrop(struct sockbuf *sb, int len)
 {
 	struct mbuf *m, *mn, *next;

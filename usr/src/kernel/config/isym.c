@@ -1,3 +1,4 @@
+#define	sonewconn	sonewconn1
 
 dummy() {}
 #define	__ISYM__(a,b,c)	b(),

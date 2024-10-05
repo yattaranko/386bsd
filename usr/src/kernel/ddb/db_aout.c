@@ -81,7 +81,7 @@
 int db_symtabsize = SYMTAB_SPACE;
 char db_symtab[SYMTAB_SPACE] = { 1 };
 
-X_db_sym_init(symtab, esymtab, name)
+void X_db_sym_init(symtab, esymtab, name)
 	int *	symtab;		/* pointer to start of symbol table */
 	char *	esymtab;	/* pointer to end of string table,
 				   for checking - rounded up to integer

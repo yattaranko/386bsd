@@ -8,8 +8,8 @@
                 "${workspaceFolder}/usr/src/kernel/include/dev/",
                 "${workspaceFolder}/usr/src/kernel/include/domain/",
                 "${workspaceFolder}/usr/src/kernel/include/fs/",
-                "${workspaceFolder}/usr/src/kernel/include/machine/",
-                "${workspaceFolder}/usr/src/kernel/include/sys/"
+                "${workspaceFolder}/usr/src/kernel/include/sys/",
+                "${workspaceFolder}/usr/src/kernel/obj/machine"
             ],
             "defines": [
                 "KERNEL",

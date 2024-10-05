@@ -56,6 +56,8 @@ extern	struct fileops socketops;
 /* strings for sleep message: */
 static char	netcon[] = "netcon";
 
+int getsock(struct filedesc *fdp, int fdes, struct file **fpp);
+
 /* create a socket */
 int
 socket(p, uap, retval)
@@ -904,5 +906,21 @@ sockargs(mp, buf, buflen, type)
 
 		sa->sa_len = buflen;
 	}
+	return (0);
+}
+
+int
+getsock(struct filedesc *fdp, int fdes, struct file **fpp)
+{
+	struct file *fp;
+
+	if ((unsigned)fdes >= fdp->fd_nfiles ||
+	    (fp = fdp->fd_ofiles[fdes]) == NULL)
+		return (EBADF);
+
+	if (fp->f_type != DTYPE_SOCKET)
+		return (ENOTSOCK);
+
+	*fpp = fp;
 	return (0);
 }

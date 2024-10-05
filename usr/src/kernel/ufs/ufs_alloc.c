@@ -57,8 +57,8 @@ extern daddr_t		mapsearch();
 extern int		inside[], around[];
 extern unsigned char	*fragtbl[];
 
-static void blkfree(register struct inode *ip, daddr_t bno, off_t size);
-static void ifree(struct inode *ip, ino_t ino, int mode);
+extern void blkfree(register struct inode *ip, daddr_t bno, off_t size);
+extern void ifree(struct inode *ip, ino_t ino, int mode);
 
 /*
  * Allocate a block in the file system.
@@ -875,7 +875,7 @@ gotit:
  * free map. If a fragment is deallocated, a possible 
  * block reassembly is checked.
  */
-static void blkfree(ip, bno, size)
+void blkfree(ip, bno, size)
 	register struct inode *ip;
 	daddr_t bno;
 	off_t size;
@@ -977,7 +977,7 @@ static void blkfree(ip, bno, size)
  *
  * The specified inode is placed back in the free map.
  */
-static void ifree(ip, ino, mode)
+void ifree(ip, ino, mode)
 	struct inode *ip;
 	ino_t ino;
 	int mode;

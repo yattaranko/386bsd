@@ -113,7 +113,7 @@ isblock(fs, cp, h)
 /*
  * take a block out of the map
  */
-static void clrblock(fs, cp, h)
+void clrblock(fs, cp, h)
 	struct fs *fs;
 	u_char *cp;
 	daddr_t h;
@@ -140,7 +140,7 @@ static void clrblock(fs, cp, h)
 /*
  * put a block into the map
  */
-static void setblock(fs, cp, h)
+void setblock(fs, cp, h)
 	struct fs *fs;
 	unsigned char *cp;
 	daddr_t h;

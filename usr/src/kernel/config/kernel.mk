@@ -94,10 +94,10 @@ ${KERNEL}: Makefile symbols.sort ${FIRSTOBJ} ${OBJS} isym.o
 	cp $@ $@.gdb
 	strip -d $@
 .endif
-	@symorder ${SYMORDER} symbols.sort $@
-.if defined(DBSYM)
-	@${DBSYM} $@
-.endif
+#	@symorder ${SYMORDER} symbols.sort $@
+#.if defined(DBSYM)
+#	@${DBSYM} $@
+#.endif
 	@size $@
 	@chmod 755 $@
 

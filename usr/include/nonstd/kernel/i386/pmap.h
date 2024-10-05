@@ -103,7 +103,7 @@ unsigned int
 #define	PG_u		0x00000004
 #define	PG_PROT		0x00000006 /* all protection bits . */
 #define	PG_W		0x00000200
-/*#define PG_N		0x00000800 /* Non-cacheable */
+/*#define PG_N		0x00000800 */ /* Non-cacheable */
 #define PG_CD		0x00000010 /* Non-cacheable */
 #define PG_WT		0x00000008 /* write thru */
 #define	PG_M		0x00000040
@@ -230,7 +230,7 @@ pv_entry_t	pv_table;		/* array of entries, one per page */
 
 #define	pmap_resident_count(pmap)	((pmap)->pm_stats.resident_count)
 
-#endif	KERNEL
-#endif	LOCORE
+#endif	/* KERNEL */
+#endif	/* LOCORE */
 
-#endif	_PMAP_MACHINE_
+#endif	/* _PMAP_MACHINE_ */

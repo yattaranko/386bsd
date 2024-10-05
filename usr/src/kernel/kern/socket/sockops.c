@@ -57,7 +57,7 @@
 /* strings for sleep message: */
 static char	netcls[] = "netcls";
 
-static void sofree(struct socket *so);
+extern void sofree(struct socket *so);
 static void sorflush(struct socket *so);
 static void socantrcvmore(struct socket *so);
 
@@ -141,7 +141,7 @@ solisten(struct socket *so, int backlog)
 }
 
 /* release (and possibly reclaim) a socket. */
-static void
+void
 sofree(struct socket *so)
 {
 

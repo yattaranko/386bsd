@@ -197,6 +197,7 @@ sbfree(struct sockbuf *sb, struct mbuf *m) {
 	} \
 }
 
+#if 0
 #ifdef NDFILE
 extern inline int
 getsock(struct filedesc *fdp, int fdes, struct file **fpp)
@@ -213,6 +214,7 @@ getsock(struct filedesc *fdp, int fdes, struct file **fpp)
 	*fpp = fp;
 	return (0);
 }
+#endif
 #endif
 
 #ifdef KERNEL
@@ -257,7 +259,7 @@ __ISYM__(int,  sbappendcontrol, (struct sockbuf *sb, struct mbuf *m0, struct mbu
 __ISYM__(int,  sbreserve, (struct sockbuf *sb, u_long cc))
 __ISYM__(int,  soreserve, (struct socket *so, u_long sndcc, u_long rcvcc))
 __ISYM__(void, sbappend, (struct sockbuf *sb, struct mbuf *m))
-__ISYM__(void, sbappendrecord, (struct sockbuf *sb, struct mbuf *m0))
+//__ISYM__(void, sbappendrecord, (struct sockbuf *sb, struct mbuf *m0))
 __ISYM__(void, sbdrop, (struct sockbuf *sb, int len))
 __ISYM__(void, sbdroprecord, (struct sockbuf *sb))
 __ISYM__(void, sbflush, (struct sockbuf *sb))

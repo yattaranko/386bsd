@@ -49,6 +49,7 @@
 #include "prototypes.h"
 
 u_char	curpri;			/* usrpri of curproc */
+int		lbolt;
 
 /* Force switch among equal priority processes every 100ms. */
 void

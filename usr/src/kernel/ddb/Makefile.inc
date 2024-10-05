@@ -7,7 +7,7 @@ KERN_SRCS+= \
 MACH_SRCS+= \
 	db_disasm.c db_interface.c db_trace.c
 MACH_SRCS_S+= \
-	db_setjmp.s
+	db_setjmp.S
 MAN4+=	ddb.0
 DBSYM=	dbsym
 DEBUGSYM=	-X
