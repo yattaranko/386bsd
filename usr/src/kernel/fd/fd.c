@@ -264,7 +264,7 @@ printf("T|");
 		fdstart(unit);		/* start drive if idle */
 	}
 	splx(s);
-	return;
+	return (0);
 
 bad:
 	biodone(bp);

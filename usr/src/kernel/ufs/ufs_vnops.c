@@ -1486,7 +1486,7 @@ ufs_print(vp)
 #endif /* FIFO */
 	printf("%s\n", (ip->i_flag & ILOCKED) ? " (LOCKED)" : "");
 	if (ip->i_spare0 == 0)
-		return;
+		return (0);
 	printf("\towner pid %d", ip->i_spare0);
 	if (ip->i_spare1)
 		printf(" waiting pid %d", ip->i_spare1);

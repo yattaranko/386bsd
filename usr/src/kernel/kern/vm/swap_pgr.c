@@ -357,7 +357,7 @@ swap_pager_putpage(vm_pager_t pager, vm_page_t m, boolean_t sync)
 #endif
 	if (pager == NULL) {
 		(void) swap_pager_clean(NULL, B_WRITE);
-		return;
+		return (FALSE);
 	}
 	flags = B_WRITE;
 	if (!sync)
@@ -690,7 +690,7 @@ swap_pager_clean(vm_page_t m, int rw)
 #ifdef DEBUG
 	/* save panic time state */
 	if ((swpagerdebug & SDB_ANOMPANIC) && panicstr)
-		return;
+		return (FALSE);
 	if (swpagerdebug & SDB_FOLLOW)
 		printf("swpg_clean(%x, %d)\n", m, rw);
 #endif

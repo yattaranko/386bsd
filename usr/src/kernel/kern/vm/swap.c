@@ -191,7 +191,7 @@ swstrategy(register struct buf *bp)
 	if (bp->b_blkno + sz > nswap) {
 		bp->b_flags |= B_ERROR;
 		biodone(bp);
-		return;
+		return (0);
 	}
 
 	/* if more than one device, find underlying block address */
@@ -221,7 +221,7 @@ printf("overlap");
 	if (sp->sw_vp == NULL) {
 		bp->b_error |= B_ERROR;
 		biodone(bp);
-		return;
+		return(0);
 	}
 	if ((bp->b_dev = sp->sw_dev) == 0)
 		panic("swstrategy");
@@ -245,6 +245,7 @@ printf("overlap");
 		bp->b_vp = sp->sw_vp;
 		bp->b_dev = sp->sw_dev;
 	VOP_STRATEGY(bp);
+	return(0);
 }
 
 /*

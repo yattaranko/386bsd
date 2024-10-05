@@ -56,6 +56,10 @@ static char	netio[] = "netio";
 
 u_long	sb_max = SB_MAX;	/* patchable administrative size limit */
 
+static void sbflush(struct sockbuf *sb);
+static void sbappendrecord(struct sockbuf *sb, struct mbuf *m0);
+static void sbcompress(struct sockbuf *sb, struct mbuf *m, struct mbuf *p);
+static void sbdrop(struct sockbuf *sb, int len);
 
 /*
  * Commit storage to sockbuf to allow the desired largest logical
@@ -94,7 +98,7 @@ sbrelease(struct sockbuf *sb)
 }
 
 /* Free all mbufs in a socket buffer. */
-void
+static void
 sbflush(struct sockbuf *sb)
 {
 
@@ -191,7 +195,7 @@ sbcheck(struct sockbuf *sb)
  * Append mbuf chain as the start of the new trailing record in a socket
  * buffer. Used by a protocol to deliver data as the start of a new record.
  */
-void
+static void
 sbappendrecord(struct sockbuf *sb, struct mbuf *m0)
 {
 	struct mbuf *m;
@@ -398,7 +402,7 @@ sbappendcontrol(struct sockbuf *sb, struct mbuf *m0,
  * buffer following mbuf "p".  If "p" is null, the buffer
  * is presumed empty.
  */
-void
+static void
 sbcompress(struct sockbuf *sb, struct mbuf *m, struct mbuf *p)
 {
 	int eor = 0;
@@ -460,7 +464,7 @@ sbcompress(struct sockbuf *sb, struct mbuf *m, struct mbuf *p)
  * Reclaim "len" bytes of data from the head of a sockbuf. Used by
  * protocol and socket delivery code to consume queue contents.
  */
-void
+static void
 sbdrop(struct sockbuf *sb, int len)
 {
 	struct mbuf *m, *mn, *next;

@@ -273,7 +273,7 @@ __ISYM__(void, soisconnecting, (struct socket *so))
 __ISYM__(void, soisdisconnected, (struct socket *so))
 __ISYM__(void, soisdisconnecting, (struct socket *so))
 __ISYM__(struct	socket *, sonewconn, (struct socket *head, int connstatus))
-__ISYM__(void, sowakeup, (struct socket *so))
+//__ISYM__(void, sowakeup, (struct socket *so))
 
 __ISYM__(int, socreate, (int dom, struct socket **aso, int type, int proto))
 __ISYM__(int, sobind, (struct socket *so, struct mbuf *sockaddrnam))
@@ -291,7 +291,7 @@ __ISYM__(int, sockargs, (struct mbuf **mp, caddr_t buf, int buflen, int type))
 #undef __ISYM_ALIAS__
 #undef __ISYM_VERSION__
 
-extern void inline 
+/* extern void inline 
 sorwakeup(struct socket *so) {
 
 	sbwakeup(&so->so_rcv);
@@ -303,6 +303,6 @@ sowwakeup(struct socket *so) {
 
 	sbwakeup(&so->so_snd);
 	sowakeup(so);
-}
+} */
 
 #endif

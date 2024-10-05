@@ -57,6 +57,8 @@
 int	ifqmaxlen = IFQ_MAXLEN;
 struct	ifnet *ifnet;	/* head of list of interfaces */
 
+static void link_rtrequest(); /* , ether_output(); */
+
 /*
  * Network interface utility routines.
  *
@@ -99,7 +101,7 @@ static char *sprint_d();
  * Attach an interface to the
  * list of "active" interfaces.
  */
-if_attach(ifp)
+void if_attach(ifp)
 	struct ifnet *ifp;
 {
 	unsigned socksize, ifasize;
@@ -109,7 +111,6 @@ if_attach(ifp)
 	register struct sockaddr_dl *sdl;
 	register struct ifaddr *ifa;
 	static int if_indexlim = 8;
-	extern link_rtrequest(); /* , ether_output(); */
 
 	while (*p)
 		p = &((*p)->if_next);
@@ -169,7 +170,7 @@ if_attach(ifp)
 	while (namelen != 0)
 		sdl->sdl_data[--namelen] = 0xff;
 	ifa->ifa_next = ifp->if_addrlist;
-	ifa->ifa_rtrequest = link_rtrequest;
+	ifa->ifa_rtrequest = (void*)link_rtrequest;
 	ifp->if_addrlist = ifa;
 }
 /*
@@ -378,7 +379,7 @@ ifa_ifwithroute(int flags, struct sockaddr *dst, struct sockaddr *gateway)
  * Lookup an appropriate real ifa to point to.
  * This should be moved to /sys/net/link.c eventually.
  */
-link_rtrequest(cmd, rt, sa)
+void link_rtrequest(cmd, rt, sa)
 register struct rtentry *rt;
 struct sockaddr *sa;
 {
@@ -499,7 +500,7 @@ extern inline int
 arpioctl(int cmd, caddr_t data) {
 	int (*f)(int, caddr_t);
 
-	(const void *) f = esym_fetch(arpioctl);
+	f = esym_fetch(arpioctl);
 	if (f == 0)
 		return(0);
 	return ((*f)(cmd, data));

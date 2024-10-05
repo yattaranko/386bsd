@@ -51,6 +51,11 @@
 
 #include "prototypes.h"
 
+static void unp_disconnect(struct unpcb *unp);
+static void unp_gc();
+static void unp_mark(struct file *fp);
+static void unp_discard(struct file *fp);
+
 /*
  * Unix communications domain.
  *
@@ -507,7 +512,7 @@ unp_connect2(so, so2)
 	return (0);
 }
 
-unp_disconnect(unp)
+static void unp_disconnect(unp)
 	struct unpcb *unp;
 {
 	register struct unpcb *unp2 = unp->unp_conn;
@@ -662,10 +667,10 @@ int error;
 }
 
 int	unp_defer, unp_gcing;
-int	unp_mark();
+//int	unp_mark();
 extern	struct domain unixdomain;
 
-unp_gc()
+static void unp_gc()
 {
 	register struct file *fp;
 	register struct socket *so;
@@ -729,7 +734,7 @@ restart:
 unp_dispose(m)
 	struct mbuf *m;
 {
-	int unp_discard();
+//	int unp_discard();
 
 	if (m)
 		unp_scan(m, unp_discard);
@@ -764,7 +769,7 @@ unp_scan(m0, op)
 	}
 }
 
-unp_mark(fp)
+static void unp_mark(fp)
 	struct file *fp;
 {
 
@@ -774,7 +779,7 @@ unp_mark(fp)
 	fp->f_flag |= (FMARK|FDEFER);
 }
 
-unp_discard(fp)
+static void unp_discard(fp)
 	struct file *fp;
 {
 

@@ -681,7 +681,7 @@ issig(struct proc *p)
 		 */
 		switch ((int)p->p_sigacts->ps_sigact[sig]) {
 
-		case SIG_DFL:
+		case (int)SIG_DFL:
 			/*
 			 * Don't take default actions on system processes.
 			 */
@@ -712,7 +712,7 @@ issig(struct proc *p)
 				return (sig);
 			/*NOTREACHED*/
 
-		case SIG_IGN:
+		case (int)SIG_IGN:
 #ifdef DIAGNOSTIC
 			/*
 			 * Masking above should prevent us ever trying

@@ -90,7 +90,8 @@ uioapply(int (*func)(), int arg1, struct uio *uio)
 
 /* pass len bytes to a uio via a function*/
 int
-uiotofunc (int (*func)(...), char *cp, int len, struct uio *uio, int order)
+uiotofunc (int (*func)(caddr_t, char*, int), char *cp, int len, struct uio *uio, int order)
+/* uiotofunc (int (*func)(...), char *cp, int len, struct uio *uio, int order) */
 {
 	struct iovec *iov;
 	int cnt, rv;
@@ -122,8 +123,10 @@ uiotofunc (int (*func)(...), char *cp, int len, struct uio *uio, int order)
 
 /* pass len bytes to a uio */
 int
-uiotofunc1 (int (*func)(...), int arg, char *cp, int len, struct uio *uio,
+uiotofunc1 (int (*func)(int, caddr_t, char*, int), int arg, char *cp, int len, struct uio *uio,
 	 int order)
+/* uiotofunc1 (int (*func)(...), int arg, char *cp, int len, struct uio *uio,
+	 int order) */
 {
 	struct iovec *iov;
 	int cnt, rv;

@@ -161,7 +161,7 @@ logselect(dev_t dev, int rw, struct proc *p)
 	return (0);
 }
 
-logwakeup()
+void logwakeup()
 {
 	struct proc *p;
 

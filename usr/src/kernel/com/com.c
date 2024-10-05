@@ -124,6 +124,8 @@ extern int kgdb_debug_init;
 
 #define	UNIT(x)		(minor(x)-1)
 
+static void comeint(register int unit, register int stat, register int com);
+
 int
 comprobe(struct isa_device *dev)
 {
@@ -377,7 +379,7 @@ comintr(int unit)
 	}
 }
 
-comeint(unit, stat, com)
+static void comeint(unit, stat, com)
 	register int unit, stat;
 	register com;
 {

@@ -65,6 +65,8 @@ roundrobin(void)
 /* decay 95% of `p_pctcpu' in 60 seconds; see CCPU_SHIFT before changing */
 fixpt_t	ccpu = 0.95122942450071400909 * FSCALE;		/* exp(-1/20) */
 
+static void endtsleep(struct proc *p);
+
 /*
  * If `ccpu' is not equal to `exp(-1/20)' and you still want to use the
  * faster/more-accurate formula, you'll have to estimate CCPU_SHIFT below
@@ -209,7 +211,6 @@ tsleep(caddr_t chan, int pri, char *wmesg, int timo)
 	int s;
 	int sig, catch = pri & PCATCH;
 	extern int cold;
-	static void endtsleep(struct proc *p);
 
 	s = splhigh();
 	if (cold || panicstr) {

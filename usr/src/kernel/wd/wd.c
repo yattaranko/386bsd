@@ -49,10 +49,10 @@ static char *wd_config =
 #include "sys/syslog.h"
 #include "dkbad.h"
 #include "disklabel.h"
-#include	"sys/uio.h"
-#include	"sys/time.h"
-#include	"sys/mount.h"
-#include	"vnode.h"
+#include "sys/uio.h"
+#include "sys/time.h"
+#include "sys/mount.h"
+#include "vnode.h"
 #include "buf.h"
 #include "uio.h"
 #include "malloc.h"
@@ -321,7 +321,7 @@ q:
 	if (wdtab.b_active == 0)
 		wdstart();		/* start controller */
 	splx(s);
-	return;
+	return (0);
 
 done:
 	/* toss transfer, we're done early */
@@ -1436,7 +1436,7 @@ wddump(dev_t dev)			/* dump core after a system crash */
 		/* update block count */
 		num--;
 		blknum++ ;
-		(int) addr += 512;
+		addr += 512;
 
 		/* operator aborting dump? */
 		if (sgetc(1))

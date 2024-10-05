@@ -123,6 +123,8 @@
 
 #define PMAP_DEACTIVATE(pmapp, pcbp)
 
+static void pads(register struct pmap *pm);
+
 void
 tlbflush(void) {
 
@@ -1934,7 +1936,7 @@ pmap_check_wiring(char *str, vm_offset_t va)
 #endif
 
 /* print address space of pmap*/
-pads(register struct pmap *pm) {
+static void pads(register struct pmap *pm) {
 	unsigned va, i, j;
 	struct pte *ptep;
 

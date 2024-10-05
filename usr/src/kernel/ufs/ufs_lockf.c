@@ -66,6 +66,9 @@ int	lockf_debug = -1;
 #define SELF	0x1
 #define OTHERS	0x2
 
+static void lf_addblock(struct lockf *lock, struct lockf *blocked);
+static void lf_split(register struct lockf *lock1, register struct lockf *lock2);
+
 /*
  * Set a byte-range lock.
  */
@@ -531,7 +534,7 @@ lf_findoverlap(lf, lock, type, prev, overlap)
 /*
  * Add a lock to the end of the blocked list.
  */
-lf_addblock(lock, blocked)
+static void lf_addblock(lock, blocked)
 	struct lockf *lock;
 	struct lockf *blocked;
 {
@@ -559,7 +562,7 @@ lf_addblock(lock, blocked)
  * Split a lock and a contained region into
  * two or three locks as necessary.
  */
-lf_split(lock1, lock2)
+static void lf_split(lock1, lock2)
 	register struct lockf *lock1;
 	register struct lockf *lock2;
 {

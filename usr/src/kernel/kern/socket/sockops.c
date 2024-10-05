@@ -57,6 +57,9 @@
 /* strings for sleep message: */
 static char	netcls[] = "netcls";
 
+static void sofree(struct socket *so);
+static void sorflush(struct socket *so);
+static void socantrcvmore(struct socket *so);
 
 /* Create a socket */
 int
@@ -138,7 +141,7 @@ solisten(struct socket *so, int backlog)
 }
 
 /* release (and possibly reclaim) a socket. */
-void
+static void
 sofree(struct socket *so)
 {
 
@@ -855,7 +858,7 @@ soshutdown(struct socket *so, int how)
 }
 
 /* */
-void
+static void
 sorflush(struct socket *so)
 {
 	struct sockbuf *sb = &so->so_rcv, asb;
@@ -1095,13 +1098,13 @@ sohasoutofband(struct socket *so)
  * Do asynchronous notification via SIGIO
  * if the socket has the SS_ASYNC flag set.
  */
-void
+/* void
 sowakeup(struct socket *so) 
 {
 
 	if (so->so_state & SS_ASYNC)
 		signalpid(so->so_pgid);
-}
+} */
 
 /*
  * Socantsendmore indicates that no more data will be sent on the
@@ -1120,7 +1123,7 @@ socantsendmore(struct socket *so)
 	sowwakeup(so);
 }
 
-void
+static void
 socantrcvmore(struct socket *so)
 {
 

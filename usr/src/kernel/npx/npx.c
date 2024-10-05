@@ -125,7 +125,7 @@ npxattach(dvp)
 /*
  * Initialize floating point unit.
  */
-npxinit(control) {
+static void npxinit(control) {
 	static short wd;
 
 	if (npxexists == 0) return;
@@ -289,7 +289,7 @@ DRIVER_MODCONFIG() {
 		return;
 
 	/* configure driver into kernel program */
-	(int *)cpu_dna = (int *)npxdna;
+	cpu_dna = (void*)npxdna;
 
 	/* probe for hardware */
 	new_isa_configure(&cfg_string, &npxdriver);

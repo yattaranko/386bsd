@@ -262,7 +262,7 @@ __ISYM__(struct	ifqueue, rawintrq,)		/* raw packet input queue */
 __ISYM__(struct	ifnet *, ifnet,)
 
 /* functions used in modules */
-__ISYM__(int, if_attach, (struct ifnet *))	/* XXX void */
+__ISYM__(void, if_attach, (struct ifnet *))	/* XXX void */
 __ISYM__(struct	ifaddr *, ifa_ifwithaddr, (struct sockaddr *))
 __ISYM__(struct	ifaddr *, ifa_ifwithnet, (struct sockaddr *))
 __ISYM__(struct	ifaddr *, ifa_ifwithdstaddr, (struct sockaddr *))

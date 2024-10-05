@@ -83,9 +83,11 @@ ${KERNEL}: Makefile symbols.sort ${FIRSTOBJ} ${OBJS} isym.o
 	@$S/config/newvers.sh
 	@${CC} -c ${CFLAGS} ${PROF} ${DEBUG} vers.c
 .if defined(DEBUGSYM)
-	@${LD} -z -T ${KERNBASE} -o $@ -X ${FIRSTOBJ} ${OBJS} vers.o isym.o
+#	@${LD} -z -T ${KERNBASE} -o $@ -X ${FIRSTOBJ} ${OBJS} vers.o isym.o
+	@${LD} --error-limit=0 --image-base 0x${KERNBASE} -Ttext 0x${KERNBASE} -entry 0x0 -o $@ -X ${FIRSTOBJ} ${OBJS} vers.o isym.o
 .else
-	@${LD} -z -T ${KERNBASE} -o $@ -x ${FIRSTOBJ} ${OBJS} vers.o isym.o
+#	@${LD} -z -T ${KERNBASE} -o $@ -x ${FIRSTOBJ} ${OBJS} vers.o isym.o
+	@${LD} --error-limit=0 --image-base 0x${KERNBASE} -Ttext 0x${KERNBASE} -entry 0x0 -o $@ -x ${FIRSTOBJ} ${OBJS} vers.o isym.o /usr/lib/libgcc.a
 .endif
 	@echo rearranging symbols
 .if defined(GDB)

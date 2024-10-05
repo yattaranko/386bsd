@@ -164,6 +164,10 @@ extern pcopen(dev_t, int, int, struct proc *);
 
 unsigned kbd_rd(), kbd_cmd_read_param();
 
+static void sput(u_char c,  u_char ka);
+static void pc_xmode_on();
+static void pc_xmode_off();
+
 /*
  * these are both bad jokes
  */
@@ -384,7 +388,7 @@ int	pcconsintr = 1;
  * Got a console transmission interrupt -
  * the console processor wants another character.
  */
-pcxint(dev)
+void pcxint(dev)
 	dev_t dev;
 {
 	register struct tty *tp;
@@ -587,7 +591,7 @@ static char bgansitopc[] =
  *   sput has support for emulation of the 'pc3' termcap entry.
  *   if ka, use kernel attributes.
  */
-sput(c,  ka)
+static void sput(c,  ka)
 u_char c;
 u_char ka;
 {
@@ -1633,7 +1637,7 @@ dprintf(flgs, fmt /*, va_alist */)
 #include "machine/psl.h"
 #include "machine/frame.h"
 
-pc_xmode_on ()
+static void pc_xmode_on ()
 {
     struct syscframe *fp;
 
@@ -1645,7 +1649,7 @@ pc_xmode_on ()
     fp->sf_eflags |= PSL_IOPL;
 }
 
-pc_xmode_off ()
+static void pc_xmode_off ()
 {
     struct syscframe *fp;
 

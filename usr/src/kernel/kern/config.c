@@ -848,11 +848,11 @@ devif_config(char **cfg, struct devif *dif)
 	/* check sanity - all devices */
 	if (cmaj >= 0 || bmaj >= 0) {
 		if ((int)dif->di_open == 0)
-			(int *) dif->di_open = (int *)nullop;
+			dif->di_open = (void*)nullop;
 		if ((int)dif->di_close == 0)
-			(int *) dif->di_close = (int *)nullop;
+			dif->di_close = (void*)nullop;
 		if ((int)dif->di_ioctl == 0)
-			(int *) dif->di_ioctl = (int *)_ENODEV_;
+			dif->di_ioctl = (void*)_ENODEV_;
 	}
 
 	/* check sanity - character devices */
@@ -864,11 +864,11 @@ devif_config(char **cfg, struct devif *dif)
 				dif->di_write = rawwrite;
 		}
 		if ((int)dif->di_select == 0)
-			dif->di_select = seltrue;
+			dif->di_select = (void*)seltrue;
 		if (dif->di_write == 0)
-			(int *)dif->di_write = _ENODEV_;
+			dif->di_write = (void*)_ENODEV_;
 		if (dif->di_read == 0)
-			(int *)dif->di_read = _ENODEV_;
+			dif->di_read = (void*)_ENODEV_;
 	}
 
 	/* check sanity - block devices */
@@ -880,9 +880,9 @@ devif_config(char **cfg, struct devif *dif)
 			return (0);
 		}
 		if ((int)dif->di_dump == 0)
-			(int *) dif->di_dump = (int *)_ENODEV_;
+			dif->di_dump = (void*)_ENODEV_;
 		if ((int)dif->di_psize == 0)
-			(int *) dif->di_psize = (int *)_ENODEV_;
+			dif->di_psize = (void*)_ENODEV_;
 	}
 
 	return (1);
@@ -1066,23 +1066,23 @@ ldiscif_config(char **cfg, struct ldiscif *lif)
 			
 	/* check sanity */
 	if ((int)lif->li_open == 0)
-		(int *) lif->li_open = (int *)_ENODEV_;
+		lif->li_open = (void*)_ENODEV_;
 	if ((int)lif->li_close == 0)
-		(int *) lif->li_close = (int *)_ENODEV_;
+		lif->li_close = (void*)_ENODEV_;
 	if ((int)lif->li_read == 0)
-		(int *) lif->li_read = (int *)_ENODEV_;
+		lif->li_read = (void*)_ENODEV_;
 	if ((int)lif->li_write == 0)
-		(int *) lif->li_write = (int *)_ENODEV_;
+		lif->li_write = (void*)_ENODEV_;
 	if ((int)lif->li_ioctl == 0)
-		(int *) lif->li_ioctl = (int *)_ENODEV_;
+		lif->li_ioctl = (void*)_ENODEV_;
 	if ((int)lif->li_rint == 0)
-		(int *) lif->li_rint = (int *)_ENODEV_;
+		lif->li_rint = (void*)_ENODEV_;
 	if ((int)lif->li_start == 0)
-		(int *) lif->li_start = (int *)_ENODEV_;
+		lif->li_start = (void*)_ENODEV_;
 	if ((int)lif->li_modem == 0)
-		(int *) lif->li_modem = (int *)_ENODEV_;
+		lif->li_modem = (void*)_ENODEV_;
 	/* if ((int)lif->li_qsize == 0)
-		(int *) lif->li_qsize = def_qsize; */
+		lif->li_qsize = def_qsize; */
 
 	return (1);
 }

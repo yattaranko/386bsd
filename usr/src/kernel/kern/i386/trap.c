@@ -595,9 +595,9 @@ copyin3(struct proc *p, void *fromaddr, void *toaddr, u_int sz) {
 		asm (" movl	$4f, %0" : : "m" (p->p_md.md_onfault));
 
 		/* copy the arguments */
-		*((int *) toaddr)++ = *((int *) fromaddr)++;
-		*((int *) toaddr)++ = *((int *) fromaddr)++;
-		*((int *) toaddr)++ = *((int *) fromaddr)++;
+		*((int *)toaddr + 0) = *((int *)fromaddr + 0); /* *((int *) toaddr)++ = *((int *) fromaddr)++; */
+		*((int *)toaddr + 1) = *((int *)fromaddr + 1); /* *((int *) toaddr)++ = *((int *) fromaddr)++; */
+		*((int *)toaddr + 2) = *((int *)fromaddr + 2); /* *((int *) toaddr)++ = *((int *) fromaddr)++; */
 
 		/* catch the possible fault */
 		asm ("\

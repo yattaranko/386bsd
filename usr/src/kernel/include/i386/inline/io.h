@@ -38,14 +38,14 @@ __INLINE u_char
 inb(u_short port)
 {	u_char rv;
 
-	asm volatile (" in%z0 %1, %0 " : "=a" (rv) : "d" (port));
+	asm volatile (" inb %1, %0 " : "=a" (rv) : "d" (port));
 	return (rv);
 }
 
 #define inb_(port) ({						\
 	u_char rv;					\
 								\
-	asm volatile (" in%z0 $" # port ", %b0 " : "=a" (rv)); \
+	asm volatile (" inb $" # port ", %b0 " : "=a" (rv)); \
 	/* asm volatile (" in%z0 %1, %b0 " : "=a" (rv) : "K" (port)); */ \
 	rv;							\
 })
@@ -64,7 +64,7 @@ __INLINE u_short
 inw(u_short port)
 {	u_short rv;
 
-	asm volatile (" in%z0 %1, %0 " : "=a" (rv) : "d" (port));
+	asm volatile (" inw %1, %0 " : "=a" (rv) : "d" (port));
 	return (rv);
 }
 
@@ -72,7 +72,7 @@ __INLINE int
 inl(u_short port)
 {	int rv;
 
-	asm volatile (" in%z0 %1, %0 " : "=a" (rv) : "d" (port));
+	asm volatile (" inl %1, %0 " : "=a" (rv) : "d" (port));
 	return (rv);
 }
 
@@ -100,7 +100,7 @@ insw (u_short port, caddr_t addr, int len)
 __INLINE void
 outb(u_short port, u_char value)
 {
-	asm volatile ("out%z0 %0, %1" : : "a" (value), "d" (port) );
+	asm volatile ("outb %0, %1" : : "a" (value), "d" (port) );
 }
 
 #ifdef nope
@@ -108,12 +108,12 @@ __INLINE void
 outb_(const u_char port, u_char value)
 {
 	/*asm volatile ("out%z0 %0, %1" : : "a" (value), "d" (port) );*/
-	asm volatile ("out%z0 %b0, %1" : : "a" (value), "i" (port) );
+	asm volatile ("outb %b0, %1" : : "a" (value), "i" (port) );
 }
 #else
 #define outb_(port, value) ({					\
 								\
-	asm volatile ("out%z0 %b0, $" # port : : "a" (value)); \
+	asm volatile ("outb %b0, $" # port : : "a" (value)); \
 	/* asm volatile ("out%z0 %b0, %1" : : "a" (value), "i" (port) ); */ \
 })
 #endif
@@ -121,7 +121,7 @@ outb_(const u_char port, u_char value)
 __INLINE void
 outl(u_short port, int value)
 {
-	asm volatile ("out%z0 %0, %1" : : "a" (value), "d" (port) );
+	asm volatile ("outl %0, %1" : : "a" (value), "d" (port) );
 }
 
 __INLINE void
@@ -150,7 +150,7 @@ outsw (u_short port, caddr_t addr, int len)
 __INLINE void
 outw(u_short port, u_short value)
 {
-	asm volatile ("out%z0 %0, %1" : : "a" (value), "d" (port) );
+	asm volatile ("outw %0, %1" : : "a" (value), "d" (port) );
 }
 
 #undef	__INLINE

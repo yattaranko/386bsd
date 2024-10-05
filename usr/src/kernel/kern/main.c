@@ -99,25 +99,25 @@ int tick, tickadj;
 struct timezone tz;
 struct proc *pidhash[64];
 struct pgrp *pgrphash[64];
-int pidhashmask = 64 -1;
+int pidhashmask = 64 - 1;
 
 /* virtual memory */
 static int pgsz, kmemsz, kmemall;
 
 struct namelist kern_options[] =
 {
-	"maxusers",		&maxusers,	NUMBER,
-	"hz", 			&hz,		NUMBER,
-	"maxproc",		&maxproc,	NUMBER,
+	"maxusers",			&maxusers,		NUMBER,
+	"hz", 				&hz,			NUMBER,
+	"maxproc",			&maxproc,		NUMBER,
 	"desiredvnodes",	&desiredvnodes,	NUMBER,
-	"maxfiles",		&maxfiles,	NUMBER,
-	"ncallout",		&ncallout,	NUMBER,
-	"tz",			&tzh,		NUMBER,
-	"dst",			&dst,		NUMBER,
-	"pagesize",		&pgsz,		NUMBER,
-	"kmemsize",		&kmemsz,	NUMBER,
-	"kmemalloc",		&kmemall,	NUMBER,
-	0,			0,		0
+	"maxfiles",			&maxfiles,		NUMBER,
+	"ncallout",			&ncallout,		NUMBER,
+	"tz",				&tzh,			NUMBER,
+	"dst",				&dst,			NUMBER,
+	"pagesize",			&pgsz,			NUMBER,
+	"kmemsize",			&kmemsz,		NUMBER,
+	"kmemalloc",		&kmemall,		NUMBER,
+	0,					0,				0
 };
 
 /*
@@ -133,7 +133,7 @@ int nmbclusters = NMBCLUSTERS;	/* number of mbuf clusters in free pool*/
  * routines including startup(), which does memory initialization
  * and autoconfiguration.
  */
-main()
+void main()
 {
 	int i;
 	struct proc *p;
@@ -176,9 +176,9 @@ main()
 
 	/* process rescheduling clock interval */
 	if (hz < 10 || hz > 1000)
-		hz = 10;
-	tick = 1000000/hz;	/* microseconds in a clock "tick" */
-	tickadj = 240000/(60*hz); /* microseconds of adjustment in a minute */
+		hz = 100;
+	tick = 1000000 / hz;				/* microseconds in a clock "tick" */
+	tickadj = 240000 / (60 * hz);		/* microseconds of adjustment in a minute */
 
 	/* local time zone & daylight savings -- needed for rtc */
 	tz.tz_minuteswest = tzh * 60 * 60;
@@ -210,7 +210,7 @@ main()
 	/* configure any extended module services before rest of modules */
 	modscaninit(MODT_EXTDMOD);
 	cpu_startup();
-isa_configure();
+	isa_configure();
 
 	modscaninit(MODT_LDISC);
 
@@ -235,19 +235,19 @@ isa_configure();
 	 * global data variables and lists.
 	 */
 	p = &proc0;
-	curproc = p;		/* current running process */
+	curproc = p;					/* current running process */
 
-	allproc = p;		/* on the allproc list */
+	allproc = p;					/* on the allproc list */
 	p->p_prev = &allproc;
 
-	p->p_pgrp = &pgrp0;	/* in the first process group, ... */
+	p->p_pgrp = &pgrp0;				/* in the first process group, ... */
 	pgrphash[0] = &pgrp0;
 	pgrp0.pg_mem = p;
 	pgrp0.pg_session = &session0;	/* ... the first session. */
 	session0.s_count = 1;
 	session0.s_leader = p;
 
-	p->p_flag = SLOAD|SSYS;		/* running system process */
+	p->p_flag = SLOAD|SSYS;			/* running system process */
 	p->p_stat = SRUN;
 	p->p_nice = NZERO;
 	memcpy(p->p_comm, "pageout", sizeof ("pageout"));
@@ -369,23 +369,24 @@ isa_configure();
 	VOP_UNLOCK(rootdir);
 	fdp->fd_fd.fd_rdir = NULL;
 
-{ volatile int sstart, send;
-if (load_module("inet", &sstart, &send)) {
-printf("\n init ");
-smodscaninit(__MODT_ALL__, sstart, send);
-}
-if(load_module("ed", &sstart, &send)) {
-printf("\n init ");
-smodscaninit(__MODT_ALL__, sstart, send);
-}
-if(load_module("nfs", &sstart, &send)) {
-printf("\n init ");
-smodscaninit(__MODT_ALL__, sstart, send);
-}
-printf("after init\n");
-/*ifinit();*/
-/*domaininit();*/
-}
+	{
+		volatile int sstart, send;
+		if (load_module("inet", &sstart, &send)) {
+			printf("\n init ");
+			smodscaninit(__MODT_ALL__, sstart, send);
+		}
+		if(load_module("ed", &sstart, &send)) {
+			printf("\n init ");
+			smodscaninit(__MODT_ALL__, sstart, send);
+		}
+		if(load_module("nfs", &sstart, &send)) {
+			printf("\n init ");
+			smodscaninit(__MODT_ALL__, sstart, send);
+		}
+		printf("after init\n");
+		/*ifinit();*/
+		/*domaininit();*/
+	}
 	swapinit();	/* XXX */
 
 	/*

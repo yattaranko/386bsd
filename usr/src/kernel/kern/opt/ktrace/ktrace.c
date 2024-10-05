@@ -48,6 +48,8 @@
 
 #include "prototypes.h"
 
+static void ktrwrite(struct vnode* vp, register struct ktr_header* kth);
+
 struct ktr_header *
 ktrgetheader(type)
 {
@@ -116,7 +118,7 @@ ktrnamei(vp, path)
 	FREE(kth, M_TEMP);
 }
 
-ktrgenio(vp, fd, rw, iov, len, error)
+void ktrgenio(vp, fd, rw, iov, len, error)
 	struct vnode *vp;
 	int fd;
 	enum uio_rw rw;
@@ -378,7 +380,7 @@ ktrsetchildren(curp, top, ops, facs, vp)
 	/*NOTREACHED*/
 }
 
-ktrwrite(vp, kth)
+static void ktrwrite(vp, kth)
 	struct vnode *vp;
 	register struct ktr_header *kth;
 {

@@ -60,6 +60,8 @@ struct sockaddr route_src = { 2, PF_ROUTE, };
 struct sockproto route_proto = { PF_ROUTE, };
 struct route_cb route_cb;
 
+static void m_copyback(struct mbuf* m0, register int offm, register int len, caddr_t cp);
+
 /*ARGSUSED*/
 route_usrreq(so, req, m, nam, control)
 	register struct socket *so;
@@ -201,7 +203,7 @@ route_output(m, so)
 	case RTM_GET:
 	case RTM_CHANGE:
 	case RTM_LOCK:
-		rt = rtalloc1(dst, 0);
+		rt = (struct rtentry*)rtalloc1(dst, 0);
 		if (rt == 0)
 			senderr(ESRCH);
 		if (rtm->rtm_type != RTM_GET) {
@@ -393,7 +395,7 @@ rt_setmetrics(which, in, out)
  * starting "off" bytes from the beginning, extending the mbuf
  * chain if necessary.
  */
-m_copyback(m0, off, len, cp)
+static void m_copyback(m0, off, len, cp)
 	struct	mbuf *m0;
 	register int off;
 	register int len;

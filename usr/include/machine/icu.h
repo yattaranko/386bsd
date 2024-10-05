@@ -13,7 +13,7 @@ __ISYM__(int, splimp, (void))
  * Interrupt "level" mechanism variables, masks, and macros
  */
 extern	unsigned short	imen;	/* interrupt mask enable */
-extern int	cpl;	/* current priority level mask */
+extern  volatile int	cpl;	/* current priority level mask */
 
 extern	int highmask; /* group of interrupts masked with splhigh() */
 extern	int ttymask; /* group of interrupts masked with spltty() */

@@ -328,7 +328,7 @@ __ISYM__(void, vhold, (struct vnode *vp))
 __ISYM__(void, vref, (struct vnode *vp))	/* increase reference to a vnode */
 __ISYM__(void, holdrele, (struct vnode *vp))
 __ISYM__(void, vprint, (char *string, struct vnode *vp))
-__ISYM__(int, cache_purge, (struct vnode *vp))
+__ISYM__(void, cache_purge, (struct vnode *vp))
 /* XXX temp vm interface */
 __ISYM__(int, vnode_pager_uncache, (struct vnode *vp))
 __ISYM__(void, vnode_pager_setsize, (struct vnode *vp, u_long nsize))

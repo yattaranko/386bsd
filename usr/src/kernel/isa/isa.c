@@ -913,7 +913,7 @@ rtcin(u_char  adr)
 	 * the reference to the clock (e.g. the NOP).
 	 */
 	x = splhigh();
-	asm volatile ("out%z0 %b0, %2 ; xorl %0, %0 ; in%z0 %3, %b0"
+	asm volatile ("outb %b0, %2 ; xorb %0, %0 ; inb %3, %b0"
 		: "=a"(adr) : "0"(adr), "i"(IO_RTC), "i"(IO_RTC + 1));
 	splx(x);
 	return (adr);
@@ -934,7 +934,7 @@ rtcout(u_char adr, u_char val)
 	 * the reference to the clock (e.g. the NOP).
 	 */
 	x = splhigh();
-	asm volatile ("out%z0 %b0, %2 ; movb %1, %b0 ; out%z0 %b0, %3"
+	asm volatile ("outb %b0, %2 ; movb %1, %b0 ; outb %b0, %3"
 		:: "a"(adr), "g"(val), "i"(IO_RTC), "i"(IO_RTC+1));
 	splx(x);
 }

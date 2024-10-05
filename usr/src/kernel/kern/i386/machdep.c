@@ -252,7 +252,7 @@ extern int	dumpsize;
  * Attempt to dump the system's memory image to disk, so
  * that the /sbin/savecore program can recover it after reboot.
  */
-dumpsys()
+void dumpsys()
 {
 
 	/* no dump device at all? */

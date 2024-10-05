@@ -193,7 +193,7 @@ cache_lookup(struct nameidata *ndp)
 /*
  * Add an entry to the cache
  */
-int
+void
 cache_enter(struct nameidata *ndp)
 {
 	register struct namecache *ncp;
@@ -269,7 +269,7 @@ nchinit(void)
  * Cache flush, a particular vnode; called when a vnode is renamed to
  * hide entries that would now be invalid
  */
-int
+void
 cache_purge(struct vnode *vp)
 {
 	union nchash *nhp;

@@ -63,7 +63,9 @@ static char *aux_config =
 #include "prototypes.h"
 #include "machine/inline/io.h"
 
-int auxprobe(), auxattach(), auxintr();
+static int  auxprobe(struct isa_device *);
+static void auxattach(struct isa_device *);
+static void auxintr(int);
 
 struct	isa_driver auxdriver = {
 	auxprobe, auxattach, auxintr, "aux", 0
@@ -74,7 +76,7 @@ static int  auxopenf, auxflag, auxpid, auxpgid;
 
 extern auxopen(dev_t, int, int, struct proc *);
 
-auxprobe(dev)
+static int auxprobe(dev)
 struct isa_device *dev;
 {
 	unsigned c;
@@ -164,7 +166,7 @@ kbd_drain();
 	return 1;
 #endif
 
-auxattach(dev)
+static void auxattach(dev)
 struct isa_device *dev;
 {
 }
@@ -249,8 +251,8 @@ auxwrite(dev_t dev, struct uio *uio, int flag)
 	return (0);
 }
 
-auxintr(dev)
-	dev_t dev;
+static void auxintr(dev)
+	int dev;
 {
 
 	if(auxopenf == 0) {

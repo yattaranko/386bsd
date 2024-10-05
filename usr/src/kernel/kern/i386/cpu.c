@@ -127,7 +127,7 @@ cpu_tfork(struct proc *p1, register struct proc *p2)
 	}
 
 	/* relocate md_reg pointer. */
-	(int)p2->p_md.md_regs = (int) p1->p_md.md_regs + diff;
+	p2->p_md.md_regs = p1->p_md.md_regs + diff;
 	p2->p_md.md_flags = 0;
 
 	/* allocate a TSS for this thread. */
