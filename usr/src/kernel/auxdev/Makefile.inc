@@ -1,6 +1,6 @@
 # MODULE=aux
-.PATH:	$S/aux
-DEV_SRCS+= aux.c
+.PATH:	$S/auxdev
+DEV_SRCS+= auxdev.c
 # MAN4+=	aux.0
 
 # .include <bsd.kernel.dev.mk>
