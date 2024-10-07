@@ -30,7 +30,7 @@
 
 # standard devices
 .include "$S/pccons/Makefile.inc"
-.include "$S/aux/Makefile.inc"
+.include "$S/auxdev/Makefile.inc"
 .include "$S/wd/Makefile.inc"
 .include "$S/fd/Makefile.inc"
 .include "$S/com/Makefile.inc"
