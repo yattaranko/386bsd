@@ -59,63 +59,63 @@
 #else
 #define PUTC(s)
 #endif
-
+	.code16
 	/* mumbo-jumbo to pacify diskcopy */
 	jmp 1f
 	.asciz "386BSD "
-	.byte 1			# sectors per allocation
-	.word 15		# additional sectors for bootstrap
-	.word 0			# number of DOS fat sectors
-	.word 0			# number of DOS rootdir entries
+	.byte 1					# sectors per allocation
+	.word 15				# additional sectors for bootstrap
+	.word 0					# number of DOS fat sectors
+	.word 0					# number of DOS rootdir entries
 #ifdef	F3
-	.byte 0xf0		# media descriptor
+	.byte 0xf0				# media descriptor
 #else
-	.byte 0xf9		# media descriptor
+	.byte 0xf9				# media descriptor
 #endif
-	.word 0			# number of sectors per a DOS fat entry
+	.word 0					# number of sectors per a DOS fat entry
 #ifdef	F3
-	.word 18		# number of sectors per track
+	.word 18				# number of sectors per track
 #else
-	.word 15		# number of sectors per track
+	.word 15				# number of sectors per track
 #endif
-	.word 2			# number of heads
-	.long 0			# number of hidden sectors
+	.word 2					# number of heads
+	.long 0					# number of hidden sectors
 #ifdef	F3
-	.long 2880-18		# logical sectors per volume
+	.long 2880-18			# logical sectors per volume
 #else
-	.long 2400-15		# logical sectors per volume
+	.long 2400-15			# logical sectors per volume
 #endif
-	.byte 0			# physical drive
-	.byte 0x29		# ?
-	.long 137		# binary id
+	.byte 0					# physical drive
+	.byte 0x29				# ?
+	.long 137				# binary id
 	.ascii "Release 1.0"	# volume label
 	.space 5
 1:
 	/* step 0 force descriptors to bottom of address space */
-	
+
 	cli
-	.byte 0xb8,0x30,0x00	/* mov $0x30,%ax */
-	mov %ax, %ss
-	.byte 0xbc,0x00,0x01	/* mov $0x100,%sp */
+	movw	$0x30, %ax
+	movw	%ax, %ss
+	movw	$0x100, %sp
 
 	xorl	%eax, %eax
-	movl	%ax, %ds
-	movl	%ax, %es
+	movw	%ax, %ds
+	movw	%ax, %es
 
 	/* obtain BIOS parameters for hard disk XXX */
 	movb	$0x9f, %ah	 /* write to 0x9ff00  XXX */
 	movb	$0xf0, %al
-	mov	%ax, %es
-	xor	%edi, %edi
+	mov		%ax, %es
+	xor		%edi, %edi
 
-	.byte 0xf, 0xb4, 0x36 ; .word  0x41*4	/* lfs 0x41*4, %si */
+	lfsw	0x41 * 4, %si
 	xorb	%ch, %ch
 	movb	$0x10, %cl
 	fs
 	rep
 	movsb
 
-	.byte 0xf, 0xb4, 0x36 ; .word  0x46*4	/* lfs 0x46*4, %si */
+	lfsw	0x46 * 4, %si
 	xorb	%ch, %ch
 	movb	$0x10, %cl
 	fs
@@ -123,31 +123,29 @@
 	movsb
 
  	xorl	%eax, %eax
-	movl	%ax, %es
+	movw	%ax, %es
 
 	/* step 1 load new descriptor table */
 
-	.byte 0x2E, 0x0F, 1, 0x16 /* word aword cs lgdt GDTptr */
-	.word	BIOSRELOC+0xa4	#GDTptr
+	lgdtw  (BIOSRELOC + GDTptr)
 
 	/* step 2 turn on protected mode */
 
-	smsw	%ax
-	orb	$1, %al
-	lmsw	%ax
-	jmp	1f
+	movl	%cr0, %eax
+	orl		$1, %eax
+	movl	%eax, %cr0
+	jmp		1f
 	nop
 
 	/* step 3  reload segment descriptors */
 
  1:
 	xorl	%eax, %eax
-	movb	$0x10, %al
-	movl	%ax, %ds
-	movl	%ax, %es
-	movl	%ax, %ss
-	word
-	ljmp	$0x8, $ BIOSRELOC+0xb3	/* would be nice if .-RELOC+0x7c00 worked */
+	movw	$0x10, %ax
+	movw	%ax, %ds
+	movw	%ax, %es
+	movw	%ax, %ss
+	ljmp	$0x8, $(BIOSRELOC+reloc)	/* would be nice if .-RELOC+0x7c00 worked */
 
  /* Global Descriptor Table contains three descriptors:
   * 0x00: Null: not used
@@ -156,25 +154,32 @@
   *		(overlays code)
   */
 GDT:
-NullDesc:	.word	0,0,0,0	# null descriptor - not used
-CodeDesc:	.word	0xFFFF	# limit at maximum: (bits 15:0)
-	.byte	0,0,0	# base at 0: (bits 23:0)
-	.byte	0x9f	# present/priv level 0/code/conforming/readable
-	.byte	0xcf	# page granular/default 32-bit/limit(bits 19:16)
-	.byte	0	# base at 0: (bits 31:24)
-DataDesc:	.word	0xFFFF	# limit at maximum: (bits 15:0)
-	.byte	0,0,0	# base at 0: (bits 23:0)
-	.byte	0x93	# present/priv level 0/data/expand-up/writeable
-	.byte	0xcf	# page granular/default 32-bit/limit(bits 19:16)
-	.byte	0	# base at 0: (bits 31:24)
+NullDesc:
+	.word	0, 0, 0, 0	# null descriptor - not used
+CodeDesc:
+	.word	0xFFFF		# limit at maximum: (bits 15:0)
+	.byte	0, 0, 0		# base at 0: (bits 23:0)
+	.byte	0x9f		# present/priv level 0/code/conforming/readable
+	.byte	0xcf		# page granular/default 32-bit/limit(bits 19:16)
+	.byte	0			# base at 0: (bits 31:24)
+DataDesc:
+	.word	0xFFFF		# limit at maximum: (bits 15:0)
+	.byte	0, 0, 0		# base at 0: (bits 23:0)
+	.byte	0x93		# present/priv level 0/data/expand-up/writeable
+	.byte	0xcf		# page granular/default 32-bit/limit(bits 19:16)
+	.byte	0			# base at 0: (bits 31:24)
+GDTend:
 
 /* Global Descriptor Table pointer
  *  contains 6-byte pointer information for LGDT
  */
-GDTptr:	.word	0x17	# limit to three 8 byte selectors(null,code,data)
-	.long 	BIOSRELOC+0x8c	# GDT -- arrgh, gas again!
-readcmd: .byte 0xe6,0,0,0,0,2,18,0x1b,0xff
+GDTptr:
+	.word	GDTend - GDT - 1	# limit to three 8 byte selectors(null,code,data)
+	.long 	BIOSRELOC + GDT		# GDT -- arrgh, gas again!
+readcmd:
+	.byte 0xe6, 0, 0, 0, 0, 2, 18, 0x1b, 0xff
 
+	.code32
 	/* step 4 relocate to final bootstrap address. */
 reloc:
 	movl	$ BIOSRELOC, %esi
@@ -183,7 +188,7 @@ reloc:
 	rep
 	movsb
 	movl	$0xa0000, %esp
-	pushl	$dodisk
+	pushl	$(dodisk + RELOC)
 	ret
 
 	/* step 5 load remaining 15 sectors off disk */
@@ -194,68 +199,67 @@ dodisk:
 	PUTC(0x7030)
 	movl	$ RELOC+0x200, %edi
 
-	movb	$2, %bx
+	movw	$2, %bx
  8:
-	movb	%bl, readcmd+4
+	movb	%bl, (readcmd+4+RELOC)
 	movl	%edi, %ecx
 
 	/* Set read/write bytes */
 	xorl	%edx, %edx
-	movb	$0x0c, %dl	# outb(0xC,0x46); outb(0xB,0x46);
 	movb	$0x46, %al
-	outb	%al, %dx
+	outb	%al, $0x0c		# outb(0xC,0x46); outb(0xB,0x46);
 	NOP
-	jmp	1f
-1:	decb	%dx
-	outb	%al, %dx
+	jmp		1f
+1:
+/*	decw	%dx*/
+/*	outb	%al, %dx*/
+	outb	%al, $0x0b
 	NOP
 
 	/* Send start address */
-	movb	$0x04, %dl	# outb(0x4, addr);
 	movb	%cl, %al
-	outb	%al, %dx
+	outb	%al, $0x04		# outb(0x4, addr);
 	NOP
-	jmp	1f
-1:	movb	%ch, %al		# outb(0x4, addr>>8);
-	outb	%al, %dx
+	jmp		1f
+1:	movb	%ch, %al
+	outb	%al, $0x04		# outb(0x4, addr>>8);
 	NOP
-	rorl	$8, %ecx		# outb(0x81, addr>>16);
+	rorl	$8, %ecx
 	movb	%ch, %al
-	outb	%al, $0x81
+	outb	%al, $0x81		# outb(0x81, addr>>16);
 	NOP
 
 	/* Send count - (512 - 1) */
-	movb	$0x05, %dl	# outb(0x5, 0xff);
 	movb	$0xff, %al
-	outb	%al, %dx
+	outb	%al, $0x05		# outb(0x5, 0xff);
 	NOP
-	movb	$1, %al		# outb(0x5, 1);
-	outb	%al, %dx
+	movb	$1, %al
+	outb	%al, $0x05		# outb(0x5, 1);
 	NOP
 
 	/* set channel 2 */
-	movb	$2, %al		# outb(0x0A,2);
+	movb	$2, %al			# outb(0x0A,2);
 	outb	%al, $0x0A
 	NOP
 
 	/* issue read command to fdc */
 	movw	$0x3f4, %dx
-	movl	$readcmd, %esi
+	movl	$(readcmd+RELOC), %esi
 	xorl	%ecx, %ecx
 	movb	$9, %cl
 
  2:	NOP
-	inb	%dx, %al
+	inb		%dx, %al
 	testb	$0x80, %al
-	jz 2b
+	jz		2b
 
-	incb	%dx
+	incw	%dx
 	NOP
-	movl	(%esi), %al
+	movb	(%esi), %al
 	outb	%al, %dx
 	NOP
 	incl	%esi
-	decb	%dx
+	decw	%dx
 	loop	 2b
 	PUTC(0x7031)
 
@@ -265,20 +269,20 @@ dodisk:
 	movb	$7, %cl
  2:
 	NOP
-	inb	%dx, %al
+	inb		%dx, %al
 	andb	$0xc0, %al
 	cmpb	$0xc0, %al
-	jne	2b
-	incb	%dx
-	inb	%dx, %al
-	decb	%dx
+	jne		2b
+	incw	%dx
+	inb		%dx, %al
+	decw	%dx
 	loop	2b
 
 	PUTC(0x7032)
-	addw	$0x200, %edi	# next addr to load to
+	addl	$0x200, %edi	# next addr to load to
 	incb	%bl
-	cmpb	$15, %bl
-	jle	8b
+	cmpb	$15, %bl		# read 15 sectors
+	jle		8b
 	
 	PUTC(0x7033)
 	/* for clever bootstrap, dig out boot unit and cylinder */
@@ -291,7 +295,7 @@ dodisk:
 	/* sorry, no flags at this point! */
 
 	movl	$ start, %eax
-	call	%eax	/* main (dev, unit, off) */
+	call	*%eax	/* main (dev, unit, off) */
 
 ebootblkcode:
 

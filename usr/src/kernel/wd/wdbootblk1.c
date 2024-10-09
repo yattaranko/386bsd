@@ -51,68 +51,68 @@
  */
 #include "isa_stdports.h"
 #include "wdreg.h"
-#define	NOP	inb $0x84,%al
+
+#define	NOP			inb $0x84,%al
 #define BIOSRELOC	0x7c00
-#define start		RELOC+0x400
+#define start		RELOC + 0x400
 
+	.code16
 	/* step 0 force descriptors to bottom of address space */
-	
-	cli
-	.byte 0xb8,0x30,0x00	/* mov $0x30,%ax */
-	mov %ax, %ss
-	.byte 0xbc,0x00,0x01	/* mov $0x100,%sp */
 
-	xorl	%eax,%eax
-	movl	%ax,%ds
-	movl	%ax,%es
+	cli
+	movw	$0x30, %ax
+	mov 	%ax, %ss
+	movw	$0x100, %sp
+
+	xorl	%eax, %eax
+	movw	%ax, %ds
+	movw	%ax, %es
 
 	/* obtain BIOS parameters for hard disk XXX */
-	movb	$0x9f,%ah	 /* write to 0x9ff00  XXX */
-	movb	$0xf0,%al
-	mov	%ax,%es
-	xor	%edi,%edi
+	movb	$0x9f, %ah	 /* write to 0x9ff00  XXX */
+	movb	$0xf0, %al
+	mov		%ax, %es
+	xor		%edi, %edi
 
-	.byte 0xf, 0xb4, 0x36 ; .word  0x41*4	/* lfs 0x41*4, %si */
-	xorb	%ch,%ch
-	movb	$0x10,%cl
+	lfsw	0x41 * 4, %si
+	xorb	%ch, %ch
+	movb	$0x10, %cl
 	fs
 	rep
 	movsb
 
-	.byte 0xf, 0xb4, 0x36 ; .word  0x46*4	/* lfs 0x46*4, %si */
-	xorb	%ch,%ch
-	movb	$0x10,%cl
+	lfsw	0x46 * 4, %si
+	xorb	%ch, %ch
+	movb	$0x10, %cl
 	fs
 	rep
 	movsb
 
- 	xorl	%eax,%eax
-	movl	%ax,%es
+ 	xorl	%eax, %eax
+	movw	%ax, %es
 
 	/* step 1 load new descriptor table */
 
-	.byte 0x3E,0x0F,1,0x16
-	.word	BIOSRELOC+0x6e	#GDTptr
-//	# word aword cs lgdt GDTptr
+	lgdtw  (BIOSRELOC + GDTptr)
 
 	/* step 2 turn on protected mode */
 
-	smsw	%ax
-	orb	$1,%al
-	lmsw	%ax
-	jmp	1f
+	movl	%cr0, %eax
+	orl		$1, %eax
+	movl	%eax, %cr0
+	jmp		1f
 	nop
 
 	/* step 3  reload segment descriptors */
 
 1:
-	xorl	%eax,%eax
-	movb	$0x10,%al
-	movl	%ax,%ds
-	movl	%ax,%es
-	movl	%ax,%ss
-	word
-	ljmp	$0x8,$ BIOSRELOC+0x74	/* would be nice if .-RELOC+0x7c00 worked */
+	xorl	%eax, %eax
+	movb	$0x10, %al
+	movw	%ax, %ds
+	movw	%ax, %es
+	movw	%ax, %ss
+	.word	0
+	ljmpw	$0x8, $(BIOSRELOC + reloc)	/* would be nice if .-RELOC+0x7c00 worked */
 
  /* Global Descriptor Table contains three descriptors:
   * 0x00: Null: not used
@@ -121,105 +121,113 @@
   *		(overlays code)
   */
 GDT:
-NullDesc:	.word	0,0,0,0	# null descriptor - not used
-CodeDesc:	.word	0xFFFF	# limit at maximum: (bits 15:0)
-	.byte	0,0,0	# base at 0: (bits 23:0)
-	.byte	0x9f	# present/priv level 0/code/conforming/readable
-	.byte	0xcf	# page granular/default 32-bit/limit(bits 19:16)
-	.byte	0	# base at 0: (bits 31:24)
-DataDesc:	.word	0xFFFF	# limit at maximum: (bits 15:0)
-	.byte	0,0,0	# base at 0: (bits 23:0)
-	.byte	0x93	# present/priv level 0/data/expand-up/writeable
-	.byte	0xcf	# page granular/default 32-bit/limit(bits 19:16)
-	.byte	0	# base at 0: (bits 31:24)
+NullDesc:
+	.word	0, 0, 0, 0	# null descriptor - not used
+CodeDesc:
+	.word	0xFFFF		# limit at maximum: (bits 15:0)
+	.byte	0, 0, 0		# base at 0: (bits 23:0)
+	.byte	0x9f		# present/priv level 0/code/conforming/readable
+	.byte	0xcf		# page granular/default 32-bit/limit(bits 19:16)
+	.byte	0			# base at 0: (bits 31:24)
+DataDesc:
+	.word	0xFFFF		# limit at maximum: (bits 15:0)
+	.byte	0, 0, 0		# base at 0: (bits 23:0)
+	.byte	0x93		# present/priv level 0/data/expand-up/writeable
+	.byte	0xcf		# page granular/default 32-bit/limit(bits 19:16)
+	.byte	0			# base at 0: (bits 31:24)
+GDTend:
 
 /* Global Descriptor Table pointer
  *  contains 6-byte pointer information for LGDT
  */
-GDTptr:	.word	0x17	# limit to three 8 byte selectors(null,code,data)
-	.long 	BIOSRELOC+0x56	# GDT -- arrgh, gas again!
+GDTptr:
+	.word	GDTend - GDT - 1	# limit to three 8 byte selectors(null,code,data)
+	.long 	BIOSRELOC + GDT		# GDT -- arrgh, gas again!
 
+	.code32
 	/* step 4 relocate to final bootstrap address. */
 reloc:
-	movl	$ BIOSRELOC,%esi
-	movl	$ RELOC,%edi
-	movl	$512,%ecx
+	movl	$ BIOSRELOC, %esi
+	movl	$ RELOC, %edi
+	movl	$512, %ecx
 	rep
 	movsb
  	movl	$0xa0000, %esp
-	pushl	$dodisk
+	pushl	$(dodisk + RELOC)
 	ret
 
 	/* step 5 load remaining 15 sectors off disk */
 dodisk:
-	movl	$ IO_WD1+wd_seccnt,%edx
-	movb	$ 15,%al
-	outb	%al,%dx
+/*---------------------------------------------------------------------------*/
+	movl	$ RELOC+0x400, %edi		// PC側の0x98400～へ転送されるようにするため追加
+/*---------------------------------------------------------------------------*/
+	movl	$ IO_WD1 + wd_seccnt, %edx
+	movb	$ 15, %al
+	outb	%al, %dx
 	NOP
-	movl	$ IO_WD1+wd_sector,%edx
-	movb	$ 2,%al
-	outb	%al,%dx
+	movl	$ IO_WD1 + wd_sector, %edx
+	movb	$ 2, %al
+	outb	%al, %dx
 	NOP
-//	#outb(wdc+wd_cyl_lo, (cyloffset & 0xff));
-//	#outb(wdc+wd_cyl_hi, (cyloffset >> 8));
-//	#outb(wdc+wd_sdh, WDSD_IBM | (unit << 4));
+	//outb(wdc+wd_cyl_lo, (cyloffset & 0xff));
+	//outb(wdc+wd_cyl_hi, (cyloffset >> 8));
+	//outb(wdc+wd_sdh, WDSD_IBM | (unit << 4));
 
-	movl	$ IO_WD1+wd_command,%edx
-	movb	$ WDCC_READ,%al
-	outb	%al,%dx
+	movl	$ IO_WD1 + wd_command, %edx
+	movb	$ WDCC_READ, %al
+	outb	%al, %dx
 	NOP
 	cld
 
 	/* check to make sure controller is not busy and we have data ready */
 readblk:
-	movl	$ IO_WD1+wd_status,%edx
+	movl	$ IO_WD1 + wd_status, %edx
 	NOP
-	inb	%dx,%al
-	testb	$ WDCS_BUSY,%al
-	jnz readblk
-	testb	$ WDCS_DRQ,%al
-	jz readblk
+	inb		%dx, %al
+	testb	$ WDCS_BUSY, %al
+	jnz		readblk
+	testb	$ WDCS_DRQ, %al
+	jz		readblk
 
 	/* read a block into final position in memory */
 
-	movl	$ IO_WD1+wd_data,%edx
-	movl	$ 256,%ecx
-	.byte 0x66,0xf2,0x6d	# rep insw
+	movl	$ IO_WD1 + wd_data, %edx
+	movl	$ 256, %ecx
+	repnz	insw
 	NOP
 
 	/* need more blocks to be read in? */
-
-	cmpl	$ RELOC+16*512-1,%edi
-	jl	readblk
+	cmpl	$ RELOC + 16 * 512 - 1, %edi
+	jl		readblk
 
 	/* for clever bootstrap, dig out boot unit and cylinder */
 	
-	movl	$ IO_WD1+wd_cyl_lo,%edx
-	inb	%dx,%al
-	xorl	%ecx,%ecx
-	movb	%al,%cl
+	movl	$ IO_WD1 + wd_cyl_lo, %edx
+	inb		%dx, %al
+	xorl	%ecx, %ecx
+	movb	%al, %cl
 	incl	%edx
 	NOP
-	inb	%dx,%al		/* cyl_hi */
-	movb	%al,%ch
+	inb		%dx, %al	/* cyl_hi */
+	movb	%al, %ch
 	pushl	%ecx		/* cyloffset */
 
 	incl	%edx
-	xorl	%eax,%eax
+	xorl	%eax, %eax
 	NOP
-	inb	%dx,%al		/* sdh */
-	andb	$0x10,%al	/* isolate unit # bit */
-	shrb	$4,%al
+	inb		%dx, %al	/* sdh */
+	andb	$0x10, %al	/* isolate unit # bit */
+	shrb	$4, %al
 	pushl	%eax		/* unit */
 
 	/* wd controller is major device 0 */
-	xorl	%eax,%eax
+	xorl	%eax, %eax
 	pushl	%eax		/* bootdev */
 
 	/* sorry, no flags at this point! */
 
 	movl	$ start, %eax
-	call	%eax /* main (dev, unit, offset) */
+	call	*%eax		/* main (dev, unit, offset) */
 
 ebootblkcode:
 

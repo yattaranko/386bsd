@@ -48,8 +48,8 @@
 	.globl	_main
 	.globl	__rtt
 	.globl	_exit
-	.globl	_bootdev
-	.globl	_cyloffset
+	.globl	bootdev
+	.globl	cyloffset
 #define	NOP	inb $0x84,%al ; inb $0x84,%al
 #define	COLORFB	0xb8000
 #define	MONOFB	0xb0000
@@ -62,8 +62,8 @@
 
 #ifdef SMALL
 	/* where the disklabel goes if we have one */
-	.globl	_disklabel
-_disklabel:
+	.globl	disklabel
+disklabel:
 	.space 512
 	.globl _scsisn
 	.set _scsisn, RELOC+0x60
@@ -126,10 +126,10 @@ start:
 	movl	$64*1024,%ebx
 	movl	$_end,%eax	# should be movl $_end-_edata but ...
 	subl	$_edata,%eax
-	#addl	%ebx,%eax
+//	#addl	%ebx,%eax
 	pushl	%eax
 	pushl	$_edata
-	call	_bzero
+	call	bzero
 
 	/*
 	 * Clear 64K of stack
@@ -139,18 +139,18 @@ start:
 	subl	$5*4,%ebx
 	pushl	%ebx
 	pushl	%eax
-	call	_bzero
+	call	bzero
 #else
 	movl	$_edata,%edx
 	movl	%esp,%eax
 	subl	%edx,%eax
 	pushl	%edx
 	pushl	%esp
-	call	_bzero
+	call	bzero
 #endif
 
 	PUTC(0x7042)
-	call	_kbdreset	/* resets keyboard and gatea20 brain damage */
+	call	kbdreset	/* resets keyboard and gatea20 brain damage */
 	PUTC(0x7043)
 	movl	%esi,%esp
 	call	_main
@@ -158,16 +158,16 @@ start:
 	jmp	1f
 
 	.data
-_bootdev:	.long	0
-_cyloffset:	.long	0
+bootdev:	.long	0
+cyloffset:	.long	0
 savearea:	.long	0,0	# sp & bp to return to
 	.text
-	.globl _wait
+	.globl wait
 
 __rtt:
 	PUTC(0x7045)
 	pushl	$1000000
-	call	_wait
+	call	wait
 	popl	%eax
 	movl	$-7,%eax
 	jmp	1f
@@ -175,7 +175,7 @@ __rtt:
 _exit:
 	PUTC(0x7046)
 	pushl	$1000000
-	call	_wait
+	call	wait
 	popl	%eax
 	movl	4(%esp),%eax
 1:
@@ -223,11 +223,11 @@ ___divsi3:
 	ret
 
 	#
-	# bzero (base,cnt)
+//	# bzero (base,cnt)
 	#
 
-	.globl _bzero
-_bzero:
+	.globl bzero
+bzero:
 	pushl	%edi
 	movl	8(%esp),%edi
 	movl	12(%esp),%ecx
@@ -239,8 +239,8 @@ _bzero:
 	ret
 
 	#
-	# bcopy (src,dst,cnt)
-	# NOTE: does not (yet) handle overlapped copies
+//	# bcopy (src,dst,cnt)
+//	# NOTE: does not (yet) handle overlapped copies
 	#
 
 	.globl	_bcopy
@@ -257,7 +257,7 @@ _bcopy:
 	popl	%esi
 	ret
 
-	# insw(port,addr,cnt)
+//	# insw(port,addr,cnt)
 	.globl	_insw
 _insw:
 	pushl	%edi
@@ -273,7 +273,7 @@ _insw:
 	popl	%edi
 	ret
 
-	# outsw(port,addr,cnt)
+//	# outsw(port,addr,cnt)
 	.globl	_outsw
 _outsw:
 	pushl	%esi

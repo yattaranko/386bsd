@@ -47,7 +47,7 @@
 #include "machine/inline/io.h"
 
 #define SMALL
-#define	NWD		1	/* number of hard disk units supported, max 2 */
+#define	NWD			1	/* number of hard disk units supported, max 2 */
 #define	RETRIES		5	/* number of retries before giving up */
 
 int noretries, wdquiet;
@@ -59,7 +59,7 @@ extern struct disklabel disklabel;
 struct disklabel wdsizes[NWD];
 #endif
 
-extern cyloffset ;		/* bootstrap's idea of cylinder for disklabel */
+extern int cyloffset;		/* bootstrap's idea of cylinder for disklabel */
 
 /*
  * Record for the bad block forwarding code.
@@ -68,35 +68,39 @@ extern cyloffset ;		/* bootstrap's idea of cylinder for disklabel */
  */
 #define TRKSEC(trk,sec)	((trk << 8) + sec)
 
-struct	dkbad	dkbad[NWD];
-static wdcport;
+struct dkbad	dkbad[NWD];
+static int		wdcport;
 
-wdopen(io)
-	register struct iob *io;
+extern void	printf(const char *fmt, ...);
+extern void	_stop(char* s);
+static int	wdio(int func, int unit, int blknm, short* addr);
+static int	wdinit(struct iob* io);
+static int	wdwait();
+
+int wdopen(register struct iob* io)
 {
-        register struct disklabel *dd;
+	register struct disklabel *dd;
 
 #ifdef WDDEBUG
 	printf("wdopen ");
 #endif
 #ifdef SMALL
-        dd = &disklabel;
+    dd = &disklabel;
 #else
-        dd = &wdsizes[io->i_unit];
+    dd = &wdsizes[io->i_unit];
 	if (io->i_part > 8)
-                _stop("Invalid partition number");
+        _stop("Invalid partition number");
 	if(io->i_ctlr > 1)
-                _stop("Invalid controller number");
+        _stop("Invalid controller number");
 #endif
-        if (wdinit(io))
-                _stop("wd initialization error");
+	if (wdinit(io))
+		_stop("wd initialization error");
 	io->i_boff = dd->d_partitions[io->i_part].p_offset ;
 /*printf("boff %d ", io->i_boff);*/
 	return(0);
 }
 
-wdstrategy(io,func)
-	register struct iob *io;
+int wdstrategy(register struct iob* io, int func)
 {
 	register int iosize;    /* number of sectors to do IO for this loop */
 	register daddr_t sector;
@@ -115,7 +119,7 @@ wdstrategy(io,func)
 #else
 	dd = &wdsizes[unit];
 #endif
-        iosize = io->i_cc / dd->d_secsize;
+	iosize = io->i_cc / dd->d_secsize;
 	/*
 	 * Convert PGSIZE "blocks" to sectors.
 	 * Note: doing the conversions this way limits the partition size
@@ -125,7 +129,7 @@ wdstrategy(io,func)
 	sector = (unsigned long) io->i_bn * DEV_BSIZE / dd->d_secsize;
 	nblocks = dd->d_partitions[partition].p_size;
 #ifndef SMALL
-        if (iosize < 0 || sector + iosize > nblocks || sector < 0) {
+    if (iosize < 0 || sector + iosize > nblocks || sector < 0) {
 #ifdef WDDEBUG
 		printf("bn = %d; sectors = %d; partition = %d; fssize = %d\n",
 			io->i_bn, iosize, partition, nblocks);
@@ -144,51 +148,51 @@ wdstrategy(io,func)
 #endif
 	sector += io->i_boff;
 
-	address = io->i_ma;
-        while (iosize > 0) {
-                if (wdio(func, unit, sector, address))
-                        return(-1);
+	address = (char*)io->i_ma;
+	while (iosize > 0) {
+		if (wdio(func, unit, sector, (short*)address))
+		{
+			return(-1);
+		}
 		iosize--;
 		sector++;
-                address += dd->d_secsize;
-        }
-        return(io->i_cc);
+		address += dd->d_secsize;
+	}
+	return(io->i_cc);
 }
 
 /* 
  * Routine to do a one-sector I/O operation, and wait for it
  * to complete.
  */
-wdio(func, unit, blknm, addr)
-        short *addr;
+int wdio(int func, int unit, int blknm, short* addr)
 {
 	struct disklabel *dd;
-	register wdc = wdcport;
+	register int wdc = wdcport;
 	struct bt_bad *bt_ptr;
-        int    i;
+	int i;
 	int retries = 0;
-        long    cylin, head, sector;
-        u_char opcode, erro;
+	long cylin, head, sector;
+	u_char opcode, erro;
 
 #ifdef	SMALL
 	dd = &disklabel;
 #else
 	dd = &wdsizes[unit];
 #endif
-        if (func == F_WRITE)
-                opcode = WDCC_WRITE;
-        else
-                opcode = WDCC_READ;
+	if (func == F_WRITE)
+		opcode = WDCC_WRITE;
+	else
+		opcode = WDCC_READ;
 
-        /* Calculate data for output.           */
-        cylin = blknm / dd->d_secpercyl;
-        head = (blknm % dd->d_secpercyl) / dd->d_nsectors;
-        sector = blknm % dd->d_nsectors;
-
+	/* Calculate data for output.           */
+	cylin = blknm / dd->d_secpercyl;
+	head = (blknm % dd->d_secpercyl) / dd->d_nsectors;
+	sector = blknm % dd->d_nsectors;
 	/* 
 	 * See if the current block is in the bad block list.
 	 */
-	if (blknm > BBSIZE/DEV_BSIZE)	/* should be BBSIZE */
+	if (blknm > BBSIZE/DEV_BSIZE) {	/* should be BBSIZE */
 	    for (bt_ptr = dkbad[unit].bt_bad; bt_ptr->bt_cyl != -1; bt_ptr++) {
 		if (bt_ptr->bt_cyl > cylin)
 			/* Sorted list, and we passed our cylinder. quit. */
@@ -207,19 +211,20 @@ wdio(func, unit, blknm, addr)
 #endif
 			    printf("--- badblock code -> Old = %d; ",
 				blknm);
-			blknm = dd->d_secperunit - dd->d_nsectors
-				- (bt_ptr - dkbad[unit].bt_bad) - 1;
-			cylin = blknm / dd->d_secpercyl;
-			head = (blknm % dd->d_secpercyl) / dd->d_nsectors;
-			sector = blknm % dd->d_nsectors;
+				blknm = dd->d_secperunit - dd->d_nsectors
+					- (bt_ptr - dkbad[unit].bt_bad) - 1;
+				cylin = blknm / dd->d_secpercyl;
+				head = (blknm % dd->d_secpercyl) / dd->d_nsectors;
+				sector = blknm % dd->d_nsectors;
 #ifdef WDDEBUG
 			    printf("new = %d\n", blknm);
 #endif
-			break;
+				break;
+			}
 		}
 	}
 
-        sector += 1;
+	sector += 1;
 retry:
 #ifdef WDDEBUG
 	printf("sec %d sdh %x cylin %d ", sector,
@@ -247,8 +252,9 @@ retry:
 	while ((inb(wdc+wd_status) & WDCS_DRQ) == 0) ;
 
 	if (opcode == WDCC_READ)
-		insw(wdc+wd_data,addr,256);
-	else	outsw(wdc+wd_data,addr,256);
+		insw(wdc + wd_data, (caddr_t)addr, 256);
+	else
+		outsw(wdc + wd_data, (caddr_t)addr, 256);
 
 	/* Check data request (should be done).         */
 	if (inb(wdc+wd_status) & WDCS_DRQ) goto error;
@@ -260,7 +266,7 @@ retry:
 #ifdef WDDEBUG
 printf("addr %x",addr);
 #endif
-        return (0);
+	return (0);
 error:
 	erro = inb(wdc+wd_error);
 	if (++retries < RETRIES)
@@ -272,19 +278,19 @@ error:
 	return (-1);
 }
 
-wdinit(io)
-	struct iob *io;
+int wdinit(struct iob* io)
 {
-	register wdc;
-	struct disklabel *dd;
-        unsigned int   unit;
-	struct dkbad *db;
-	int i, errcnt = 0;
-	char buf[512];
-	static open[NWD];
+	register int		wdc;
+	struct disklabel*	dd;
+	unsigned int		unit;
+	struct dkbad*		db;
+	int					i, errcnt = 0;
+	char				buf[512];
+	static int			open[NWD];
 
 	unit = io->i_unit;
-	if (open[unit]) return(0);
+	if (open[unit])
+		return(0);
 
 	wdcport = io->i_ctlr ? IO_WD2 : IO_WD1;
 	wdc = wdcport;
@@ -295,23 +301,58 @@ wdinit(io)
 	dd = &wdsizes[unit];
 #endif
 
+	/* drive control register(control base + 0)
+	bit0:n/a	Always seto to zero.
+	bit1:nIEN	Set this to stop the current device from sending interrupts.
+	bit2:SRST	Set, then clear(after 5us), this to do a "Software reset" on
+				all ATA drives on a bus, if one is misbehaving.
+	bit3-6:n/a	Reserved.
+	bit7:HOB	Set this to read back the High Order Byte of the las LBA48
+				value sent to an IO port.
+	*/
+	outb(wdc + wd_ctlr, 0);
+	DELAY(1000);
 	/* reset controller */
-	outb(wdc+wd_ctlr,6);
+	outb(wdc + wd_ctlr, WDCTL_IDS | WDCTL_RST);
 	DELAY(1000);
-	outb(wdc+wd_ctlr,2);
+	outb(wdc + wd_ctlr, WDCTL_IDS);
 	DELAY(1000);
-	while(inb(wdc+wd_status) & WDCS_BUSY);
-	outb(wdc+wd_ctlr,8);
+	while(inb(wdc + wd_status) & WDCS_BUSY);
+	outb(wdc + wd_ctlr, WDCTL_4BIT);
+	DELAY(1000);
 
-	/* set SDH, step rate, do restore to recalibrate drive */
+	/* Drive/Head register(I/O base + 6)
+	bit0-3:	In CHS addressing, bits 0 to 3 of the head. In LBA addressing,
+			bits 24 to 27 of the block number.
+	bit4:	Selects the drive number.(1:primary, 2:secondary)
+	bit:5	Always set.
+	bit:6	Uses CHS addressing if clear or LBA addressing if set.
+	bit:7	Always set.
+	*/
+	/* Status register(I/O base + 7)
+	bit0:ERR	Indicates an error occurred. Send a new command to clear it
+				(or nuke it with a Software Reset).
+	bit1:IDX	Index. Always set to zero.
+	bit2:CORR	Corrected data. Always set to zero.
+	bit3:DRQ	Set when the drive has PIO data to transfer, or is ready to
+				accept PIO data.
+	bit4:SRV	Overlapped Mode Service Request.
+	bit5:DF		Drive Fault Error (does not set ERR).
+	bit6:RDY	Bit is clear when drive is spun down, or after an error.
+				Set otherwise.
+	bit7:BSY	Indicates the drive is preparing to send/receive data
+				(wait for it to clear). In case of 'hang' (it never clears),
+				do a software reset.
+	*/
 tryagainrecal:
-	outb(wdc+wd_sdh, WDSD_IBM | (unit << 4));
+	/* set SDH, step rate, do restore to recalibrate drive */
+	outb(wdc + wd_sdh, WDSD_IBM | (unit << 4));
 	wdwait();
-	outb(wdc+wd_command, WDCC_RESTORE | WD_STEP);
+	outb(wdc + wd_command, WDCC_RESTORE | WD_STEP);
 	wdwait();
-	if ((i = inb(wdc+wd_status)) & WDCS_ERR) {
+	if ((i = inb(wdc + wd_status)) & WDCS_ERR) {
 		printf("wd%d: recal status %b error %b\n",
-			unit, i, WDCS_BITS, inb(wdc+wd_error), WDERR_BITS);
+			unit, i, WDCS_BITS, inb(wdc + wd_error), WDERR_BITS);
 		if (++errcnt < 10)
 			goto tryagainrecal;
 		return(-1);
@@ -383,7 +424,14 @@ retry:
 #ifdef WDDEBUG
 	printf("magic %x sect %d\n", dd->d_magic, dd->d_nsectors);
 #endif
-#endif	!SMALL
+#else	// !SMALL
+	// disklabelが初期化されておらず、wdstrategyで0割例外が発生していたので追加(2024/8/4)
+	dd->d_ntracks	= 8;
+	dd->d_nsectors	= 17;
+	dd->d_secpercyl	= dd->d_ntracks * dd->d_nsectors;
+	dd->d_secsize	= DEV_BSIZE;
+	outb(wdc+wd_precomp, 0xff);	/* force head 3 bit off */
+#endif	// !SMALL
 
 /*printf("C%dH%dS%d ", dd->d_ncylinders, dd->d_ntracks, dd->d_nsectors);*/
 
@@ -398,36 +446,37 @@ retry:
 	dkbad[unit].bt_bad[0].bt_cyl = -1;
 
 	if (dd->d_flags & D_BADSECT) {
-	/*
-	 * Read bad sector table into memory.
-	 */
-	i = 0;
-	do {
-		int blknm = dd->d_secperunit - dd->d_nsectors + i;
-		errcnt = wdio(F_READ, unit, blknm, buf);
-	} while (errcnt && (i += 2) < 10 && i < dd->d_nsectors);
-	db = (struct dkbad *)(buf);
+		/*
+		* Read bad sector table into memory.
+		*/
+		i = 0;
+		do {
+			int blknm = dd->d_secperunit - dd->d_nsectors + i;
+			errcnt = wdio(F_READ, unit, blknm, (short*)buf);
+		} while (errcnt && (i += 2) < 10 && i < dd->d_nsectors);
+		db = (struct dkbad *)(buf);
 #define DKBAD_MAGIC 0x4321
-	if (errcnt == 0 && db->bt_mbz == 0 && db->bt_flag == DKBAD_MAGIC)
-		dkbad[unit] = *db;
-	else {
-		if (!wdquiet)
-			printf("wd%d: error in bad-sector file\n", unit);
-		dkbad[unit].bt_bad[0].bt_cyl = -1;
-	}
+		if (errcnt == 0 && db->bt_mbz == 0 && db->bt_flag == DKBAD_MAGIC)
+			dkbad[unit] = *db;
+		else {
+			if (!wdquiet)
+				printf("wd%d: error in bad-sector file\n", unit);
+			dkbad[unit].bt_bad[0].bt_cyl = -1;
+		}
 	}
 	return(0);
 }
 
-wdwait()
+int wdwait()
 {
-	register wdc = wdcport;
-	register i = 0;
+	register int wdc = wdcport;
+	register int i = 0;
 	
-	while (inb(wdc+wd_status) & WDCS_BUSY)
-		;
-	while ((inb(wdc+wd_status) & WDCS_READY) == 0)
+	while (inb(wdc+wd_status) & WDCS_BUSY) ;
+
+	while ((inb(wdc+wd_status) & WDCS_READY) == 0) {
 		if (i++ > 100000)
 			return(-1);
+	}
 	return(0);
 }

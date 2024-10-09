@@ -56,10 +56,15 @@
 
 
 char *devname = "XX";
-static ss = 1;
+static int ss = 1;
 struct iob iobuf;
-bread(bdev, off, addr, sz)
-	char *addr;
+
+extern void printf(const char *fmt, ...);
+extern int xxstrategy(struct iob* io, int func);
+extern int xxopen(struct iob* io);
+extern int scankbd();
+
+int bread(int bdev, int off, char* addr, int sz)
 {
 
 /*printf("bread %d %d %x %d\n", bdev, off, addr, sz);*/
@@ -70,7 +75,7 @@ bread(bdev, off, addr, sz)
 	iobuf.i_unit = 0;
 	iobuf.i_cc = sz;
 	iobuf.i_bn = off;
-	iobuf.i_ma = addr;
+	iobuf.i_ma = (int)addr;
 	/*io.i_boff= 0;*/
 	iobuf.i_flgs = F_FILE | F_READ;
 	if(ss) { ss=0; xxopen(&iobuf); }
