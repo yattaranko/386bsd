@@ -133,13 +133,11 @@ ufs_mountroot(void)
 	mp->mnt_flag = MNT_RDONLY;
 	mp->mnt_exroot = 0;
 	mp->mnt_mounth = NULLVP;
-printf("ufs_mountroot1\n");
 	error = mountfs(rootvp, mp, p);
 	if (error) {
 		free((caddr_t)mp, M_MOUNT);
 		return (error);
 	}
-printf("ufs_mountroot2\n");
 	if (error = vfs_lock(mp)) {
 		(void)ufs_unmount(mp, 0, p);
 		free((caddr_t)mp, M_MOUNT);
@@ -265,22 +263,18 @@ mountfs(struct vnode *devvp, struct mount *mp, struct proc *p)
 	int needclose = 0;
 	int ronly = (mp->mnt_flag & MNT_RDONLY) != 0;
 
-printf("mountfs1\n");
 	if (error = VOP_OPEN(devvp, (ronly ? FREAD : FREAD|FWRITE) | FMOUNT,
 	    NOCRED, p))
 		return (error);
 	needclose = 1;
-printf("mountfs2\n");
 	if (VOP_IOCTL(devvp, DIOCGPART, (caddr_t)&dpart, FREAD, NOCRED, p) != 0)
 		size = DEV_BSIZE;
 	else {
 		havepart = 1;
 		size = dpart.disklab->d_secsize;
 	}
-printf("mountfs3\n");
 	if (error = bread(devvp, SBLOCK, SBSIZE, NOCRED, &bp))
 		goto out;
-printf("mountfs4\n");
 	fs = bp->b_un.b_fs;
 	if (fs->fs_magic != FS_MAGIC || fs->fs_bsize > MAXBSIZE ||
 	    fs->fs_bsize < sizeof(struct fs)) {

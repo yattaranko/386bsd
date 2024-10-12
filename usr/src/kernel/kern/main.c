@@ -399,19 +399,16 @@ void _main()
 	if ((*(rootvfs->vfs_mountroot))())
 		panic("cannot mount root");
 
-printf("main1\n");
 	/* obtain the root vnode */
 	if (VFS_ROOT(rootfs, &rootdir))
 		panic("cannot find root vnode");
 
-printf("main2\n");
 	/* set default root and current directory of initial process */
 	fdp->fd_fd.fd_cdir = rootdir;
 	VREF(fdp->fd_fd.fd_cdir);
 	VOP_UNLOCK(rootdir);
 	fdp->fd_fd.fd_rdir = NULL;
 
-printf("main3\n");
 	int sstart, send;
 	if (load_module("inet", &sstart, &send)) {
 		printf("\n init ");
