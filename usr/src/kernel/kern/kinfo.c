@@ -306,7 +306,7 @@ static struct kinfoif
 	kinfo_file_kif = { "file", KINFO_FILE, kinfo_file };
 
 /* configure servers */
-KERNEL_MODCONFIG() {
+KERNEL_MODCONFIG(kinfo) {
 
 	kinfo_addserver(&kinfo_proc_kif);
 	kinfo_addserver(&kinfo_file_kif);

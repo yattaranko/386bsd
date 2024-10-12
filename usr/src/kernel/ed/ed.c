@@ -2464,7 +2464,7 @@ ed_ring_to_mbuf(sc,src,dst,total_len)
 	return (m);
 }
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(ed) {
 	char *cfg_string;
 	
 	/* find configuration string. */

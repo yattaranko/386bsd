@@ -229,7 +229,7 @@ static struct devif mem_devif =
 
 int mem_no;
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(mem) {
 	char *cfg_string = mem_config;
 	
 	/* configure device? */

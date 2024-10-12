@@ -93,10 +93,29 @@ extern int cold;
 /*
  * Configurable parameters
  */
+#if 0
 int maxusers, hz, maxproc, maxfiles, ncallout, tzh, dst;
 long desiredvnodes;
 
 int tick, tickadj;
+#else
+int tzh, dst;
+
+#define	HZ			10
+#define	MAXUSERS	200
+#define MAXPROC		(20 + 16 * MAXUSERS)
+
+/* process rescheduling clock interval */
+int	 hz				= HZ;
+int	 tick 			= 1000000 / HZ;			/* microseconds in a clock "tick" */
+int	 tickadj		= 240000 / (60 * HZ);	/* microseconds of adjustment in a minute */
+int  maxusers		= MAXUSERS;
+int  maxproc		= MAXPROC;
+long desiredvnodes	= 2 * MAXPROC + 100;
+int  maxfiles		= 3 * MAXPROC + 100;
+int  ncallout		= 16 + MAXPROC;
+#endif
+
 struct timezone tz;
 struct proc *pidhash[64];
 struct pgrp *pgrphash[64];
@@ -126,6 +145,24 @@ struct namelist kern_options[] =
  */
 int fscale = FSCALE;		/* kernel uses `FSCALE', user uses `fscale' */
 int nmbclusters = NMBCLUSTERS;	/* number of mbuf clusters in free pool*/
+
+extern void		startrtclock(void);
+extern void		enablertclock(void);
+extern void		kmeminit(void);
+extern void		vm_pager_init(void);
+extern void		isa_configure(void);
+extern void		ifinit(void);
+extern void		domaininit(void);
+extern void		smodscaninit(modtype_t modtype, int *sstart, int *send);
+extern int		devif_root(unsigned major, unsigned unit, unsigned subunit, dev_t *rd);
+extern caddr_t	load_module(char *s, int *ss, int *se);
+extern int		fork(struct proc *p, void* uap, int retval[]);
+
+static void		init_proc0(struct proc* p);
+static void		init_vmemsys();
+static void		init_limits(struct proc* p);
+static void		mount_rootfs(struct vnode** rootdir);
+static void		init_fdesctbl(struct proc* p, struct vnode* rootdir);
 
 /*
  * System startup; initialize the world, create process 0,
@@ -158,6 +195,7 @@ void _main()
 	 */
 	(void)config_scan(kern_config, &cfg);
 	(void)cfg_namelist(&cfg, kern_options);
+#if 0
 	if (maxusers < 4)
 		maxusers = 4;
 	if (maxusers > 200)
@@ -180,6 +218,7 @@ void _main()
 		hz = 100;
 	tick = 1000000 / hz;				/* microseconds in a clock "tick" */
 	tickadj = 240000 / (60 * hz);		/* microseconds of adjustment in a minute */
+#endif
 
 	/* local time zone & daylight savings -- needed for rtc */
 	tz.tz_minuteswest = tzh * 60 * 60;
@@ -360,34 +399,36 @@ void _main()
 	if ((*(rootvfs->vfs_mountroot))())
 		panic("cannot mount root");
 
+printf("main1\n");
 	/* obtain the root vnode */
 	if (VFS_ROOT(rootfs, &rootdir))
 		panic("cannot find root vnode");
 
+printf("main2\n");
 	/* set default root and current directory of initial process */
 	fdp->fd_fd.fd_cdir = rootdir;
 	VREF(fdp->fd_fd.fd_cdir);
 	VOP_UNLOCK(rootdir);
 	fdp->fd_fd.fd_rdir = NULL;
 
-	{
-		volatile int sstart, send;
-		if (load_module("inet", &sstart, &send)) {
-			printf("\n init ");
-			smodscaninit(__MODT_ALL__, sstart, send);
-		}
-		if(load_module("ed", &sstart, &send)) {
-			printf("\n init ");
-			smodscaninit(__MODT_ALL__, sstart, send);
-		}
-		if(load_module("nfs", &sstart, &send)) {
-			printf("\n init ");
-			smodscaninit(__MODT_ALL__, sstart, send);
-		}
-		printf("after init\n");
-		/*ifinit();*/
-		/*domaininit();*/
+printf("main3\n");
+	int sstart, send;
+	if (load_module("inet", &sstart, &send)) {
+		printf("\n init ");
+		smodscaninit(__MODT_ALL__, &sstart, &send);
 	}
+	if(load_module("ed", &sstart, &send)) {
+		printf("\n init ");
+		smodscaninit(__MODT_ALL__, &sstart, &send);
+	}
+	if(load_module("nfs", &sstart, &send)) {
+		printf("\n init ");
+		smodscaninit(__MODT_ALL__, &sstart, &send);
+	}
+	printf("after init\n");
+	/*ifinit();*/
+	/*domaininit();*/
+
 	swapinit();	/* XXX */
 
 	/*

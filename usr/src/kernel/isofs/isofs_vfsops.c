@@ -40,7 +40,7 @@ struct vfsops isofs_vfsops = {
 	isofs_mountroot
 };
 
-FILESYSTEM_MODCONFIG() {
+FILESYSTEM_MODCONFIG(isofs) {
 	char *cfg_string = isofs_config;
 
 	if (config_scan(isofs_config, &cfg_string) == 0)

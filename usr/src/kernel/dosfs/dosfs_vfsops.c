@@ -647,7 +647,7 @@ struct vfsops dosfs_vfsops = {
 	pcfs_init
 };
 
-FILESYSTEM_MODCONFIG() {
+FILESYSTEM_MODCONFIG(dosfs) {
 	char *cfg_string = dosfs_config;
 
 	if (config_scan(dosfs_config, &cfg_string) == 0)

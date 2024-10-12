@@ -666,7 +666,7 @@ struct domain routedomain =
     { 0, "route", 0, 0, 0,
       routesw, &routesw[sizeof(routesw)/sizeof(routesw[0])] };
 
-NETWORK_MODCONFIG() {
+NETWORK_MODCONFIG(raw) {
 	char *cfg_string = route_config;
 
 	if (config_scan(route_config, &cfg_string) == 0)
@@ -682,7 +682,7 @@ static struct kinfoif
 	kinfo_rtable_kif = { "rtable", KINFO_RT, kinfo_rtable };
 
 /* configure servers */
-KERNEL_MODCONFIG() {
+KERNEL_MODCONFIG(raw) {
 
 	kinfo_addserver(&kinfo_rtable_kif);
 }

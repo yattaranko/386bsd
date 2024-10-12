@@ -810,7 +810,7 @@ static struct kinfoif
 	kinfo_vnode_kif = { "vnode", KINFO_VNODE, kinfo_vnode };
 
 /* configure servers */
-KERNEL_MODCONFIG() {
+KERNEL_MODCONFIG(vnode) {
 
 	kinfo_addserver(&kinfo_vnode_kif);
 }

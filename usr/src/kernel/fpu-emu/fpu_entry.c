@@ -606,7 +606,7 @@ void math_abort(struct trapframe * tf, unsigned int signal)
 }
 #endif
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(fpu) {
 	char *cfg_string;
 	
 	/* find configuration string. */

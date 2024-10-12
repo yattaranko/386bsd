@@ -362,7 +362,7 @@ static struct devif lpt_devif =
 	0, 0, 0, 0,
 };
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(lpt) {
 	char *cfg_string = lpt_config;
 	
 	/* configure device. */

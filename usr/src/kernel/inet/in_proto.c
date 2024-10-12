@@ -141,7 +141,7 @@ extern arpwhohas(), arpinput(), arpresolve(), in_sockmaskof(), arpioctl();	/* XX
 extern void (*netintr[32])(void) asm("netintr1");
 extern void printf() asm("printf1");
 
-NETWORK_MODCONFIG() {
+NETWORK_MODCONFIG(inet) {
 	char *cfg_string = inet_config;
 
 	if (config_scan(inet_config, &cfg_string) == 0)

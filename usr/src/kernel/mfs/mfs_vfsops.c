@@ -81,7 +81,7 @@ struct vfsops mfs_vfsops = {
 	mfs_init,
 };
 
-FILESYSTEM_MODCONFIG() {
+FILESYSTEM_MODCONFIG(mfs) {
 	char *cfg_string = mfs_config;
 
 	if (config_scan(mfs_config, &cfg_string) == 0)

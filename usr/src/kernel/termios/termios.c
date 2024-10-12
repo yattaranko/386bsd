@@ -1078,7 +1078,7 @@ static struct ldiscif tty_ldiscif =
 	ttyoutput, ttstart, ttymodem,
 };
 
-LDISC_MODCONFIG() {
+LDISC_MODCONFIG(termios) {
 	char *cfg_string = tty_config;
 	
 	if (ldiscif_config(&cfg_string, &tty_ldiscif) == 0)

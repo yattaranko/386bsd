@@ -91,7 +91,7 @@ struct vfsops nfs_vfsops = {
 	nfs_mountroot,
 };
 
-FILESYSTEM_MODCONFIG() {
+FILESYSTEM_MODCONFIG(nfs) {
 	char *cfg_string = nfs_config;
 
 	if (config_scan(nfs_config, &cfg_string) == 0)

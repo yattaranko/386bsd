@@ -78,13 +78,13 @@ int	writev __P((int, const struct iovec *, int));
 __END_DECLS
 
 #else
-struct iovec *uio_advance(struct uio *uio, struct iovec *iov, int cnt);
+static struct iovec *uio_advance(struct uio *uio, struct iovec *iov, int cnt);
 int uiomove(caddr_t cp, int len, struct uio *uio);
 
 /*
  * Advance a uio and its iov by cnt bytes, returning next iov.
  */
-extern inline struct iovec *
+static inline struct iovec *
 uio_advance(struct uio *uio, struct iovec *iov, int cnt) {
 
 	/* consume an iov, possibly fetching the next one */

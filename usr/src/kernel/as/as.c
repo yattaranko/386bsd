@@ -1804,7 +1804,7 @@ struct devif as_devif =
 
 void mkraw(struct bdevsw *bdp, struct cdevsw *cdp);*/
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(as) {
 	int vec[3], nvec = 3, nctl;	/* (bdev, cdev, nctl) */
 	char *cfg_string = as_config;
 #ifdef foo

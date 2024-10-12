@@ -1440,7 +1440,7 @@ static struct devif fd_devif =
 	0,  0, 
 };
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(fdesc) {
 	char *cfg_string = "fdesc 53.";
 	
 	if (devif_config(&cfg_string, &fd_devif) == 0)

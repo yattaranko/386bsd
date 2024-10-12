@@ -130,7 +130,7 @@ int loops_per_usec;
  * independant of the driver instance/implementation itself).
  */
 
-BUS_MODCONFIG() {
+BUS_MODCONFIG(isa) {
 
 	/*printf("isa: "); */
 	/*isa_configure(init++) */
@@ -988,7 +988,7 @@ static struct devif isa_devif =
 	0,  0, 
 };
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(isa) {
 	char *cfg_string = isa_config;
 	
 	if (devif_config(&cfg_string, &isa_devif) == 0)

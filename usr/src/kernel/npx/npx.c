@@ -281,7 +281,7 @@ npxdna() {
 	return (1);
 }
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(npx) {
 	char *cfg_string;
 	
 	/* find configuration string. */

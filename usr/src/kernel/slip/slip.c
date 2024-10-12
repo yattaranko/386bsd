@@ -190,7 +190,7 @@ static slattach();
 extern struct timeval time;
 
 /* execute on load/bootstrap to configure in */
-SLIP_MODCONFIG() {
+SLIP_MODCONFIG(slip) {
 	slattach();
 }
 
@@ -786,7 +786,7 @@ static struct ldiscif sl_ldiscif =
 	slopen, slclose, 0, 0, sltioctl, slinput, 0, slstart, nullmodem,
 };
 
-LDISC_MODCONFIG() {
+LDISC_MODCONFIG(slip) {
 	char *cfg_string = sl_config;
 	
 	if (ldiscif_config(&cfg_string, &sl_ldiscif) == 0)

@@ -67,9 +67,23 @@
 struct	direct {
 	u_long	d_ino;			/* inode number of entry */
 	u_short	d_reclen;		/* length of this record */
-	u_short	d_namlen;		/* length of string in d_name */
+	u_char	d_type;					/* file type, see below */
+	u_char	d_namlen;				/* length of string in d_name */
 	char	d_name[MAXNAMLEN + 1];	/* name with length <= MAXNAMLEN */
 };
+
+/*
+ * File types
+ */
+#define	DT_UNKNOWN	 0
+#define	DT_FIFO		 1
+#define	DT_CHR		 2
+#define	DT_DIR		 4
+#define	DT_BLK		 6
+#define	DT_REG		 8
+#define	DT_LNK		10
+#define	DT_SOCK		12
+#define	DT_WHT		14
 
 /*
  * The DIRSIZ macro gives the minimum record length which will hold
@@ -88,11 +102,13 @@ struct	direct {
 struct dirtemplate {
 	u_long	dot_ino;
 	short	dot_reclen;
-	short	dot_namlen;
+	u_char	dot_type;
+	u_char	dot_namlen;
 	char	dot_name[4];		/* must be multiple of 4 */
 	u_long	dotdot_ino;
 	short	dotdot_reclen;
-	short	dotdot_namlen;
+	u_char	dotdot_type;
+	u_char	dotdot_namlen;
 	char	dotdot_name[4];		/* ditto */
 };
 #endif /* !_DIR_H_ */

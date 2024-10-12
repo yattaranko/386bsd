@@ -100,7 +100,7 @@ struct vnodeops fifo_vnodeops = {
 	fifo_advlock,		/* advlock */
 };
 
-FILESYSTEM_MODCONFIG() {
+FILESYSTEM_MODCONFIG(fifo) {
 	printf("fifo ");
 }
 

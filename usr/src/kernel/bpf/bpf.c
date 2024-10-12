@@ -1084,7 +1084,7 @@ static struct devif bpf_devif =
 	0,  0, 
 };
 
-EXTDMOD_MODCONFIG() {
+EXTDMOD_MODCONFIG(bpf) {
 	char *cfg_string = bpf_config;
 	
 	/* configure device. */

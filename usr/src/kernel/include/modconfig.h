@@ -91,22 +91,22 @@ struct modconfig {
 #define MODULE_VERSION		19940705
 #define	__MODULE_CONFIG__(name, type) \
 	static void __ ## name ## _init__ (void); \
-	static struct modconfig __ ## name ## __ = \
+	volatile struct modconfig __ ## name ## __ = \
 		{ MODULE_SIGNATURE, MODULE_VERSION, type , \
 		__ ## name ## _init__ }; \
 	static void __ ## name ## _init__ (void)
 
-#define	BUS_MODCONFIG()		__MODULE_CONFIG__(bus, MODT_BUS)
-#define	CONSOLE_MODCONFIG()	__MODULE_CONFIG__(console, MODT_CONSOLE)
-#define	EXTDMOD_MODCONFIG()	__MODULE_CONFIG__(driver, MODT_EXTDMOD)
-#define	DRIVER_MODCONFIG()	__MODULE_CONFIG__(driver, MODT_DRIVER)
-#define	NETWORK_MODCONFIG()	__MODULE_CONFIG__(network, MODT_NETWORK)
-#define	FILESYSTEM_MODCONFIG() __MODULE_CONFIG__(filesystem, MODT_FILESYSTEM)
-#define	LDISC_MODCONFIG()	__MODULE_CONFIG__(ldisc, MODT_LDISC)
-#define	SYSCALLS_MODCONFIG() __MODULE_CONFIG__(syscalls, MODT_SYSCALLS)
-#define	KERNEL_MODCONFIG() __MODULE_CONFIG__(kernel, MODT_KERNEL)
-#define	SLIP_MODCONFIG() __MODULE_CONFIG__(slip, MODT_SLIP)
-#define	LOCALNET_MODCONFIG() __MODULE_CONFIG__(localnet, MODT_LOCALNET)
+#define	BUS_MODCONFIG(dev)			__MODULE_CONFIG__(dev ## _ ## bus, MODT_BUS)
+#define	CONSOLE_MODCONFIG(dev)		__MODULE_CONFIG__(dev ## _ ## console, MODT_CONSOLE)
+#define	EXTDMOD_MODCONFIG(dev)		__MODULE_CONFIG__(dev ## _ ## driver, MODT_EXTDMOD)
+#define	DRIVER_MODCONFIG(dev)		__MODULE_CONFIG__(dev ## _ ## driver, MODT_DRIVER)
+#define	NETWORK_MODCONFIG(dev)		__MODULE_CONFIG__(dev ## _ ## network, MODT_NETWORK)
+#define	FILESYSTEM_MODCONFIG(dev)	__MODULE_CONFIG__(dev ## _ ## filesystem, MODT_FILESYSTEM)
+#define	LDISC_MODCONFIG(dev)		__MODULE_CONFIG__(dev ## _ ## ldisc, MODT_LDISC)
+#define	SYSCALLS_MODCONFIG(dev) 	__MODULE_CONFIG__(dev ## _ ## syscalls, MODT_SYSCALLS)
+#define	KERNEL_MODCONFIG(dev)		__MODULE_CONFIG__(dev ## _ ## kernel, MODT_KERNEL)
+#define	SLIP_MODCONFIG(dev)			__MODULE_CONFIG__(dev ## _ ## slip, MODT_SLIP)
+#define	LOCALNET_MODCONFIG(dev)		__MODULE_CONFIG__(dev ## _ ## localnet, MODT_LOCALNET)
 /* add more here */
 
 /* kernel interface to initializing a class of modules */

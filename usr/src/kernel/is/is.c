@@ -108,7 +108,7 @@ unsigned char  *rbuf,*tbuf;
 
 int isc;
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(is) {
 	printf("mem ");
 }
 

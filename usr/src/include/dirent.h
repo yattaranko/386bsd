@@ -45,9 +45,10 @@
  */
 
 struct dirent {
-	u_long	d_fileno;		/* file number of entry */
-	u_short	d_reclen;		/* length of this record */
-	u_short	d_namlen;		/* length of string in d_name */
+	u_long	d_fileno;			/* file number of entry */
+	u_short	d_reclen;			/* length of this record */
+	u_char	d_type;				/* file type, see below */
+	u_char	d_namlen;			/* length of string in d_name */
 #ifdef _POSIX_SOURCE
 	char	d_name[255 + 1];	/* name must be no longer than this */
 #else
@@ -67,11 +68,11 @@ typedef void *	DIR;
 
 /* structure describing an open directory. */
 typedef struct _dirdesc {
-	int	dd_fd;		/* file descriptor associated with directory */
+	int		dd_fd;		/* file descriptor associated with directory */
 	long	dd_loc;		/* offset in current buffer */
 	long	dd_size;	/* amount of data returned by getdirentries */
 	char	*dd_buf;	/* data buffer */
-	int	dd_len;		/* size of data buffer */
+	int		dd_len;		/* size of data buffer */
 	long	dd_seek;	/* magic cookie returned by getdirentries */
 	void	*dd_ddloc;	/* Linked list of ddloc structs for telldir/seekdir */
 } DIR;

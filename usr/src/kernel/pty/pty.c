@@ -778,7 +778,7 @@ struct devif ptc_devif =
 	0,	0, 0, 0,
 };
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(pty) {
 	char *cfg_string;
 	
 	/* find configuration string. */

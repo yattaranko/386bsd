@@ -785,7 +785,7 @@ static struct devif com_devif =
 	comcngetc,  comcnputc, 
 };
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(com) {
 	char *cfg_string = com_config;
 	
 	/* configure device. */
@@ -796,7 +796,7 @@ DRIVER_MODCONFIG() {
 	new_isa_configure(&cfg_string, &comdriver);
 }
 
-CONSOLE_MODCONFIG() {
+CONSOLE_MODCONFIG(com) {
 	char *cfg1 = com_console_config;
 	char *cfg2 = com_config;
 	int speed;

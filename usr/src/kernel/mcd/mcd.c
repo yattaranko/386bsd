@@ -1566,7 +1566,7 @@ static struct devif mcd_devif =
 	mcdstrategy,	0, 0, 0,
 };
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(mcd) {
 	char *cfg_string = mcd_conf;
 	
 	if (devif_config(&cfg_string, &mcd_devif) == 0)

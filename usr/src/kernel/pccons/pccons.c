@@ -1683,7 +1683,7 @@ struct devif pc_devif =
 	pccngetc,  pccnputc, 
 };
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(pc) {
 	char *cfg_string = pc_config;
 	
 	if (devif_config(&cfg_string, &pc_devif) == 0)
@@ -1693,7 +1693,7 @@ DRIVER_MODCONFIG() {
 	new_isa_configure(&cfg_string, &pcdriver);
 }
 
-CONSOLE_MODCONFIG() {
+CONSOLE_MODCONFIG(pc) {
 	char *cfg1 = pc_console_config;
 	char *cfg2 = pc_config;
 

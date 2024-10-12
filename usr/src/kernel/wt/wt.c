@@ -1155,7 +1155,7 @@ static struct devif wt_devif =
 	wtstrategy,	0, 0, 0,
 };
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(wt) {
 	int nctl;
 	char *cfg_string = wt_config;
 	

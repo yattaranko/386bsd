@@ -173,7 +173,7 @@ static u_short interactive_ports[8] = {
 #define ESCAPE_P(c)	(sc->sc_asyncmap[(c) >> 5] & (1 << ((c) & 0x1F)))
 
 /* execute on load/bootstrap to configure in */
-SLIP_MODCONFIG() {
+SLIP_MODCONFIG(ppp) {
 	pppattach();
 }
 
@@ -1577,7 +1577,7 @@ static struct ldiscif ppp_ldiscif =
 	pppstart, pppmodem,
 };
 
-LDISC_MODCONFIG() {
+LDISC_MODCONFIG(ppp) {
 	char *cfg_string = ppp_config;
 	
 	if (ldiscif_config(&cfg_string, &ppp_ldiscif) == 0)

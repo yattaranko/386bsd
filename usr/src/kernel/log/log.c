@@ -236,7 +236,7 @@ static struct devif log_devif =
 	0, 0, 0, 0,
 };
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(log) {
 	char *cfg_string = log_config;
 	
 	/* configure device */

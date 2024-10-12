@@ -1096,8 +1096,8 @@ out:
  * A virgin directory (no blushing please).
  */
 struct dirtemplate mastertemplate = {
-	0, 12, 1, ".",
-	0, DIRBLKSIZ - 12, 2, ".."
+	0, 12, DT_DIR, 1, ".",
+	0, DIRBLKSIZ - 12, DT_DIR, 2, ".."
 };
 
 /*

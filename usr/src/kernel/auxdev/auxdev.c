@@ -344,7 +344,7 @@ static struct devif aux_devif =
 	0, 0, 0, 0,
 };
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(aux) {
 	char *cfg_string = aux_config;
 	
 	/* can configure an aux? */

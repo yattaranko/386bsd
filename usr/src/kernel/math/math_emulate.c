@@ -1490,7 +1490,7 @@ void int_to_real(const temp_int * a, temp_real * b)
 	}
 }
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(math) {
 	char *cfg_string;
 	
 	/* find configuration string. */

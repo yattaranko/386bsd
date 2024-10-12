@@ -130,7 +130,7 @@ clkintr(struct intrframe f) {
 	hardclock(f.if_ppl, f.if_eip, f.if_cs);
 }
 
-DRIVER_MODCONFIG() {
+DRIVER_MODCONFIG(clk) {
 	char *cfg_string;
 	
 	/* find configuration string. */
