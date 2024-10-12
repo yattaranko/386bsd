@@ -66,7 +66,7 @@ struct pcb {
 #define	FP_WASUSED	0x01	/* process has used fltng pnt hardware */
 #define	FP_NEEDSSAVE	0x02	/* ... that needs save on next context switch */
 #define	FP_NEEDSRESTORE	0x04	/* ... that needs restore on next DNA fault */
-/* #define	FP_USESEMC	0x08	/* process uses EMC memory-mapped mode */
+/* #define	FP_USESEMC	0x08	*/ /* process uses EMC memory-mapped mode */
 #define	FM_TRAP		0x10	/* process entered kernel on a trap frame */
 #define	FP_SOFTFP	0x20	/* process using software fltng pnt emulator */
 #define	FP_SOFTFP_LOOK	0x40	/* fltng pnt emulator lookahead */

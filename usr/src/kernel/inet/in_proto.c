@@ -72,7 +72,7 @@ int	tp_init(), tp_slowtimo(), tp_drain();
 
 #ifdef EON
 int	eoninput(), eonctlinput(), eonprotoinit();
-#endif EON
+#endif	/* EON */
 
 extern	struct domain inetdomain;
 

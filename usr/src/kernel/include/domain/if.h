@@ -272,4 +272,4 @@ __ISYM__(int, ifioctl, (struct socket *so, int cmd, caddr_t data, struct proc *p
 #undef __ISYM_ALIAS__
 #undef __ISYM_VERSION__
 
-#endif KERNEL
+#endif	/* KERNEL */

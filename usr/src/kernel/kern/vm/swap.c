@@ -162,7 +162,7 @@ swapinit()
 		panic("swapvp");
 	if (error = swfree(&proc0, 0)) {
 		printf("\nwarning: no swap space present (yet)\n");
-		/* printf("(swfree (..., 0) -> %d)\n", error);	/* XXX */
+		/* printf("(swfree (..., 0) -> %d)\n", error);	*/ /* XXX */
 		/*panic("swapinit swfree 0");*/
 	}
 #endif

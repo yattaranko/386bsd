@@ -143,4 +143,4 @@ void	pmap_deactivate();
 extern pmap_t	kernel_pmap;
 #endif
 
-#endif	_PMAP_VM_
+#endif	/* _PMAP_VM_ */

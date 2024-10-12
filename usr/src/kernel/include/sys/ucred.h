@@ -67,6 +67,6 @@ __ISYM__(int, groupmember, (gid_t gid, const struct ucred *cred))
 #undef __ISYM__
 #undef __ISYM_ALIAS__
 #undef __ISYM_VERSION__
-#endif KERNEL
+#endif	/* KERNEL */
 
 #endif /* !_UCRED_H_ */

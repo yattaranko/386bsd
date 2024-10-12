@@ -145,7 +145,7 @@ struct ktr_bio {
 #define KTBIO_WRITE	3	/* bwrite() */
 #define KTBIO_AWRITE	4	/* bawrite() */
 #define KTBIO_WAIT	5	/* biowait() */
-/* #define KTBIO_DONE	6	/* biodone() */
+/* #define KTBIO_DONE	6	*/ /* biodone() */
 #define KTBIO_DTOA	7	/* bdwrite becoming bawrite() */
 #define KTBIO_RECYCLE	8	/* free buffer recycled */
 #define KTBIO_INVALID	9	/* buffer invalidated and freed */

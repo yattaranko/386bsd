@@ -51,7 +51,7 @@ struct	pager_struct {
 	caddr_t		pg_handle;	/* external handle (vp, dev, fp) */
 	int		pg_type;	/* type of pager */
 	struct pagerops	*pg_ops;	/* pager operations */
-/*	vm_map_t	pg_shmap;	/* shared map (if shared) */
+/*	vm_map_t	pg_shmap;	*/ /* shared map (if shared) */
 	caddr_t		pg_data;	/* private pager data */
 };
 typedef	struct pager_struct *vm_pager_t;

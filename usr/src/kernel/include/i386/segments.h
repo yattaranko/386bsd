@@ -240,7 +240,7 @@ tryagain:
 	sdnfree_gdesc--;
 
 	/* fill in the blanks */
-	/* memset(sdp, 0, sizeof(*sdp));		/* XXX overkill */
+	/* memset(sdp, 0, sizeof(*sdp));		*/ /* XXX overkill */
 	*(int *) sdp = 0; /* clear lower word */
 	*(((int *) sdp) + 1) = 0; /* clear upper word */
 	sdp->sd_p = 1;

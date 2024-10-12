@@ -67,5 +67,5 @@ extern struct lockf *lf_getblock();	/* Return the first blocking lock */
 
 #ifdef	LOCKF_DEBUG
 extern int lockf_debug;
-#endif	LOCKF_DEBUG
-#endif	KERNEL
+#endif	/* LOCKF_DEBUG */
+#endif	/* KERNEL */

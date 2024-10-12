@@ -14,4 +14,4 @@ void	vm_fault_unwire(vm_map_t map, vm_offset_t start, vm_offset_t end);
 void	vm_fault_copy_entry(vm_map_t dst_map, vm_map_t src_map,
 		vm_map_entry_t dst_entry, vm_map_entry_t src_entry);
 
-#endif VM_FAULT_H
+#endif	/* VM_FAULT_H */

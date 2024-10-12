@@ -4,7 +4,7 @@
 #define	 KBS_WARM	0x04	/* kbd input buffer low */
 #define	 KBS_OCMD	0x08	/* kbd output buffer has command */
 #define	 KBS_NOSEC	0x10	/* kbd security lock not engaged */
-/* #define	 KBS_TERR	0x20	/* kbd transmission error */
+/* #define	 KBS_TERR	0x20	*/ /* kbd transmission error */
 #define	 KBS_AUXDIB	0x20	/* kbd aux port data in buffer */
 #define	 KBS_TOERR	0x40	/* kbd timeout error */
 #define	 KBS_PERR	0x80	/* kbd parity error */
@@ -48,7 +48,7 @@
  * Keyboard controller command byte (K__CMDBYTE)
  */
 #define	KC8_TRANS	0x40	/* convert to old scan codes */
-/*#define KC8_OLDPC	0x20	/* old 9bit codes instead of new 11bit */
+/*#define KC8_OLDPC	0x20	*/ /* old 9bit codes instead of new 11bit */
 #define	KC8_AUXDIS	0x20	/* disable aux interrupt */
 #define	KC8_KEYDIS	0x10	/* disable keyboard */
 #define	KC8_IGNSEC	0x08	/* ignore security lock */

@@ -117,7 +117,7 @@ typedef int	boolean_t;
 
 
 #ifdef	ASSEMBLER
-#else	ASSEMBLER
+#else	/* ASSEMBLER */
 /*
  *	Convert addresses to pages and vice versa.
  *	No rounding is used.
@@ -126,7 +126,7 @@ typedef int	boolean_t;
 #ifdef	KERNEL
 #define	atop(x)		(((unsigned)(x)) >> page_shift)
 #define	ptoa(x)		((vm_offset_t)((x) << page_shift))
-#endif	KERNEL
+#endif	/* KERNEL */
 
 /*
  *	Round off or truncate to the nearest page.  These will work
@@ -137,10 +137,10 @@ typedef int	boolean_t;
 #ifdef	KERNEL
 #define round_page(x)	((vm_offset_t)((((vm_offset_t)(x)) + page_mask) & ~page_mask))
 #define trunc_page(x)	((vm_offset_t)(((vm_offset_t)(x)) & ~page_mask))
-#else	KERNEL
+#else	/* KERNEL */
 #define	round_page(x)	((((vm_offset_t)(x) + (vm_page_size - 1)) / vm_page_size) * vm_page_size)
 #define	trunc_page(x)	((((vm_offset_t)(x)) / vm_page_size) * vm_page_size)
-#endif	KERNEL
+#endif	/* KERNEL */
 
 #ifdef	KERNEL
 extern vm_size_t	page_size;	/* machine independent page size */
@@ -151,8 +151,8 @@ extern int		page_shift;	/* shift to use for page size */
 extern vm_size_t	mem_size;	/* size of physical memory (bytes) */
 extern vm_offset_t	first_addr;	/* first physical page */
 extern vm_offset_t	last_addr;	/* last physical page */
-#endif	KERNEL
+#endif	/* KERNEL */
 
-#endif	ASSEMBLER
+#endif	/* ASSEMBLER */
 
-#endif	_VM_PARAM_
+#endif	/* _VM_PARAM_ */

@@ -135,7 +135,7 @@ static void single_arg_error(void)
 #ifdef PARANOID
     default:
       EXCEPTION(EX_INTERNAL|0x0112);
-#endif PARANOID
+#endif	/* PARANOID */
     }
 }
 
@@ -153,7 +153,7 @@ static void f2xm1(void)
 #ifdef DENORM_OPERAND
       if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 	
 	if ( FPU_st0_ptr->sign == SIGN_POS )
 	  {
@@ -208,7 +208,7 @@ static void fptan(void)
 #ifdef DENORM_OPERAND
       if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
       FPU_st0_ptr->sign = SIGN_POS;
       if ( (q = trig_arg(FPU_st0_ptr)) != -1 )
@@ -267,7 +267,7 @@ static void fxtract(void)
 #ifdef DENORM_OPERAND
       if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 	  
       push();
       reg_move(st1_ptr, FPU_st0_ptr);
@@ -321,7 +321,7 @@ static void fxtract(void)
 #ifdef PARANOID
   else
     EXCEPTION(EX_INTERNAL | 0x119);
-#endif PARANOID
+#endif	/* PARANOID */
 }
 
 
@@ -351,7 +351,7 @@ static void fsqrt_(void)
 #ifdef DENORM_OPERAND
       if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
       expon = FPU_st0_ptr->exp - EXP_BIAS;
       FPU_st0_ptr->exp = EXP_BIAS + (expon & 1);  /* make st(0) in  [1.0 .. 4.0) */
@@ -385,7 +385,7 @@ static void frndint_(void)
 #ifdef DENORM_OPERAND
       if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
       round_to_int(FPU_st0_ptr);  /* Fortunately, this can't overflow to 2^64 */
       FPU_st0_ptr->exp = EXP_BIAS + 63;
@@ -411,7 +411,7 @@ static void fsin(void)
 #ifdef DENORM_OPERAND
       if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
       if ( (q = trig_arg(FPU_st0_ptr)) != -1 )
 	{
@@ -471,7 +471,7 @@ static int f_cos(FPU_REG *arg)
 #ifdef DENORM_OPERAND
       if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	return 1;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
       arg->sign = SIGN_POS;
       if ( (q = trig_arg(arg)) != -1 )
@@ -566,7 +566,7 @@ static void fprem_kernel(int round)
 	  if ( ((FPU_st0_ptr->exp <= EXP_UNDER) ||
 		(st1_ptr->exp <= EXP_UNDER)) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
       
       control_word &= ~CW_RC;
       control_word |= round;
@@ -630,7 +630,7 @@ static void fprem_kernel(int round)
 #ifdef DENORM_OPERAND
 	  if ( (st1_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
 	  setcc(0); return;
 	}
@@ -651,7 +651,7 @@ static void fprem_kernel(int round)
 #ifdef DENORM_OPERAND
 	  if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
 	  if ( st1_tag == TW_Infinity )
 	    {
@@ -674,7 +674,7 @@ static void fprem_kernel(int round)
 #ifdef PARANOID
   if ( (FPU_st0_tag != TW_NaN) && (st1_tag != TW_NaN) )
       EXCEPTION(EX_INTERNAL | 0x118);
-#endif PARANOID
+#endif	/* PARANOID */
 
   real_2op_NaN(FPU_st0_ptr, st1_ptr, FPU_st0_ptr);
 
@@ -697,7 +697,7 @@ static void fyl2x(void)
 	  if ( ((FPU_st0_ptr->exp <= EXP_UNDER) ||
 		(st1_ptr->exp <= EXP_UNDER)) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
 	  /* We use the general purpose arithmetic,
 	     so we need to save these. */
@@ -752,7 +752,7 @@ static void fyl2x(void)
 	      reg_move(&CONST_INF, FPU_st0_ptr);
 	      return;
 	    }
-#endif PECULIAR_486
+#endif	/* PECULIAR_486 */
 	  else
 	    divide_by_zero(st1_ptr->sign^SIGN_NEG^SIGN_POS, FPU_st0_ptr);
 	  return;
@@ -766,7 +766,7 @@ static void fyl2x(void)
 #ifdef DENORM_OPERAND
 	  if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 	  if ( FPU_st0_ptr->sign == SIGN_NEG )
 	    {
 	      pop(); FPU_st0_ptr = &st(0);
@@ -795,7 +795,7 @@ static void fyl2x(void)
 #ifdef DENORM_OPERAND
 	  if ( (st1_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
 	  pop(); FPU_st0_ptr = &st(0);
 	  reg_move(&CONST_INF, FPU_st0_ptr);
@@ -827,7 +827,7 @@ static void fyl2x(void)
 #ifdef DENORM_OPERAND
 	  if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
 	  st1_ptr->sign ^= SIGN_NEG;
 	  pop();
@@ -844,7 +844,7 @@ static void fyl2x(void)
 	  /* This should be invalid, but a real 80486 is happy with it. */
 #ifndef PECULIAR_486
 	  divide_by_zero(st1_ptr->sign, FPU_st0_ptr);
-#endif PECULIAR_486
+#endif	/* PECULIAR_486 */
 	}
       else
 	{
@@ -871,7 +871,7 @@ static void fpatan(void)
       if ( ((FPU_st0_ptr->exp <= EXP_UNDER) ||
 	    (st1_ptr->exp <= EXP_UNDER)) && (denormal_operand()) )
 	return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
       /* We use the general purpose arithmetic so we need to save these. */
       saved_status = status_word;
@@ -935,7 +935,7 @@ static void fpatan(void)
 #ifdef DENORM_OPERAND
 	      if ( (st1_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 		return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
 	      if ( FPU_st0_ptr->sign == SIGN_POS )
 		{ reg_move(&CONST_Z, st1_ptr); pop(); return; }
@@ -949,7 +949,7 @@ static void fpatan(void)
 #ifdef DENORM_OPERAND
 	  if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
 	  reg_move(&CONST_PI2, st1_ptr);
 	}
@@ -963,7 +963,7 @@ static void fpatan(void)
 #ifdef DENORM_OPERAND
       if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
       if ( FPU_st0_ptr->sign == SIGN_POS )
 	{ reg_move(&CONST_Z, st1_ptr); pop(); return; }
@@ -979,7 +979,7 @@ static void fpatan(void)
 #ifdef DENORM_OPERAND
       if ( (st1_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
       reg_move(&CONST_PI2, st1_ptr);
       st1_ptr->sign = sign;
@@ -987,7 +987,7 @@ static void fpatan(void)
 #ifdef PARANOID
   else
     EXCEPTION(EX_INTERNAL | 0x220);
-#endif PARANOID
+#endif	/* PARANOID */
 
   pop();
   set_precision_flag_up();  /* We do not really know if up or down */
@@ -1019,7 +1019,7 @@ static void fyl2xp1(void)
       if ( ((FPU_st0_ptr->exp <= EXP_UNDER) ||
 	    (st1_ptr->exp <= EXP_UNDER)) && (denormal_operand()) )
 	return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
       /* We use the general purpose arithmetic so we need to save these. */
       saved_status = status_word;
@@ -1055,7 +1055,7 @@ static void fyl2xp1(void)
 	      if ( (st1_tag == TW_Valid) && (st1_ptr->exp <= EXP_UNDER) &&
 		  (denormal_operand()) )
 		return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
 	  st1_ptr->sign ^= FPU_st0_ptr->sign;
 	  reg_move(FPU_st0_ptr, st1_ptr);
@@ -1078,7 +1078,7 @@ static void fyl2xp1(void)
 	  EXCEPTION(EX_INTERNAL | 0x116);
 	  return;
 	}
-#endif PARANOID
+#endif	/* PARANOID */
       pop(); return;
     }
   else if ( FPU_st0_tag == TW_Valid )
@@ -1096,14 +1096,14 @@ static void fyl2xp1(void)
 #ifdef DENORM_OPERAND
 	      if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 		return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 	      st1_ptr->sign ^= SIGN_POS^SIGN_NEG;
 	      pop(); return;
 	    }
 #ifdef DENORM_OPERAND
 	  if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 	  pop(); return;
 	}
       if ( st1_tag == TW_Infinity )
@@ -1121,14 +1121,14 @@ static void fyl2xp1(void)
 #ifdef DENORM_OPERAND
 	      if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 		return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 	      st1_ptr->sign ^= SIGN_POS^SIGN_NEG;
 	      pop(); return;
 	    }
 #ifdef DENORM_OPERAND
 	  if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 	  pop(); return;
 	}
       if ( st1_tag == TW_NaN )
@@ -1165,7 +1165,7 @@ static void fyl2xp1(void)
 #ifdef DENORM_OPERAND
 	  if ( (st1_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
       /* The Manual says that log(Infinity) is invalid, but a real
 	 80486 sensibly says that it is o.k. */
@@ -1181,7 +1181,7 @@ static void fyl2xp1(void)
     {
       EXCEPTION(EX_INTERNAL | 0x117);
     }
-#endif PARANOID
+#endif	/* PARANOID */
 }
 
 
@@ -1200,7 +1200,7 @@ static void fscale(void)
       if ( ((FPU_st0_ptr->exp <= EXP_UNDER) ||
 	    (st1_ptr->exp <= EXP_UNDER)) && (denormal_operand()) )
 	return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
       if ( st1_ptr->exp > EXP_BIAS + 30 )
 	{
@@ -1246,7 +1246,7 @@ static void fscale(void)
 #ifdef DENORM_OPERAND
 	  if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
 	  return;
 	}
@@ -1257,7 +1257,7 @@ static void fscale(void)
 #ifdef DENORM_OPERAND
 	  if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
 	  if ( sign == SIGN_POS )
 	    { reg_move(&CONST_INF, FPU_st0_ptr); }
@@ -1277,7 +1277,7 @@ static void fscale(void)
 #ifdef DENORM_OPERAND
 	  if ( (st1_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
 	  return;
 	}
@@ -1303,7 +1303,7 @@ static void fscale(void)
 #ifdef DENORM_OPERAND
 	  if ( (st1_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	    return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
 	  return;
 	}

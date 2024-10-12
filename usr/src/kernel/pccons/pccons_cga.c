@@ -87,7 +87,7 @@ u_char c;
 
 		if(cursorat <= COL*ROW) {
 			crtat = Crtat + cursorat*CHR;
-			/* att = crtat[1];	/* use current attribute present */
+			/* att = crtat[1];	*/ /* use current attribute present */
 		} else	crtat = Crtat;
 
 		/* clean display */

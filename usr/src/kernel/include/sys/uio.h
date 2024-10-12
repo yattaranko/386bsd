@@ -49,7 +49,7 @@ enum	uio_rw { UIO_READ, UIO_WRITE };
 enum	uio_seg {
 	UIO_USERSPACE,		/* from user data space */
 	UIO_SYSSPACE,		/* from system space */
-	/* UIO_USERISPACE	/* from user I space */
+	/* UIO_USERISPACE	*/ /* from user I space */
 };
 
 struct uio {

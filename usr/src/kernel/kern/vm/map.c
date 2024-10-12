@@ -977,6 +977,7 @@ vmspace_allocate(struct vmspace *vs, vm_offset_t *va, vm_size_t sz, int anywhere
 	 * If we cannot allocate any pages of memory, don't
 	 * allow any additional address space allocations.
 	 */
+
 	if (curproc && curproc->p_vmspace == vs && chk4space(atop(sz)) == 0)
 		return(KERN_NO_SPACE);
 

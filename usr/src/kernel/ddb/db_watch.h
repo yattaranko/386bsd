@@ -74,4 +74,4 @@ extern void db_set_watchpoint(/* vm_map_t map, db_addr_t addr, vm_size_t size */
 extern void db_delete_watchpoint(/* vm_map_t map, db_addr_t addr */);
 extern void db_list_watchpoints();
 
-#endif	_DDB_DB_WATCH_
+#endif	/* _DDB_DB_WATCH_ */

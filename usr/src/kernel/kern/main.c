@@ -484,7 +484,7 @@ void _main()
 
 	/* initial process 0 becomes pageout process */
 	pageproc = p;
-	p->p_flag |= SLOAD|SSYS;		/* XXX */
+	p->p_flag |= SLOAD | SSYS;		/* XXX */
 	vm_pageout();
 	/* NOTREACHED */
 }

@@ -64,4 +64,4 @@
 #define	EFL_USER_SET	(EFL_IF)
 #define	EFL_USER_CLEAR	(EFL_IOPL|EFL_NT|EFL_RF)
 
-#endif	_I386_EFLAGS_H_
+#endif	/* _I386_EFLAGS_H_ */

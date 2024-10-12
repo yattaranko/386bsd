@@ -191,7 +191,7 @@ ether_output(struct ifnet *ifp, struct mbuf *m0, struct sockaddr *dst,
 			printf("\n");
 		ENDDEBUG
 		} goto gottype;
-#endif	ISO
+#endif	/* ISO */
 #ifdef RMP
 	case AF_RMP:
 		/*
@@ -382,7 +382,7 @@ ether_input(struct ifnet *ifp, struct ether_header *eh, struct mbuf *m)
 #else
 	    m_freem(m);
 	    return;
-#endif	ISO
+#endif	/* ISO */
 	}
 
 	s = splimp();

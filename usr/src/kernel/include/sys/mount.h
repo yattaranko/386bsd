@@ -216,7 +216,7 @@ struct mfs_args {
 	caddr_t	base;		/* base address of file system in memory */
 	u_long size;		/* size of file system */
 };
-#endif MFS
+#endif	/* MFS */
 
 #ifdef NFS
 /*
@@ -259,7 +259,7 @@ struct nfs_args {
 #define	NFSMNT_SPONGY	0x0400	/* spongy mount (soft for stat and lookup) */
 #define	NFSMNT_COMPRESS	0x0800	/* Compress nfs rpc xdr */
 #define	NFSMNT_LOCKBITS	(NFSMNT_SCKLOCK | NFSMNT_WANTSCK)
-#endif NFS
+#endif	/* NFS */
 
 #ifdef KERNEL
 /*
@@ -293,12 +293,12 @@ __ISYM__(void, cache_purgevfs, (struct mount *mp))
 /* XXX temp vm interface */
 void vnode_pager_umount(struct mount *mp);
 
-/* struct	vfsops *vfssw[];	/* mount filesystem type table */
+/* struct	vfsops *vfssw[];	*/ /* mount filesystem type table */
 extern struct	vfsops *vfs;		/* head of vfs list */
 struct	vfsops *findvfs(int type);	/* return vfs associated with type */
 /* use another filesystem to complete a different filesystem */
 void incoporatefs(struct vfsops *, struct vfsops *);
-/*int	(*mountroot)();		/* perform mount of root filesystem */
+/*int	(*mountroot)();		*/ /* perform mount of root filesystem */
 
 #else /* KERNEL */
 

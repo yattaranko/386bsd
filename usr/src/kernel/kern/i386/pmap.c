@@ -374,7 +374,7 @@ pmap_init(void)
 	s = (vm_size_t) (sizeof(struct pv_entry) * npg + npg);
 	s = round_page(s);
 	addr = (vm_offset_t) kmem_alloc(kernel_map, s, M_ZERO_IT);
-	/*(void) memset ((void *) addr, 0, s); /* sheer paranoia */
+	/*(void) memset ((void *) addr, 0, s); */ /* sheer paranoia */
 	pv_table = (pv_entry_t) addr;
 	addr += sizeof(struct pv_entry) * npg;
 	pmap_attributes = (char *) addr;

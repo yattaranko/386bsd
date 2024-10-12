@@ -73,7 +73,7 @@ struct	in_aliasreq {
 #ifdef	KERNEL
 struct	in_ifaddr *in_ifaddr;
 struct	in_ifaddr *in_iaonnetof();
-/* extern struct	ifqueue	ipintrq;		/* ip packet input queue */
+/* extern struct	ifqueue	ipintrq;		*/ /* ip packet input queue */
 
 #ifndef _IN_PROTOTYPES
 /* private functions, accessed via external symbol stub when loaded */

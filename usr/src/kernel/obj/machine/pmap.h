@@ -82,16 +82,16 @@ struct pte
 unsigned int	
 		pg_v:1,			/* valid bit */
 		pg_prot:2,		/* access control */
-		/*pg_mbz1:1,		/* reserved, must be zero */
+		/*pg_mbz1:1,		*/ /* reserved, must be zero */
 		pg_wt:1,		/* 'write thru' bit */
 		pg_cd:1,		/* 'uncacheable page' bit */
-		/*pg_mbz1:2,		/* reserved, must be zero */
+		/*pg_mbz1:2,		*/ /* reserved, must be zero */
 		pg_u:1,			/* hardware maintained 'used' bit */
 		pg_m:1,			/* hardware maintained modified bit */
 		pg_mbz2:2,		/* reserved, must be zero */
 		pg_w:1,			/* software, wired down page */
 		:1,			/* software (unused) */
-		/* pg_nc:1,		/* 'uncacheable page' bit */
+		/* pg_nc:1,		*/ /* 'uncacheable page' bit */
 		:1,			/* software (unused) */
 		pg_pfnum:20;		/* physical page frame number */
 };

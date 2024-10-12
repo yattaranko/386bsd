@@ -77,7 +77,7 @@ void reg_mul(FPU_REG *a, FPU_REG *b, FPU_REG *dest, unsigned int control_w)
 	{
 	  if ( denormal_operand() ) return;
 	}
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
       /* Must have either both arguments == zero, or
 	 one valid and the other zero.
 	 The result is therefore zero. */
@@ -86,7 +86,7 @@ void reg_mul(FPU_REG *a, FPU_REG *b, FPU_REG *dest, unsigned int control_w)
       /* The 80486 book says that the answer is +0, but a real
 	 80486 appears to behave this way... */
       dest->sign = sign;
-#endif PECULIAR_486
+#endif	/* PECULIAR_486 */
       return;
     }
 #if 0  /* TW_Denormal is not used yet... perhaps never will be. */
@@ -113,7 +113,7 @@ void reg_mul(FPU_REG *a, FPU_REG *b, FPU_REG *dest, unsigned int control_w)
 	      if ( (b->tag == TW_Valid) && (b->exp <= EXP_UNDER) &&
 		  denormal_operand() )
 		return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 	      reg_move(a, dest);
 	      dest->sign = sign;
 	    }
@@ -129,7 +129,7 @@ void reg_mul(FPU_REG *a, FPU_REG *b, FPU_REG *dest, unsigned int control_w)
 	      if ( (a->tag == TW_Valid) && (a->exp <= EXP_UNDER) &&
 		  denormal_operand() )
 		return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 	      reg_move(b, dest);
 	      dest->sign = sign;
 	    }
@@ -140,6 +140,6 @@ void reg_mul(FPU_REG *a, FPU_REG *b, FPU_REG *dest, unsigned int control_w)
 	{
 	  EXCEPTION(EX_INTERNAL|0x102);
 	}
-#endif PARANOID
+#endif	/* PARANOID */
     }
 }

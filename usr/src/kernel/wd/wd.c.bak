@@ -1350,7 +1350,7 @@ wddump(dev_t dev)			/* dump core after a system crash */
 	if (num > nblocks)
 		return(EINVAL);
 
-	/*wdtab.b_active = 1;		/* mark controller active for if we
+	/*wdtab.b_active = 1;		*/ /* mark controller active for if we
 					   panic during the dump */
 	wddoingadump = 1;
 	if (wdselect(du, unit, 0) < 0)

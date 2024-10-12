@@ -100,7 +100,7 @@ static void ftst_(void)
 #ifdef DENORM_OPERAND
       if ( (FPU_st0_ptr->exp <= EXP_UNDER) && (denormal_operand()) )
 	return;
-#endif DENORM_OPERAND
+#endif	/* DENORM_OPERAND */
 
       if (FPU_st0_ptr->sign == SIGN_POS)
         setcc(0);

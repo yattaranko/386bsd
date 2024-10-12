@@ -78,7 +78,7 @@ typedef unsigned char	bcd_t;
 #define		MCD_16BUFEN	0x41	/* enable low and hi byte */
 #define		MCD_16DIR	0x80	/* read PIO instead of DMA (override) */
 #define		MCDH_DTS	0x08	/* read PIO instead of DMA (override) */
-/*#define		MCD_???	0x04	/* ?? */
+/*#define		MCD_???	0x04	*/ /* ?? */
 
 #define mcd_config	3
 #define		MCD_DECODER	0x80	/* OTI decoder instead of Sanyo */

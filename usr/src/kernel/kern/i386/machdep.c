@@ -204,7 +204,7 @@ again:
 			M_ZERO_IT);
 		if (firstaddr == 0)
 			panic("startup: no room for tables");
-		/* (void) memset((void *)firstaddr, 0, size); /* paranoia, sheer */
+		/* (void) memset((void *)firstaddr, 0, size); */ /* paranoia, sheer */
 		goto again;
 	}
 
@@ -355,7 +355,7 @@ union descriptor ldt[5];
 #define	LUCODE_SEL	3
 #define	LUDATA_SEL	4
 /* seperate stack, es,fs,gs sels ? */
-/* #define	LPOSIXCALLS_SEL	5	/* notyet */
+/* #define	LPOSIXCALLS_SEL	5	*/ /* notyet */
 
 struct	i386tss	inv_tss, dbl_tss, exit_tss;
 char alt_stack[1024];

@@ -589,7 +589,7 @@ ifioctl(so, cmd, data, p)
 		if (ifp->if_ioctl == NULL)
 			return (EOPNOTSUPP);
 		return ((*ifp->if_ioctl)(ifp, cmd, data));
-#endif MULTICAST
+#endif	/* MULTICAST */
 
 	default:
 		if (so->so_proto == 0)

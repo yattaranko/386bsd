@@ -59,7 +59,7 @@ struct	rusage {
 	long	ru_maxrss;		/* max resident set size */
 #define	ru_first	ru_ixrss
 	long	ru_ixrss;		/* integral sharable memory size */
-/*	long	ru_ilrss;		/* integral shared memory size */
+/*	long	ru_ilrss;		*/ /* integral shared memory size */
 	long	ru_idrss;		/* integral unshared data " */
 	long	ru_isrss;		/* integral unshared stack " */
 	long	ru_minflt;		/* page reclaims */

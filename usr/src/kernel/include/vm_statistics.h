@@ -91,7 +91,7 @@ typedef struct vm_statistics	vm_statistics_data_t;
 
 #ifdef	KERNEL
 vm_statistics_data_t	vm_stat;
-#endif	KERNEL
+#endif	/* KERNEL */
 
 /*
  *	Each machine dependent implementation is expected to
@@ -106,4 +106,4 @@ struct pmap_statistics {
 };
 
 typedef struct pmap_statistics	*pmap_statistics_t;
-#endif	_VM_STATISTICS_
+#endif	/* _VM_STATISTICS_ */

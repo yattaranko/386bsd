@@ -58,7 +58,7 @@ static char *fd_config =
 #include "machine/inline/io.h"
 
 #define	FDUNIT(s)	((s>>3)&1)
-#define	FDTYPE(u, s)	(((s) & 7) == 0 ? fd_typ[u] : (s) & 7 - 1)
+#define	FDTYPE(u, s)	fd_typ[u] /* (((s) & 7) == 0 ? fd_typ[u] : (s) & 7 - 1) */
 
 #define b_cylin b_resid
 #define b_step b_resid
@@ -84,7 +84,7 @@ struct fd_type fd_types[] = {
 };
 
 struct fd_u {
-	/* int type;		/* Drive type (HD, DD     */
+	/* int type; */		/* Drive type (HD, DD     */
 	int active;		/* Drive activity boolean */
 	int motor;		/* Motor on flag          */
 	struct buf head;	/* Head of buf chain      */
@@ -99,8 +99,8 @@ struct buf fdtab, fdutab[NFD];	/* controller activity */
 extern int hz;
 
 /* state needed for current transfer */
-static fdc;	/* floppy disk controller io base register */
-int	fd_dmachan;
+static short fdc;	/* floppy disk controller io base register */
+static short fd_dmachan;
 static int fd_skip;
 static int fd_state;
 static int fd_retry;
@@ -112,9 +112,13 @@ static int fd_status[7];
 /****************************************************************************/
 /*                      autoconfiguration stuff                             */
 /****************************************************************************/
-int fdprobe(struct isa_device *);
-void fdattach(struct isa_device *), fdintr(int);
-int fd_turnoff(int);
+static int fdprobe(struct isa_device *);
+static void fdattach(struct isa_device *), fdintr(int);
+static int fdstrategy(struct buf *bp);
+static int fd_turnoff(int);
+int in_fdc(void);
+int out_fdc(int x);
+static void nextstate(struct buf *dp);
 
 struct	isa_driver fddriver = {
 	fdprobe, fdattach, fdintr, "fd", &biomask
@@ -129,8 +133,7 @@ static struct isa_device fd_default_devices[] = {
 /*
  * probe for existance of controller
  */
-int
-fdprobe(struct isa_device *dev)
+int fdprobe(struct isa_device *dev)
 {
 	fdc = dev->id_iobase;
 
@@ -147,8 +150,7 @@ fdprobe(struct isa_device *dev)
 /*
  * wire controller into system, look for floppy units
  */
-void
-fdattach(struct isa_device *dev)
+void fdattach(struct isa_device *dev)
 {
 	int i, hdr;
 	unsigned fdt, st0, cyl;
@@ -204,16 +206,17 @@ fdattach(struct isa_device *dev)
 	fd_turnoff(0);
 }
 
-int
-fdsize(dev_t dev)
+/*
+int fdsize(dev_t dev)
 {
 	return(0);
 }
+*/
 
 /****************************************************************************/
 /*                               fdstrategy                                 */
 /****************************************************************************/
-fdstrategy(struct buf *bp)
+int fdstrategy(struct buf *bp)
 {
 	register struct buf *dp,*dp0,*dp1;
 	long nblocks,blknum;
@@ -264,10 +267,11 @@ printf("T|");
 		fdstart(unit);		/* start drive if idle */
 	}
 	splx(s);
-	return (0);
+	return ( 0 );
 
 bad:
 	biodone(bp);
+	return ( 0 );
 }
 
 /****************************************************************************/
@@ -285,8 +289,7 @@ int unit,reset;
 		| (m1 ? FDO_MOEN1 : 0));
 }
 
-int
-fd_turnoff(int unit)
+int fd_turnoff(int unit)
 {
 	fd_unit[unit].motor = 0;
 	if (unit) set_motor(0,0);
@@ -303,8 +306,7 @@ fd_turnon(int unit)
 /****************************************************************************/
 /*                             fdc in/out                                   */
 /****************************************************************************/
-int
-in_fdc()
+int in_fdc()
 {
 	int i, j = 100000;
 	while ((i = inb(fdc+fdsts) & (NE7_DIO|NE7_RQM)) != (NE7_DIO|NE7_RQM) && j-- > 0)
@@ -314,8 +316,7 @@ in_fdc()
 	return inb(fdc+fddata);
 }
 
-out_fdc(x)
-int x;
+int out_fdc(int x)
 {
 	int i = 100000;
 
@@ -404,8 +405,7 @@ printf("Seek %d %d\n", bp->b_cylin, dp->b_step);
 	splx(s);
 }
 
-fd_timeout(x)
-int x;
+static int fd_timeout(int x)
 {
 	int st0, st3, cyl;
 	struct buf *dp,*bp;
@@ -420,20 +420,22 @@ int x;
 	out_fdc(NE7CMD_SENSEI);
 	st0 = in_fdc();
 	cyl = in_fdc();
-printf("fd%d: Operation timeout ST0 %b cyl %d ST3 %b\n", fd_drive,
-st0, NE7_ST0BITS, cyl, st3, NE7_ST3BITS);
+	printf("fd%d: Operation timeout ST0 %b cyl %d ST3 %b\n", fd_drive,
+	st0, NE7_ST0BITS, cyl, st3, NE7_ST3BITS);
 
 	if (bp) {
 		fd_state = 4;
 		fdintr(fd_drive);
 	}
+
+	return (0);
 }
 
 /****************************************************************************/
 /*                                 fdintr                                   */
 /****************************************************************************/
 void
-fdintr(unit)
+fdintr_body(unit)
 {
 	register struct buf *dp,*bp;
 	struct buf *dpother;
@@ -461,9 +463,9 @@ fdintr(unit)
 			i = in_fdc();
 			cyl = in_fdc();
 			if (cyl != descyl) {
-printf("fd%d: Seek to cyl %d failed; am at cyl %d (ST0 = %b)\n", fd_drive,
-descyl, cyl, i, NE7_ST0BITS);
-fd_state = 4;
+				printf("fd%d: Seek to cyl %d failed; am at cyl %d (ST0 = %b)\n", fd_drive,
+				descyl, cyl, i, NE7_ST0BITS);
+				fd_state = 4;
 				return;
 			}
 		}
@@ -477,7 +479,7 @@ fd_state = 4;
 		sec = blknum %  (sectrac * 2);
 		head = sec / sectrac;
 		sec = sec % sectrac + 1;
-fd_hddrv = ((head&1)<<2)+fd_drive;
+		fd_hddrv = ((head&1)<<2)+fd_drive;
 
 		if (read)  out_fdc(NE7CMD_READ);	/* READ */
 		else out_fdc(NE7CMD_WRITE);		/* WRITE */
@@ -496,7 +498,7 @@ fd_hddrv = ((head&1)<<2)+fd_drive;
 		for(i=0;i<7;i++) {
 			fd_status[i] = in_fdc();
 		}
-		if (fd_status[0]&0xF8) {
+		if (fd_status[0]&0xD8/* 0xF8 */) {
 #ifdef FDOTHER
 printf("status0 err %d:",fd_status[0]);
 #endif
@@ -628,17 +630,26 @@ retry:
 		fd_drive, fd_status[0], NE7_ST0BITS, fd_status[1], NE7_ST1BITS,
 		fd_status[2], NE7_ST2BITS,  fd_status[3], NE7_ST3BITS, 
 		fd_status[4], fd_status[5], fd_status[6]);*/
-printf("fd%d: hard error (ST0 %b ", fd_drive, fd_status[0], NE7_ST0BITS);
-printf(" ST1 %b ", fd_status[1], NE7_ST1BITS);
-printf(" ST2 %b ", fd_status[2], NE7_ST2BITS);
-printf(" ST3 %b ", fd_status[3], NE7_ST3BITS);
-printf("cyl %d hd %d sec %d)\n", fd_status[4], fd_status[5], fd_status[6]);
+		printf("fd%d: hard error (ST0 %b ", fd_drive, fd_status[0], NE7_ST0BITS);
+		printf(" ST1 %b ", fd_status[1], NE7_ST1BITS);
+		printf(" ST2 %b ", fd_status[2], NE7_ST2BITS);
+		printf(" ST3 %b ", fd_status[3], NE7_ST3BITS);
+		printf("cyl %d hd %d sec %d)\n", fd_status[4], fd_status[5], fd_status[6]);
 		badtrans(dp,bp);
 		return;
 	}
 	fd_state = 1;
 	fd_retry++;
 	fdintr(0xff);
+}
+
+void fdintr(unit)
+{
+	int s;
+
+	s = splbio();
+	fdintr_body(unit);
+	splx(s);
 }
 
 badtrans(dp,bp)
@@ -663,8 +674,7 @@ struct buf *dp,*bp;
 	to state 0 (not expecting any interrupts).
 */
 
-nextstate(dp)
-struct buf *dp;
+void nextstate(struct buf *dp)
 {
 	struct buf *dpother;
 	

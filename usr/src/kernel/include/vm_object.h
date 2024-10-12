@@ -113,7 +113,7 @@ long		vm_object_count;	/* count of all objects */
 vm_object_t	kernel_object;		/* the single kernel object */
 vm_object_t	kmem_object;
 
-#endif	KERNEL
+#endif	/* KERNEL */
 
 /*
  *	Declare procedures that operate on VM objects.
@@ -159,4 +159,4 @@ void	vm_object_print(vm_object_t object, boolean_t full);
 
 #define	vm_object_sleep(event, object, interruptible) \
 	thread_sleep((event), &(object)->Lock, (interruptible))
-#endif	_VM_OBJECT_
+#endif	/* _VM_OBJECT_ */

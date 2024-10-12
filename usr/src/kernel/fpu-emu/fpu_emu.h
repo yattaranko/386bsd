@@ -112,7 +112,7 @@ extern char emulating;
 #else
 #  define RE_ENTRANT_CHECK_OFF
 #  define RE_ENTRANT_CHECK_ON
-#endif PARANOID
+#endif	/* PARANOID */
 
 typedef void (*FUNC)(void);
 typedef struct fpu_reg FPU_REG;
@@ -176,6 +176,6 @@ extern void round_reg(FPU_REG *arg, unsigned int extent,
 #include "fpu_proto.h"
 #endif
 
-#endif __ASSEMBLER__
+#endif	/* __ASSEMBLER__ */
 
-#endif _FPU_EMU_H_
+#endif	/* _FPU_EMU_H_ */

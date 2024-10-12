@@ -207,5 +207,5 @@ vm_page_init(vm_page_t mem, vm_object_t object, vm_offset_t offset)
 }
 
 #define vm_page_set_modified(m)	{ (m)->clean = FALSE; }
-#endif	KERNEL
-#endif	_VM_PAGE_
+#endif	/* KERNEL */
+#endif	/* _VM_PAGE_ */

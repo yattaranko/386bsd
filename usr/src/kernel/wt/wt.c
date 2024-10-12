@@ -90,9 +90,9 @@ static char *wt_config = "wt 3 10 (0x300 5 1).";
 
 #ifdef	ORC
 unsigned wtport = 0x288;	/* base I/O port of controller	*/
-#else	ORC
+#else	/* ORC */
 unsigned wtport = 0x300;	/* base I/O port of controller	*/
-#endif	ORC
+#endif	/* ORC */
 				/* standard = 0x300		*/
 				/* alternate = 0x338		*/
 

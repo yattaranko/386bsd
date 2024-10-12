@@ -297,7 +297,7 @@ pcclose(dev_t dev, int flag, int mode, struct proc *p)
 {
 struct tty *tp = &pccons;
 /*extern int xxxcons;*/
-	/*if (flag & O_NONBLOCK) {		/* XXX */
+	/*if (flag & O_NONBLOCK) {		*/ /* XXX */
 	ldiscif_close(&pccons, flag);
 	/* (*linesw[pccons.t_line].l_close)(&pccons, flag);*/
 	ttyclose(&pccons);
@@ -545,7 +545,7 @@ cursor(int a)
 	outb(addr_6845+1, 0);
 	outb(addr_6845, 11);
 	outb(addr_6845+1, 18);
-#endif	FAT_CURSOR
+#endif	/* FAT_CURSOR */
 	}
 	if (a == 0)
 		timeout(cursor, 0, hz/10);
@@ -800,7 +800,7 @@ addr_6845 = MONO_BASE;
 					memcpy(Crtat, Crtat+vs.ncol*vs.cx, vs.ncol*(vs.nrow-vs.cx)*CHR);
 					memsetw(Crtat+vs.ncol*(vs.nrow-vs.cx),
 						(at <<8)+' ', vs.ncol*vs.cx);
-					/* crtat -= vs.ncol*vs.cx; /* XXX */
+					/* crtat -= vs.ncol*vs.cx; */ /* XXX */
 					vs.esc = 0; vs.ebrac = 0; vs.eparm = 0;
 					break;
 				case 'M': /* delete line. */
@@ -818,7 +818,7 @@ addr_6845 = MONO_BASE;
 					memmove(Crtat+vs.ncol*vs.cx, Crtat, vs.ncol*(vs.nrow-vs.cx)*CHR);
 					memsetw(Crtat, (at <<8)+' ',
 						vs.ncol*vs.cx);
-					/* crtat += vs.ncol*vs.cx; /* XXX */
+					/* crtat += vs.ncol*vs.cx; */ /* XXX */
 					vs.esc = 0; vs.ebrac = 0; vs.eparm = 0;
 					break;
 				case 'L' : /* insert line */

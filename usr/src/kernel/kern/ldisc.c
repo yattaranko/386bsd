@@ -249,7 +249,7 @@ ttstart(struct tty *tp)
 int
 ttioctl(struct tty *tp, int com, caddr_t data, int flag, struct proc *p)
 {
-	/* struct proc *p = curproc;		/* XXX */
+	/* struct proc *p = curproc;		*/ /* XXX */
 	int s, error;
 
 	/*

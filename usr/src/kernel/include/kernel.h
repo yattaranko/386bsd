@@ -44,7 +44,7 @@ extern struct timeval boottime;
 extern struct timeval time;
 extern struct timezone tz;			/* XXX */
 
-/*extern int hz;					/* clock frequency */
+/*extern int hz;					*/ /* clock frequency */
 extern int phz;				/* alternate clock's frequency */
 extern int tick;
 

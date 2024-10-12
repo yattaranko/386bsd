@@ -81,4 +81,4 @@ extern void		db_clear_breakpoints();
 extern db_breakpoint_t	db_set_temp_breakpoint(/* db_addr_t addr */);
 extern void		db_delete_temp_breakpoint(/* db_breakpoint_t bkpt */);
 
-#endif	_DDB_DB_BREAK_H_
+#endif	/* _DDB_DB_BREAK_H_ */

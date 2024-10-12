@@ -226,4 +226,4 @@ void vm_map_print(vm_map_t map, boolean_t full);
 #define MAX_KMAP	10
 #define	MAX_KMAPENT	500
 
-#endif	_VM_MAP_
+#endif	/* _VM_MAP_ */

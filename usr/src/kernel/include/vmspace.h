@@ -77,4 +77,4 @@ int vmspace_inherit(struct vmspace *vs, caddr_t va, unsigned sz,
 int vmspace_activate(struct vmspace *vs, caddr_t va, unsigned sz);
 __END_DECLS
 
-#endif	VMSPACE_H
+#endif	/* VMSPACE_H */

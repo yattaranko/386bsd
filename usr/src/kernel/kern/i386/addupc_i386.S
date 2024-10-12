@@ -29,7 +29,7 @@ ENTRY(addupc)
 	cmpl PR_SIZE(%edx),%eax		/* if (praddr > up->pr_size) return */
 	ja L1
 
-/*	addl %eax,%eax			/* praddr -> word offset */
+/*	addl %eax,%eax			*/ /* praddr -> word offset */
 	addl PR_BASE(%edx),%eax		/* praddr += up-> pr_base */
 	movl 16(%ebp),%ecx		/* ticks */
 

@@ -600,7 +600,7 @@ int reg_store_double(void)
 		  (FPU_st0_ptr->sigl & 0x000007ff) )
 		EXCEPTION(precision_loss);
 	      else
-#endif PECULIAR_486
+#endif	/* PECULIAR_486 */
 		{
 		  EXCEPTION(EX_Underflow | precision_loss);
 		  /* This is a special case: see sec 16.2.5.1 of
@@ -794,7 +794,7 @@ int reg_store_single(void)
 		  ((FPU_st0_ptr->sigh & 0x000000ff) || FPU_st0_ptr->sigl) )
 		EXCEPTION(precision_loss);
 	      else
-#endif PECULIAR_486
+#endif	/* PECULIAR_486 */
 		{
 		  EXCEPTION(EX_Underflow | precision_loss);
 		  /* This is a special case: see sec 16.2.5.1 of

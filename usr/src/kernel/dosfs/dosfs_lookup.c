@@ -300,7 +300,7 @@ printf("pcfs_lookup(): saving empty slot location\n");
 			ndp->ni_pcfs.pcfs_cluster = slotcluster;
 			ndp->ni_pcfs.pcfs_count   = 1;
 		}
-/*		dp->de_flag |= DEUPD; /* never update dos directories */
+/*		dp->de_flag |= DEUPD; */ /* never update dos directories */
 		ndp->ni_nameiop |= SAVENAME;
 		if (!lockparent)	/* leave searched dir locked?	*/
 			DEUNLOCK(dp);

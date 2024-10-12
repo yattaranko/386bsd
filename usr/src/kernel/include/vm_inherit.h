@@ -89,4 +89,4 @@ typedef int		vm_inherit_t;	/* might want to change this */
 
 #define VM_INHERIT_DEFAULT	VM_INHERIT_COPY
 
-#endif	_VM_INHERIT_
+#endif	/* _VM_INHERIT_ */
