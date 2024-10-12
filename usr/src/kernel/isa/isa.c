@@ -130,7 +130,8 @@ int loops_per_usec;
  * independant of the driver instance/implementation itself).
  */
 
-BUS_MODCONFIG(isa) {
+BUS_MODCONFIG(isa)
+{
 
 	/*printf("isa: "); */
 	/*isa_configure(init++) */
@@ -143,9 +144,10 @@ isa_configure()
 {
 	struct isa_device *dvp;
 	struct isa_driver *dp;
-	register cnt;
-	int tick, x;
+/*	register cnt; */
+	int /* tick, */ x;
 
+#if 0
 	/*
 	 * Configure bus interrupts with processor
 	 */
@@ -182,6 +184,7 @@ isa_configure()
 	tick *= 1000000;
 	tick /= 1193182;
 	loops_per_usec = (10000/tick + 5) / 10;
+#endif
 
 	/*
 	 * Configure ISA devices. XXX
@@ -210,10 +213,10 @@ isa_configure()
 }
 
 /* parse and evaluate an ISA device */
-cfg_isadev(char **ptr, char *modname, struct isa_device *idp) {
+cfg_isadev(char **ptr, char *modname, struct isa_device *idp)
+{
 	char *lp = *ptr;
 	int val;
-
 
 	/* default fields */
 	idp->id_iobase = 0;
@@ -318,7 +321,7 @@ new_isa_configure(char **lp, struct isa_driver *dp) {
 /*
  * Configure an ISA device.
  */
-config_isadev(isdp)
+int config_isadev(isdp)
 	struct isa_device *isdp;
 {
 	struct isa_driver *dp;
@@ -394,7 +397,8 @@ extern	IDTVEC(intrdefault);
  * Fill in default interrupt table (in case of spuruious interrupt
  * during configuration of kernel, setup interrupt control unit
  */
-isa_defaultirq() {
+void isa_defaultirq()
+{
 	int i;
 
 	/* icu vectors */
@@ -558,7 +562,8 @@ void isa_dmadone(int flags, caddr_t addr, int nbytes, int chan)
  * Return true if special handling needed.
  */
 
-isa_dmarangecheck(caddr_t va, unsigned length) {
+isa_dmarangecheck(caddr_t va, unsigned length)
+{
 	vm_offset_t phys, priorpage, endva;
 
 	endva = (vm_offset_t)round_page(va + length);
@@ -590,7 +595,8 @@ static void (*isaphysmemunblock)(); /* needs to be a list */
  * (assumed to be called at splbio())
  */
 caddr_t
-isa_allocphysmem(caddr_t va, unsigned length, void (*func)()) {
+isa_allocphysmem(caddr_t va, unsigned length, void (*func)())
+{
 	
 	isaphysmemunblock = func;
 	while (isaphysmemflag & B_BUSY) {
@@ -607,7 +613,8 @@ isa_allocphysmem(caddr_t va, unsigned length, void (*func)()) {
  * (assumed to be called at splbio())
  */
 void
-isa_freephysmem(caddr_t va, unsigned length) {
+isa_freephysmem(caddr_t va, unsigned length)
+{
 
 	isaphysmemflag &= ~B_BUSY;
 	if (isaphysmemflag & B_WANTED) {
@@ -622,7 +629,8 @@ isa_freephysmem(caddr_t va, unsigned length) {
  * Handle a NMI, possibly a machine check.
  * return true to panic system, false to ignore.
  */
-isa_nmi(cd) {
+int isa_nmi(cd)
+{
 
 	log(LOG_CRIT, "\nNMI port 61 %x, port 70 %x\n", inb(0x61), inb(0x70));
 	return(0);
@@ -631,7 +639,8 @@ isa_nmi(cd) {
 /*
  * Caught a stray interrupt, notify
  */
-isa_strayintr(d) {
+void isa_strayintr(d)
+{
 
 #ifdef notdef
 	/* DON'T BOTHER FOR NOW! */
@@ -641,7 +650,8 @@ isa_strayintr(d) {
 }
 
 u_short
-getit(int unit, int timer) {
+getit(int unit, int timer)
+{
 	int port = (unit ? IO_TIMER2 : IO_TIMER1), val;
 
 	outb(port+ 3, timer<<6); /* emit latch command */
@@ -651,7 +661,8 @@ getit(int unit, int timer) {
 }
 
 void
-setit(unit, timer, mode, count) {
+setit(unit, timer, mode, count)
+{
 	int port = (unit ? IO_TIMER2 : IO_TIMER1);
 
 	outb(port+ 3, (timer << 6) + mode); /* emit latch command */
@@ -662,7 +673,8 @@ setit(unit, timer, mode, count) {
 /*
  * get time in absolute it_ticks for tracing.
  */
-getticks() {
+int getticks()
+{
 	register unsigned val;
 
 	/* stop interrupts, emit latch command for timer 0, unit 0 */
@@ -757,7 +769,8 @@ void sysbeep(int pitch, int period)
  * Pass command to keyboard controller (8042)
  */
 void
-kbd_cmd(unsigned val) {
+kbd_cmd(unsigned val)
+{
 	u_char r;
 	
 	/* see if we can issue a command. clear data buffer if something present */
@@ -778,7 +791,8 @@ kbd_cmd(unsigned val) {
  * Pass command thru keyboard controller to keyboard itself
  */
 void
-kbd_wr(unsigned val) {
+kbd_wr(unsigned val)
+{
 	u_char r;
 	
 	while (inb(KBSTATP) & KBS_IBF)
@@ -802,7 +816,8 @@ kbd_wr(unsigned val) {
  * Read a character from keyboard controller 
  */
 u_char
-kbd_rd() {
+kbd_rd()
+{
 	int sts;
 	
 	while (inb(KBSTATP) & KBS_IBF)
@@ -814,7 +829,8 @@ kbd_rd() {
 	return (inb(KBDATAP));
 }
 
-kbd_drain() {
+void kbd_drain()
+{
 	int sts;
 
 	/* do { */
@@ -828,7 +844,8 @@ kbd_drain() {
  * Send the keyboard a command, wait for and return status
  */
 u_char
-key_cmd(unsigned val) {
+key_cmd(unsigned val)
+{
 
 	kbd_wr(val);
 	return(kbd_rd());
@@ -838,7 +855,8 @@ key_cmd(unsigned val) {
  * Send the aux port a command, wait for and return status
  */
 u_char
-aux_cmd(unsigned val) {
+aux_cmd(unsigned val)
+{
 	u_char r;
 	
 	kbd_cmd(K_AUXOUT);
@@ -850,7 +868,8 @@ aux_cmd(unsigned val) {
  * Execute a keyboard controller command that passes a parameter
  */
 void
-kbd_cmd_write_param(unsigned cmd, unsigned val) {
+kbd_cmd_write_param(unsigned cmd, unsigned val)
+{
 	u_char r;
 	
 	kbd_cmd(cmd);
@@ -861,28 +880,30 @@ kbd_cmd_write_param(unsigned cmd, unsigned val) {
  * Execute a keyboard controller command that returns a parameter
  */
 u_char
-kbd_cmd_read_param(unsigned cmd) {
+kbd_cmd_read_param(unsigned cmd)
+{
 	u_char r;
 
 	kbd_cmd(cmd);
 	return(kbd_rd());
 }
 
-#define	CW54BCD		0x01	/* BCD instead of binary count down mode */
-#define	CW54RATE	 0x04	/* rate operating mode */
-#define	CW54SQUARE	 0x06	/* square wave output mode */
-#define	CW54LSBMSB	 0x30	/* pass counter values in little endian order */
+#define	CW54BCD			0x01	/* BCD instead of binary count down mode */
+#define	CW54RATE		0x04	/* rate operating mode */
+#define	CW54SQUARE		0x06	/* square wave output mode */
+#define	CW54LSBMSB		0x30	/* pass counter values in little endian order */
 
-#define	KBC42FAILDIS	 0x04	/* disable failsafe counter NMI */
-#define	KBC42IOCHKDIS	 0x08	/* disable IOCHK NMI */
-#define	KBC42FAILNMI	 0x40	/* NMI from failsafe timer  */
-#define	KBC42IOCHKNMI	 0x80	/* NMI from IOCHK */
+#define	KBC42FAILDIS	0x04	/* disable failsafe counter NMI */
+#define	KBC42IOCHKDIS	0x08	/* disable IOCHK NMI */
+#define	KBC42FAILNMI	0x40	/* NMI from failsafe timer  */
+#define	KBC42IOCHKNMI	0x80	/* NMI from IOCHK */
 
 /*
  * Enable an NMI failsafe timer for a millisecond
  */
 int allownmi;
-failsafe_start() {
+failsafe_start()
+{
 	if(allownmi) {
 	setit(1, 0, CW54LSBMSB|CW54SQUARE, 1193000/100);
 	outb(0x61, inb(0x61) & ~KBC42FAILDIS);
@@ -893,7 +914,8 @@ failsafe_start() {
 /*
  * Disable the NMI failsafe timer, cancelling the timeout.
  */
-failsafe_cancel() {
+void failsafe_cancel()
+{
 	outb(0x61, inb(0x61) | KBC42FAILDIS);
 	outb(0x70, 0x80);
 }
@@ -941,7 +963,8 @@ rtcout(u_char adr, u_char val)
 
 /* XXX: framework only, unfinished */
 static int
-isaopen(dev_t dev, int flag, int mode, struct proc *p) {
+isaopen(dev_t dev, int flag, int mode, struct proc *p)
+{
 	struct syscframe *fp = (struct syscframe *)p->p_md.md_regs;
 
 	fp->sf_eflags |= PSL_IOPL;
@@ -949,7 +972,8 @@ isaopen(dev_t dev, int flag, int mode, struct proc *p) {
 }
 
 static int
-isaclose(dev_t dev, int flag, int mode, struct proc *p) {
+isaclose(dev_t dev, int flag, int mode, struct proc *p)
+{
 	struct syscframe *fp = (struct syscframe *)p->p_md.md_regs;
 
 	fp->sf_eflags &= ~PSL_IOPL;
@@ -957,7 +981,8 @@ isaclose(dev_t dev, int flag, int mode, struct proc *p) {
 }
 
 static int
-isaioctl(dev_t dev, int cmd, caddr_t addr, int flag, struct proc *p) {
+isaioctl(dev_t dev, int cmd, caddr_t addr, int flag, struct proc *p)
+{
 
 	/* What's missing: enable selection on irq's, controls on
 	   [e]isa features, statistics, ... */
@@ -966,7 +991,8 @@ isaioctl(dev_t dev, int cmd, caddr_t addr, int flag, struct proc *p) {
 }
 
 static int
-isaselect(dev_t dev, int rw, struct proc *p) {
+isaselect(dev_t dev, int rw, struct proc *p)
+{
 
 	return (ENODEV);
 }
@@ -988,7 +1014,8 @@ static struct devif isa_devif =
 	0,  0, 
 };
 
-DRIVER_MODCONFIG(isa) {
+DRIVER_MODCONFIG(isa)
+{
 	char *cfg_string = isa_config;
 	
 	if (devif_config(&cfg_string, &isa_devif) == 0)

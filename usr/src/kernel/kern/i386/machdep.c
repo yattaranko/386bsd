@@ -699,6 +699,11 @@ init386(first) {
 	setidt(30, &IDTVEC(rsvd13),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
 	setidt(31, &IDTVEC(rsvd14),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
 
+	/*
+	 * Configure bus interrupts with processor
+	 */
+	isa_defaultirq();
+
 	r_gdt.rd_limit = NGDT * sizeof(union descriptor) - 1;
 	r_gdt.rd_base = (int) gdt;
 	lgdt(r_gdt);

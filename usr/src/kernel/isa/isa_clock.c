@@ -67,7 +67,8 @@ static	char *clk_config =
 unsigned long it_ticks, it_ticksperintr;
 
 
-startrtclock() {
+void startrtclock()
+{
 	int s;
 
 	/* initialize 8253 clock */
@@ -94,7 +95,8 @@ static ena;
 /*
  * Wire clock interrupt in.
  */
-enablertclock() {
+void enablertclock()
+{
 	ena=1;
 }
 
@@ -118,19 +120,25 @@ clkprobe(struct isa_device *dvp)
 static void
 clkattach(struct isa_device *dvp)
 {
+	printf("<Intel 8253/8254 PIT>");
+
 	splx(0xf); /* XXX */
 }
 
 static void
-clkintr(struct intrframe f) {
-
+clkintr(struct intrframe f)
+{
 	if (!ena) return;
 	splhigh();
 	it_ticks += it_ticksperintr;
 	hardclock(f.if_ppl, f.if_eip, f.if_cs);
 }
 
-DRIVER_MODCONFIG(clk) {
+extern u_short getit(int unit, int timer);
+unsigned long it_ticksperintr;
+
+KERNEL_MODCONFIG(clk)
+{
 	char *cfg_string;
 	
 	/* find configuration string. */
@@ -139,4 +147,34 @@ DRIVER_MODCONFIG(clk) {
 
 	/* probe for hardware */
 	new_isa_configure(&cfg_string, &clkdriver);
+
+	/* initialize 8253 clock */
+	it_ticksperintr = 1193182/hz;
+	outb (IO_TIMER1+3, 0x34);
+	outb (IO_TIMER1, it_ticksperintr);
+	outb (IO_TIMER1, it_ticksperintr/256);
+
+	register int cnt;
+	int tick;
+	
+	/*
+	 * Find out how many loops we need to DELAY() a microsecond
+	 */
+
+	/* wait till overflow to insure no wrap around */
+	do
+		tick = getit(0,0);
+	while (tick < getit(0,0));
+
+	/* time a while loop */
+	cnt = 1000;
+	tick = getit(0,0);
+	while (cnt-- > 0)
+		;
+	tick -= getit(0,0);
+
+	/* scale to microseconds per 1000 "loops" */
+	tick *= 1000000;
+	tick /= 1193182;
+	loops_per_usec = (10000/tick + 5) / 10;
 }
