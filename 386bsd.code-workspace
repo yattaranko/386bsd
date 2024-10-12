@@ -15,7 +15,10 @@
 			"socketvar.h": "c",
 			"prototypes.h": "c",
 			"vm_pageout.h": "c",
-			"ufs_dir.h": "c"
+			"ufs_dir.h": "c",
+			"filedesc.h": "c",
+			"modconfig.h": "c",
+			"vnode.h": "c"
 		}
 	}
 }

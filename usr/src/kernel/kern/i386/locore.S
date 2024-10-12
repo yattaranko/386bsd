@@ -234,14 +234,14 @@ start:
 	movl	%esi, %eax
 	call	reloc
 	movl	%eax, %edx
-	movl	$KernelPTD-KERNBASE, %eax
+	movl	$KernelPTD - KERNBASE, %eax
 	call	reloc
 	movl	%edx, (%eax)
 
 	/* virtual address of Kernel PTD */
 	movl	%esi, %edx
 	addl	$KERNBASE, %edx
-	movl	$VAKernelPTD-KERNBASE, %eax
+	movl	$VAKernelPTD - KERNBASE, %eax
 	call	reloc
 	movl	%edx, (%eax)
 
@@ -253,7 +253,7 @@ start:
 	movl	%edx, (%eax)
 
 	/* logical address of kernel PT */
-	lea	(UPAGES+1)*NBPG(%esi), %ebx
+	lea	(UPAGES + 1)*NBPG(%esi), %ebx
 	movl	$KPTphys - KERNBASE, %eax
 	call	reloc
 	movl	%ebx, (%eax)
@@ -265,7 +265,7 @@ start:
 	/* kernel text pages */
 	movl	%edi, %ecx		/* this much virtual address space */
 	shrl	$PGSHIFT, %ecx
-	movl	$PG_V|PG_KR, %edx	/* read-only (for 486) */
+	movl	$PG_V | PG_KR, %edx	/* read-only (for 486) */
 	xorl	%eax, %eax		/*  starting at this address - 0 XXX */
 	call	rfillkpt
 
@@ -273,12 +273,12 @@ start:
 	movl	%esi, %ecx
 	subl	%edi, %ecx		/* remaining data pages */
 	shrl	$PGSHIFT, %ecx
-	addl	$UPAGES+1+NSYSMAP, %ecx /* include initial state */
+	addl	$UPAGES + 1 + NSYSMAP, %ecx	/* include initial state */
 	movl	$PG_V|PG_KW, %edx	/* read-write */
 	call	rfillkpt
 
 	/* map I/O memory map XXX */
-	movl	$_atdevphys-KERNBASE, %eax /* record relative pte base */
+	movl	$_atdevphys - KERNBASE, %eax	/* record relative pte base */
 	call	reloc
 	movl	%ebx, (%eax)
 	movl	$0x100-0xa0, %ecx	/* pages to map hole */
@@ -290,36 +290,36 @@ start:
  * Construct a page table directory
  */
 	/* install an entry for a temporary double map of bottom of VA */
-	lea	(UPAGES+1)*NBPG(%esi), %eax /* logical address of kernel page table */
+	lea	(UPAGES + 1)*NBPG(%esi), %eax	/* logical address of kernel page table */
 	movl	$PG_V|PG_KW, %edx	/* read-write */
-	movl	$1, %ecx		/* a single entry */
-	movl	%esi, %ebx		/* at the start of the page directory */
+	movl	$1, %ecx			/* a single entry */
+	movl	%esi, %ebx			/* at the start of the page directory */
 	call	rfillkpt
 
 	/* install a set of entries for the kernel's page tables */
-	lea	(UPAGES+1)*NBPG(%esi), %eax /* logical address of kernel page table */
+	lea	(UPAGES + 1)*NBPG(%esi), %eax /* logical address of kernel page table */
 	movl	$NSYSMAP, %ecx		/* for this many directory entries */
 	lea	SYSPDROFF*4(%esi), %ebx	/* offset into page directory of kernel program */
 	call	rfillkpt
 
 	/* install an entry recursively mapping the page directory as a page table */
-	movl	%esi, %eax		/* logical address of PTD in proc 0 */
-	movl	$1, %ecx		/* a single entry */
+	movl	%esi, %eax			/* logical address of PTD in proc 0 */
+	movl	$1, %ecx			/* a single entry */
 	lea	PDRPDROFF*4(%esi), %ebx	/* below the kernel entries */
 	call	rfillkpt
 
 	/* load base of page directory, and enable mapping */
-	movl	%esi, %eax		/* logical address of PTD in proc 0 */
+	movl	%esi, %eax			/* logical address of PTD in proc 0 */
 	call	reloc
 	movl	%eax, %ebx
-	movl	%eax, %cr3		/* load ptd addr into mmu */
-	movl	%cr0, %eax		/* get control word */
-	orl	$CR0_PG, %eax		/* turn on paging mode bit */
-	movl	%eax, %cr0		/* enter paged mode with this instr. */
+	movl	%eax, %cr3			/* load ptd addr into mmu */
+	movl	%cr0, %eax			/* get control word */
+	orl	$CR0_PG, %eax			/* turn on paging mode bit */
+	movl	%eax, %cr0			/* enter paged mode with this instr. */
 
 	/* assign stack for proc 0, at the end of it's pcb */
 	movl	proc0paddr, %eax
- 	addl	$UPAGES*NBPG-4*12, %eax /* XXX 4*12 is for printf's sake */
+ 	addl	$UPAGES*NBPG - 4 * 12, %eax	/* XXX 4*12 is for printf's sake */
  	movl	%eax, %esp
 
 	/* relocate program counter to high addresses */
@@ -342,7 +342,7 @@ begin:
 	movl	%edx, Crtat
 
 	/* clear bss */
-	movl	$_end, %ecx /* find end of kernel image */
+	movl	$_end, %ecx			/* find end of kernel image */
 	movl	$_edata, %edi
 	subl	%edi, %ecx
 	xorl	%eax, %eax
@@ -351,7 +351,7 @@ begin:
 	stosb
 
 	/* clear first kernel stack */
-	movl	$(UPAGES * NBPG)/4, %ecx
+	movl	$(UPAGES * NBPG) / 4, %ecx
 	movl	proc0paddr, %edi
 	xorl	%eax, %eax
 	cld
@@ -369,7 +369,7 @@ begin:
 	movw	%ax, %fs	/* bootstrap could have used these, zero */
 	movw	%ax, %gs
 
-	movl	$0, PTD /* blow away temporary "low" directory entry? */
+	movl	$0, PTD		/* blow away temporary "low" directory entry? */
 
 	/* bootstrap processor - void init386(int firstphys) */
 	call	init386
@@ -383,14 +383,14 @@ begin:
 	movzwl	_udatasel, %ecx
 
 	/* build an outer stack frame to enter user mode to execute proc 0 */
-	pushl	%ecx		/* user ss */
+	pushl	%ecx			/* user ss */
 	pushl	$USRSTACK - 4	/* user esp */
-	pushl	%eax		/* user cs */
-	pushl	$0		/* user ip */
-	movw	%cx, %ds	/* user ds */
-	movw	%cx, %es	/* user es */
-	movw	%cx, %gs	/* XXX and ds to gs */
- 	lret			/* goto user */
+	pushl	%eax			/* user cs */
+	pushl	$0				/* user ip */
+	movw	%cx, %ds		/* user ds */
+	movw	%cx, %es		/* user es */
+	movw	%cx, %gs		/* XXX and ds to gs */
+ 	lret					/* goto user */
 
 #ifdef	DIAGNOSTIC
 	pushl	$1f	/* lret failed - "should never get here!" */
@@ -407,7 +407,7 @@ begin:
 	/* relocate a logical address if "hole" is encountered */
 reloc:
 	cmpl	%eax, %ebp /* if at or above start of hole, */
-	ja	1f
+	ja		1f
 	subl	%ebp, %eax /* use physical pages above hole */
 	addl	$ENDHOLE, %eax
 1:	ret
@@ -427,7 +427,7 @@ rfillkpt:
 	call	reloc
 
 	movl	%eax, (%ebx)	/* stuff pte */
-	orl	%edx, (%ebx)	/* add protection bits to pte */
+	orl		%edx, (%ebx)	/* add protection bits to pte */
 
 	popl	%eax
 	popl	%ebx
@@ -469,7 +469,7 @@ ___main:	ret		/* gcc 2 errata */
  * If the execve() fails, process 1 exits.
  */
 icode:
-	pushl	$0		/* empty env, for now */
+	pushl	$0					/* empty env, for now */
 	movl	$argv, %eax
 	subl	$icode, %eax
 	pushl	%eax
@@ -478,22 +478,22 @@ icode:
 	subl	$icode, %eax
 	pushl	%eax
 
-	pushl	%eax		/* place holder for return address */
+	pushl	%eax				/* place holder for return address */
 
 	movl	%esp, %ebp
 	movl	$execve, %eax
 	lcall   $iBCSSYSCALLSEL, $0	/* execve("/sbin/init", argv, 0); */
 	pushl	$0
 	movl	$exit, %eax
-	pushl	%eax		/* place holder for return address */
+	pushl	%eax				/* place holder for return address */
 	lcall	$iBCSSYSCALLSEL, $0	/* exit(0); */
 
 init:
 	.asciz	"/sbin/init"
 	.align	2
 argv:
-	.long	init+6-icode	/* argv[0] = "init" ("/sbin/init" + 6) */
-	.long	eicode - icode	/* argv[1] follows icode after copyout */
+	.long	init + 6 - icode	/* argv[0] = "init" ("/sbin/init" + 6) */
+	.long	eicode - icode		/* argv[1] follows icode after copyout */
 	.long	0
 eicode:	/* main appends a string(s) here ... */
 
@@ -507,11 +507,11 @@ szicode:
 	.globl	sigcode, szsigcode
 sigcode:
 	call	*12(%esp)
-	xorl	%eax, %eax	/* smaller movl $103, %eax */
+	xorl	%eax, %eax			/* smaller movl $103, %eax */
 	movb	$103, %al
 	/* enter kernel with args on stack */
 	lcall	$iBCSSYSCALLSEL, $0	/* sigreturn(); */
-	hlt			/* never gets here */
+	hlt							/* never gets here */
 
 szsigcode:
 	.long	szsigcode - sigcode
@@ -534,7 +534,7 @@ ENTRY(ssdtosd)
 	movl	4(%ecx),%eax
 	movw	%ax,%dx
 	andl	$0xf0000,%eax
-	orl	%eax,%ebx
+	orl		%eax,%ebx
 	movl	12(%esp),%ecx
 	movl	%edx,(%ecx)
 	movl	%ebx,4(%ecx)
@@ -560,7 +560,7 @@ ENTRY(copyout_4)
 	movl	$copyout_fault1, PMD_ONFAULT(%ecx)	/* in case of fault */
 	movl	8(%esp), %edx
 	cmpl	$PTmap, %edx	/* out of user space */
-	jae	copyout_fault1
+	jae		copyout_fault1
 
 	shrl	$IDXSHIFT, %edx	/* fetch pte associated with address */
 	andb	$0xfc, %dl
@@ -568,14 +568,14 @@ ENTRY(copyout_4)
 
 	andb	$7, %dl		/* if we are the one case that won't trap... */
 	cmpb	$5, %dl
-	jne	1f
+	jne		1f
 				/* ... then simulate the trap! */
 	pushl	8(%esp)
 	call	_trapwrite	/* trapwrite(addr) */
 	popl	%edx
 	movl	curproc, %ecx
 	cmpl	$0, %eax	/* if not ok, return */
-	jne	copyout_fault1
+	jne		copyout_fault1
 1:
 	movl	8(%esp), %edx
 	movl	4(%esp), %eax
@@ -593,21 +593,21 @@ ENTRY(copyout_2)
 	movl	$copyout_fault1, PMD_ONFAULT(%ecx)	/* in case of fault */
 	movl	8(%esp), %edx
 	cmpl	$PTmap, %edx	/* out of user space */
-	jae	copyout_fault1
+	jae		copyout_fault1
 
 	shrl	$IDXSHIFT, %edx	/* calculate pte address */
 	andb	$0xfc, %dl
 	movl	PTmap(%edx), %edx
 	andb	$7, %dl		/* if we are the one case that won't trap... */
 	cmpb	$5, %dl
-	jne	1f
+	jne		1f
 				/* ..., then simulate the trap! */
 	pushl	8(%esp)
 	call	_trapwrite	/* trapwrite(addr) */
 	popl	%edx
 	movl	curproc, %ecx	# restore trashed registers
 	cmpl	$0, %eax	/* if not ok, return */
-	jne	copyout_fault1
+	jne		copyout_fault1
 1:
 	movl	8(%esp), %edx
 	movl	4(%esp), %eax
@@ -625,21 +625,21 @@ ENTRY(copyout_1)
 	movl	$copyout_fault1, PMD_ONFAULT(%ecx)	/* in case of fault */
 	movl	8(%esp),%edx
 	cmpl	$PTmap, %edx	/* out of user space */
-	jae	copyout_fault1
+	jae		copyout_fault1
 
 	shrl	$IDXSHIFT, %edx	/* calculate pte address */
 	andb	$0xfc, %dl
 	movl	PTmap(%edx), %edx
 	andb	$7, %dl		/* if we are the one case that won't trap... */
 	cmpb	$5, %dl
-	jne	1f
+	jne		1f
 				/* ..., then simulate the trap! */
 	pushl	8(%esp)
 	call	_trapwrite	/* trapwrite(addr) */
 	popl	%edx
 	movl	curproc, %ecx	# restore trashed registers
 	cmpl	$0, %eax	/* if not ok, return */
-	jne	copyout_fault1
+	jne		copyout_fault1
 1:
 	movl	8(%esp),%edx
 	movl	4(%esp),%eax
@@ -670,11 +670,11 @@ ENTRY(copyoutstr)
 	movl	28(%esp), %ebx	/* size */
 
 	cmpl	$PTmap, %edi	/* out of user space */
-	jae	9f
+	jae		9f
 	movl	%edi, %eax
 	addl	%ebx, %eax
 	cmpl	$PTmap, %eax
-	jae	9f
+	jae		9f
  				/* first, check to see if "write fault" */
 1:	movl	%edi, %eax
 	shrl	$IDXSHIFT, %eax	/* fetch pte associated with address */
@@ -683,21 +683,21 @@ ENTRY(copyoutstr)
 
 	andb	$7, %al		/* if we are the one case that won't trap... */
 	cmpb	$5, %al
-	jne	2f
+	jne		2f
 				/* ... then simulate the trap! */
 	pushl	%edi
 	call	_trapwrite	/* trapwrite(addr) */
 	popl	%eax
 
 	cmpl	$0, %eax	/* if not ok, return */
-	jne	9f
+	jne		9f
 				/* otherwise, continue with reference */
 2:	movl	%edi, %eax	/* calculate the remainder in this page */
 	andl	$NBPG-1, %eax
 	movl	$NBPG, %ecx
 	subl	%eax, %ecx
 	cmpl	%ecx, %ebx
-	jg	3f
+	jg		3f
 	movl	%ebx, %ecx
 3:	subl	%ecx, %ebx
 
@@ -706,10 +706,10 @@ ENTRY(copyoutstr)
 	movsb
 	loopne	5b
 	lahf
-	je	4f		/* null? normal termination. */
+	je		4f		/* null? normal termination. */
 
 	cmpl	$0, %ebx	/* any remainder? */
-	jne	1b
+	jne		1b
 
 	sahf
 	jne     7f		/* out of space */
@@ -728,17 +728,17 @@ ENTRY(copyoutstr)
 	/* termination count needs to be returned? */
 	movl	20(%esp), %edx	/* lencopied */
 	cmpl	$0, %edx
-	je	1f
+	je		1f
 	subl	%ecx, 16(%esp)	/* size */
 	movl	16(%esp), %ecx
 	movl	%ecx, (%edx)
 1:	ret
 
 7:	movl	$ENAMETOOLONG, %eax /* ran out of space in user process */
-	jmp	8b
+	jmp		8b
 
 9:	movl	$EFAULT, %eax /* detected a fault, return error */
-	jmp	8b
+	jmp		8b
 
 /*
  * Copy from kernel to user process:
@@ -755,46 +755,47 @@ ENTRY(copyout)
 	movl	28(%esp), %ebx	/* sz */
 
 	cmpl	$PTmap, %edi	/* out of user space */
-	jae	9f
+	jae		9f
 	movl	%edi, %eax
 	addl	%ebx, %eax
 	cmpl	$PTmap, %eax
-	jae	9f
+	jae		9f
  				/* first, check to see if "write fault" */
 1:	movl	%edi, %eax
 	shrl	$IDXSHIFT, %eax	/* fetch pte associated with address */
 	andb	$0xfc, %al
 	movl	PTmap(%eax), %eax
 
-	andb	$7, %al		/* if we are the one case that won't trap... */
+	andb	$7, %al			/* if we are the one case that won't trap... */
 	cmpb	$5, %al
-	jne	2f
+	jne		2f
 				/* ... then simulate the trap! */
 	pushl	%edi
-	call	_trapwrite	/* trapwrite(addr) */
+	call	_trapwrite		/* trapwrite(addr) */
 	popl	%eax
 
-	cmpl	$0, %eax	/* if not ok, return */
-	je	9f
+	cmpl	$0, %eax		/* if not ok, return */
+	je		9f
 				/* otherwise, continue with reference */
-2:	movl	%edi, %eax	/* calculate the remainder in this page */
+2:	movl	%edi, %eax		/* calculate the remainder in this page */
 	andl	$NBPG-1, %eax
 	movl	$NBPG, %ecx
 	subl	%eax, %ecx
 	cmpl	%ecx, %ebx
-	jg	3f
+	jg		3f
 	movl	%ebx, %ecx
 3:	subl	%ecx, %ebx
 	movl	%ecx, %edx
 
-	shrl	$2, %ecx	/* move a page fragment */
-	cld; rep; movsl
+	shrl	$2, %ecx		/* move a page fragment */
+	cld;
+	rep; movsl
 	movl	%edx, %ecx
 	andl	$3, %ecx
 	rep; movsb
 
-	cmpl	$0, %ebx	/* any remainder? */
-	jne	1b
+	cmpl	$0, %ebx		/* any remainder? */
+	jne		1b
 
 	popl	%ebx
 	popl	%edi
@@ -804,7 +805,7 @@ ENTRY(copyout)
 	movl	%eax, PMD_ONFAULT(%edx)
 	ret
 
-9:	popl	%ebx		/* detected a fault, return error */
+9:	popl	%ebx			/* detected a fault, return error */
 	popl	%edi
 	popl	%esi
 	movl	4(%esp), %edx
@@ -831,15 +832,15 @@ ENTRY(copyout)
  * to wait for something to come ready.
  */
 	.globl	Idle
-	.align 4
+	.align	4
 Idle:
-	call	splnone	/* idle with all interrupts unmasked */
-	cmpl	$0, whichqs	/* if any process ready on queue, */
-	jne	swtch_selq	/*  reenter scheduler after saves. */
+	call	splnone			/* idle with all interrupts unmasked */
+	cmpl	$0, whichqs		/* if any process ready on queue, */
+	jne		swtch_selq		/*  reenter scheduler after saves. */
 	cmpl	$0, dma_active	/* don't use hlt if DMA is active */
-	jne	Idle
-	hlt			/* wait for interrupt */
-	jmp	Idle
+	jne		Idle
+	hlt						/* wait for interrupt */
+	jmp		Idle
 
 /*
  * void swtch(void)
@@ -848,7 +849,7 @@ Idle:
 ENTRY(swtch)
 ALTENTRY(final_swtch)
 	PROC_ENTRY
-	incl	cnt+V_SWTCH
+	incl	cnt + V_SWTCH
 
 	/* mark as not in a process, remembering "old" process */
 	xorl	%eax, %eax
@@ -856,16 +857,16 @@ ALTENTRY(final_swtch)
 	pushl	%eax
 
 	/* now find highest priority full process queue or idle */
-	pushl %ebx
-	pushl %esi
+	pushl	%ebx
+	pushl	%esi
 
 swtch_selq:
-	bsfl	whichqs, %eax		/* find a full queue */
-	jz      Idle                    /* if none, idle */
+	bsfl	whichqs, %eax	/* find a full queue */
+	jz      Idle			/* if none, idle */
 
-	btrl	%eax, whichqs		/* clear queue full status */
-	jnc	swtch_selq		/* if it was clear, look for another */
-	cli				/* interrupts off until after swtch() */
+	btrl	%eax, whichqs	/* clear queue full status */
+	jnc		swtch_selq		/* if it was clear, look for another */
+	cli						/* interrupts off until after swtch() */
 	movl	%eax, %ebx		/* save queue head index */
 	shll	$3, %eax		/* select associated queue */
 	addl	$qs, %eax
@@ -874,7 +875,7 @@ swtch_selq:
 #ifdef	DIAGNOSTIC
 	/* check if the queue head is linked to itself (empty) */
 	cmpl	P_LINK(%eax), %eax
-	je	2f
+	je		2f
 #endif
 
 	/* unlink first process attached to the queue head */
@@ -886,7 +887,7 @@ swtch_selq:
 
 	/* if queue is still full, set full status in queue status word */
 	cmpl	P_LINK(%ecx), %esi
-	je	1f
+	je		1f
 	btsl	%ebx, whichqs
 1:
 
@@ -895,24 +896,24 @@ swtch_selq:
 #ifdef	DIAGNOSTIC
 	/* process should not be sleeping but runnable */
 	cmpl	%eax, P_WCHAN(%ecx)
-	jne	2f
+	jne		2f
 	cmpb	$SRUN, P_STAT(%ecx)
-	jne	2f
+	jne		2f
 #endif
 
 	movl	%eax, P_RLINK(%ecx) /* isolate process to run */
 
 	/* recover state of previous register contents */
-	popl %esi
-	popl %ebx
+	popl	%esi
+	popl	%ebx
 
 	/* recover previous process pointer */
-	popl  %eax
+	popl	%eax
 	PROC_EXIT
 
 	/* if process is switching to itself then don't ljmp */
 	cmpl	%ecx, %eax
-	je	1f
+	je		1f
 
 	ljmp	*(PMD_TSEL - 4)(%ecx)
 1:	movl	%eax, curproc		/* into next process */
@@ -933,34 +934,34 @@ swtch_selq:
  */
 ENTRY(qswtch)
 	PROC_ENTRY
-	incl	cnt+V_SWTCH
+	incl	cnt + V_SWTCH
 
 	/* mark as not in a process, remembering "old" process */
 	xorl	%eax, %eax
 	xchgl	%eax, curproc
 	pushl	%eax
 
-	pushl %ebx
-	pushl %esi
+	pushl	%ebx
+	pushl	%esi
 
 	cli
 	/* stick on a queue */
 #ifdef	DIAGNOSTIC
 	cmpl	$0, P_RLINK(%eax)	/* should not be on q already */
-	jne	1f
+	jne		1f
 #endif
 	andl	$~MDP_RESCHED, PMD_FLAGS(%eax)
 	movzbl	P_PRI(%eax), %edx
 	shrl	$2, %edx
 	btsl	%edx, whichqs		/* set q full bit */
 	shll	$3, %edx
-	addl	$qs, %edx		/* locate q hdr */
+	addl	$qs, %edx			/* locate q hdr */
 	movl	%edx, P_LINK(%eax)	/* link process on tail of q */
 	movl	P_RLINK(%edx), %ecx
 	movl	%ecx, P_RLINK(%eax)
 	movl	%eax, P_RLINK(%edx)
 	movl	%eax, P_LINK(%ecx)
-	jmp	swtch_selq
+	jmp		swtch_selq
 
 #ifdef	DIAGNOSTIC
 1:	pushl	$2f
@@ -972,11 +973,11 @@ ENTRY(qswtch)
 	.data
 	.globl	proc0paddr
 proc0paddr:	.long	0	/* process 0 address of kstack. */
-	.space 4
+	.space	4
 	.globl	intrnames, _eintrnames, _intrcnt, _eintrcnt
-intrnames:	.space 16*4
+intrnames:	.space 16 * 4
 _eintrnames:
-_intrcnt:	.space 16*4
+_intrcnt:	.space 16 * 4
 _eintrcnt:
 
 	.text
@@ -1033,15 +1034,15 @@ _eintrcnt:
 common_traps:
 	pushal
 	nop
-	push %ds
-	push %es
+	push	%ds
+	push	%es
 	movw	$KDSEL, %ax
 	movw	%ax,%ds
 	movw	%ax,%es
 	incl	cnt+V_TRAP
 	call	trap
 	movl	cpl, %ecx
-	jmp	trap_exit
+	jmp		trap_exit
 
 /*
  * Interrupts, otherwise known as asynchronous traps.
@@ -1053,15 +1054,17 @@ common_traps:
  * Macro's for interrupt level priority masks (used in interrupt vector entry)
  */
 
-#define	WUP(n)	\
-	pushl %eax  ; \
-	pushl $n  ; \
-	inb $IO_ICU2+1, %al ; \
-	movb %al,%ah ; \
-	inb $IO_ICU1+1, %al ; \
-	pushl %eax ; \
-	call _wpl ; \
-	popl %eax ;  popl %eax ;  popl %eax ; 
+#define	WUP(n)					\
+	pushl	%eax  ;				\
+	pushl	$n  ;				\
+	inb		$IO_ICU2+1, %al ;	\
+	movb	%al,%ah ;			\
+	inb		$IO_ICU1+1, %al ;	\
+	pushl	%eax ;				\
+	call	_wpl ;				\
+	popl	%eax ;				\
+	popl	%eax ;				\
+	popl	%eax ; 
 
 /* If this is an old 386 that requires recovery time on the 8259, add nops */
 #define	NOP	/* none with modern machines */
@@ -1074,20 +1077,20 @@ common_traps:
 	pushl	$0 ; \
 	pushl	$T_ASTFLT ; \
 	pushal ; \
-	NOP ;			/* wait for 8259 recovery */ \
-	movb	$3, %al ; 	/* select ISR ... */ \
-	outb	%al, $IO_ICU1 ; /* in 8259 unit 1 ...*/ \
-	NOP ;			/* wait for 8259 recovery */ \
-	inb	$IO_ICU1, %al ;	/* grab ISR */ \
-	movb	%al, %dl ;	/* save ISR */ \
-	NOP ;			/* ... ASAP */ \
-	movb	$2, %al ; 	/* reselect IRR ... */ \
+	NOP ;					/* wait for 8259 recovery */ \
+	movb	$3, %al ; 		/* select ISR ... */ \
+	outb	%al, $IO_ICU1 ;	/* in 8259 unit 1 ...*/ \
+	NOP ;					/* wait for 8259 recovery */ \
+	inb		$IO_ICU1, %al ;	/* grab ISR */ \
+	movb	%al, %dl ;		/* save ISR */ \
+	NOP ;					/* ... ASAP */ \
+	movb	$2, %al ; 		/* reselect IRR ... */ \
 	outb	%al, $IO_ICU1 ; /* ... ...*/ \
-	NOP ;			/* ... ASAP */ \
+	NOP ;					/* ... ASAP */ \
 	movb	$(0x20 | unit), %al ; 	/* next, as soon as possible send EOI ... */ \
 	outb	%al, $IO_ICU1 ; /* ... so in service bit may be cleared ...*/ \
-	NOP ;			/* wait for 8259 recovery */ \
-	pushl	%ds ; 		/* save our data and extra segments ... */ \
+	NOP ;					/* wait for 8259 recovery */ \
+	pushl	%ds ; 			/* save our data and extra segments ... */ \
 	pushl	%es ; \
 	movw	$KDSEL, %ax ;	/* ... and reload with kernel's own */ \
 	movw	%ax, %ds ; \
@@ -1097,41 +1100,41 @@ common_traps:
 	shll	$8, %edx ; \
 	movb	$unit, %dl ; \
 	pushl	%edx ; \
-	orw	mask, %ax ; \
+	orw		mask, %ax ; \
 	movl	%eax,cpl ; \
-	orw	imen, %ax ; \
+	orw		imen, %ax ; \
 	outb	%al, $IO_ICU1+1 ; \
-	NOP ;			/* wait for 8259 recovery */ \
+	NOP ;					/* wait for 8259 recovery */ \
 	movb	%ah, %al ; \
 	outb	%al, $IO_ICU2+1	; \
-	NOP ;			/* wait for 8259 recovery */ \
-	WRPOST ; /* do write post */ \
+	NOP ;					/* wait for 8259 recovery */ \
+	WRPOST ;				/* do write post */ \
 	sti ; \
 	call	isa_strayintr ; \
-	jmp	common_int_return
+	jmp		common_int_return
 
 #define	INTRSTRAY2(unit, mask, offst) \
 	pushl	$0 ; \
 	pushl	$T_ASTFLT ; \
 	pushal ; \
-	NOP ;			/* wait for 8259 recovery */ \
-	movb	$3, %al ; 	/* select ISR ... */ \
+	NOP ;					/* wait for 8259 recovery */ \
+	movb	$3, %al ; 		/* select ISR ... */ \
 	outb	%al, $IO_ICU2 ; /* in 8259 unit 2 ...*/ \
-	NOP ;			/* wait for 8259 recovery */ \
-	inb	$IO_ICU2, %al ;	/* grab ISR */ \
+	NOP ;					/* wait for 8259 recovery */ \
+	inb		$IO_ICU2, %al ;	/* grab ISR */ \
 	xorb	%dl, %dl ;	 \
-	movb	%al, %dh ;	/* save ISR */ \
-	NOP ;			/* ... ASAP */ \
-	movb	$2, %al ; 	/* reselect IRR ... */ \
+	movb	%al, %dh ;		/* save ISR */ \
+	NOP ;					/* ... ASAP */ \
+	movb	$2, %al ; 		/* reselect IRR ... */ \
 	outb	%al, $IO_ICU2 ; /* ... ...*/ \
 	movb	$0x62, %al ; 	/* next, as soon as possible send EOI ... */ \
 	outb	%al, $IO_ICU1 ; /* ... so in service bit may be cleared ...*/ \
-	NOP ;			/* wait for 8259 recovery */ \
+	NOP ;					/* wait for 8259 recovery */ \
 	movb	$(0x60|(unit-8)), %al ; 	/* next, as soon as possible send EOI ... */ \
 	outb	%al, $IO_ICU1 ; /* ... so in service bit may be cleared ...*/ \
 	outb	%al, $IO_ICU2 ; /* ... ...*/ \
-	NOP ;			/* wait for 8259 recovery */ \
-	pushl	%ds ; 		/* save our data and extra segments ... */ \
+	NOP ;					/* wait for 8259 recovery */ \
+	pushl	%ds ; 			/* save our data and extra segments ... */ \
 	pushl	%es ; \
 	movw	$KDSEL, %ax ;	/* ... and reload with kernel's own */ \
 	movw	%ax, %ds ; \
@@ -1141,17 +1144,17 @@ common_traps:
 	shll	$8, %edx ; \
 	movb	$unit, %dl ; \
 	pushl	%edx ; \
-	orw	mask, %ax ; \
+	orw		mask, %ax ; \
 	movl	%eax,cpl ; \
-	orw	imen, %ax ; \
+	orw		imen, %ax ; \
 	outb	%al, $IO_ICU1+1 ; \
-	NOP ;			/* wait for 8259 recovery */ \
+	NOP ;					/* wait for 8259 recovery */ \
 	movb	%ah, %al ; \
 	outb	%al, $IO_ICU2+1	; \
-	WRPOST ; /* do write post */ \
+	WRPOST ;				/* do write post */ \
 	sti ; \
 	call	isa_strayintr ; \
-	jmp	common_int_return
+	jmp		common_int_return
 
 /*
  * Stray Interrupt Catcher Table
@@ -1188,28 +1191,28 @@ common_traps:
 	pushal; \
 	NOP ; \
 	movb	$(0x60|offst), %al; 	/* next, as soon as possible send EOI ... */ \
-	outb	%al, $IO_ICU1; /* ... so in service bit may be cleared ...*/ \
-	pushl	%ds; 		/* save our data and extra segments ... */ \
+	outb	%al, $IO_ICU1;			/* ... so in service bit may be cleared ...*/ \
+	pushl	%ds; 					/* save our data and extra segments ... */ \
 	pushl	%es; \
-	movw	$0x10, %ax;	/* ... and reload with kernel's own */ \
+	movw	$0x10, %ax;				/* ... and reload with kernel's own */ \
 	movw	%ax, %ds; \
 	movw	%ax, %es; \
-	incl	cnt+V_INTR;	/* tally interrupts */ \
+	incl	cnt+V_INTR;				/* tally interrupts */ \
 	incl	_intrcnt+offst*4; \
 	movl	cpl, %eax; \
 	pushl	%eax; \
 	pushl	isa_unit+offst*4; \
 	orw		isa_mask+offst*2, %ax; \
 	movl	%eax, cpl; \
-	orw	imen, %ax; \
+	orw		imen, %ax; \
 	NOP ; \
 	outb	%al, $IO_ICU1+1; \
 	movb	%ah, %al; \
 	outb	%al, $IO_ICU2+1; \
-	WRPOST ; /* do write post */ \
+	WRPOST ;						/* do write post */ \
 	sti; \
 	call	*(isa_vec+(offst*4)); \
-	jmp	common_int_return
+	jmp		common_int_return
 
 /* Mask a group of interrupts atomically */
 #define	INTR2(offst) \
@@ -1217,28 +1220,28 @@ common_traps:
 	pushl	$T_ASTFLT; \
 	pushal; \
 	NOP ; \
-	movb	$(0x60|(offst-8)), %al; 	/* next, as soon as possible send EOI ... */ \
+	movb	$(0x60|(offst-8)), %al;		/* next, as soon as possible send EOI ... */ \
 	outb	%al, $IO_ICU2; \
-	movb	$0x62, %al; 	/* next, as soon as possible send EOI ... */ \
-	outb	%al, $IO_ICU1; /* ... so in service bit may be cleared ...*/ \
-	pushl	%ds; 		/* save our data and extra segments ... */ \
+	movb	$0x62, %al; 				/* next, as soon as possible send EOI ... */ \
+	outb	%al, $IO_ICU1;				/* ... so in service bit may be cleared ...*/ \
+	pushl	%ds; 						/* save our data and extra segments ... */ \
 	pushl	%es; \
-	movw	$0x10, %ax;	/* ... and reload with kernel's own */ \
+	movw	$0x10, %ax;					/* ... and reload with kernel's own */ \
 	movw	%ax, %ds; \
 	movw	%ax, %es; \
-	incl	cnt+V_INTR;	/* tally interrupts */ \
+	incl	cnt+V_INTR;					/* tally interrupts */ \
 	incl	_intrcnt+offst*4; \
 	movl	cpl,%eax; \
 	pushl	%eax; \
 	pushl	isa_unit+offst*4; \
 	orw		isa_mask+offst*2, %ax; \
-	movw	%ax, cpl; \
+	movl	%eax, cpl; \
 	orw		imen, %ax; \
 	outb	%al, $IO_ICU1+1; \
 	NOP ; \
 	movb	%ah, %al; \
 	outb	%al, $IO_ICU2+1; \
-	WRPOST ; /* do write post */ \
+	WRPOST ;							/* do write post */ \
 	sti; \
 	call	*(isa_vec+offst*4); \
 	jmp		common_int_return
@@ -1296,18 +1299,18 @@ netmask:	.long	0
  * Mechanism to discover interrupt latency with NMI failsafe timer
  */
 #ifdef IRQFAILSAFE
-	.globl	_splstart
-_splstart:	.long	0
-#define	ENFAILSAFE	cmpl	$0, _splstart ;	\
-	jne	3f ;		\
-	movl	0(%esp), %eax ; \
-	movl	%eax, _splstart ; \
-	call	_failsafe_start ; \
+	.globl	splstart
+splstart:	.long	0
+#define	ENFAILSAFE	cmpl	$0, splstart ;	\
+	jne		3f ;				\
+	movl	0(%esp), %eax ;		\
+	movl	%eax, splstart ;	\
+	call	_failsafe_start ;	\
 3:
-#define	DISFAILSAFE	cmpl	$0, _splstart ;	\
-	je	4f ;		\
-	movl	$0, _splstart ; \
-	call	_failsafe_cancel ; \
+#define	DISFAILSAFE	cmpl	$0, splstart ;	\
+	je		4f ;				\
+	movl	$0, splstart ; 		\
+	call	_failsafe_cancel ;	\
 4:
 #else
 #define	ENFAILSAFE
@@ -1327,7 +1330,7 @@ common_int_return:
 	movl	%eax, %ecx
 	cli
 	movl	%eax, cpl
-	orw	imen, %ax
+	orw		imen, %ax
 	outb	%al, $IO_ICU1+1		/* re-enable intr? */
 	NOP
 	movb	%ah, %al
@@ -1336,14 +1339,14 @@ common_int_return:
 
 trap_exit:
 	testl	%ecx, %ecx		/* returning to zero? */
-	je	9f
+	je		9f
 
 	/* returning to greater than basepri */
 5:
 8:
 	/* WUP(1)*/
-	pop	%es			/* returning to previous context */
-	pop	%ds
+	pop		%es			/* returning to previous context */
+	pop		%ds
 	popal
 	nop
 	addl	$8, %esp
@@ -1360,29 +1363,29 @@ iret:
 	/* first, look for asts ... */
 	/* testw $0x3, 13*4(%esp) */
 	cmpw	$0x1f, 13*4(%esp)
-	jne	1f			/* no asts, move on to swintrs */
+	jne		1f			/* no asts, move on to swintrs */
 	movl	curproc, %edx		/* have we a process? */
 	/* testl	%edx, %edx	must have if going back to user 
 	je	1f */
 /*testl	%edx, %edx	
 je	9f*/
 	btrl	$0, PMD_FLAGS(%edx)
-	jc	6f
+	jc		6f
 
 	/* then network software interrupts */
 1:
 	xorl	%ebx, %ebx
 	xchgl	%ebx, netisr
 	testl	%ebx, %ebx
-	jne	4f
+	jne		4f
 
 3:	/* next, look for softclocks. */
 	xorl	%eax, %eax
 	xchgl	%eax, sclkpending
 	testl	%eax, %eax
-	jne	5f
+	jne		5f
 
-	jmp	8b			/* return at base pri */
+	jmp		8b			/* return at base pri */
 
 	
 #include "netisr.h"
@@ -1390,24 +1393,24 @@ je	9f*/
 4:
 	movl	$IRNET|IRSCLK, cpl	/* mask net and softclock */
 	sti
-	.globl netintr
-#define DONET(s, c)	; \
-	.globl	c ;  \
-	btrl	$ s , %ebx ;  \
-	jnc	1f ; \
-	incl	cnt+V_SOFT ; \
-	call	c ; \
+	.globl	netintr
+#define DONET(s, c)	;		\
+	.globl	c ;				\
+	btrl	$ s , %ebx ; 	\
+	jnc		1f ;			\
+	incl	cnt+V_SOFT ;	\
+	call	c ;				\
 1:
 
-#define DONETS(isr, tmp)	;	\
-1:					\
+#define DONETS(isr, tmp)	;		\
+1:									\
 	bsfl	isr , tmp ;	/* find a software interrupt */ \
-	jz 1f	;			\
-	btrl	tmp , isr ; 		\
-	jnc	1f ; 			\
-	incl	cnt + V_SOFT ;		\
+	jz		1f	;					\
+	btrl	tmp , isr ; 			\
+	jnc		1f ; 					\
+	incl	cnt + V_SOFT ;			\
 	call	*netintr(, tmp ,4) ;	\
-	jmp	1b ;			\
+	jmp		1b ;					\
 1:
 	
 
@@ -1424,7 +1427,7 @@ je	9f*/
 #else
 	DONETS(%ebx, %eax)
 #endif
-	jmp 9b
+	jmp		9b
 
 5:	/* simulate a hardware interrupt for softclock() */
 	movl	$IRSCLK, cpl	/* mask softclock */
@@ -1433,10 +1436,10 @@ je	9f*/
 
 	pushl	13*4(%esp)		/* cs */
 	pushl	13*4(%esp)		/* eip */
-	pushl	$0			/* basepri */
+	pushl	$0				/* basepri */
 	call	softclock		/* softclock(clockframe); */
 	addl	$12, %esp
-	jmp 9b
+	jmp		9b
 
 6:	/* have an AST to deliver */
 	sti
@@ -1444,7 +1447,7 @@ je	9f*/
 	/* movl	%eax, 11*4(%esp) */	/* error code contains md_flags */
 	movl	$T_ASTFLT, 10*4(%esp)
 	call	trap			/* trap(struct trapframe); */
-	jmp 9b
+	jmp		9b
 
 #ifdef	DIAGNOSTIC
 9:	pushl	$1f
@@ -1457,29 +1460,29 @@ je	9f*/
  * Interrupt priority mechanism
  */
 #define	COMMON_SPL							\
-	movl	%eax, %edx ;						\
-	orw	imen, %ax ;	/* mask off those not enabled yet */	\
+	movl	%eax, %edx ;					\
+	orw		imen, %ax ;			/* mask off those not enabled yet */	\
 	outb	%al, $IO_ICU1+1 ;	/* update icu's */		\
 	NOP ; \
 	movb	%ah, %al ;						\
-	outb	%al, $IO_ICU2+1 ;					\
-	WRPOST ;	 /* write post before restoring interrupts */	\
-	xchgl	%edx, cpl ;	 /* exchange old/new priority level */	\
-	movl %edx, %eax ; \
-	sti ;				/* enable interrupts */		\
+	outb	%al, $IO_ICU2+1 ;				\
+	WRPOST ;					/* write post before restoring interrupts */	\
+	xchgl	%edx, cpl ;			/* exchange old/new priority level */	\
+	movl	%edx, %eax ;					\
+	sti ;						/* enable interrupts */		\
 	/* WUP(3) ; */ \
 	ret
 
 	.globl	splhigh
 splhigh:
-	movl	$IRHIGH, %eax	/* set new priority level with interrupts off */
+	movl	$IRHIGH, %eax		/* set new priority level with interrupts off */
 	cli
 	COMMON_SPL
 
 	.globl	splclock
 splclock:
 	movl	cpl, %eax
-	orb	$IRQ0, %al	/* set new priority level with interrupts off */
+	orb		$IRQ0, %al			/* set new priority level with interrupts off */
 	cli
 	COMMON_SPL
 
@@ -1496,28 +1499,28 @@ _splimp:
 	cli				# disable interrupts
 	DISFAILSAFE
 	movl	cpl, %eax
-	orw	netmask, %ax
+	orw		netmask, %ax
 	COMMON_SPL
 
-	.globl	splbio	
+	.globl	splbio
 splbio:
 	cli				# disable interrupts
 	DISFAILSAFE
 	movl	cpl, %eax
-	orw	biomask, %ax
+	orw		biomask, %ax
 	COMMON_SPL
 
 	.globl	splsoftclock
 splsoftclock:
 	PROC_ENTRY
 	cli
-	pushl	cpl			/* save old priority */
-	movw	imen, %ax		/* mask off those not enabled yet */
+	pushl	cpl					/* save old priority */
+	movw	imen, %ax			/* mask off those not enabled yet */
 	outb	%al, $IO_ICU1+1		/* update icu's */
 	NOP
 	movb	%ah, %al
 	outb	%al, $IO_ICU2+1
-	WRPOST			 /* write post before restoring interrupts */
+	WRPOST						/* write post before restoring interrupts */
 
 #ifdef nope
 	pushl	%ebx
@@ -1527,7 +1530,7 @@ splsoftclock:
 	movl	$IRNET|IRSCLK, cpl	# set new priority level
 
 	testl	%ebx, %ebx
-	je	2f
+	je		2f
 	
 	sti
 #ifdef nope
@@ -1544,13 +1547,13 @@ splsoftclock:
 	DONETS(%ebx, %eax)
 #endif
 	cli
-	jmp 9b
+	jmp		9b
 2:
 #endif
 	movl	$IRSCLK, cpl		/* set new priority level */
 	sti
 	/* popl	%ebx */
-	popl	%eax			/* return old priority */
+	popl	%eax				/* return old priority */
 	PROC_EXIT
 	ret
 
@@ -1580,7 +1583,7 @@ splnone:
 	movl	$IRNET|IRSCLK, cpl	# set new priority level
 
 	testl	%ebx, %ebx
-	je	5f
+	je		5f
 	
 	sti
 #ifdef	nope
@@ -1597,7 +1600,7 @@ splnone:
 	DONETS(%ebx, %eax)
 #endif
 	cli
-	jmp	9b
+	jmp		9b
 
 5:
 #ifdef notdef
@@ -1606,7 +1609,7 @@ splnone:
 	movl	$IRSCLK, cpl		/* set new priority level */
 
 	testl	%ebx, %ebx
-	je	1f
+	je		1f
 
 	/* create a softclock interrupt frame */
 	sti
@@ -1616,7 +1619,7 @@ splnone:
 	call	softclock		/* softclock(clockframe); */
 	addl	$12, %esp
 	cli
-	jmp	9b
+	jmp		9b
 
 1:
 #endif
@@ -1627,13 +1630,13 @@ splnone:
 	PROC_EXIT
 	ret
 
-	.globl splx
+	.globl	splx
 splx:
 	movl	4(%esp), %eax		# new priority level
 	cmpl	$0, %eax
-	je	splnone		# going to "zero level" is special
+	je		splnone		# going to "zero level" is special
 	cmpl	$IRSCLK, %eax
-	je	splsoftclock		# going to "softclock level" is special
+	je		splsoftclock		# going to "softclock level" is special
 
 	cli
 	COMMON_SPL
@@ -1662,19 +1665,19 @@ syscall_entry:
 	btrl	$0, PMD_FLAGS(%edx)
 	
 	/* an ast? */
-	jc	7f
+	jc		7f
 
 	/* any network software interrupts present? */
 	xorl	%ebx, %ebx
 	xchgl	%ebx, netisr
 	testl	%ebx, %ebx
-	jne	5f
+	jne		5f
 
 	/* need a software clock interrupt? */
 	xorl	%edi, %edi
 	xchgl	%edi, sclkpending
 	testl	%edi, %edi
-	jne	6f
+	jne		6f
 
 	movl	$0, cpl
 	/* WUP(2) */
@@ -1706,7 +1709,7 @@ syscall_lret:
 #else
 	DONETS(%ebx, %eax)
 #endif
-	jmp	9b
+	jmp		9b
 
 6:	/* simulate a hardware interrupt */
 	incl	cnt+V_SOFT
@@ -1718,10 +1721,10 @@ syscall_lret:
 	pushl	$0			/* basepri */
 	call	softclock		/* softclock(clockframe); */
 	addl	$12, %esp
-	jmp	9b
+	jmp		9b
 
 7:
 	sti
 	incl	cnt+V_TRAP
 	call	systrap		/* systrap(struct syscframe); */
-	jmp 9b
+	jmp		9b

@@ -67,6 +67,7 @@ roundrobin(void)
 fixpt_t	ccpu = 0.95122942450071400909 * FSCALE;		/* exp(-1/20) */
 
 static void endtsleep(struct proc *p);
+extern int splclock(void);
 
 /*
  * If `ccpu' is not equal to `exp(-1/20)' and you still want to use the
@@ -204,6 +205,10 @@ int safepri;
  * if possible, and EINTR is returned if the system call should
  * be interrupted by the signal (return EINTR).
  */
+#include "sys/param.h"
+#include "fs/ufs_dinode.h"
+#include "ufs.h"
+#include "buf.h"
 int
 tsleep(caddr_t chan, int pri, char *wmesg, int timo)
 {
@@ -268,8 +273,10 @@ tsleep(caddr_t chan, int pri, char *wmesg, int timo)
 	swtch();
 
 	/* handy breakpoint location after process "wakes" */
+/*
 #define	BP(s)	asm (".globl bp" # s " ; bp" # s ": ; ")
 	BP(sleeprun);
+*/
 
 resume:
 	curpri = p->p_usrpri;

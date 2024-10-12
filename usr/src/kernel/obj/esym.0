@@ -1,0 +1,48 @@
+ESYM(9)                    Kernel Developer’s Manual                   ESYM(9)
+
+[1mNAME[0m
+       esym — kernel external symbol table
+
+[1mSYNOPSIS[0m
+       [1m#include "esym.h"[0m
+
+       [1mesym_bind[22m([4msymbol[24m);
+
+       [1mesym_unbind[22m([4msymbol[24m);
+
+       [4mvoid[24m [4m*[0m
+       [1mesym_fetch[22m([4msymbol[24m);
+
+[1mDESCRIPTION[0m
+       Services  provide  by  modules  other  than the core kernel module (see
+       [4mkern[24m(9) ) that may or may not be loaded in the kernel  program  may  be
+       accessed from all other modules via the external symbol table.  This is
+       the  way  an  optionally, dynamically bound symbol can be accessed from
+       any part of the kernel, unlike the statically bound symbols in the  re‐
+       set of the program.
+
+       Symbols  are  manually  entered into the external symbol table with the
+       [1mesym_bind[22m() function, that associates the symbol name with  a  specific
+       kernel  address.   These  addresses  can  be  then  recovered  via  the
+       [1mesym_fetch[22m() function, which obtains the address associated with a sym‐
+       bol of the given name which was already bound. Symbols can  be  rebound
+       by  breaking  the binding with the [1mesym_unbind[22m() function, allowing the
+       symbol to be bound differently with another [1mesym_bind[22m() call.
+
+       While symbols are bound explicitly by the kernel  modules  implementing
+       the  services  used  elsewhere,  service  clients  implicitly  use  the
+       [1mesym_fetch[22m() function via inline stub functions and macros  present  in
+       include  files  (located  adjacent  to  the function prototypes for the
+       functions implemented).
+
+       The external symbol table does not use dynamic memory allocation or any
+       blocking resource, thus is usable anywhere in the kernel program.
+
+[1mRETURN VALUES[0m
+       The [1mesym_fetch[22m() function returns an address of the symbol if  present;
+       otherwise a null address is returned.
+
+[1mSEE ALSO[0m
+       [4mkern[24m(9)
+
+386BSD 1                        August 29, 1994                        ESYM(9)

@@ -1,0 +1,15 @@
+NULL(4)                     Kernel Interfaces Manual                   NULL(4)
+
+[1mNAME[0m
+       zero — the zero‐fill device
+
+[1mDESCRIPTION[0m
+       The [1mzero [22mdevice reads as if an infinitely long file of zeros.  Like the
+       [4mnull[24m(4)  device, the [1mzero [22mdevice accepts and reads data as any ordinary
+       (and willing) file - but throws it away. The length of the [1mzero  [22mdevice
+       is always zero.
+
+[1mFILES[0m
+       [4m/dev/null[0m
+
+4.4BSD                           June 28, 1994                         NULL(4)

@@ -40,13 +40,18 @@ static char *kern_config =
 #include "sys/mount.h"
 #include "sys/stat.h"
 #include "sys/reboot.h"
+#include "dmap.h"
+#include "machine/cpu.h"
 #include "filedesc.h"
 #include "kernel.h"		/* for boot time and time */
+#include <kmem.h>
+#include <mbuf.h>
 #include "resourcevar.h"
 #include "uio.h"
 #include "malloc.h"
 #include "modconfig.h"
 
+#include "vm_pageout.h"
 #include "vnode.h"
 /*#include "quota.h" ??? */
 
@@ -236,16 +241,15 @@ void _main()
 	vm_object_init();
 
 	/* virtual layer */
-	vm_map_startup(/*VM_KMEM_SIZE + VM_MBUF_SIZE + VM_PHYS_SIZE,
-	    MAXALLOCSAVE*/);
+	vm_map_startup();
 	kmem_init();
 
 	/* address translation layer */
 	pmap_init();
 	/* pager layer */
-	vm_pager_init(/*VM_PHYS_SIZE*/);
+	vm_pager_init();
 
-	kmeminit(/*VM_KMEM_SIZE, MAXALLOCSAVE*/);
+	kmeminit();
 
 	/* configure any extended module services before rest of modules */
 	modscaninit(MODT_EXTDMOD);
