@@ -14,7 +14,8 @@
 			"CR23RR~4.C": "cpp",
 			"socketvar.h": "c",
 			"prototypes.h": "c",
-			"vm_pageout.h": "c"
+			"vm_pageout.h": "c",
+			"ufs_dir.h": "c"
 		}
 	}
 }

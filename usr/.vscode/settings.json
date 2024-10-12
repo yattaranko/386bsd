@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "auxdev.C": "cpp",
+        "prototypes.h": "c",
+        "isym.h": "c",
+        "proc.h": "c"
+    }
+}
