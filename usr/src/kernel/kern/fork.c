@@ -51,7 +51,6 @@ fork(p, uap, retval)
 	void *uap;
 	int retval[];
 {
-
 	return (fork1(p, 0, retval));
 }
 

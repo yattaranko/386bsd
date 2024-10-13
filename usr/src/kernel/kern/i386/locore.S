@@ -496,7 +496,7 @@ argv:
 	.long	eicode - icode		/* argv[1] follows icode after copyout */
 	.long	0
 eicode:	/* main appends a string(s) here ... */
-
+	.asciz	""
 szicode:
 	.long	szicode - icode
 
@@ -846,7 +846,7 @@ Idle:
  * void swtch(void)
  * volatile void final_swtch(void)
  */
-ENTRY(swtch)
+ENTRY(_swtch)
 ALTENTRY(final_swtch)
 	PROC_ENTRY
 	incl	cnt + V_SWTCH

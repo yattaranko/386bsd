@@ -70,6 +70,9 @@
 #include "specialreg.h"
 #include "sigframe.h"
 
+extern int splnone(void);
+extern void tlbflush(void);
+
 /*
  * Implement the innermost part of a fork() operation, by building
  * a new kernel execution thread (consisting of a process control block
@@ -127,7 +130,7 @@ cpu_tfork(struct proc *p1, register struct proc *p2)
 	}
 
 	/* relocate md_reg pointer. */
-	p2->p_md.md_regs = p1->p_md.md_regs + diff;
+	p2->p_md.md_regs = (int*)((int) p1->p_md.md_regs + diff);
 	p2->p_md.md_flags = 0;
 
 	/* allocate a TSS for this thread. */
@@ -164,7 +167,7 @@ asm(".globl _tfork_child ; _tfork_child: ");
  * to next process or thread.
  */
 volatile void final_swtch(void);
-volatile void
+void
 cpu_texit(register struct proc *p)
 {
 	extern int Exit_stack;

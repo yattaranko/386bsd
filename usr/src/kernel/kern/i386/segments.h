@@ -272,7 +272,7 @@ freedesc(struct segment_descriptor *sdp)
  * creating a new thread. Special version of allocdesc().
  */
 extern inline
-alloctss(struct proc *p) {
+void alloctss(struct proc *p) {
 	struct segment_descriptor *sdp = allocdesc();
 	sdp->sd_lolimit = sizeof(struct i386tss) - 1;
 	sdp->sd_lobase = (int)p->p_addr;

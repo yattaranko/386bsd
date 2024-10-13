@@ -88,7 +88,7 @@ struct	proc {
 #define	p_ucred		p_cred->pc_ucred
 #define	p_rlimit	p_limit->pl_rlimit
 
-	int	p_flag;
+	int		p_flag;
 	char	p_stat;
 /*	char	p_space; */
 
@@ -104,7 +104,7 @@ struct	proc {
 
 	/* scheduling */
 	u_int	p_cpu;		/* cpu usage for scheduling */
-	int	p_cpticks;	/* ticks of cpu time */
+	int		p_cpticks;	/* ticks of cpu time */
 	fixpt_t	p_pctcpu;	/* %cpu for this process during p_time */
 	caddr_t p_wchan;	/* event process is awaiting */
 	u_int	p_time;		/* resident/nonresident time for swapping */
@@ -114,10 +114,10 @@ struct	proc {
 	struct	timeval p_utime;	/* user time */
 	struct	timeval p_stime;	/* system time */
 
-	int	p_traceflag;	/* kernel trace points */
+	int		p_traceflag;	/* kernel trace points */
 	struct	vnode *p_tracep;/* trace to vnode */
 
-	int	p_sig;		/* signals pending to this process */
+	int		p_sig;		/* signals pending to this process */
 
 /* end area that is zeroed on creation */
 #define	p_endzero	p_startcopy
@@ -165,11 +165,11 @@ struct	proc {
  */
 struct	pcred {
 	struct	ucred *pc_ucred;	/* current credentials */
-	uid_t	p_ruid;			/* real user id */
-	uid_t	p_svuid;		/* saved effective user id */
-	gid_t	p_rgid;			/* real group id */
-	gid_t	p_svgid;		/* saved effective group id */
-	int	p_refcnt;		/* number of references */
+	uid_t	p_ruid;				/* real user id */
+	uid_t	p_svuid;			/* saved effective user id */
+	gid_t	p_rgid;				/* real group id */
+	gid_t	p_svgid;			/* saved effective group id */
+	int		p_refcnt;				/* number of references */
 };
 
 /* stat codes */
@@ -207,7 +207,7 @@ struct	pcred {
  * by less than 4 (128/32) are actually identical.
  */
 #define	PSWP	0
-#define	PVM	4
+#define	PVM		4
 #define	PINOD	8
 #define	PRIBIO	16
 #define	PVFS	20

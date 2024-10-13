@@ -56,6 +56,19 @@ typedef	short	pid_t;			/* process id */
 typedef	u_short	mode_t;			/* permissions */
 typedef u_long	fixpt_t;		/* fixed point number */
 
+/*
+ * If your system doesn't typedef the following basic integral types,
+ * change the 0 to a 1, and change the values as necessary.
+ */
+typedef	char			   	  int8_t;
+typedef	unsigned char		u_int8_t;
+typedef	short				  int16_t;
+typedef	unsigned short		u_int16_t;
+typedef	int			  		  int32_t;
+typedef	unsigned int		u_int32_t;
+typedef	long long			  int64_t;
+typedef	unsigned long long	u_int64_t;
+
 #ifndef _POSIX_SOURCE
 typedef	struct	_uquad	{ u_long val[2]; } u_quad;
 typedef	struct	_quad	{   long val[2]; } quad;

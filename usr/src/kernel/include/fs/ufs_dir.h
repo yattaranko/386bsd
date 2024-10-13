@@ -65,8 +65,8 @@
 #define	MAXNAMLEN	255
 
 struct	direct {
-	u_long	d_ino;			/* inode number of entry */
-	u_short	d_reclen;		/* length of this record */
+	u_long	d_ino;					/* inode number of entry */
+	u_short	d_reclen;				/* length of this record */
 	u_char	d_type;					/* file type, see below */
 	u_char	d_namlen;				/* length of string in d_name */
 	char	d_name[MAXNAMLEN + 1];	/* name with length <= MAXNAMLEN */

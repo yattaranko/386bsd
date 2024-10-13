@@ -63,7 +63,7 @@ typedef	int		ssize_t;	/* POSIX names. */
  * If your system doesn't typedef the following basic integral types,
  * change the 0 to a 1, and change the values as necessary.
  */
-#if 1
+#if 0
 typedef	char		   	   int8_t;
 typedef	unsigned char		 u_int8_t;
 typedef	short			  int16_t;

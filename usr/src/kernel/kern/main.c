@@ -84,7 +84,6 @@ struct	proc *curproc = &proc0;
 struct	proc *initproc, *pageproc;
 struct	timeval boottime;
 
-int	cmask = CMASK;
 extern	struct user *proc0paddr;
 extern	int (*mountroot)();
 
@@ -98,12 +97,6 @@ extern int cold;
 /*
  * Configurable parameters
  */
-#if 0
-int maxusers, hz, maxproc, maxfiles, ncallout, tzh, dst;
-long desiredvnodes;
-
-int tick, tickadj;
-#else
 int tzh, dst;
 
 #define	HZ			10
@@ -119,7 +112,6 @@ int  maxproc		= MAXPROC;
 long desiredvnodes	= 2 * MAXPROC + 100;
 int  maxfiles		= 3 * MAXPROC + 100;
 int  ncallout		= 16 + MAXPROC;
-#endif
 
 struct timezone tz;
 struct proc *pidhash[64];
@@ -148,7 +140,7 @@ struct namelist kern_options[] =
 /*
  * Usually not configurable parameters
  */
-int fscale = FSCALE;		/* kernel uses `FSCALE', user uses `fscale' */
+int fscale = FSCALE;			/* kernel uses `FSCALE', user uses `fscale' */
 int nmbclusters = NMBCLUSTERS;	/* number of mbuf clusters in free pool*/
 
 extern void		startrtclock(void);
@@ -200,30 +192,6 @@ void _main()
 	 */
 	(void)config_scan(kern_config, &cfg);
 	(void)cfg_namelist(&cfg, kern_options);
-#if 0
-	if (maxusers < 4)
-		maxusers = 4;
-	if (maxusers > 200)
-		maxusers = 200;
-	i = 20 + 16 * maxusers;
-	if (maxproc < i)
-		maxproc = i;
-	i = 2 * maxproc + 100;
-	if (desiredvnodes < i)
-		desiredvnodes = i;
-	i = 3 * maxproc + 100;
-	if (maxfiles < i)
-		maxfiles = i;
-	i = 16 + maxproc;
-	if (ncallout < i);
-		ncallout = i;
-
-	/* process rescheduling clock interval */
-	if (hz < 10 || hz > 1000)
-		hz = 100;
-	tick = 1000000 / hz;				/* microseconds in a clock "tick" */
-	tickadj = 240000 / (60 * hz);		/* microseconds of adjustment in a minute */
-#endif
 
 	/* local time zone & daylight savings -- needed for rtc */
 	tz.tz_minuteswest = tzh * 60 * 60;
@@ -278,8 +246,8 @@ void _main()
 	 * system process 0 (pageout), and insert it into the kernel
 	 * global data variables and lists.
 	 */
-	p = &proc0;
-	curproc = p;					/* current running process */
+//	p = &proc0;
+//	curproc = p;					/* current running process */
 
 	allproc = p;					/* on the allproc list */
 	p->p_prev = &allproc;
@@ -303,7 +271,7 @@ void _main()
 	fdp = &filedesc0;
 	p->p_fd = &fdp->fd_fd;
 	fdp->fd_fd.fd_refcnt = 1;
-	fdp->fd_fd.fd_cmask = cmask;
+	fdp->fd_fd.fd_cmask = CMASK;
 	fdp->fd_fd.fd_ofiles = fdp->fd_dfiles;
 	fdp->fd_fd.fd_ofileflags = fdp->fd_dfileflags;
 	fdp->fd_fd.fd_nfiles = NDFILE;
@@ -443,6 +411,7 @@ void _main()
 	 */
 	if (fork(p, (void *) NULL, rval))
 		panic("fork init");
+printf("curproc = %x\n", curproc);
 	if (rval[1]) {
 		static char initflags[] = "-sf";
 		char *ip = initflags + 1;
@@ -451,20 +420,19 @@ void _main()
 		extern int szicode;		/* size of icode */
 
 		/*
-		 * Now in process 1. SImulate an execve() by setting
+		 * Now in process 1. Simulate an execve() by setting
 		 * init flags into icode,
 		 * get a minimal address space, copy out "icode",
 		 * and return to it to do an exec of init.
 		 */
 		initproc = p = curproc;
-		if (boothowto&RB_SINGLE)
+		if (boothowto & RB_SINGLE)
 			*ip++ = 's';
 #ifdef notyet
 		if (boothowto&RB_FASTBOOT)
 			*ip++ = 'f';
 #endif
 		*ip++ = '\0';
-
 		/* allocate space for user bootstrap program */
 		if (vmspace_allocate(p->p_vmspace, &addr,
 		    szicode + sizeof(initflags), FALSE) != 0)
@@ -477,6 +445,7 @@ void _main()
 			panic("init: couldn't allocate init stack");
 
 		p->p_vmspace->vm_maxsaddr = (caddr_t)addr + NBPG - MAXSSIZ;
+printf("p = %x, icode = %x, szicode = %x", p, icode, szicode);
 		(void) copyout(p, (caddr_t)icode, (caddr_t)0, (unsigned)szicode);
 		(void) copyout(p, initflags, (caddr_t)szicode, sizeof(initflags));
 		return;			/* returns to icode */

@@ -44,6 +44,8 @@
 
 #include "prototypes.h"
 
+struct timeval boottime;
+
 /* 
  * Time of day and interval timer support.
  *

@@ -18,7 +18,8 @@
 			"ufs_dir.h": "c",
 			"filedesc.h": "c",
 			"modconfig.h": "c",
-			"vnode.h": "c"
+			"vnode.h": "c",
+			"segments.h": "c"
 		}
 	}
 }

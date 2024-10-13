@@ -57,7 +57,7 @@
 
 /* Thread create/destroy */
 int cpu_tfork(struct proc *, struct proc *);
-volatile void cpu_texit(struct proc *);
+void cpu_texit(struct proc *);
 
 /* POSIX specific cpu-dependant functions */
 #define cpu_wait(p)			/* recover resources after exit() */
