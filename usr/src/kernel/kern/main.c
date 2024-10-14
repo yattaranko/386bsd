@@ -411,7 +411,6 @@ void _main()
 	 */
 	if (fork(p, (void *) NULL, rval))
 		panic("fork init");
-printf("curproc = %x\n", curproc);
 	if (rval[1]) {
 		static char initflags[] = "-sf";
 		char *ip = initflags + 1;
@@ -445,7 +444,6 @@ printf("curproc = %x\n", curproc);
 			panic("init: couldn't allocate init stack");
 
 		p->p_vmspace->vm_maxsaddr = (caddr_t)addr + NBPG - MAXSSIZ;
-printf("p = %x, icode = %x, szicode = %x", p, icode, szicode);
 		(void) copyout(p, (caddr_t)icode, (caddr_t)0, (unsigned)szicode);
 		(void) copyout(p, initflags, (caddr_t)szicode, sizeof(initflags));
 		return;			/* returns to icode */
