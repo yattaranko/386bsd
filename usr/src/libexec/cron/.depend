@@ -1,0 +1,265 @@
+# -I/home/share/386bsd-2.0/usr/src/libexec/cron -DDEBUGGING=1 -DBSD=0x900000 -DCRONDIR="/var/cron" cron.c database.c do_command.c entry.c env.c job.c user.c popen.c misc.c
+cron.o: cron.c /home/share/386bsd-2.0/usr/src/libexec/cron/cron.h \
+  /usr/include/sys/types.h /usr/include/sys/cdefs.h \
+  /usr/include/machine/endian.h /usr/include/x86/endian.h \
+  /usr/include/sys/_types.h /usr/include/machine/_types.h \
+  /usr/include/x86/_types.h /usr/include/machine/_limits.h \
+  /usr/include/x86/_limits.h /usr/include/sys/_endian.h \
+  /usr/include/sys/_pthreadtypes.h /usr/include/sys/_stdint.h \
+  /usr/include/sys/bitcount.h /usr/include/sys/select.h \
+  /usr/include/sys/_sigset.h /usr/include/sys/_timeval.h \
+  /usr/include/sys/timespec.h /usr/include/sys/_timespec.h \
+  /usr/include/sys/param.h /usr/include/sys/_null.h \
+  /usr/include/sys/syslimits.h /usr/include/sys/signal.h \
+  /usr/include/machine/signal.h /usr/include/x86/signal.h \
+  /usr/include/machine/param.h /usr/include/machine/_align.h \
+  /usr/include/x86/_align.h /usr/include/sys/limits.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/compat.h \
+  /usr/include/stdio.h /usr/include/ctype.h /usr/include/_ctype.h \
+  /usr/include/runetype.h /usr/include/xlocale/_ctype.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/bitstring.h \
+  /usr/include/pwd.h /usr/include/sys/wait.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/pathnames.h \
+  /usr/include/paths.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/config.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/externs.h \
+  /usr/include/stdlib.h /usr/include/unistd.h /usr/include/sys/unistd.h \
+  /usr/include/string.h /usr/include/strings.h \
+  /usr/include/xlocale/_strings.h /usr/include/xlocale/_string.h \
+  /usr/include/dirent.h /usr/include/sys/dirent.h \
+  /usr/include/sys/time.h /usr/include/sys/_clock_id.h \
+  /usr/include/time.h /usr/include/xlocale/_time.h
+database.o: database.c /home/share/386bsd-2.0/usr/src/libexec/cron/cron.h \
+  /usr/include/sys/types.h /usr/include/sys/cdefs.h \
+  /usr/include/machine/endian.h /usr/include/x86/endian.h \
+  /usr/include/sys/_types.h /usr/include/machine/_types.h \
+  /usr/include/x86/_types.h /usr/include/machine/_limits.h \
+  /usr/include/x86/_limits.h /usr/include/sys/_endian.h \
+  /usr/include/sys/_pthreadtypes.h /usr/include/sys/_stdint.h \
+  /usr/include/sys/bitcount.h /usr/include/sys/select.h \
+  /usr/include/sys/_sigset.h /usr/include/sys/_timeval.h \
+  /usr/include/sys/timespec.h /usr/include/sys/_timespec.h \
+  /usr/include/sys/param.h /usr/include/sys/_null.h \
+  /usr/include/sys/syslimits.h /usr/include/sys/signal.h \
+  /usr/include/machine/signal.h /usr/include/x86/signal.h \
+  /usr/include/machine/param.h /usr/include/machine/_align.h \
+  /usr/include/x86/_align.h /usr/include/sys/limits.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/compat.h \
+  /usr/include/stdio.h /usr/include/ctype.h /usr/include/_ctype.h \
+  /usr/include/runetype.h /usr/include/xlocale/_ctype.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/bitstring.h \
+  /usr/include/pwd.h /usr/include/sys/wait.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/pathnames.h \
+  /usr/include/paths.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/config.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/externs.h \
+  /usr/include/stdlib.h /usr/include/unistd.h /usr/include/sys/unistd.h \
+  /usr/include/string.h /usr/include/strings.h \
+  /usr/include/xlocale/_strings.h /usr/include/xlocale/_string.h \
+  /usr/include/dirent.h /usr/include/sys/dirent.h /usr/include/fcntl.h \
+  /usr/include/sys/stat.h /usr/include/sys/time.h \
+  /usr/include/sys/_clock_id.h /usr/include/time.h \
+  /usr/include/xlocale/_time.h /usr/include/sys/file.h \
+  /usr/include/sys/fcntl.h
+do_command.o: do_command.c \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/cron.h \
+  /usr/include/sys/types.h /usr/include/sys/cdefs.h \
+  /usr/include/machine/endian.h /usr/include/x86/endian.h \
+  /usr/include/sys/_types.h /usr/include/machine/_types.h \
+  /usr/include/x86/_types.h /usr/include/machine/_limits.h \
+  /usr/include/x86/_limits.h /usr/include/sys/_endian.h \
+  /usr/include/sys/_pthreadtypes.h /usr/include/sys/_stdint.h \
+  /usr/include/sys/bitcount.h /usr/include/sys/select.h \
+  /usr/include/sys/_sigset.h /usr/include/sys/_timeval.h \
+  /usr/include/sys/timespec.h /usr/include/sys/_timespec.h \
+  /usr/include/sys/param.h /usr/include/sys/_null.h \
+  /usr/include/sys/syslimits.h /usr/include/sys/signal.h \
+  /usr/include/machine/signal.h /usr/include/x86/signal.h \
+  /usr/include/machine/param.h /usr/include/machine/_align.h \
+  /usr/include/x86/_align.h /usr/include/sys/limits.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/compat.h \
+  /usr/include/stdio.h /usr/include/ctype.h /usr/include/_ctype.h \
+  /usr/include/runetype.h /usr/include/xlocale/_ctype.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/bitstring.h \
+  /usr/include/pwd.h /usr/include/sys/wait.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/pathnames.h \
+  /usr/include/paths.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/config.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/externs.h \
+  /usr/include/stdlib.h /usr/include/unistd.h /usr/include/sys/unistd.h \
+  /usr/include/string.h /usr/include/strings.h \
+  /usr/include/xlocale/_strings.h /usr/include/xlocale/_string.h \
+  /usr/include/dirent.h /usr/include/sys/dirent.h /usr/include/syslog.h
+entry.o: entry.c /home/share/386bsd-2.0/usr/src/libexec/cron/cron.h \
+  /usr/include/sys/types.h /usr/include/sys/cdefs.h \
+  /usr/include/machine/endian.h /usr/include/x86/endian.h \
+  /usr/include/sys/_types.h /usr/include/machine/_types.h \
+  /usr/include/x86/_types.h /usr/include/machine/_limits.h \
+  /usr/include/x86/_limits.h /usr/include/sys/_endian.h \
+  /usr/include/sys/_pthreadtypes.h /usr/include/sys/_stdint.h \
+  /usr/include/sys/bitcount.h /usr/include/sys/select.h \
+  /usr/include/sys/_sigset.h /usr/include/sys/_timeval.h \
+  /usr/include/sys/timespec.h /usr/include/sys/_timespec.h \
+  /usr/include/sys/param.h /usr/include/sys/_null.h \
+  /usr/include/sys/syslimits.h /usr/include/sys/signal.h \
+  /usr/include/machine/signal.h /usr/include/x86/signal.h \
+  /usr/include/machine/param.h /usr/include/machine/_align.h \
+  /usr/include/x86/_align.h /usr/include/sys/limits.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/compat.h \
+  /usr/include/stdio.h /usr/include/ctype.h /usr/include/_ctype.h \
+  /usr/include/runetype.h /usr/include/xlocale/_ctype.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/bitstring.h \
+  /usr/include/pwd.h /usr/include/sys/wait.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/pathnames.h \
+  /usr/include/paths.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/config.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/externs.h \
+  /usr/include/stdlib.h /usr/include/unistd.h /usr/include/sys/unistd.h \
+  /usr/include/string.h /usr/include/strings.h \
+  /usr/include/xlocale/_strings.h /usr/include/xlocale/_string.h \
+  /usr/include/dirent.h /usr/include/sys/dirent.h
+env.o: env.c /home/share/386bsd-2.0/usr/src/libexec/cron/cron.h \
+  /usr/include/sys/types.h /usr/include/sys/cdefs.h \
+  /usr/include/machine/endian.h /usr/include/x86/endian.h \
+  /usr/include/sys/_types.h /usr/include/machine/_types.h \
+  /usr/include/x86/_types.h /usr/include/machine/_limits.h \
+  /usr/include/x86/_limits.h /usr/include/sys/_endian.h \
+  /usr/include/sys/_pthreadtypes.h /usr/include/sys/_stdint.h \
+  /usr/include/sys/bitcount.h /usr/include/sys/select.h \
+  /usr/include/sys/_sigset.h /usr/include/sys/_timeval.h \
+  /usr/include/sys/timespec.h /usr/include/sys/_timespec.h \
+  /usr/include/sys/param.h /usr/include/sys/_null.h \
+  /usr/include/sys/syslimits.h /usr/include/sys/signal.h \
+  /usr/include/machine/signal.h /usr/include/x86/signal.h \
+  /usr/include/machine/param.h /usr/include/machine/_align.h \
+  /usr/include/x86/_align.h /usr/include/sys/limits.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/compat.h \
+  /usr/include/stdio.h /usr/include/ctype.h /usr/include/_ctype.h \
+  /usr/include/runetype.h /usr/include/xlocale/_ctype.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/bitstring.h \
+  /usr/include/pwd.h /usr/include/sys/wait.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/pathnames.h \
+  /usr/include/paths.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/config.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/externs.h \
+  /usr/include/stdlib.h /usr/include/unistd.h /usr/include/sys/unistd.h \
+  /usr/include/string.h /usr/include/strings.h \
+  /usr/include/xlocale/_strings.h /usr/include/xlocale/_string.h \
+  /usr/include/dirent.h /usr/include/sys/dirent.h
+job.o: job.c /home/share/386bsd-2.0/usr/src/libexec/cron/cron.h \
+  /usr/include/sys/types.h /usr/include/sys/cdefs.h \
+  /usr/include/machine/endian.h /usr/include/x86/endian.h \
+  /usr/include/sys/_types.h /usr/include/machine/_types.h \
+  /usr/include/x86/_types.h /usr/include/machine/_limits.h \
+  /usr/include/x86/_limits.h /usr/include/sys/_endian.h \
+  /usr/include/sys/_pthreadtypes.h /usr/include/sys/_stdint.h \
+  /usr/include/sys/bitcount.h /usr/include/sys/select.h \
+  /usr/include/sys/_sigset.h /usr/include/sys/_timeval.h \
+  /usr/include/sys/timespec.h /usr/include/sys/_timespec.h \
+  /usr/include/sys/param.h /usr/include/sys/_null.h \
+  /usr/include/sys/syslimits.h /usr/include/sys/signal.h \
+  /usr/include/machine/signal.h /usr/include/x86/signal.h \
+  /usr/include/machine/param.h /usr/include/machine/_align.h \
+  /usr/include/x86/_align.h /usr/include/sys/limits.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/compat.h \
+  /usr/include/stdio.h /usr/include/ctype.h /usr/include/_ctype.h \
+  /usr/include/runetype.h /usr/include/xlocale/_ctype.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/bitstring.h \
+  /usr/include/pwd.h /usr/include/sys/wait.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/pathnames.h \
+  /usr/include/paths.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/config.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/externs.h \
+  /usr/include/stdlib.h /usr/include/unistd.h /usr/include/sys/unistd.h \
+  /usr/include/string.h /usr/include/strings.h \
+  /usr/include/xlocale/_strings.h /usr/include/xlocale/_string.h \
+  /usr/include/dirent.h /usr/include/sys/dirent.h
+user.o: user.c /home/share/386bsd-2.0/usr/src/libexec/cron/cron.h \
+  /usr/include/sys/types.h /usr/include/sys/cdefs.h \
+  /usr/include/machine/endian.h /usr/include/x86/endian.h \
+  /usr/include/sys/_types.h /usr/include/machine/_types.h \
+  /usr/include/x86/_types.h /usr/include/machine/_limits.h \
+  /usr/include/x86/_limits.h /usr/include/sys/_endian.h \
+  /usr/include/sys/_pthreadtypes.h /usr/include/sys/_stdint.h \
+  /usr/include/sys/bitcount.h /usr/include/sys/select.h \
+  /usr/include/sys/_sigset.h /usr/include/sys/_timeval.h \
+  /usr/include/sys/timespec.h /usr/include/sys/_timespec.h \
+  /usr/include/sys/param.h /usr/include/sys/_null.h \
+  /usr/include/sys/syslimits.h /usr/include/sys/signal.h \
+  /usr/include/machine/signal.h /usr/include/x86/signal.h \
+  /usr/include/machine/param.h /usr/include/machine/_align.h \
+  /usr/include/x86/_align.h /usr/include/sys/limits.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/compat.h \
+  /usr/include/stdio.h /usr/include/ctype.h /usr/include/_ctype.h \
+  /usr/include/runetype.h /usr/include/xlocale/_ctype.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/bitstring.h \
+  /usr/include/pwd.h /usr/include/sys/wait.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/pathnames.h \
+  /usr/include/paths.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/config.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/externs.h \
+  /usr/include/stdlib.h /usr/include/unistd.h /usr/include/sys/unistd.h \
+  /usr/include/string.h /usr/include/strings.h \
+  /usr/include/xlocale/_strings.h /usr/include/xlocale/_string.h \
+  /usr/include/dirent.h /usr/include/sys/dirent.h
+popen.o: popen.c /home/share/386bsd-2.0/usr/src/libexec/cron/cron.h \
+  /usr/include/sys/types.h /usr/include/sys/cdefs.h \
+  /usr/include/machine/endian.h /usr/include/x86/endian.h \
+  /usr/include/sys/_types.h /usr/include/machine/_types.h \
+  /usr/include/x86/_types.h /usr/include/machine/_limits.h \
+  /usr/include/x86/_limits.h /usr/include/sys/_endian.h \
+  /usr/include/sys/_pthreadtypes.h /usr/include/sys/_stdint.h \
+  /usr/include/sys/bitcount.h /usr/include/sys/select.h \
+  /usr/include/sys/_sigset.h /usr/include/sys/_timeval.h \
+  /usr/include/sys/timespec.h /usr/include/sys/_timespec.h \
+  /usr/include/sys/param.h /usr/include/sys/_null.h \
+  /usr/include/sys/syslimits.h /usr/include/sys/signal.h \
+  /usr/include/machine/signal.h /usr/include/x86/signal.h \
+  /usr/include/machine/param.h /usr/include/machine/_align.h \
+  /usr/include/x86/_align.h /usr/include/sys/limits.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/compat.h \
+  /usr/include/stdio.h /usr/include/ctype.h /usr/include/_ctype.h \
+  /usr/include/runetype.h /usr/include/xlocale/_ctype.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/bitstring.h \
+  /usr/include/pwd.h /usr/include/sys/wait.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/pathnames.h \
+  /usr/include/paths.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/config.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/externs.h \
+  /usr/include/stdlib.h /usr/include/unistd.h /usr/include/sys/unistd.h \
+  /usr/include/string.h /usr/include/strings.h \
+  /usr/include/xlocale/_strings.h /usr/include/xlocale/_string.h \
+  /usr/include/dirent.h /usr/include/sys/dirent.h
+misc.o: misc.c /home/share/386bsd-2.0/usr/src/libexec/cron/cron.h \
+  /usr/include/sys/types.h /usr/include/sys/cdefs.h \
+  /usr/include/machine/endian.h /usr/include/x86/endian.h \
+  /usr/include/sys/_types.h /usr/include/machine/_types.h \
+  /usr/include/x86/_types.h /usr/include/machine/_limits.h \
+  /usr/include/x86/_limits.h /usr/include/sys/_endian.h \
+  /usr/include/sys/_pthreadtypes.h /usr/include/sys/_stdint.h \
+  /usr/include/sys/bitcount.h /usr/include/sys/select.h \
+  /usr/include/sys/_sigset.h /usr/include/sys/_timeval.h \
+  /usr/include/sys/timespec.h /usr/include/sys/_timespec.h \
+  /usr/include/sys/param.h /usr/include/sys/_null.h \
+  /usr/include/sys/syslimits.h /usr/include/sys/signal.h \
+  /usr/include/machine/signal.h /usr/include/x86/signal.h \
+  /usr/include/machine/param.h /usr/include/machine/_align.h \
+  /usr/include/x86/_align.h /usr/include/sys/limits.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/compat.h \
+  /usr/include/stdio.h /usr/include/ctype.h /usr/include/_ctype.h \
+  /usr/include/runetype.h /usr/include/xlocale/_ctype.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/bitstring.h \
+  /usr/include/pwd.h /usr/include/sys/wait.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/pathnames.h \
+  /usr/include/paths.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/config.h \
+  /home/share/386bsd-2.0/usr/src/libexec/cron/externs.h \
+  /usr/include/stdlib.h /usr/include/unistd.h /usr/include/sys/unistd.h \
+  /usr/include/string.h /usr/include/strings.h \
+  /usr/include/xlocale/_strings.h /usr/include/xlocale/_string.h \
+  /usr/include/dirent.h /usr/include/sys/dirent.h \
+  /usr/include/sys/time.h /usr/include/sys/_clock_id.h \
+  /usr/include/time.h /usr/include/xlocale/_time.h \
+  /usr/include/sys/file.h /usr/include/sys/fcntl.h \
+  /usr/include/sys/stat.h /usr/include/errno.h /usr/include/fcntl.h \
+  /usr/include/syslog.h

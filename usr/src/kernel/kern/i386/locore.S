@@ -846,7 +846,7 @@ Idle:
 ENTRY(_swtch)
 ALTENTRY(_final_swtch)
 	PROC_ENTRY
-	incl	cnt+V_SWTCH
+	incl	cnt + V_SWTCH
 	/* mark as not in a process, remembering "old" process */
 	xorl	%eax, %eax
 	xchgl	%eax, curproc

@@ -152,7 +152,7 @@ struct	proc {
 	u_short	p_stksz;	/* size of per process at p_addr */
 
 	long	p_spare[6];	/* tmp spares to avoid shifting eproc */
-};
+} __attribute__ ((packed));
 
 #define	p_session	p_pgrp->pg_session
 #define	p_pgid		p_pgrp->pg_id

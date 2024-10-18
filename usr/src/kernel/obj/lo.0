@@ -1,0 +1,37 @@
+LO(4)                       Kernel Interfaces Manual                     LO(4)
+
+[1mNAME[0m
+       lo — software loopback network interface
+
+[1mSYNOPSIS[0m
+       [1mloop[22m.
+
+[1mDESCRIPTION[0m
+       The  [1mloop  [22minterface is a software loopback mechanism which may be used
+       for performance analysis, software testing, and/or local communication.
+       As with other network interfaces, the loopback interface must have net‐
+       work addresses assigned for each address family with which it is to  be
+       used.   These  addresses  may  be  set  or changed with the SIOCSIFADDR
+       [4mioctl[24m(2).  The loopback interface should be the last interface  config‐
+       ured,  as protocols may use the order of configuration as an indication
+       of priority.  The loopback should [4mnever[24m be configured first  unless  no
+       hardware interfaces exist.
+
+[1mDIAGNOSTICS[0m
+       [1mlo%d:  can’t  handle af%d.  [22mThe interface was handed a message with ad‐
+       dresses formatted in an  unsuitable  address  family;  the  packet  was
+       dropped.
+
+[1mSEE ALSO[0m
+       [4mintro[24m(4), [4minet[24m(4), [4mns[24m(4)
+
+[1mHISTORY[0m
+       The [1mlo [22mdevice appeared in 4.2BSD.
+
+[1mBUGS[0m
+       Previous versions of the system enabled the loopback interface automat‐
+       ically,  using a nonstandard Internet address (127.1).  Use of that ad‐
+       dress is now discouraged; a reserved host address for the local network
+       should be used instead.
+
+4.2 Berkeley Distribution        May 28, 1994                            LO(4)

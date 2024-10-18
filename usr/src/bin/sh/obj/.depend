@@ -1,0 +1,327 @@
+# -DSHELL -I. -I/home/share/386bsd-2.0/usr/src/bin/sh -I/home/share/386bsd-2.0/usr/src/include -I/home/share/386bsd-2.0/usr/src/kernel/include builtins.c /home/share/386bsd-2.0/usr/src/bin/sh/cd.c /home/share/386bsd-2.0/usr/src/bin/sh/dirent.c /home/share/386bsd-2.0/usr/src/bin/sh/bltin/echo.c /home/share/386bsd-2.0/usr/src/bin/sh/error.c /home/share/386bsd-2.0/usr/src/bin/sh/eval.c /home/share/386bsd-2.0/usr/src/bin/sh/exec.c /home/share/386bsd-2.0/usr/src/bin/sh/expand.c /home/share/386bsd-2.0/usr/src/bin/sh/input.c /home/share/386bsd-2.0/usr/src/bin/sh/jobs.c /home/share/386bsd-2.0/usr/src/bin/sh/mail.c /home/share/386bsd-2.0/usr/src/bin/sh/main.c /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.c /home/share/386bsd-2.0/usr/src/bin/sh/miscbltin.c /home/share/386bsd-2.0/usr/src/bin/sh/mystring.c nodes.c /home/share/386bsd-2.0/usr/src/bin/sh/options.c /home/share/386bsd-2.0/usr/src/bin/sh/parser.c /home/share/386bsd-2.0/usr/src/bin/sh/redir.c /home/share/386bsd-2.0/usr/src/bin/sh/show.c signames.c syntax.c /home/share/386bsd-2.0/usr/src/bin/sh/trap.c /home/share/386bsd-2.0/usr/src/bin/sh/output.c /home/share/386bsd-2.0/usr/src/bin/sh/var.c
+builtins.o: builtins.c /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h builtins.h
+cd.o: /home/share/386bsd-2.0/usr/src/bin/sh/cd.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/var.h nodes.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/jobs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/options.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h
+dirent.o: /home/share/386bsd-2.0/usr/src/bin/sh/dirent.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h
+echo.o: /home/share/386bsd-2.0/usr/src/bin/sh/bltin/echo.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/bltin/bltin.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/bltin/../shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/bltin/../mystring.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/bltin/../output.h
+error.o: /home/share/386bsd-2.0/usr/src/bin/sh/error.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/main.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/options.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h
+eval.o: /home/share/386bsd-2.0/usr/src/bin/sh/eval.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h nodes.h \
+  syntax.h /home/share/386bsd-2.0/usr/src/bin/sh/expand.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/parser.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/jobs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/eval.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/builtins.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/options.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/exec.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/redir.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/input.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/trap.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/var.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h
+exec.o: /home/share/386bsd-2.0/usr/src/bin/sh/exec.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/main.h nodes.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/parser.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/redir.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/eval.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/exec.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/builtins.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/var.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/options.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/input.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h syntax.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/init.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/fcntl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h
+expand.o: /home/share/386bsd-2.0/usr/src/bin/sh/expand.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/main.h nodes.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/eval.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/expand.h syntax.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/parser.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/jobs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/options.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/var.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/input.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/include/dirent.h
+input.o: /home/share/386bsd-2.0/usr/src/bin/sh/input.c \
+  /home/share/386bsd-2.0/usr/src/include/stdio.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/fcntl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h syntax.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/input.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h
+jobs.o: /home/share/386bsd-2.0/usr/src/bin/sh/jobs.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/include/sgtty.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/ioctl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/ioctl_compat.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/ttychars.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/ttydefaults.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/ttydev.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/main.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/parser.h nodes.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/jobs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/options.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/trap.h signames.h syntax.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/input.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/redir.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/fcntl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/wait.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h
+mail.o: /home/share/386bsd-2.0/usr/src/bin/sh/mail.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/exec.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/var.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h
+main.o: /home/share/386bsd-2.0/usr/src/bin/sh/main.c \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/fcntl.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/main.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mail.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/options.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/parser.h nodes.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/eval.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/jobs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/input.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/trap.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/init.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h
+memalloc.o: /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/machdep.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h
+miscbltin.o: /home/share/386bsd-2.0/usr/src/bin/sh/miscbltin.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/options.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/var.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h
+mystring.o: /home/share/386bsd-2.0/usr/src/bin/sh/mystring.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h syntax.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h
+nodes.o: nodes.c /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h nodes.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/machdep.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h
+options.o: /home/share/386bsd-2.0/usr/src/bin/sh/options.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/options.h nodes.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/eval.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/jobs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/input.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/trap.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/var.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h
+parser.o: /home/share/386bsd-2.0/usr/src/bin/sh/parser.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/parser.h nodes.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/expand.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/redir.h syntax.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/options.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/input.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/var.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/token.def
+redir.o: /home/share/386bsd-2.0/usr/src/bin/sh/redir.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h nodes.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/jobs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/expand.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/redir.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/fcntl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h
+show.o: /home/share/386bsd-2.0/usr/src/bin/sh/show.c \
+  /home/share/386bsd-2.0/usr/src/include/stdio.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/parser.h nodes.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h
+signames.o: signames.c /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h
+syntax.o: syntax.c /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h syntax.h
+trap.o: /home/share/386bsd-2.0/usr/src/bin/sh/trap.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/main.h nodes.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/eval.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/jobs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/options.h syntax.h signames.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/trap.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h
+output.o: /home/share/386bsd-2.0/usr/src/bin/sh/output.c \
+  /home/share/386bsd-2.0/usr/src/include/stdio.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h syntax.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h
+var.o: /home/share/386bsd-2.0/usr/src/bin/sh/var.c \
+  /home/share/386bsd-2.0/usr/src/bin/sh/shell.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/output.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/expand.h nodes.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/eval.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/exec.h syntax.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/options.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mail.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/var.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/memalloc.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/error.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/bin/sh/mystring.h

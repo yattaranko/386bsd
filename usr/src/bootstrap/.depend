@@ -1,0 +1,123 @@
+# -I/home/share/386bsd-2.0/usr/src/bootstrap/../include -I/home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include -I/home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/ic -I/home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/fs -I/home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/dev -I/home/share/386bsd-2.0/usr/src/bootstrap/boot -DSTANDALONE /home/share/386bsd-2.0/usr/src/bootstrap/boot/boot.c /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/fd/fdbootblk.c /home/share/386bsd-2.0/usr/src/bootstrap/boot/prf.c /home/share/386bsd-2.0/usr/src/bootstrap/config/srt0_i386.c /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/wd/wdbootblk.c /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/wd/wdbootblk1.c /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/pccons/pccons_cga.c /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/fd/fdboot.c /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/pccons/pccons_kbd.c /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/wd/wdboot.c /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/as/asboot.c
+boot.o: /home/share/386bsd-2.0/usr/src/bootstrap/boot/boot.c \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/reboot.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../include/a.out.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/exec.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/elf32.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/elf_common.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../include/nlist.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/boot/saio.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/dev/disklabel.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/fs/ufs_dinode.h
+fdbootblk.o: \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/fd/fdbootblk.c
+prf.o: /home/share/386bsd-2.0/usr/src/bootstrap/boot/prf.c \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/types.h
+srt0_i386.o: /home/share/386bsd-2.0/usr/src/bootstrap/config/srt0_i386.c
+wdbootblk.o: \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/wd/wdbootblk.c \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/dev/isa_stdports.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/wd/wdreg.h
+wdbootblk1.o: \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/wd/wdbootblk1.c \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/dev/isa_stdports.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/wd/wdreg.h
+pccons_cga.o: \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/pccons/pccons_cga.c \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/inline/io.h
+fdboot.o: /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/fd/fdboot.c \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/dev/disklabel.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/fd/fdreg.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/dev/isa_stdports.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/ic/nec765.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/boot/saio.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/inline/io.h
+pccons_kbd.o: \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/pccons/pccons_kbd.c \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/inline/io.h
+wdboot.o: /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/wd/wdboot.c \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/dev/dkbad.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/dev/disklabel.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/dev/isa_stdports.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/wd/wdreg.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/boot/saio.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/inline/io.h
+asboot.o: /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/as/asboot.c \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/dev/disklabel.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/as/asreg.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/boot/saio.h \
+  /home/share/386bsd-2.0/usr/src/bootstrap/../kernel/include/machine/inline/io.h

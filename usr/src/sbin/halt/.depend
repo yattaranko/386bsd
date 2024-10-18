@@ -1,0 +1,17 @@
+# -I/home/share/386bsd-2.0/usr/src/include -I/home/share/386bsd-2.0/usr/src/kernel/include halt.c
+halt: halt.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/reboot.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/syslog.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/include/pwd.h \
+  /home/share/386bsd-2.0/usr/src/include/stdio.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h

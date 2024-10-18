@@ -116,7 +116,7 @@ struct vm_map_entry {
 	vm_prot_t			max_protection;	/* maximum protection */
 	vm_inherit_t		inheritance;	/* inheritance */
 	int				wired_count;	/* can be paged if = 0 */
-};
+} __attribute__ ((packed));
 
 typedef struct vm_map_entry	*vm_map_entry_t;
 
@@ -140,7 +140,7 @@ struct vm_map {
 	unsigned int		timestamp;	/* Version number */
 #define	min_offset		header.start
 #define max_offset		header.end
-};
+} __attribute__ ((packed));
 
 typedef	struct vm_map	*vm_map_t;
 

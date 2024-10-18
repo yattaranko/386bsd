@@ -23,7 +23,14 @@
 			"kernel.h": "c",
 			"vm_fault.h": "c",
 			"param.h": "c",
-			"signal.h": "c"
+			"signal.h": "c",
+			"proc.h": "c",
+			"vm.h": "c",
+			"vmspace.h": "c",
+			"tty.h": "c",
+			"vm_param.h": "c",
+			"stat.h": "c",
+			"vm_map.h": "c"
 		}
 	}
 }

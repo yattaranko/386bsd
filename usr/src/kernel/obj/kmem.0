@@ -1,0 +1,74 @@
+KMEM(9)                    Kernel Developer’s Manual                   KMEM(9)
+
+[1mNAME[0m
+       kmem — primary kernel memory / address space management functions
+
+[1mSYNOPSIS[0m
+       [1m#include "vm.h"[0m
+       [1m#include "kmem.h"[0m
+       [1m#include "malloc.h"[0m
+
+       [4mvm_offset_t[0m
+       [1mkmem_alloc[22m([4mvm_map_t[24m [4mmap[24m, [4mvm_size_t[24m [4msize[24m, [4mint[24m [4mflags[24m);
+
+       [4mvoid[0m
+       [1mkmem_free[22m([4mvm_map_t[24m [4mmap[24m, [4mvm_offset_t[24m [4maddr[24m);, vm_size_t size
+
+       [4mvm_map_t[0m
+       [1mkmem_suballoc[22m([4mvm_size_t[24m [4msize[24m, [4mboolean_t[24m [4mpageable[24m);
+
+       [4mvm_offset_t[0m
+       [1mkmem_mmap[22m([4mvm_map_t[24m [4mmap[24m, [4mvm_offset_t[24m [4maddr[24m, [4mvm_size_t[24m [4msize[24m);
+
+       [4mvm_offset_t[0m
+       [1mkmem_phys[22m([4mvm_offset_t[24m [4mkva[24m);
+
+[1mDESCRIPTION[0m
+       Kernel program memory in the 386BSD kernel is managed by the "kmem" fa‐
+       cility,  which  allows for shared used by kernel threads of portions of
+       kernel memory (or address space).  It is an interface  to  the  virtual
+       memory system as a way to allocate its resources for application in the
+       kernel.
+
+       The  [1mkmem_alloc[22m()  function  allocates  page‐granularity  uninitialized
+       space for an object whose size is specified by [4msize[24m  from  the  address
+       space  or  subspace  specified  by  [4mmap[24m.  Either memory or just address
+       space reservation can be  allocated.   If  no  resource  is  available,
+       [1mkmem_alloc[22m()  can  optionally wait indefinitely for the resource to be‐
+       come available with the M_WAITOK option passed via the [4mflags[24m (note that
+       this allocator can be also used from interrupt level without the block‐
+       ing flag).  Since this function is used by the kernel [4mmalloc[24m(9) alloca‐
+       tor, both share the same option flags.
+
+       [1mkmem_free[22m() is called to return the resource to the  free  pool.  Since
+       static array elements are consumed with certain maps (kmem_map), indef‐
+       inite allocation is not always possible.
+
+       The  [1mkmem_suballoc[22m()  function  is used to create a subspace map within
+       the kernel for independant management. It reserves  a  portion  of  the
+       kernel  address  space  for  sole use by requestors using the allocated
+       subspace map as an argument.
+
+       The [1mkmem_mmap[22m() function is used to  remap  a  region  of  the  current
+       process  into  the  kernel memory (not unlike the [4mmmap[24m(2) system call),
+       allowing access to the processes memory region globally. The  user  ad‐
+       dress  space mapped at [4maddr[24m and for length [4msize[24m is mapped into the ker‐
+       nel within the address space (or subspace) [4mmap[24m.
+
+       The [1mkmem_phys[22m() function returns the physical address  associated  with
+       the [4mkva[24m address in the kernel.
+
+[1mRETURN VALUES[0m
+       The  [1mkmem_malloc[22m() function returns a address of the allocated resource
+       if  successful;  otherwise   a   null   address   is   returned.    The
+       [1mkmem_suballoc[22m()  function  returns a new map instance as a handle to be
+       used in memory allocation from that subspace, otherwise  it  returns  a
+       null  value.  The  [1mkmem_mmap[22m() function returns an address of where the
+       requested contents of a process may be located in the kernel  program’s
+       address space. The [1mkmem_phys[22m() function returns the physical address or
+       the null address if ther is no page.
+
+[1mSEE ALSO[0m
+       [4mmalloc[24m(9), [4mfree[24m(9), [4mmmap[24m(2), [4mpageout[24m(9)
+
+386BSD 1                        August 29, 1994                        KMEM(9)

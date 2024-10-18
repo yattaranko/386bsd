@@ -57,7 +57,7 @@ struct stat
 	long	st_blocks;		/* blocks allocated for file */
 	u_long	st_flags;		/* user defined flags for file */
 	u_long	st_gen;			/* file generation number */
-};
+} __attribute__ ((packed));
 #else
 struct stat {
 	dev_t		st_dev;				/* inode's device */

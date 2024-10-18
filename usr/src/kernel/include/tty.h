@@ -82,7 +82,7 @@ struct tty {
 	struct	ringb t_raw;		/* ring buffers */
 	struct	ringb t_can;
 	struct	ringb t_out;
-};
+} __attribute__ ((packed));
 
 #define	TTIPRI		25		/* sleep priority for tty reads */
 #define	TTOPRI		26		/* sleep priority for tty writes */

@@ -97,7 +97,7 @@
  */
 #ifdef __GNUC__
 #if __GNUC__ >= 2
-#pragma pack(1)
+//#pragma pack(1)
 #endif
 #endif
 

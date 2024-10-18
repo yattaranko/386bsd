@@ -1,0 +1,116 @@
+PTY(4)                      Kernel Interfaces Manual                    PTY(4)
+
+[1mNAME[0m
+       pty — pseudo terminal driver
+
+[1mSYNOPSIS[0m
+       [1mpty slave_chr_major control_chr_major [22m[[4mptycount[24m].
+
+[1mDESCRIPTION[0m
+       The  [4mpty[24m  driver  provides  support  for  a device‐pair termed a [4mpseudo[0m
+       [4mterminal[24m.  A pseudo terminal is a pair of character devices,  a  [4mmaster[0m
+       device  and a [4mslave[24m device.  The slave device provides processes an in‐
+       terface identical to that described in [4mtty[24m(4).   However,  whereas  all
+       other  devices  which  provide the interface described in [4mtty[24m(4) have a
+       hardware device of some sort behind them, the  slave  device  has,  in‐
+       stead,  another  process manipulating it through the master half of the
+       pseudo terminal.  That is, anything written on  the  master  device  is
+       given  to  the  slave device as input and anything written on the slave
+       device is presented as input on the master device.
+
+       If an optional [4mcount[24m is given in the  device  configuration  specifica‐
+       tion,  that number of pseudo terminal pairs are configured; the default
+       count is 8.
+
+       The following [4mioctl[24m(2) calls apply only to pseudo terminals:
+
+       TIOCSTOP    Stops output to a terminal (e.g. like typing ‘ˆS’).   Takes
+                   no parameter.
+
+       TIOCSTART   Restarts  output  (stopped  by TIOCSTOP or by typing ‘ˆS’).
+                   Takes no parameter.
+
+       TIOCPKT     Enable/disable [4mpacket[24m mode.   Packet  mode  is  enabled  by
+                   specifying  (by reference) a nonzero parameter and disabled
+                   by specifying (by reference) a zero  parameter.   When  ap‐
+                   plied  to the master side of a pseudo terminal, each subse‐
+                   quent [4mread[24m from the terminal will return  data  written  on
+                   the  slave  part  of the pseudo terminal preceded by a zero
+                   byte (symbolically defined as TIOCPKT_DATA),  or  a  single
+                   byte  reflecting control status information.  In the latter
+                   case, the byte is an inclusive‐or of zero or  more  of  the
+                   bits:
+
+                   TIOCPKT_FLUSHREAD   whenever  the read queue for the termi‐
+                                       nal is flushed.
+
+                   TIOCPKT_FLUSHWRITE  whenever the write queue for the termi‐
+                                       nal is flushed.
+
+                   TIOCPKT_STOP        whenever  output  to  the  terminal  is
+                                       stopped a la ‘ˆS’.
+
+                   TIOCPKT_START       whenever  output  to  the  terminal  is
+                                       restarted.
+
+                   TIOCPKT_DOSTOP      whenever [4mt_stopc[24m is ‘ˆS’  and  [4mt_startc[0m
+                                       is ‘ˆQ’.
+
+                   TIOCPKT_NOSTOP      whenever  the start and stop characters
+                                       are not ‘ˆS/ˆQ’.
+
+                                       While this mode is in use, the presence
+                                       of control  status  information  to  be
+                                       read  from  the  master side may be de‐
+                                       tected by a [4mselect[24m(2)  for  exceptional
+                                       conditions.
+
+                                       This  mode  is  used  by  [4mrlogin[24m(1) and
+                                       [4mrlogind[24m(8)  to  implement   a   remote‐
+                                       echoed, locally ‘ˆS/ˆQ’ flow‐controlled
+                                       remote  login with proper back‐flushing
+                                       of output; it can be used by other sim‐
+                                       ilar programs.
+
+       TIOCUCNTL   Enable/disable a mode that allows a small number of  simple
+                   user  [4mioctl[24m commands to be passed through the pseudo‐termi‐
+                   nal, using a protocol similar  to  that  of  TIOCPKT.   The
+                   TIOCUCNTL  and  TIOCPKT modes are mutually exclusive.  This
+                   mode is enabled from the master side of a  pseudo  terminal
+                   by  specifying  (by reference) a nonzero parameter and dis‐
+                   abled by specifying (by reference) a zero parameter.   Each
+                   subsequent [4mread[24m from the master side will return data writ‐
+                   ten  on the slave part of the pseudo terminal preceded by a
+                   zero byte, or a single byte reflecting a user control oper‐
+                   ation on the slave side.  A user control  command  consists
+                   of  a  special [4mioctl[24m operation with no data; the command is
+                   given as UIOCCMD(n), where [4mn[24m  is  a  number  in  the  range
+                   1‐255.   The operation value [4mn[24m will be received as a single
+                   byte on the next [4mread[24m from  the  master  side.   The  [4mioctl[0m
+                   UIOCCMD(0) is a no‐op that may be used to probe for the ex‐
+                   istence  of  this  facility.  As with TIOCPKT mode, command
+                   operations may be detected with a  [4mselect[24m  for  exceptional
+                   conditions.
+
+       TIOCREMOTE  A  mode  for the master half of a pseudo terminal, indepen‐
+                   dent of TIOCPKT.  This mode causes input to the pseudo ter‐
+                   minal to be flow controlled and not input  edited  (regard‐
+                   less of the terminal mode).  Each write to the control ter‐
+                   minal  produces  a  record boundary for the process reading
+                   the terminal.  In normal usage, a write of data is like the
+                   data typed as a line on the terminal; a write of 0 bytes is
+                   like typing an end‐of‐file character.   TIOCREMOTE  can  be
+                   used when doing remote line editing in a window manager, or
+                   whenever flow controlled input is required.
+
+[1mFILES[0m
+       [4m/dev/pty[p‐r][0‐9a‐f][24m   master pseudo terminals
+       [4m/dev/tty[p‐r][0‐9a‐f][24m   slave pseudo terminals
+
+[1mDIAGNOSTICS[0m
+       None.
+
+[1mHISTORY[0m
+       The [1mpty [22mdriver appeared in 4.2BSD.
+
+4.2 Berkeley Distribution       March 28, 1991                          PTY(4)
