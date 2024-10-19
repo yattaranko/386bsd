@@ -19,4 +19,4 @@ _ldexp:
 	jmp L1
 L1:
 	leave
-	ret
+	re

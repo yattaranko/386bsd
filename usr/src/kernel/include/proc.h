@@ -207,7 +207,7 @@ struct	pcred {
  * by less than 4 (128/32) are actually identical.
  */
 #define	PSWP	0
-#define	PVM	4
+#define	PVM		4
 #define	PINOD	8
 #define	PRIBIO	16
 #define	PVFS	20

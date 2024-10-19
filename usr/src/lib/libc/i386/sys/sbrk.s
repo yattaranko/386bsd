@@ -55,7 +55,7 @@ ENTRY(sbrk)
 	movl	4(%esp),%ecx
 	movl	curbrk,%eax
 	addl	%eax,4(%esp)
-	lea	SYS_brk,%eax
+	lea		SYS_brk,%eax
 	LCALL(7,0)
 	jb	err
 	movl	curbrk,%eax

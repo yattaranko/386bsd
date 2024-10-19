@@ -126,7 +126,8 @@ typedef struct vm_map_entry	*vm_map_entry_t;
  *	searches again from the last successful search,
  *	insertion, or removal.
  */
-struct vm_map {
+struct vm_map
+{
 	struct pmap *		pmap;		/* Physical map */
 	lock_data_t			lock;		/* Lock for map data */
 	struct vm_map_entry	header;		/* List of entries */
@@ -153,7 +154,8 @@ typedef	struct vm_map	*vm_map_t;
  *	associated timestamp are no longer valid; the map version
  *	does not include a reference for the imbedded share_map.]
  */
-typedef struct {
+typedef struct
+{
 	int		main_timestamp;
 	vm_map_t	share_map;
 	int		share_timestamp;
@@ -174,46 +176,43 @@ typedef struct {
  *	Exported procedures that operate on vm_map_t.
  */
 
-void	vm_map_startup(void);
-vm_map_t
-	vm_map_create(pmap_t pmap, vm_offset_t min, vm_offset_t max,
-		boolean_t pageable);
-void	vm_map_init(struct vm_map *map, vm_offset_t min, vm_offset_t max,
-		boolean_t pageable);
-void	vm_map_reference(vm_map_t map);
-void	vm_map_deallocate(vm_map_t map);
-int	vm_map_find(vm_map_t map, vm_offset_t *addr, vm_size_t length);
-int	vm_map_protect(vm_map_t map, vm_offset_t start, vm_offset_t end,
-		vm_prot_t new_prot, boolean_t set_max);
-int	vm_map_inherit(vm_map_t map, vm_offset_t start, vm_offset_t end,
-		vm_inherit_t new_inheritance);
-int	vm_map_pageable(vm_map_t map, vm_offset_t start, vm_offset_t end,
-		boolean_t new_pageable);
-int	vm_map_remove(vm_map_t map, vm_offset_t start, vm_offset_t end);
-boolean_t
-	vm_map_check_protection(vm_map_t map, vm_offset_t start,
-		vm_offset_t end, vm_prot_t protection);
-int	vm_map_copy(vm_map_t dst_map, vm_map_t src_map, vm_offset_t dst_addr,
-		vm_size_t len, vm_offset_t src_addr, boolean_t dst_alloc,
-		boolean_t src_destroy);
-int	vm_map_lookup(vm_map_t *var_map, vm_offset_t vaddr,
-		vm_prot_t fault_type, vm_map_entry_t *out_entry,
-		vm_object_t *object, vm_offset_t *offset, vm_prot_t *out_prot,
-		boolean_t *wired, boolean_t *single_use);
-void	vm_map_lookup_done(vm_map_t map, vm_map_entry_t entry);
-void	vm_map_simplify(vm_map_t map, vm_offset_t start);
+void		vm_map_startup(void);
+vm_map_t	vm_map_create(pmap_t pmap, vm_offset_t min, vm_offset_t max,
+							boolean_t pageable);
+void		vm_map_init(struct vm_map *map, vm_offset_t min, vm_offset_t max,
+							boolean_t pageable);
+void		vm_map_reference(vm_map_t map);
+void		vm_map_deallocate(vm_map_t map);
+int			vm_map_find(vm_map_t map, vm_offset_t *addr, vm_size_t length);
+int			vm_map_protect(vm_map_t map, vm_offset_t start, vm_offset_t end,
+						vm_prot_t new_prot, boolean_t set_max);
+int			vm_map_inherit(vm_map_t map, vm_offset_t start, vm_offset_t end,
+						vm_inherit_t new_inheritance);
+int			vm_map_pageable(vm_map_t map, vm_offset_t start, vm_offset_t end,
+						boolean_t new_pageable);
+int			vm_map_remove(vm_map_t map, vm_offset_t start, vm_offset_t end);
+boolean_t	vm_map_check_protection(vm_map_t map, vm_offset_t start,
+						vm_offset_t end, vm_prot_t protection);
+int			vm_map_copy(vm_map_t dst_map, vm_map_t src_map, vm_offset_t dst_addr,
+						vm_size_t len, vm_offset_t src_addr, boolean_t dst_alloc,
+						boolean_t src_destroy);
+int			vm_map_lookup(vm_map_t *var_map, vm_offset_t vaddr,
+						vm_prot_t fault_type, vm_map_entry_t *out_entry,
+						vm_object_t *object, vm_offset_t *offset, vm_prot_t *out_prot,
+						boolean_t *wired, boolean_t *single_use);
+void		vm_map_lookup_done(vm_map_t map, vm_map_entry_t entry);
+void		vm_map_simplify(vm_map_t map, vm_offset_t start);
 
 /*  "internal" routines currently used externally (vm_kern,vm_mmap): */
-int	vm_map_submap(vm_map_t map, vm_offset_t start, vm_offset_t end,
-		vm_map_t submap);
-void	vm_map_delete(vm_map_t map, vm_offset_t start, vm_offset_t end);
-int	vm_map_insert(vm_map_t map, vm_object_t object, vm_offset_t offset,
-		vm_offset_t start, vm_offset_t end);
-boolean_t
-	vm_map_lookup_entry(vm_map_t map, vm_offset_t address,
-		vm_map_entry_t *entry);
+int			vm_map_submap(vm_map_t map, vm_offset_t start, vm_offset_t end,
+						vm_map_t submap);
+void		vm_map_delete(vm_map_t map, vm_offset_t start, vm_offset_t end);
+int			vm_map_insert(vm_map_t map, vm_object_t object, vm_offset_t offset,
+						vm_offset_t start, vm_offset_t end);
+boolean_t	vm_map_lookup_entry(vm_map_t map, vm_offset_t address,
+						vm_map_entry_t *entry);
 
-void vm_map_print(vm_map_t map, boolean_t full);
+void		vm_map_print(vm_map_t map, boolean_t full);
 
 /*
  *	Functions implemented as macros

@@ -46,7 +46,8 @@
 #ifdef PROF
 #undef ENTRY
 #define	ENTRY(x) \
-	.globl _/**/x; .align 2; _/**/x:  pusha ; \
+//	.globl _/**/x; .align 2; _/**/x:  pusha ; \
+	.globl x; .align 2; x:  pusha ; \
 	.data; 1:; .long 0; .text; movl $1b,%eax; call mcount; popa ; nop
 #endif /* PROF */
 
