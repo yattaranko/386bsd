@@ -3,5 +3,6 @@
 PROG=	rm
 LDADD=	-lutil
 DPADD=	${LIBUTIL}
+SRCS=	rm.c
 
 .include <bsd.prog.mk>

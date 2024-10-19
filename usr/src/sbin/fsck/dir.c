@@ -36,10 +36,10 @@ static char sccsid[] = "@(#)dir.c	5.19 (Berkeley) 7/26/91";
 #endif /* not lint */
 
 #include <sys/param.h>
-#include <ufs/dinode.h>
-#include <ufs/fs.h>
+#include <fs/ufs_dinode.h>
+#include <fs/ufs.h>
 #define KERNEL
-#include <ufs/dir.h>
+#include <fs/ufs_dir.h>
 #undef KERNEL
 #include <stdlib.h>
 #include <string.h>

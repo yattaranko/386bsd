@@ -43,9 +43,9 @@ struct nameidata {
 	/*
 	 * Arguments to namei.
 	 */
-	caddr_t	ni_dirp;		/* pathname pointer */
+	caddr_t	ni_dirp;			/* pathname pointer */
 	enum	uio_seg ni_segflg;	/* location of pathname */
-	u_long	ni_nameiop;		/* see below */
+	u_long	ni_nameiop;			/* see below */
 	/*
 	 * Arguments to lookup.
 	 */
@@ -60,25 +60,25 @@ struct nameidata {
 	/*
 	 * Shared between namei, lookup routines, and commit routines.
 	 */
-	char	*ni_pnbuf;		/* pathname buffer */
-	u_int	ni_pathlen;		/* remaining chars in path */
-	char	*ni_ptr;		/* current location in pathname */
-	u_int	ni_namelen;		/* length of current component */
-	char	*ni_next;		/* next location in pathname */
-	u_long	ni_hash;		/* hash value of current component */
-	u_char	ni_loopcnt;		/* count of symlinks encountered */
+	char	*ni_pnbuf;			/* pathname buffer */
+	u_int	ni_pathlen;			/* remaining chars in path */
+	char	*ni_ptr;			/* current location in pathname */
+	u_int	ni_namelen;			/* length of current component */
+	char	*ni_next;			/* next location in pathname */
+	u_long	ni_hash;			/* hash value of current component */
+	u_char	ni_loopcnt;			/* count of symlinks encountered */
 	u_char	ni_makeentry;		/* 1 => add entry to name cache */
 	u_char	ni_isdotdot;		/* 1 => current component name is .. */
-	u_char	ni_more;		/* 1 => symlink needs interpretation */
+	u_char	ni_more;			/* 1 => symlink needs interpretation */
 	/*
 	 * Side effects.
 	 */
 	struct ufs_specific {		/* saved info for new dir entry */
-		off_t	ufs_endoff;	/* end of useful directory contents */
-		long	ufs_offset;	/* offset of free space in directory */
-		long	ufs_count;	/* size of free slot in directory */
-		ino_t	ufs_ino;	/* inode number of found directory */
-		u_long	ufs_reclen;	/* size of found directory entry */
+		off_t	ufs_endoff;		/* end of useful directory contents */
+		long	ufs_offset;		/* offset of free space in directory */
+		long	ufs_count;		/* size of free slot in directory */
+		ino_t	ufs_ino;		/* inode number of found directory */
+		u_long	ufs_reclen;		/* size of found directory entry */
 	} ni_ufs;
 };
 
@@ -116,11 +116,11 @@ struct nameidata {
  * buffer and for vrele'ing ni_startdir.
  */
 #define	NOCROSSMOUNT	0x0100	/* do not cross mount points */
-#define	REMOTE		0x0200	/* lookup for remote filesystem servers */
-#define	HASBUF		0x0400	/* has allocated pathname buffer */
-#define	SAVENAME	0x0800	/* save pathanme buffer */
-#define	SAVESTART	0x1000	/* save starting directory */
-#define PARAMASK	0xff00	/* mask of parameter descriptors */
+#define	REMOTE			0x0200	/* lookup for remote filesystem servers */
+#define	HASBUF			0x0400	/* has allocated pathname buffer */
+#define	SAVENAME		0x0800	/* save pathanme buffer */
+#define	SAVESTART		0x1000	/* save starting directory */
+#define PARAMASK		0xff00	/* mask of parameter descriptors */
 #endif
 
 /*
@@ -133,16 +133,16 @@ struct nameidata {
 #define	NCHNAMLEN	31	/* maximum name segment length we bother with */
 
 struct	namecache {
-	struct	namecache *nc_forw;	/* hash chain, MUST BE FIRST */
-	struct	namecache *nc_back;	/* hash chain, MUST BE FIRST */
-	struct	namecache *nc_nxt;	/* LRU chain */
+	struct	namecache *nc_forw;		/* hash chain, MUST BE FIRST */
+	struct	namecache *nc_back;		/* hash chain, MUST BE FIRST */
+	struct	namecache *nc_nxt;		/* LRU chain */
 	struct	namecache **nc_prev;	/* LRU chain */
-	struct	vnode *nc_dvp;		/* vnode of parent of name */
-	u_long	nc_dvpid;		/* capability number of nc_dvp */
-	struct	vnode *nc_vp;		/* vnode the name refers to */
-	u_long	nc_vpid;		/* capability number of nc_vp */
-	char	nc_nlen;		/* length of name */
-	char	nc_name[NCHNAMLEN];	/* segment name */
+	struct	vnode *nc_dvp;			/* vnode of parent of name */
+	u_long	nc_dvpid;				/* capability number of nc_dvp */
+	struct	vnode *nc_vp;			/* vnode the name refers to */
+	u_long	nc_vpid;				/* capability number of nc_vp */
+	char	nc_nlen;				/* length of name */
+	char	nc_name[NCHNAMLEN];		/* segment name */
 };
 
 #ifdef KERNEL
@@ -174,9 +174,9 @@ struct	nchstats {
 	long	ncs_neghits;		/* negative hits that we can use */
 	long	ncs_badhits;		/* hits we must drop */
 	long	ncs_falsehits;		/* hits with id mismatch */
-	long	ncs_miss;		/* misses */
-	long	ncs_long;		/* long names that ignore cache */
-	long	ncs_pass2;		/* names found with passes == 2 */
+	long	ncs_miss;			/* misses */
+	long	ncs_long;			/* long names that ignore cache */
+	long	ncs_pass2;			/* names found with passes == 2 */
 	long	ncs_2passes;		/* number of times we attempt it */
 };
 #endif /* !_NAMEI_H_ */

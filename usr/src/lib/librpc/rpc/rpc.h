@@ -38,7 +38,7 @@
 #define __RPC_HEADER__
 
 #include <rpc/types.h>		/* some typedefs */
-#include <netinet/in.h>
+#include <domain/in.h>
 
 /* external data representation interfaces */
 #include <rpc/xdr.h>		/* generic (de)serializer */
@@ -56,7 +56,7 @@
  *  Uncomment-out the next line if you are building the rpc library with    
  *  DES Authentication (see the README file in the secure_rpc/ directory).
  */
-/*#include <rpc/auth_des.h>	/* protocol for des style cred */
+/*#include <rpc/auth_des.h> */	/* protocol for des style cred */
 
 /* Server side only remote procedure callee */
 #include <rpc/svc.h>		/* service manager and multiplexer */

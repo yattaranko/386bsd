@@ -1,5 +1,6 @@
 #	@(#)Makefile	5.6 (Berkeley) 5/2/91
 
+SRCS= dmesg.c
 NONSTDINC= $(INCKERNEL)
 PROG=	dmesg
 MAN8=	dmesg.0

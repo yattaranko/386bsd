@@ -42,6 +42,7 @@
 #include "kernel.h"
 #include "proc.h"
 #include "resourcevar.h"
+#include <signalvar.h>
 
 #include "machine/cpu.h"
 
@@ -86,6 +87,9 @@
 
 int				phz;
 struct timeval	time;
+
+extern int splclock(void);
+extern int splsoftclock(void);
 
 /*
  * The hz hardware interval timer.
@@ -166,15 +170,20 @@ hardclock(clockframe frame)
 	 */
 	if (p) {
 		if ((p->p_utime.tv_sec+p->p_stime.tv_sec+1) >
-		    p->p_rlimit[RLIMIT_CPU].rlim_cur) {
+		    p->p_rlimit[RLIMIT_CPU].rlim_cur)
+		{
 			psignal(p, SIGXCPU);
 			if (p->p_rlimit[RLIMIT_CPU].rlim_cur <
 			    p->p_rlimit[RLIMIT_CPU].rlim_max)
+			{
 				p->p_rlimit[RLIMIT_CPU].rlim_cur += 5;
+			}
 		}
 		if (timerisset(&pstats->p_timer[ITIMER_PROF].it_value) &&
 		    itimerdecr(&pstats->p_timer[ITIMER_PROF], tick) == 0)
+		{
 			psignal(p, SIGPROF);
+		}
 
 		/*
 		 * We adjust the priority of the current process.
@@ -193,11 +202,16 @@ hardclock(clockframe frame)
 		 */
 		p->p_cpticks++;
 		if (++p->p_cpu == 0)
+		{
 			p->p_cpu--;
-		if ((p->p_cpu & 3) == 0) {
+		}
+		if ((p->p_cpu & 3) == 0)
+		{
 			setpri(p);
 			if (p->p_pri >= PUSER)
+			{
 				p->p_pri = p->p_usrpri;
+			}
 		}
 	}
 
@@ -206,7 +220,9 @@ hardclock(clockframe frame)
 	 * we must gather the statistics.
 	 */
 	if (phz == 0)
+	{
 		gatherstats(frame);
+	}
 
 	/*
 	 * Increment the time-of-day, and schedule
@@ -215,29 +231,40 @@ hardclock(clockframe frame)
 	 * priority any longer than necessary.
 	 */
 	if (timedelta == 0)
+	{
 		BUMPTIME(&time, tick)
-	else {
-		register delta;
+	}
+	else
+	{
+		register int delta;
 
-		if (timedelta < 0) {
+		if (timedelta < 0)
+		{
 			delta = tick - tickdelta;
 			timedelta += tickdelta;
-		} else {
+		}
+		else
+		{
 			delta = tick + tickdelta;
 			timedelta -= tickdelta;
 		}
 		BUMPTIME(&time, delta);
 	}
-	if (needsoft) {
-		if (CLKF_BASEPRI(&frame)) {
+	if (needsoft)
+	{
+		if (CLKF_BASEPRI(&frame))
+		{
 			/*
 			 * Save the overhead of a software interrupt;
 			 * it will happen as soon as we return, so do it now.
 			 */
 			(void) splsoftclock();
 			softclock(frame);
-		} else
+		}
+		else
+		{
 			setsoftclock();
+		}
 	}
 }
 
@@ -258,15 +285,22 @@ gatherstats(clockframe frame)
 	/*
 	 * Determine what state the cpu is in.
 	 */
-	if (CLKF_USERMODE(&frame)) {
+	if (CLKF_USERMODE(&frame))
+	{
 		/*
 		 * CPU was in user state.
 		 */
 		if (curproc->p_nice > NZERO)
+		{
 			cpstate = CP_NICE;
+		}
 		else
+		{
 			cpstate = CP_USER;
-	} else {
+		}
+	}
+	else
+	{
 		/*
 		 * CPU was in system state.  If profiling kernel
 		 * increment a counter.  If no process is running
@@ -280,7 +314,9 @@ gatherstats(clockframe frame)
 		 */
 		cpstate = CP_SYS;
 		if (curproc == NULL && CLKF_BASEPRI(&frame))
+		{
 			cpstate = CP_IDLE;
+		}
 #ifdef GPROF
 		s = (u_long) CLKF_PC(&frame) - (u_long) s_lowpc;
 		if (profiling < 2 && s < s_textsize)
@@ -294,8 +330,12 @@ gatherstats(clockframe frame)
 	 */
 	cp_time[cpstate]++;
 	for (s = 0; s < DK_NDRIVE; s++)
+	{
 		if (dk_busy&(1<<s))
+		{
 			dk_time[s]++;
+		}
+	}
 }
 
 /*
@@ -305,19 +345,23 @@ gatherstats(clockframe frame)
 void
 softclock(clockframe frame)
 {
+	struct callout *p1;
+	caddr_t arg;
+	int (*func)(caddr_t, int);
 
-	for (;;) {
-		struct callout *p1;
-		caddr_t arg;
-		int (*func)();
+	for (;;)
+	{
 		int a, s;
 
 		s = splclock();
-		if ((p1 = calltodo.c_next) == 0 || p1->c_time > 0) {
+		if ((p1 = calltodo.c_next) == 0 || p1->c_time > 0)
+		{
 			splx(s);
 			break;
 		}
-		arg = p1->c_arg; func = p1->c_func; a = p1->c_time;
+		arg = p1->c_arg;
+		func = p1->c_func;
+		a = p1->c_time;
 		calltodo.c_next = p1->c_next;
 		p1->c_next = callfree;
 		callfree = p1;
@@ -328,24 +372,31 @@ softclock(clockframe frame)
 	/*
 	 * If no process to work with, we're finished.
 	 */
-	if (curproc == 0) return;
+	if (curproc == 0)
+	{
+		return;
+	}
 
 	/*
 	 * If trapped user-mode and profiling, give it
 	 * a profiling tick.
 	 */
-	if (CLKF_USERMODE(&frame)) {
+	if (CLKF_USERMODE(&frame))
+	{
 		register struct proc *p = curproc;
 
 		if (p->p_stats->p_prof.pr_scale)
+		{
 			profile_tick(p, &frame);
+		}
 		/*
 		 * Check to see if process has accumulated
 		 * more than 10 minutes of user time.  If so
 		 * reduce priority to give others a chance.
 		 */
 		if (p->p_ucred->cr_uid && p->p_nice == NZERO &&
-		    p->p_utime.tv_sec > 10 * 60) {
+		    p->p_utime.tv_sec > 10 * 60)
+		{
 			p->p_nice = NZERO + 4;
 			setpri(p);
 			p->p_pri = p->p_usrpri;

@@ -39,7 +39,7 @@
 #include "mbuf.h"
 #include "sys/file.h"
 #include "sys/errno.h"
-/* #include "proc.h"	*/ /* for wakeup() */
+/* #include "proc.h"	/* for wakeup() */
 
 /* interface symbols */
 #define	__ISYM_VERSION__ "1"	/* XXX RCS major revision number of hdr file */
@@ -352,7 +352,7 @@ tcp_close(tp)
 				rt->rt_rmx.rmx_ssthresh = i;
 		}
 	}
-#endif	/* RTV_RTT */
+#endif /* RTV_RTT */
 	/* free the reassembly queue, if any */
 	t = tp->seg_next;
 	while (t != (struct tcpiphdr *)tp) {

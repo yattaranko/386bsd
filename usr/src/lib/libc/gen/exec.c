@@ -226,7 +226,8 @@ execvp(name, argv)
 		bcopy(name, buf + lp + 1, ln);
 		buf[lp + ln + 1] = '\0';
 
-retry:		(void)execve(bp, argv, environ);
+retry:
+		(void)execve(bp, argv, environ);
 		switch(errno) {
 		case EACCES:
 			eacces = 1;

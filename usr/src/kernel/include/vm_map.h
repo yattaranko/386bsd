@@ -100,22 +100,22 @@ typedef union vm_map_object	vm_map_object_t;
 struct vm_map_entry {
 	struct vm_map_entry	*prev;		/* previous entry */
 	struct vm_map_entry	*next;		/* next entry */
-	vm_offset_t		start;		/* start address */
-	vm_offset_t		end;		/* end address */
+	vm_offset_t			start;		/* start address */
+	vm_offset_t			end;		/* end address */
 	union vm_map_object	object;		/* object I point to */
-	vm_offset_t		offset;		/* offset into object */
+	vm_offset_t			offset;		/* offset into object */
 	unsigned int
-				is_a_map:1,	/* Is "object" a map? */
-				is_sub_map:1,	/* Is "object" a submap? */
-		/* Only in sharing maps: */
-				copy_on_write:1,/* is data copy-on-write */
-				needs_copy:1,	/* does object need to be copied */
-		/* Only in task maps: */
-				canwire:1;	/* wire on fault */
-	vm_prot_t		protection;	/* protection code */
-	vm_prot_t		max_protection;	/* maximum protection */
+						is_a_map:1,	/* Is "object" a map? */
+						is_sub_map:1,	/* Is "object" a submap? */
+						/* Only in sharing maps: */
+						copy_on_write:1,/* is data copy-on-write */
+						needs_copy:1,	/* does object need to be copied */
+						/* Only in task maps: */
+						canwire:1;	/* wire on fault */
+	vm_prot_t			protection;	/* protection code */
+	vm_prot_t			max_protection;	/* maximum protection */
 	vm_inherit_t		inheritance;	/* inheritance */
-	int			wired_count;	/* can be paged if = 0 */
+	int				wired_count;	/* can be paged if = 0 */
 };
 
 typedef struct vm_map_entry	*vm_map_entry_t;
@@ -128,15 +128,15 @@ typedef struct vm_map_entry	*vm_map_entry_t;
  */
 struct vm_map {
 	struct pmap *		pmap;		/* Physical map */
-	lock_data_t		lock;		/* Lock for map data */
+	lock_data_t			lock;		/* Lock for map data */
 	struct vm_map_entry	header;		/* List of entries */
-	int			nentries;	/* Number of entries */
-	vm_size_t		size;		/* virtual size */
-	boolean_t		is_main_map;	/* Am I a main map? */
-	int			ref_count;	/* Reference count */
+	int					nentries;	/* Number of entries */
+	vm_size_t			size;		/* virtual size */
+	boolean_t			is_main_map;	/* Am I a main map? */
+	int					ref_count;	/* Reference count */
 	vm_map_entry_t		hint;		/* hint for quick lookups */
 	vm_map_entry_t		first_free;	/* First free space hint */
-	boolean_t		entries_pageable; /* map entries pageable?? */
+	boolean_t			entries_pageable; /* map entries pageable?? */
 	unsigned int		timestamp;	/* Version number */
 #define	min_offset		header.start
 #define max_offset		header.end

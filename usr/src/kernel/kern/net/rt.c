@@ -64,8 +64,8 @@ nortmissmsg(int type, struct sockaddr *dst, struct sockaddr *gate,
 	panic("nortmissmsg");
 }
 
-/* struct route_ops _router_ = {
+/*struct route_ops _router_ = {
 	0,
 	nortinit, nortalloc, nortfree,
 	nortrequest, nortredirect, nortmissmsg, nortioctl
-}; */
+};*/

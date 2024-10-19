@@ -19,7 +19,11 @@
 			"filedesc.h": "c",
 			"modconfig.h": "c",
 			"vnode.h": "c",
-			"segments.h": "c"
+			"segments.h": "c",
+			"kernel.h": "c",
+			"vm_fault.h": "c",
+			"param.h": "c",
+			"signal.h": "c"
 		}
 	}
 }

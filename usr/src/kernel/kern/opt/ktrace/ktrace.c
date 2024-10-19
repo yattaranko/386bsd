@@ -48,10 +48,8 @@
 
 #include "prototypes.h"
 
-static void ktrwrite(struct vnode* vp, register struct ktr_header* kth);
-
 struct ktr_header *
-ktrgetheader(type)
+ktrgetheader(int type)
 {
 	register struct ktr_header *kth;
 	struct proc *p = curproc;	/* XXX */
@@ -65,9 +63,7 @@ ktrgetheader(type)
 	return (kth);
 }
 
-ktrsyscall(vp, code, narg, args)
-	struct vnode *vp;
-	int code, narg, args[];
+void ktrsyscall(struct vnode *vp, int code, int narg, int args[])
 {
 	struct	ktr_header *kth = ktrgetheader(KTR_SYSCALL);
 	struct	ktr_syscall *ktp;
@@ -87,9 +83,7 @@ ktrsyscall(vp, code, narg, args)
 	FREE(kth, M_TEMP);
 }
 
-ktrsysret(vp, code, error, retval)
-	struct vnode *vp;
-	int code, error, retval;
+void ktrsysret(struct vnode* vp, int code, int error, int retval)
 {
 	struct ktr_header *kth = ktrgetheader(KTR_SYSRET);
 	struct ktr_sysret ktp;
@@ -154,9 +148,7 @@ done:
 	FREE(ktp, M_TEMP);
 }
 
-ktrpsig(vp, sig, action, mask, code)
-	struct	vnode *vp;
-	sig_t	action;
+void ktrpsig(struct vnode* vp, int sig, sig_t action, int mask, int code)
 {
 	struct ktr_header *kth = ktrgetheader(KTR_PSIG);
 	struct ktr_psig	kp;
@@ -380,7 +372,7 @@ ktrsetchildren(curp, top, ops, facs, vp)
 	/*NOTREACHED*/
 }
 
-static void ktrwrite(vp, kth)
+ktrwrite(vp, kth)
 	struct vnode *vp;
 	register struct ktr_header *kth;
 {
@@ -390,7 +382,7 @@ static void ktrwrite(vp, kth)
 	int error;
 
 	if (vp == NULL || p->p_traceflag & 0x20000000)
-		return;
+		return ( 1 );
 	p->p_traceflag |= 0x20000000;
 	auio.uio_iov = &aiov[0];
 	auio.uio_offset = 0;
@@ -412,7 +404,7 @@ static void ktrwrite(vp, kth)
 	VOP_UNLOCK(vp);
 	p->p_traceflag &= ~0x20000000;
 	if (!error)
-		return;
+		return ( 0 );
 	/*
 	 * If error encountered, give up tracing on this vnode.
 	 */

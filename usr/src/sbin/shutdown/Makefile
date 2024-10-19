@@ -3,7 +3,8 @@
 PROG=	shutdown
 MAN8=	shutdown.0
 BINOWN=	root
-BINGRP=	operator
+BINGRP=	wheel
 BINMODE=4550
+SRCS=	shutdown.c 
 
 .include <bsd.prog.mk>

@@ -36,6 +36,6 @@
 #include <paths.h>
 
 #define	_PATH_FASTBOOT	"/fastboot"
-#define	_PATH_HALT	"/sbin/halt"
+#define	_PATH_HALT  	"/sbin/halt"
 #define	_PATH_REBOOT	"/sbin/reboot"
-#define	_PATH_WALL	"/usr/bin/wall"
+#define	_PATH_WALL  	"/usr/bin/wall"

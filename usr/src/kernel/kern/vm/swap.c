@@ -162,7 +162,7 @@ swapinit()
 		panic("swapvp");
 	if (error = swfree(&proc0, 0)) {
 		printf("\nwarning: no swap space present (yet)\n");
-		/* printf("(swfree (..., 0) -> %d)\n", error);	*/ /* XXX */
+		/* printf("(swfree (..., 0) -> %d)\n", error);	/* XXX */
 		/*panic("swapinit swfree 0");*/
 	}
 #endif
@@ -191,7 +191,7 @@ swstrategy(register struct buf *bp)
 	if (bp->b_blkno + sz > nswap) {
 		bp->b_flags |= B_ERROR;
 		biodone(bp);
-		return (0);
+		return ( 0 );
 	}
 
 	/* if more than one device, find underlying block address */
@@ -221,7 +221,7 @@ printf("overlap");
 	if (sp->sw_vp == NULL) {
 		bp->b_error |= B_ERROR;
 		biodone(bp);
-		return(0);
+		return ( 0 );
 	}
 	if ((bp->b_dev = sp->sw_dev) == 0)
 		panic("swstrategy");
@@ -244,8 +244,8 @@ printf("overlap");
 	} else
 		bp->b_vp = sp->sw_vp;
 		bp->b_dev = sp->sw_dev;
+printf("swstrategy\n");
 	VOP_STRATEGY(bp);
-	return(0);
 }
 
 /*

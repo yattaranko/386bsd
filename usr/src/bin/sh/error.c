@@ -47,13 +47,13 @@ static char sccsid[] = "@(#)error.c	5.1 (Berkeley) 3/7/91";
 #include "options.h"
 #include "output.h"
 #include "error.h"
-#include <signal.h>
+#include <sys/signal.h>
 #ifdef __STDC__
 #include "stdarg.h"
 #else
 #include <varargs.h>	
 #endif
-#include <errno.h>
+#include <sys/errno.h>
 
 
 /*
@@ -64,7 +64,7 @@ struct jmploc *handler;
 int exception;
 volatile int suppressint;
 volatile int intpending;
-char *commandname;
+//char *commandname;
 
 
 /*

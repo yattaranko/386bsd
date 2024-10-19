@@ -59,10 +59,21 @@ int bdev;
 char superb[SBSIZE], abuf[MAXBSIZE];
 struct fs *fs;
 
+extern void exit(int status);
+extern void printf(const char *fmt, ...);
+extern void bcopy(char* src, char* dst, int cnt);
+extern int strcmp(const char *s1, const char *s2);
+extern int bread(int bdev, int off, char* addr, int sz);
+extern int bmap(struct dinode* dip, daddr_t bn, daddr_t* bnp);
+extern void fetchi(int i, struct dinode* dip);
+extern int iread(struct dinode* dip, int off, char* p, int sz);
+static int ilookup(struct dinode* dip, char* s);
+
 /*
  * Translate name to inode number.
  */
-namei(s) char *s; {
+int namei(char* s)
+{
 	int ino;
 	struct dinode rd;
 
@@ -80,7 +91,8 @@ namei(s) char *s; {
 /*
  * look for a file in this inode.
  */
-ilookup(dip, s) struct dinode *dip; char *s; {
+int ilookup(struct dinode* dip, char* s)
+{
 	struct direct dirent;
 	int off;
 
@@ -103,14 +115,15 @@ ilookup(dip, s) struct dinode *dip; char *s; {
 /*
  * Extract an inode and return it.
  */
-fetchi(i, dip) struct dinode *dip; {
+void fetchi(int i, struct dinode* dip)
+{
 
 #if	DEBUG > 2
 	printf("fetchi %d %x\n", i, dip);
 #endif
 	bread(bdev, fsbtodb(fs, itod(fs, i)), abuf, fs->fs_bsize);
 	bcopy (abuf + itoo(fs,i) * sizeof(struct dinode),
-		dip, sizeof(struct dinode));
+		(char*)dip, sizeof(struct dinode));
 #if	DEBUG > 8
 	printf("mode %o link %d uid %d gid %d size %d [ ",
 	dip->di_mode, dip->di_nlink, dip->di_uid, dip->di_gid, dip->di_size);
@@ -126,9 +139,7 @@ fetchi(i, dip) struct dinode *dip; {
 /*
  * Read data contents of an inode
  */
-iread(dip, off, p, sz)
-	struct dinode *dip;
-	char *p;
+int iread(struct dinode* dip, int off, char* p, int sz)
 {
 	daddr_t physblock;
 	int va = sz;
@@ -168,7 +179,8 @@ iread(dip, off, p, sz)
 	return(va);
 }
 
-_stop(s) {
+void _stop(char* s)
+{
 	printf("Failed: %s\n", s);
 	exit(0);
 }

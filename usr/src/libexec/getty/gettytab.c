@@ -35,7 +35,7 @@
 static char sccsid[] = "@(#)gettytab.c	5.5 (Berkeley) 2/25/91";
 #endif /* not lint */
 
-#include <fcntl.h>
+#include <sys/fcntl.h>
 #include <unistd.h>
 #include <string.h>
 #include <ctype.h>
@@ -45,17 +45,17 @@ static char sccsid[] = "@(#)gettytab.c	5.5 (Berkeley) 2/25/91";
 
 static	char *tbuf;
 int	hopcount;	/* detect infinite loops in termcap, init 0 */
-char	*skip();
-char	*getstr();
-char	*decode();
+static char*	skip(register char *bp);
+static char*	decode(register char *str, char **area);
+static int 		namatch(char* np);
+static int 		nchktc();
 
 /*
  * Get an entry for terminal name in buffer bp,
  * from the termcap file.  Parse is very rudimentary;
  * we just notice escaped newlines.
  */
-getent(bp, name)
-	char *bp, *name;
+int getent(char* bp, char* name)
 {
 	register char *cp;
 	register int c;
@@ -113,7 +113,7 @@ getent(bp, name)
  * Note that this works because of the left to right scan.
  */
 #define	MAXHOP	32
-nchktc()
+static int nchktc()
 {
 	register char *p, *q;
 	char tcname[16];	/* name of similar terminal */
@@ -160,8 +160,7 @@ nchktc()
  * against each such name.  The normal : terminator after the last
  * name (before the first field) stops us.
  */
-namatch(np)
-	char *np;
+static int namatch(char* np)
 {
 	register char *Np, *Bp;
 
@@ -186,9 +185,7 @@ namatch(np)
  * knowing about \: escapes or any such.  If necessary, :'s can be put
  * into the termcap file in octal.
  */
-static char *
-skip(bp)
-	register char *bp;
+static char* skip(register char *bp)
 {
 
 	while (*bp && *bp != ':')
@@ -206,9 +203,7 @@ skip(bp)
  * a # character.  If the option is not found we return -1.
  * Note that we handle octal numbers beginning with 0.
  */
-long
-getnum(id)
-	char *id;
+long getnum(char* id)
 {
 	register long i, base;
 	register char *bp = tbuf;
@@ -240,8 +235,7 @@ getnum(id)
  * of the buffer.  Return 1 if we find the option, or 0 if it is
  * not given.
  */
-getflag(id)
-	char *id;
+int getflag(char* id)
 {
 	register char *bp = tbuf;
 
@@ -268,9 +262,7 @@ getflag(id)
  * placed in area, which is a ref parameter which is updated.
  * No checking on area overflow.
  */
-char *
-getstr(id, area)
-	char *id, **area;
+char* getstr(char* id, char** area)
 {
 	register char *bp = tbuf;
 
@@ -293,10 +285,7 @@ getstr(id, area)
  * Tdecode does the grung work to decode the
  * string capability escapes.
  */
-static char *
-decode(str, area)
-	register char *str;
-	char **area;
+static char* decode(register char *str, char **area)
 {
 	register char *cp;
 	register int c;

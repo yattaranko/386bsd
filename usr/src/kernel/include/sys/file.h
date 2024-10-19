@@ -65,7 +65,7 @@ struct file {
 };
 
 extern struct file *filehead;	/* head of list of open files */
-extern int maxfiles;		/* kernel limit on number of open files */
+extern const  int 	maxfiles;		/* kernel limit on number of open files */
 extern int nfiles;		/* actual number of open files */
 
 #endif /* KERNEL */

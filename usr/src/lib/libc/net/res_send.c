@@ -43,7 +43,7 @@ static char sccsid[] = "@(#)res_send.c	6.27 (Berkeley) 2/24/91";
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <sys/uio.h>
-#include <netinet/in.h>
+#include <domain/in.h>
 #include <arpa/nameser.h>
 #include <stdio.h>
 #include <errno.h>

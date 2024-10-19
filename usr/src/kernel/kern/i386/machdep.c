@@ -114,7 +114,13 @@ int	bufpages = 0;
 #endif
 int	msgbufmapped;		/* set when safe to use msgbuf */
 extern int freebufspace;
-extern char copyright1[], copyright2[];
+//extern char copyright1[], copyright2[];
+
+extern void vm_set_page_size(int sz);
+extern u_char rtcin(u_char  adr);
+extern void trap(struct trapframe frame);
+extern int splnone(void);
+extern void isa_defaultirq();
 
 /*
  * Machine-dependent startup code
@@ -145,11 +151,13 @@ cpu_startup(void)
 #ifdef KDB
 	kdb_init();			/* startup kernel debugger */
 #endif
+#if 0
 	/*
 	 * Good {morning,afternoon,evening,night}.
 	 */
-	printf("%s [2.0.%s]\n", copyright1, version+9);
+	printf("%s [1.0.%s]\n", copyright1, version+9);
 	printf(copyright2);
+#endif
 
 	/*
 	 * Allocate space for system data structures.
@@ -181,10 +189,16 @@ again:
 	 * We allocate 1/2 as many swap buffer headers as file i/o buffers.
 	 */
 	if (bufpages == 0)
+	{
 		if (physmem < (2 * 1024 * 1024))
+		{
 			bufpages = physmem / 10 / CLSIZE;
+		}
 		else
+		{
 			bufpages = ((2 * 1024 * 1024 + physmem) / 10) / CLSIZE;
+		}
+	}
 
 	if (nbuf == 0) {
 		nbuf = bufpages / 2;
@@ -344,7 +358,7 @@ struct segment_descriptor *sdfirstp_gdesc = &gdt_bootstrap[GPROC0_SEL].sd,
 int sdngd_gdesc = NGDT, sdnfree_gdesc = NGDT - GPROC0_SEL;
 
 /* interrupt descriptor table */
-struct gate_descriptor idt[NIDT];
+static struct gate_descriptor idt[NIDT];
 
 /* local descriptor table */
 union descriptor ldt[5];
@@ -355,7 +369,7 @@ union descriptor ldt[5];
 #define	LUCODE_SEL	3
 #define	LUDATA_SEL	4
 /* seperate stack, es,fs,gs sels ? */
-/* #define	LPOSIXCALLS_SEL	5	*/ /* notyet */
+/* #define	LPOSIXCALLS_SEL	5 */	/* notyet */
 
 struct	i386tss	inv_tss, dbl_tss, exit_tss;
 char alt_stack[1024];
@@ -367,122 +381,122 @@ struct soft_segment_descriptor gdt_segs[] = {
 	/* Null Descriptor */
 {	0x0,			/* segment base address  */
 	0x0,			/* length - all address space */
-	0,			/* segment type */
-	0,			/* segment descriptor priority level */
-	0,			/* segment descriptor present */
+	0,				/* segment type */
+	0,				/* segment descriptor priority level */
+	0,				/* segment descriptor present */
 	0,0,
-	0,			/* default 32 vs 16 bit size */
-	0  			/* limit granularity (byte/page units)*/ },
+	0,				/* default 32 vs 16 bit size */
+	0  				/* limit granularity (byte/page units)*/ },
 	/* Code Descriptor for kernel */
 {	0x0,			/* segment base address  */
 	0xffffe,		/* length - all address space */
 	SDT_MEMERA,		/* segment type */
-	0,			/* segment descriptor priority level */
-	1,			/* segment descriptor present */
+	0,				/* segment descriptor priority level */
+	1,				/* segment descriptor present */
 	0,0,
-	1,			/* default 32 vs 16 bit size */
-	1  			/* limit granularity (byte/page units)*/ },
+	1,				/* default 32 vs 16 bit size */
+	1  				/* limit granularity (byte/page units)*/ },
 	/* Data Descriptor for kernel */
 {	0x0,			/* segment base address  */
 	0xffffe,		/* length - all address space */
 	SDT_MEMRWA,		/* segment type */
-	0,			/* segment descriptor priority level */
-	1,			/* segment descriptor present */
+	0,				/* segment descriptor priority level */
+	1,				/* segment descriptor present */
 	0,0,
-	1,			/* default 32 vs 16 bit size */
-	1  			/* limit granularity (byte/page units)*/ },
+	1,				/* default 32 vs 16 bit size */
+	1  				/* limit granularity (byte/page units)*/ },
 	/* LDT Descriptor */
-{	(int) ldt,			/* segment base address  */
-	sizeof(ldt)-1,		/* length - all address space */
+{	(int) ldt,		/* segment base address  */
+	sizeof(ldt)-1,	/* length - all address space */
 	SDT_SYSLDT,		/* segment type */
-	0,			/* segment descriptor priority level */
-	1,			/* segment descriptor present */
+	0,				/* segment descriptor priority level */
+	1,				/* segment descriptor present */
 	0,0,
-	0,			/* unused - default 32 vs 16 bit size */
-	0  			/* limit granularity (byte/page units)*/ },
+	0,				/* unused - default 32 vs 16 bit size */
+	0  				/* limit granularity (byte/page units)*/ },
 	/* Null Descriptor - Placeholder */
 {	0x0,			/* segment base address  */
 	0x0,			/* length - all address space */
-	0,			/* segment type */
-	0,			/* segment descriptor priority level */
-	0,			/* segment descriptor present */
+	0,				/* segment type */
+	0,				/* segment descriptor priority level */
+	0,				/* segment descriptor present */
 	0,0,
-	0,			/* default 32 vs 16 bit size */
-	0  			/* limit granularity (byte/page units)*/ },
+	0,				/* default 32 vs 16 bit size */
+	0  				/* limit granularity (byte/page units)*/ },
 	/* Invalid Tss fault Tss Descriptor */
-{	(int) &inv_tss,		/* segment base address  */
+{	(int)&inv_tss,	/* segment base address  */
 	sizeof(struct i386tss)-1,		/* length - all address space */
-	SDT_SYS386TSS,		/* segment type */
-	0,			/* segment descriptor priority level */
-	1,			/* segment descriptor present */
+	SDT_SYS386TSS,	/* segment type */
+	0,				/* segment descriptor priority level */
+	1,				/* segment descriptor present */
 	0,0,
-	0,			/* unused - default 32 vs 16 bit size */
-	0  			/* limit granularity (byte/page units)*/ },
+	0,				/* unused - default 32 vs 16 bit size */
+	0  				/* limit granularity (byte/page units)*/ },
 	/* Double fault Tss Descriptor */
-{	(int) &dbl_tss,		/* segment base address  */
+{	(int)&dbl_tss,	/* segment base address  */
 	sizeof(struct i386tss)-1,		/* length - all address space */
-	SDT_SYS386TSS,		/* segment type */
-	0,			/* segment descriptor priority level */
-	1,			/* segment descriptor present */
+	SDT_SYS386TSS,	/* segment type */
+	0,				/* segment descriptor priority level */
+	1,				/* segment descriptor present */
 	0,0,
-	0,			/* unused - default 32 vs 16 bit size */
-	0  			/* limit granularity (byte/page units)*/ },
+	0,				/* unused - default 32 vs 16 bit size */
+	0  				/* limit granularity (byte/page units)*/ },
 	/* Exit Tss Descriptor */
-{	(int) &exit_tss,	/* segment base address  */
+{	(int)&exit_tss,/* segment base address  */
 	sizeof(struct i386tss)-1,		/* length - all address space */
-	SDT_SYS386TSS,		/* segment type */
-	0,			/* segment descriptor priority level */
-	1,			/* segment descriptor present */
+	SDT_SYS386TSS,	/* segment type */
+	0,				/* segment descriptor priority level */
+	1,				/* segment descriptor present */
 	0,0,
-	0,			/* unused - default 32 vs 16 bit size */
-	0  			/* limit granularity (byte/page units)*/ }};
+	0,				/* unused - default 32 vs 16 bit size */
+	0  				/* limit granularity (byte/page units)*/ }};
 
 struct soft_segment_descriptor ldt_segs[] = {
 	/* Null Descriptor - overwritten by call gate */
 {	0x0,			/* segment base address  */
 	0x0,			/* length - all address space */
-	0,			/* segment type */
-	0,			/* segment descriptor priority level */
-	0,			/* segment descriptor present */
+	0,				/* segment type */
+	0,				/* segment descriptor priority level */
+	0,				/* segment descriptor present */
 	0,0,
-	0,			/* default 32 vs 16 bit size */
-	0  			/* limit granularity (byte/page units)*/ },
+	0,				/* default 32 vs 16 bit size */
+	0  				/* limit granularity (byte/page units)*/ },
 	/* Null Descriptor - overwritten by call gate */
 {	0x0,			/* segment base address  */
 	0x0,			/* length - all address space */
-	0,			/* segment type */
-	0,			/* segment descriptor priority level */
-	0,			/* segment descriptor present */
+	0,				/* segment type */
+	0,				/* segment descriptor priority level */
+	0,				/* segment descriptor present */
 	0,0,
-	0,			/* default 32 vs 16 bit size */
-	0  			/* limit granularity (byte/page units)*/ },
+	0,				/* default 32 vs 16 bit size */
+	0  				/* limit granularity (byte/page units)*/ },
 	/* Null Descriptor - overwritten by call gate */
 {	0x0,			/* segment base address  */
 	0x0,			/* length - all address space */
-	0,			/* segment type */
-	0,			/* segment descriptor priority level */
-	0,			/* segment descriptor present */
+	0,				/* segment type */
+	0,				/* segment descriptor priority level */
+	0,				/* segment descriptor present */
 	0,0,
-	0,			/* default 32 vs 16 bit size */
-	0  			/* limit granularity (byte/page units)*/ },
+	0,				/* default 32 vs 16 bit size */
+	0  				/* limit granularity (byte/page units)*/ },
 	/* Code Descriptor for user */
 {	0x0,			/* segment base address  */
 	0xffffe,		/* length - all address space */
 	SDT_MEMERA,		/* segment type */
 	SEL_UPL,		/* segment descriptor priority level */
-	1,			/* segment descriptor present */
+	1,				/* segment descriptor present */
 	0,0,
-	1,			/* default 32 vs 16 bit size */
-	1  			/* limit granularity (byte/page units)*/ },
+	1,				/* default 32 vs 16 bit size */
+	1  				/* limit granularity (byte/page units)*/ },
 	/* Data Descriptor for user */
 {	0x0,			/* segment base address  */
 	0xffffe,		/* length - all address space */
 	SDT_MEMRWA,		/* segment type */
 	SEL_UPL,		/* segment descriptor priority level */
-	1,			/* segment descriptor present */
+	1,				/* segment descriptor present */
 	0,0,
-	1,			/* default 32 vs 16 bit size */
-	1  			/* limit granularity (byte/page units)*/ } };
+	1,				/* default 32 vs 16 bit size */
+	1  				/* limit granularity (byte/page units)*/ } };
 
 void
 setidt(int idx, void *func, int typ, int dpl, sel_t sel)
@@ -491,11 +505,11 @@ setidt(int idx, void *func, int typ, int dpl, sel_t sel)
 
 	ip->gd_looffset = (int)func;
 	ip->gd_selector = sel;
-	ip->gd_stkcpy = 0;
-	ip->gd_xx = 0;
-	ip->gd_type = typ;
-	ip->gd_dpl = dpl;
-	ip->gd_p = 1;
+	ip->gd_stkcpy 	= 0;
+	ip->gd_xx 		= 0;
+	ip->gd_type 	= typ;
+	ip->gd_dpl 		= dpl;
+	ip->gd_p 		= 1;
 	ip->gd_hioffset = ((int)func)>>16 ;
 }
 
@@ -583,9 +597,9 @@ again:
 	return (tsp);
 }
 
-
 #define	IDTVEC(name)	__CONCAT(X, name)
-extern	IDTVEC(div), IDTVEC(dbg), IDTVEC(nmi), IDTVEC(bpt), IDTVEC(ofl),
+extern	int
+	IDTVEC(div), IDTVEC(dbg), IDTVEC(nmi), IDTVEC(bpt), IDTVEC(ofl),
 	IDTVEC(bnd), IDTVEC(ill), IDTVEC(dna), IDTVEC(dble), IDTVEC(fpusegm),
 	IDTVEC(tss), IDTVEC(missing), IDTVEC(stk), IDTVEC(prot),
 	IDTVEC(page), IDTVEC(rsvd), IDTVEC(fpu), IDTVEC(rsvd0),
@@ -597,7 +611,8 @@ extern	IDTVEC(div), IDTVEC(dbg), IDTVEC(nmi), IDTVEC(bpt), IDTVEC(ofl),
 int	cpu_option;
 
 
-invtss() {
+static void invtss()
+{
 	struct i386tss *tsp = panictss();
 	struct trapframe tf;
 
@@ -616,7 +631,8 @@ invtss() {
 	panic("inval tss");
 }
 
-dbl() {
+static void dbl()
+{
 	struct i386tss *tsp = panictss();
 	struct trapframe tf;
 
@@ -636,7 +652,8 @@ dbl() {
 }
 
 
-init386(first) {
+void init386(int first)
+{
 	int x;
 	unsigned biosbasemem, biosextmem;
 	struct gate_descriptor *gdp;
@@ -666,33 +683,33 @@ init386(first) {
 		ssdtosd(ldt_segs+x, ldt+x);
 
 	/* exceptions */
-	setidt(0, &IDTVEC(div),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(1, &IDTVEC(dbg),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(2, &IDTVEC(nmi),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
- 	setidt(3, &IDTVEC(bpt),  SDT_SYS386TGT, SEL_UPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(4, &IDTVEC(ofl),  SDT_SYS386TGT, SEL_UPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(5, &IDTVEC(bnd),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(6, &IDTVEC(ill),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(7, &IDTVEC(dna),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(8, &IDTVEC(dble),  SDT_SYSTASKGT, SEL_KPL, GSEL(GDBLFLT_SEL, SEL_KPL));
-	setidt(9, &IDTVEC(fpusegm),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(10, &IDTVEC(tss),  SDT_SYSTASKGT, SEL_KPL, GSEL(GINVTSS_SEL, SEL_KPL));
-	setidt(11, &IDTVEC(missing),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(12, &IDTVEC(stk),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(13, &IDTVEC(prot),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(14, &IDTVEC(page),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(15, &IDTVEC(rsvd),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(16, &IDTVEC(fpu),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(17, &IDTVEC(rsvd0),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(18, &IDTVEC(rsvd1),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(19, &IDTVEC(rsvd2),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(20, &IDTVEC(rsvd3),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(21, &IDTVEC(rsvd4),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(22, &IDTVEC(rsvd5),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(23, &IDTVEC(rsvd6),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(24, &IDTVEC(rsvd7),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(25, &IDTVEC(rsvd8),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
-	setidt(26, &IDTVEC(rsvd9),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(0,  &IDTVEC(div),     SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(1,  &IDTVEC(dbg),     SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(2,  &IDTVEC(nmi),     SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+ 	setidt(3,  &IDTVEC(bpt),     SDT_SYS386TGT, SEL_UPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(4,  &IDTVEC(ofl),     SDT_SYS386TGT, SEL_UPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(5,  &IDTVEC(bnd),     SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(6,  &IDTVEC(ill),     SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(7,  &IDTVEC(dna),     SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(8,  &IDTVEC(dble),    SDT_SYSTASKGT, SEL_KPL, GSEL(GDBLFLT_SEL, SEL_KPL));
+	setidt(9,  &IDTVEC(fpusegm), SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(10, &IDTVEC(tss),     SDT_SYSTASKGT, SEL_KPL, GSEL(GINVTSS_SEL, SEL_KPL));
+	setidt(11, &IDTVEC(missing), SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(12, &IDTVEC(stk),     SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(13, &IDTVEC(prot),    SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(14, &IDTVEC(page),    SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(15, &IDTVEC(rsvd),    SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(16, &IDTVEC(fpu),  	 SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(17, &IDTVEC(rsvd0),   SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(18, &IDTVEC(rsvd1),   SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(19, &IDTVEC(rsvd2),   SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(20, &IDTVEC(rsvd3),   SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(21, &IDTVEC(rsvd4),   SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(22, &IDTVEC(rsvd5),   SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(23, &IDTVEC(rsvd6),   SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(24, &IDTVEC(rsvd7),   SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(25, &IDTVEC(rsvd8),   SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
+	setidt(26, &IDTVEC(rsvd9),   SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
 	setidt(27, &IDTVEC(rsvd10),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
 	setidt(28, &IDTVEC(rsvd11),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
 	setidt(29, &IDTVEC(rsvd12),  SDT_SYS386TGT, SEL_KPL, GSEL(GCODE_SEL, SEL_KPL));
@@ -865,4 +882,14 @@ __inb(u_short port) {
 	(void) inb_(0x84);
 
 	return (rv);
+}
+
+void enable_intr()
+{
+	__asm__ volatile ("sti");
+}
+
+void disable_intr()
+{
+	__asm__ volatile ("cli");
 }

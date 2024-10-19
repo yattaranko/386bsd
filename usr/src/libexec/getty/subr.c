@@ -48,16 +48,17 @@ extern	struct sgttyb tmode;
 extern	struct tchars tc;
 extern	struct ltchars ltc;
 
+static int delaybits();
+
 /*
  * Get a table entry.
  */
-gettable(name, buf, area)
-	char *name, *buf, *area;
+void gettable(char* name, char* buf, char* area)
 {
 	register struct gettystrs *sp;
 	register struct gettynums *np;
 	register struct gettyflags *fp;
-	register n;
+	register int n;
 
 	hopcount = 0;		/* new lookup, start fresh */
 	if (getent(buf, name) != 1)
@@ -85,7 +86,7 @@ gettable(name, buf, area)
 	}
 }
 
-gendefaults()
+void gendefaults()
 {
 	register struct gettystrs *sp;
 	register struct gettynums *np;
@@ -104,7 +105,7 @@ gendefaults()
 			fp->defalt = fp->invrt;
 }
 
-setdefaults()
+void setdefaults()
 {
 	register struct gettystrs *sp;
 	register struct gettynums *np;
@@ -136,7 +137,7 @@ charvars[] = {
 	&ltc.t_werasc, &ltc.t_lnextc, 0
 };
 
-setchars()
+void setchars()
 {
 	register int i;
 	register char *p;
@@ -151,7 +152,7 @@ setchars()
 }
 
 long
-setflags(n)
+setflags(int n)
 {
 	register long f;
 
@@ -230,6 +231,8 @@ struct delayval {
 	int		bits;
 };
 
+static int adelay(register int ms, register struct delayval *dp);
+
 /*
  * below are random guesses, I can't be bothered checking
  */
@@ -270,9 +273,9 @@ struct delayval	tbdelay[] = {
 	0,		TAB2,
 };
 
-delaybits()
+static int delaybits()
 {
-	register f;
+	register int f;
 
 	f  = adelay(CD, crdelay);
 	f |= adelay(ND, nldelay);
@@ -282,9 +285,7 @@ delaybits()
 	return (f);
 }
 
-adelay(ms, dp)
-	register ms;
-	register struct delayval *dp;
+static int adelay(register int ms, register struct delayval *dp)
 {
 	if (ms == 0)
 		return (0);
@@ -295,8 +296,7 @@ adelay(ms, dp)
 
 char	editedhost[32];
 
-edithost(pat)
-	register char *pat;
+void edithost(register char *pat)
 {
 	register char *host = HN;
 	register char *res = editedhost;
@@ -359,7 +359,7 @@ struct speedtab {
 	0
 };
 
-speed(val)
+int speed(int val)
 {
 	register struct speedtab *sp;
 
@@ -373,20 +373,19 @@ speed(val)
 	return (B300);		/* default in impossible cases */
 }
 
-makeenv(env)
-	char *env[];
+void makeenv(char *env[])
 {
 	static char termbuf[128] = "TERM=";
 	register char *p, *q;
 	register char **ep;
-	char *index();
 
 	ep = env;
 	if (TT && *TT) {
 		strcat(termbuf, TT);
 		*ep++ = termbuf;
 	}
-	if (p = EV) {
+	p = EV;
+	if (p != 0) {
 		q = p;
 		while (q = index(q, ',')) {
 			*q++ = '\0';

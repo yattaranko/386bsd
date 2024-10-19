@@ -43,11 +43,7 @@ static char sccsid[] = "@(#)gfmt.c	5.4 (Berkeley) 6/10/91";
 
 static void gerr __P((char *));
 
-void
-gprint(tp, wp, ldisc)
-	struct termios *tp;
-	struct winsize *wp;
-	int ldisc;
+void gprint(struct termios* tp, struct winsize* wp, int ldisc)
 {
 	register struct cchar *cp;
 
@@ -58,10 +54,7 @@ gprint(tp, wp, ldisc)
 	(void)printf("ispeed=%d:ospeed=%d\n", cfgetispeed(tp), cfgetospeed(tp));
 }
 
-void
-gread(tp, s) 
-	register struct termios *tp;
-	char *s;
+void gread(register struct termios *tp, char* s)
 {
 	register char *ep, *p;
 	long tmp;
@@ -171,9 +164,7 @@ gread(tp, s)
 	}
 }
 
-static void
-gerr(s)
-	char *s;
+static void gerr(char* s)
 {
 	if (s)
 		err("illegal gfmt1 option -- %s", s);

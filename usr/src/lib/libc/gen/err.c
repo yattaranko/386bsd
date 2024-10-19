@@ -14,7 +14,7 @@
 
 extern char *__progname;		/* Program name, from crt0. */
 
-void
+volatile void
 #ifdef __STDC__
 err(int eval, const char *fmt, ...)
 #else
@@ -34,7 +34,7 @@ err(eval, fmt, va_alist)
 	va_end(ap);
 }
 
-void
+volatile void
 verr(eval, fmt, ap)
 	int eval;
 	const char *fmt;
@@ -52,7 +52,7 @@ verr(eval, fmt, ap)
 	exit(eval);
 }
 
-void
+volatile void
 #ifdef __STDC__
 errx(int eval, const char *fmt, ...)
 #else
@@ -72,7 +72,7 @@ errx(eval, fmt, va_alist)
 	va_end(ap);
 }
 
-void
+volatile void
 verrx(eval, fmt, ap)
 	int eval;
 	const char *fmt;

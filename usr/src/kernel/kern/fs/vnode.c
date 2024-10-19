@@ -160,12 +160,14 @@ loop:
 			continue;
 		if ((bp->b_flags & B_DELWRI) == 0)
 			panic("vflushbuf: not dirty");
+#if 0
 		/* if flushing all but xbp, pass on this buffer */
 		if (xbp && bp == xbp)
 			continue;
 		/* if an indirect block, don't bother */
 		if (xbp && bp->b_vp != vp)
 			continue;
+#endif
 		bremfree(bp);
 		bp->b_flags |= B_BUSY;
 		splx(s);

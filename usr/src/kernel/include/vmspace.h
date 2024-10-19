@@ -48,7 +48,7 @@ struct vmspace {
 /* we copy from vm_startcopy to the end of the structure on fork */
 #define vm_startcopy vm_rssize
 	segsz_t vm_rssize; 	/* current resident set size in pages */
-	segsz_t vm_swrss;	/* resident set size before last swap */
+//	segsz_t vm_swrss;	/* resident set size before last swap */
 	segsz_t vm_tsize;	/* text size (pages) XXX */
 	segsz_t vm_dsize;	/* data size (pages) XXX */
 	segsz_t vm_ssize;	/* stack size (pages) */

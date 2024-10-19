@@ -123,7 +123,7 @@
 
 #define PMAP_DEACTIVATE(pmapp, pcbp)
 
-static void pads(register struct pmap *pm);
+extern void	vm_page_wait(char *s, int npages);
 
 void
 tlbflush(void) {
@@ -229,14 +229,12 @@ boolean_t	pmap_initialized = FALSE;	/* Has pmap_init completed? */
 char		*pmap_attributes;	/* reference and modify bits */
 
 void pmap_clear_modify(vm_offset_t pa);
-static void i386_protection_init();
-/*static */  struct pte *pmap_pte(register struct pmap *pmap, vm_offset_t va);
-void
-pmap_ptalloc(struct pmap *pmap, pd_entry_t *pde);
-static void
-pmap_ptfree(struct pmap *pmap, pd_entry_t *pde);
-void
-pmap_activate(register struct pmap *pmap, struct pcb *pcbp);
+static void	i386_protection_init();
+struct pte *pmap_pte(register struct pmap *pmap, vm_offset_t va);
+void		pmap_ptalloc(struct pmap *pmap, pd_entry_t *pde);
+void		pmap_activate(register struct pmap *pmap, struct pcb *pcbp);
+static void	pmap_ptfree(struct pmap *pmap, pd_entry_t *pde);
+static int	pads(register struct pmap *pm);
 
 #if BSDVM_COMPAT
 #include "msgbuf.h"
@@ -364,7 +362,7 @@ pmap_init(void)
 
 	addr = (vm_offset_t) KERNBASE+KPTphys;
 	(void) vm_map_insert(kernel_map, kernel_object, addr - KERNBASE,
-			   addr, addr+2*NBPG);
+			   addr, addr + 2 * NBPG);
 
 	/*
 	 * Allocate memory for random pmap data structures.  Includes the
@@ -374,7 +372,7 @@ pmap_init(void)
 	s = (vm_size_t) (sizeof(struct pv_entry) * npg + npg);
 	s = round_page(s);
 	addr = (vm_offset_t) kmem_alloc(kernel_map, s, M_ZERO_IT);
-	/*(void) memset ((void *) addr, 0, s); */ /* sheer paranoia */
+	/*(void) memset ((void *) addr, 0, s);*/ /* sheer paranoia */
 	pv_table = (pv_entry_t) addr;
 	addr += sizeof(struct pv_entry) * npg;
 	pmap_attributes = (char *) addr;
@@ -1546,7 +1544,8 @@ pmap_zero_page(vm_offset_t phys)
  * copy a page of physical memory
  * specified in relocation units (NBPG bytes)
  */
-physcopyseg(frm, to) {
+# if 0	// 使われていない
+static void physcopyseg(frm, to) {
 
 	*(int *)CMAP1 = PG_V | PG_KW | ctob(frm);
 	*(int *)CMAP2 = PG_V | PG_KW | ctob(to);
@@ -1557,6 +1556,8 @@ physcopyseg(frm, to) {
 	*(int *) CMAP1 = 0;
 	*(int *) CMAP2 = 0;
 }
+#endif
+
 /*
  *	pmap_copy_page copies the specified (machine independent)
  *	page by mapping the page into virtual memory and using
@@ -1897,7 +1898,7 @@ panic("chg");
 }
 
 #ifdef DEBUG
-pmap_pvdump(vm_offset_t pa)
+static void pmap_pvdump(vm_offset_t pa)
 {
 	register pv_entry_t pv;
 
@@ -1936,23 +1937,40 @@ pmap_check_wiring(char *str, vm_offset_t va)
 #endif
 
 /* print address space of pmap*/
-static void pads(register struct pmap *pm) {
+static int pads(register struct pmap *pm)
+{
 	unsigned va, i, j;
 	struct pte *ptep;
 
-	if(pm == kernel_pmap) return;
-	for (i = 0; i < 1024; i++) 
+	if(pm == kernel_pmap)
+	{
+		return (0);
+	}
+
+	for (i = 0; i < 1024; i++)
+	{
 		if(pm->pm_pdir[i].pd_v)
-			for (j = 0; j < 1024 ; j++) {
+		{
+			for (j = 0; j < 1024 ; j++)
+			{
 				va = (i<<22)+(j<<12);
 				if (pm == kernel_pmap && va < KERNBASE)
-						continue;
+				{
+					continue;
+				}
 				if (pm != kernel_pmap && va > PT_MAX_ADDRESS)
-						continue;
+				{
+					continue;
+				}
 				ptep = pmap_pte(pm, va);
 				if(pmap_pte_v(ptep)) 
+				{
 					printf("%x:%x ", va, *(int *)ptep); 
-			} ;
-				
+				}
+			}
+		}
+	}
+			
+	return (0);
 }
 #endif

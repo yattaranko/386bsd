@@ -58,7 +58,7 @@ static char *isa_config =
 #include "sys/time.h"
 #include "sys/file.h"
 #include "sys/syslog.h"
-#include "kernel.h"	/* hz */
+#include "kernel.h"		/* hz */
 #include "proc.h"
 #include "buf.h"
 #include "uio.h"
@@ -85,17 +85,22 @@ static char *isa_config =
 
 #include "machine/inline/io.h"
 
-int config_isadev(struct isa_device *);
-u_short getit(int unit, int timer);
+extern int	splnone(void);
+extern void	setirq(int idx, void *func);
+
+static int	config_isadev(struct isa_device *);
+static int	isa_dmarangecheck(caddr_t va, unsigned length);
+static int	cfg_isadev(char **ptr, char *modname, struct isa_device *idp);
 
 #define	IDTVEC(name)	__CONCAT(X,name)
 /* assignable interrupt vector table entries */
-extern	IDTVEC(irq0), IDTVEC(irq1), IDTVEC(irq2), IDTVEC(irq3),
+extern int 
+	IDTVEC(irq0), IDTVEC(irq1), IDTVEC(irq2), IDTVEC(irq3),
 	IDTVEC(irq4), IDTVEC(irq5), IDTVEC(irq6), IDTVEC(irq7),
 	IDTVEC(irq8), IDTVEC(irq9), IDTVEC(irq10), IDTVEC(irq11),
 	IDTVEC(irq12), IDTVEC(irq13), IDTVEC(irq14), IDTVEC(irq15);
 
-static *irqvec[16] = {
+static void *irqvec[16] = {
 	&IDTVEC(irq0), &IDTVEC(irq1), &IDTVEC(irq2), &IDTVEC(irq3),
 	&IDTVEC(irq4), &IDTVEC(irq5), &IDTVEC(irq6), &IDTVEC(irq7),
 	&IDTVEC(irq8), &IDTVEC(irq9), &IDTVEC(irq10), &IDTVEC(irq11),
@@ -108,7 +113,7 @@ int	isa_unit[16];
 extern	char *intrnames[16];
 
 unsigned volatile it_ticks;
-unsigned it_ticksperintr;
+extern unsigned long it_ticksperintr;
 int loops_per_usec;
 
 /*
@@ -130,61 +135,22 @@ int loops_per_usec;
  * independant of the driver instance/implementation itself).
  */
 
-BUS_MODCONFIG(isa)
-{
+#if dontuse
+BUS_MODCONFIG(isa) {
 
 	/*printf("isa: "); */
 	/*isa_configure(init++) */
 }
+#endif
 
 /*
  * Configure all ISA devices
  */
-isa_configure()
+void isa_configure()
 {
 	struct isa_device *dvp;
 	struct isa_driver *dp;
-/*	register cnt; */
-	int /* tick, */ x;
-
-#if 0
-	/*
-	 * Configure bus interrupts with processor
-	 */
-	isa_defaultirq();
-	splhigh();	/* XXX */
-
-	/*
-	 * Configure motherboard
-	 */
-
-	/* initialize 8253 clock */
-	it_ticksperintr = 1193182/hz;
-	outb (IO_TIMER1+3, 0x34);
-	outb (IO_TIMER1, it_ticksperintr);
-	outb (IO_TIMER1, it_ticksperintr/256);
-	
-	/*
-	 * Find out how many loops we need to DELAY() a microsecond
-	 */
-
-	/* wait till overflow to insure no wrap around */
-	do
-		tick = getit(0,0);
-	while (tick < getit(0,0));
-
-	/* time a while loop */
-	cnt = 1000;
-	tick = getit(0,0);
-	while (cnt-- > 0)
-		;
-	tick -= getit(0,0);
-
-	/* scale to microseconds per 1000 "loops" */
-	tick *= 1000000;
-	tick /= 1193182;
-	loops_per_usec = (10000/tick + 5) / 10;
-#endif
+	int x;
 
 	/*
 	 * Configure ISA devices. XXX
@@ -198,22 +164,24 @@ isa_configure()
 	 */
 	ttymask |= biomask + netmask;
 	netmask |= biomask;
-	/* biomask |= ttymask ;  can some tty devices use buffers? */
-	/*printf("biomask %x ttymask %x netmask %x\n", biomask, ttymask, netmask); */
 
 	/* splat masks into place */
 	for (x = 0; x < 16; x++)
 	{
 		if (driver_for_intr[x] && driver_for_intr[x]->mask)
+		{
 			isa_mask[x] = *(driver_for_intr[x]->mask);
+		}
 		if (intrnames[x] == 0)
+		{
 			intrnames[x] = "** unassigned **";
+		}
 	}
 	splnone();
 }
 
 /* parse and evaluate an ISA device */
-cfg_isadev(char **ptr, char *modname, struct isa_device *idp)
+static int cfg_isadev(char **ptr, char *modname, struct isa_device *idp)
 {
 	char *lp = *ptr;
 	int val;
@@ -228,11 +196,13 @@ cfg_isadev(char **ptr, char *modname, struct isa_device *idp)
 	idp->id_flags = 0;
 
 	/* list of values or '?' */
-	if (cfg_char(&lp, '(') && cfg_number(&lp, &val)) {
+	if (cfg_char(&lp, '(') && cfg_number(&lp, &val))
+	{
 		/* specify all or partial list (if device can guess rest) */
 		idp->id_iobase = val;
 
-		if (cfg_number(&lp, &val)) {	/* XXX use "," to spec multiples */
+		if (cfg_number(&lp, &val))
+		{	/* XXX use "," to spec multiples */
 			if (val >= 0)
 				idp->id_irq = 1 << val;
 		}
@@ -259,7 +229,8 @@ cfg_isadev(char **ptr, char *modname, struct isa_device *idp)
 		goto nope;
 	
 	}
-	else if (cfg_char(&lp, '?')) {
+	else if (cfg_char(&lp, '?'))
+	{
 		/* driver attempts to do everything for device */
 		idp->id_iobase = '?';
 		*ptr = lp;
@@ -307,28 +278,32 @@ new_isa_configure(char **lp, struct isa_driver *dp) {
 	struct isa_device adev ; 
 
 	adev.id_driver = dp;
-	for(;;) {
-		if (cfg_isadev(lp, 0, &adev)) {
-			/*if ( */ (void)config_isadev(&adev) /* )
-				print_isadev(&adev)  */ ;
-				/* attach */
-		} else break;
+	for(;;)
+	{
+		if (cfg_isadev(lp, 0, &adev))
+		{
+			(void)config_isadev(&adev);
+		}
+		else
+		{
+			break;
+		}
 	}
-		
-	/*printf("\n");*/
 }
 
 /*
  * Configure an ISA device.
  */
-int config_isadev(isdp)
-	struct isa_device *isdp;
+static int config_isadev(struct isa_device* isdp)
 {
 	struct isa_driver *dp;
 	int rv;
  
-	if (dp = isdp->id_driver) {
-		if (isdp->id_maddr) {
+	dp = isdp->id_driver;
+	if (dp != 0)
+	{
+		if (isdp->id_maddr)
+		{
 			extern u_int atdevbase;
 
 			isdp->id_maddr -= 0xa0000;
@@ -356,10 +331,9 @@ printf("\r                                                                  \r")
 				if (dp->mask)
 					INTRMASK(*(dp->mask), isdp->id_irq);
 
-				setirq(ICU_OFFSET + intrno, irqvec [intrno]);
+				setirq(ICU_OFFSET + intrno, irqvec[intrno]);
 				isa_vec[intrno] = dp->intr;
 				isa_unit[intrno] = isdp->id_unit;
-
 				driver_for_intr[intrno] = dp;
 				intrnames[intrno] = dp->name; /* XXX - allocate seperate string with unit number */
 			}
@@ -379,20 +353,40 @@ printf("\r                                                                  \r")
 
 #define	IDTVEC(name)	__CONCAT(X,name)
 /* default interrupt vector table entries */
-extern	IDTVEC(intr0), IDTVEC(intr1), IDTVEC(intr2), IDTVEC(intr3),
+extern int
+	IDTVEC(intr0), IDTVEC(intr1), IDTVEC(intr2), IDTVEC(intr3),
 	IDTVEC(intr4), IDTVEC(intr5), IDTVEC(intr6), IDTVEC(intr7),
 	IDTVEC(intr8), IDTVEC(intr9), IDTVEC(intr10), IDTVEC(intr11),
 	IDTVEC(intr12), IDTVEC(intr13), IDTVEC(intr14), IDTVEC(intr15);
 
-static *defvec[16] = {
+static void *defvec[16] = {
 	&IDTVEC(intr0), &IDTVEC(intr1), &IDTVEC(intr2), &IDTVEC(intr3),
 	&IDTVEC(intr4), &IDTVEC(intr5), &IDTVEC(intr6), &IDTVEC(intr7),
 	&IDTVEC(intr8), &IDTVEC(intr9), &IDTVEC(intr10), &IDTVEC(intr11),
 	&IDTVEC(intr12), &IDTVEC(intr13), &IDTVEC(intr14), &IDTVEC(intr15) };
 
 /* out of range default interrupt vector gate entry */
-extern	IDTVEC(intrdefault);
-	
+extern int	IDTVEC(intrdefault);
+
+
+#define	NIDT		256
+#define	NRSVIDT		32		/* reserved entries for cpu exceptions */
+#define	ICU_IRR		0x0a
+#define	ICU_ISR		0x0b
+
+#define	icucom1(val)	icu_outb(IO_ICU1, val)
+#define	icudat1(val)	icu_outb(IO_ICU1 + 1, val)
+#define	icucom2(val)	icu_outb(IO_ICU2, val)
+#define	icudat2(val)	icu_outb(IO_ICU2 + 1, val)
+
+static inline void icu_outb(u_int16_t port, u_int8_t val)
+{
+	outb(port, val);
+	outb(0x80, 0);
+}
+
+extern void irq0_handler();
+
 /*
  * Fill in default interrupt table (in case of spuruious interrupt
  * during configuration of kernel, setup interrupt control unit
@@ -402,32 +396,42 @@ void isa_defaultirq()
 	int i;
 
 	/* icu vectors */
-#define	NIDT	256
-#define	NRSVIDT	32		/* reserved entries for cpu exceptions */
-	for (i = NRSVIDT ; i < NRSVIDT+ICU_LEN ; i++)
-		setirq(i, defvec[i]);
+	for (i = NRSVIDT ; i < NRSVIDT + ICU_LEN ; i++)
+	{
+		setirq(i, defvec[i - NRSVIDT]);
+	}
 
+#if 0	// 0～31の例外ハンドラ本体はinit386で設定、32～63は上記で設定、
+		// 64～256は未使用なのでダミー不要
 	/* out of range vectors */
 	for (i = NRSVIDT; i < NIDT; i++)
+	{
 		setirq(i, &IDTVEC(intrdefault));
+	}
+#endif
 
+#if 0 // 目的不明、FreeBSD/NetBSD共にVer.1から削除しているので削除
 	/* clear npx intr latch */
-	outb(0xf1,0);
+	outb(0xf1, 0);
+	IO_WAIT();
+#endif
 
 	/* initialize 8259's */
-	__outb(IO_ICU1, 0x11);		/* reset; program device, four bytes */
-	__outb(IO_ICU1+1, NRSVIDT);	/* starting at this vector index */
-	__outb(IO_ICU1+1, 1<<2);		/* slave on line 2 */
-	__outb(IO_ICU1+1, 1);		/* 8086 mode */
-	__outb(IO_ICU1+1, 0xff);		/* leave interrupts masked */
-	__outb(IO_ICU1, /*0x60+*/8+1);		/* default to ISR on read */
+	icucom1(0x11);			/* reset; program device, four bytes */
+	icudat1(NRSVIDT);		/* starting at this vector index */
+	icudat1(1 << 2);		/* slave on line 2 */
+	icudat1(1);				/* 8086 mode */
+	icudat1(0xff);			/* leave interrupts masked */
+	icucom1(ICU_IRR);		/* default to IRR on read */
+//	icucom1(ICU_ISR);		/* default to ISR on read */
 
-	__outb(IO_ICU2, 0x11);		/* reset; program device, four bytes */
-	__outb(IO_ICU2+1, NRSVIDT+8);	/* staring at this vector index */
-	__outb(IO_ICU2+1,2);		/* my slave id is 2 */
-	__outb(IO_ICU2+1,1);		/* 8086 mode */
-	__outb(IO_ICU2+1, 0xff);		/* leave interrupts masked */
-	__outb(IO_ICU2, /*0x60+*/8+1);		/* default to ISR on read */
+	icucom2(0x11);			/* reset; program device, four bytes */
+	icudat2(NRSVIDT + 8);	/* staring at this vector index */
+	icudat2(2);				/* my slave id is 2 */
+	icudat2(1);				/* 8086 mode */
+	icudat2(0xff);			/* leave interrupts masked */
+	icucom2(ICU_IRR);		/* default to IRR on read */
+//	icucom2(ICU_ISR);		/* default to ISR on read */
 }
 
 
@@ -481,7 +485,7 @@ void isa_dmastart(int flags, caddr_t addr, unsigned nbytes, unsigned chan)
 	if (chan > 7 || nbytes > (1<<16))
 		panic("isa_dmastart: impossible request"); 
 
-	if (isa_dmarangecheck(addr, nbytes)) {
+	if (isa_dmarangecheck(addr, nbytes) != 0) {
 		if (dma_bounce[chan] == 0)
 			dma_bounce[chan] =
 				/*(caddr_t)malloc(MAXDMASZ, M_TEMP, M_WAITOK);*/
@@ -562,7 +566,7 @@ void isa_dmadone(int flags, caddr_t addr, int nbytes, int chan)
  * Return true if special handling needed.
  */
 
-isa_dmarangecheck(caddr_t va, unsigned length)
+static int isa_dmarangecheck(caddr_t va, unsigned length)
 {
 	vm_offset_t phys, priorpage, endva;
 
@@ -585,7 +589,7 @@ isa_dmarangecheck(caddr_t va, unsigned length)
 struct buf isa_physmemq;
 
 /* blocked waiting for resource to become free for exclusive use */
-static isaphysmemflag;
+static int isaphysmemflag;
 /* if waited for and call requested when free (B_CALL) */
 static void (*isaphysmemunblock)(); /* needs to be a list */
 
@@ -595,8 +599,7 @@ static void (*isaphysmemunblock)(); /* needs to be a list */
  * (assumed to be called at splbio())
  */
 caddr_t
-isa_allocphysmem(caddr_t va, unsigned length, void (*func)())
-{
+isa_allocphysmem(caddr_t va, unsigned length, void (*func)()) {
 	
 	isaphysmemunblock = func;
 	while (isaphysmemflag & B_BUSY) {
@@ -613,8 +616,7 @@ isa_allocphysmem(caddr_t va, unsigned length, void (*func)())
  * (assumed to be called at splbio())
  */
 void
-isa_freephysmem(caddr_t va, unsigned length)
-{
+isa_freephysmem(caddr_t va, unsigned length) {
 
 	isaphysmemflag &= ~B_BUSY;
 	if (isaphysmemflag & B_WANTED) {
@@ -629,7 +631,7 @@ isa_freephysmem(caddr_t va, unsigned length)
  * Handle a NMI, possibly a machine check.
  * return true to panic system, false to ignore.
  */
-int isa_nmi(cd)
+int isa_nmi(int cd)
 {
 
 	log(LOG_CRIT, "\nNMI port 61 %x, port 70 %x\n", inb(0x61), inb(0x70));
@@ -639,7 +641,7 @@ int isa_nmi(cd)
 /*
  * Caught a stray interrupt, notify
  */
-void isa_strayintr(d)
+void isa_strayintr(int d)
 {
 
 #ifdef notdef
@@ -661,7 +663,7 @@ getit(int unit, int timer)
 }
 
 void
-setit(unit, timer, mode, count)
+setit(int unit, int timer, int mode, int count)
 {
 	int port = (unit ? IO_TIMER2 : IO_TIMER1);
 
@@ -690,8 +692,6 @@ int getticks()
 		return (it_ticks + it_ticksperintr - val);
 }
 	
-extern int hz;
-
 /*
  * get fraction of tick in units of microseconds
  * (must be called at splclock)
@@ -700,10 +700,8 @@ extern int hz;
  */
 
 void
-microtime(tvp)
-	register struct timeval *tvp;
+microtime(register struct timeval* tvp)
 {
-	extern unsigned it_ticksperintr;
 	register unsigned val;
 
 	/* minimize clock sampling skew by latching counter immediately after blocking interrupts */
@@ -738,9 +736,9 @@ microtime(tvp)
 	asm("sti");
 }
 
-static beeping;
-static
-sysbeepstop(f)
+static int beeping;
+static int
+sysbeepstop(int f)
 {
 	/* disable counter 2 */
 	outb(0x61, inb(0x61) & 0xFC);
@@ -748,6 +746,8 @@ sysbeepstop(f)
 		timeout(sysbeepstop, 0, f);
 	else
 		beeping = 0;
+
+	return 0;
 }
 
 void sysbeep(int pitch, int period)
@@ -769,8 +769,7 @@ void sysbeep(int pitch, int period)
  * Pass command to keyboard controller (8042)
  */
 void
-kbd_cmd(unsigned val)
-{
+kbd_cmd(unsigned val) {
 	u_char r;
 	
 	/* see if we can issue a command. clear data buffer if something present */
@@ -791,8 +790,7 @@ kbd_cmd(unsigned val)
  * Pass command thru keyboard controller to keyboard itself
  */
 void
-kbd_wr(unsigned val)
-{
+kbd_wr(unsigned val) {
 	u_char r;
 	
 	while (inb(KBSTATP) & KBS_IBF)
@@ -816,8 +814,7 @@ kbd_wr(unsigned val)
  * Read a character from keyboard controller 
  */
 u_char
-kbd_rd()
-{
+kbd_rd() {
 	int sts;
 	
 	while (inb(KBSTATP) & KBS_IBF)
@@ -844,8 +841,7 @@ void kbd_drain()
  * Send the keyboard a command, wait for and return status
  */
 u_char
-key_cmd(unsigned val)
-{
+key_cmd(unsigned val) {
 
 	kbd_wr(val);
 	return(kbd_rd());
@@ -855,8 +851,7 @@ key_cmd(unsigned val)
  * Send the aux port a command, wait for and return status
  */
 u_char
-aux_cmd(unsigned val)
-{
+aux_cmd(unsigned val) {
 	u_char r;
 	
 	kbd_cmd(K_AUXOUT);
@@ -868,8 +863,7 @@ aux_cmd(unsigned val)
  * Execute a keyboard controller command that passes a parameter
  */
 void
-kbd_cmd_write_param(unsigned cmd, unsigned val)
-{
+kbd_cmd_write_param(unsigned cmd, unsigned val) {
 	u_char r;
 	
 	kbd_cmd(cmd);
@@ -880,8 +874,7 @@ kbd_cmd_write_param(unsigned cmd, unsigned val)
  * Execute a keyboard controller command that returns a parameter
  */
 u_char
-kbd_cmd_read_param(unsigned cmd)
-{
+kbd_cmd_read_param(unsigned cmd) {
 	u_char r;
 
 	kbd_cmd(cmd);
@@ -902,12 +895,12 @@ kbd_cmd_read_param(unsigned cmd)
  * Enable an NMI failsafe timer for a millisecond
  */
 int allownmi;
-failsafe_start()
+void failsafe_start()
 {
 	if(allownmi) {
-	setit(1, 0, CW54LSBMSB|CW54SQUARE, 1193000/100);
-	outb(0x61, inb(0x61) & ~KBC42FAILDIS);
-	outb(0x70, 0x00);
+		setit(1, 0, CW54LSBMSB|CW54SQUARE, 1193000/100);
+		outb(0x61, inb(0x61) & ~KBC42FAILDIS);
+		outb(0x70, 0x00);
 	}
 }
 
@@ -963,8 +956,7 @@ rtcout(u_char adr, u_char val)
 
 /* XXX: framework only, unfinished */
 static int
-isaopen(dev_t dev, int flag, int mode, struct proc *p)
-{
+isaopen(dev_t dev, int flag, int mode, struct proc *p) {
 	struct syscframe *fp = (struct syscframe *)p->p_md.md_regs;
 
 	fp->sf_eflags |= PSL_IOPL;
@@ -972,8 +964,7 @@ isaopen(dev_t dev, int flag, int mode, struct proc *p)
 }
 
 static int
-isaclose(dev_t dev, int flag, int mode, struct proc *p)
-{
+isaclose(dev_t dev, int flag, int mode, struct proc *p) {
 	struct syscframe *fp = (struct syscframe *)p->p_md.md_regs;
 
 	fp->sf_eflags &= ~PSL_IOPL;
@@ -981,8 +972,7 @@ isaclose(dev_t dev, int flag, int mode, struct proc *p)
 }
 
 static int
-isaioctl(dev_t dev, int cmd, caddr_t addr, int flag, struct proc *p)
-{
+isaioctl(dev_t dev, int cmd, caddr_t addr, int flag, struct proc *p) {
 
 	/* What's missing: enable selection on irq's, controls on
 	   [e]isa features, statistics, ... */
@@ -991,8 +981,7 @@ isaioctl(dev_t dev, int cmd, caddr_t addr, int flag, struct proc *p)
 }
 
 static int
-isaselect(dev_t dev, int rw, struct proc *p)
-{
+isaselect(dev_t dev, int rw, struct proc *p) {
 
 	return (ENODEV);
 }
@@ -1014,8 +1003,7 @@ static struct devif isa_devif =
 	0,  0, 
 };
 
-DRIVER_MODCONFIG(isa)
-{
+DRIVER_MODCONFIG(isa) {
 	char *cfg_string = isa_config;
 	
 	if (devif_config(&cfg_string, &isa_devif) == 0)

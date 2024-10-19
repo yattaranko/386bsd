@@ -298,6 +298,7 @@ ovhiwat:
 			return (EWOULDBLOCK);
 		return (0);
 	}
+printf("ttwrite5\n");
 	tp->t_state |= TS_ASLEEP;
 	error = ttysleep(tp, (caddr_t)&tp->t_out, TTOPRI | PCATCH, ttyout, 0);
 	splx(s);
@@ -1078,7 +1079,7 @@ static struct ldiscif tty_ldiscif =
 	ttyoutput, ttstart, ttymodem,
 };
 
-LDISC_MODCONFIG(termios) {
+LDISC_MODCONFIG(tty) {
 	char *cfg_string = tty_config;
 	
 	if (ldiscif_config(&cfg_string, &tty_ldiscif) == 0)

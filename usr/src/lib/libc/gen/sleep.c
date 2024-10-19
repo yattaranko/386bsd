@@ -37,12 +37,14 @@ static char sccsid[] = "@(#)sleep.c	5.6 (Berkeley) 2/23/91";
 
 #include <sys/time.h>
 #include <sys/signal.h>
-#include <unistd.h>
+#include <sys/unistd.h>
 
 #define	setvec(vec, a) \
 	vec.sv_handler = a; vec.sv_mask = vec.sv_onstack = 0
 
 static int ringring;
+
+static void sleephandler();
 
 unsigned int
 sleep(seconds)
@@ -52,7 +54,7 @@ sleep(seconds)
 	struct itimerval itv, oitv;
 	struct sigvec vec, ovec;
 	long omask;
-	static void sleephandler();
+/*	static void sleephandler(); */
 
 	itp = &itv;
 	if (!seconds)

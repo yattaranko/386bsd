@@ -73,6 +73,9 @@
 extern int splnone(void);
 extern void tlbflush(void);
 
+int	sclkpending = 0;
+int netpending = 0;
+
 /*
  * Implement the innermost part of a fork() operation, by building
  * a new kernel execution thread (consisting of a process control block
@@ -166,7 +169,8 @@ asm(".globl _tfork_child ; _tfork_child: ");
  * Release any remaining resources of this thread and pass control
  * to next process or thread.
  */
-volatile void final_swtch(void);
+extern void swtch(void);
+
 void
 cpu_texit(register struct proc *p)
 {
@@ -189,7 +193,8 @@ cpu_texit(register struct proc *p)
 		free(p->p_addr, M_TEMP); */
 
 	/* context switch, never to return */
-	final_swtch();
+//	final_swtch();
+	swtch();
 #ifdef	DIAGNOSTIC
 	panic("cpu_exit");
 #endif
@@ -245,6 +250,7 @@ cpu_signal(struct proc *p, int sig, int mask)
         oonstack = ps->ps_onstack;
 	frmtrap = p->p_addr->u_pcb.pcb_flags & FM_TRAP;
 
+//printf("cpu_signal ps_sigact[%d] = %x, pid = %d\n", sig, ps->ps_sigact[sig], p->p_pid);
 	/*
 	 * Find the base of the special signal stack frame. If a
 	 * signal uses the special signal stack, and it's available,
@@ -347,6 +353,7 @@ cpu_signalreturn(struct proc *p)
 		return(EFAULT);
 	}
 
+//printf("cpu_signalreturn ps_sigact[%d] = %x, pid = %d\n", p->p_sigacts->ps_sig, p->p_sigacts->ps_sigact[p->p_sigacts->ps_sig], p->p_pid);
 	/*
 	 * point the fault vector at the error return, so that any
 	 * failed user process address space reference will cause

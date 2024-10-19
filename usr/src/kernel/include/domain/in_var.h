@@ -73,7 +73,7 @@ struct	in_aliasreq {
 #ifdef	KERNEL
 struct	in_ifaddr *in_ifaddr;
 struct	in_ifaddr *in_iaonnetof();
-/* extern struct	ifqueue	ipintrq;		*/ /* ip packet input queue */
+/* extern struct	ifqueue	ipintrq;		/* ip packet input queue */
 
 #ifndef _IN_PROTOTYPES
 /* private functions, accessed via external symbol stub when loaded */
@@ -85,7 +85,7 @@ extern inline void
 in_sockmaskof(struct in_addr in, struct sockaddr_in *sockmask) {
 	void (*f)(struct in_addr in, struct sockaddr_in *);
 
-	f = esym_fetch(in_sockmaskof);
+	/* (const void *) */ f = esym_fetch(in_sockmaskof);
 	if (f)
 		(*f)(in, sockmask);
 }

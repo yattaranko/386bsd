@@ -47,7 +47,7 @@ static char sccsid[] = "@(#)err.c	5.10 (Berkeley) 6/8/91";
 #include "csh.h"
 #include "extern.h"
 
-char   *seterr = NULL;	/* Holds last error if there was one */
+//char   *seterr = NULL;	/* Holds last error if there was one */
 
 #define ERR_FLAGS	0xf0000000
 #define ERR_NAME	0x10000000

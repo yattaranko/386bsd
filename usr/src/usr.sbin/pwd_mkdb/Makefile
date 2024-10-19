@@ -4,5 +4,6 @@ PROG=	pwd_mkdb
 NONSTDINC=$(INCDB)
 SRCS=	pw_scan.c pwd_mkdb.c
 MAN8=	pwd_mkdb.0
+LDADD=	-lc
 
 .include <bsd.prog.mk>

@@ -59,9 +59,7 @@ static char sccsid[] = "@(#)path.c	5.1 (Berkeley) 4/3/91";
  * Move specified string into path.  Convert "" to "." to handle BSD
  * semantics for a null path.  Strip trailing slashes.
  */
-path_set(p, string)
-	register PATH_T *p;
-	char *string;
+int path_set(register PATH_T* p, char *string)
 {
 	if (strlen(string) > PATH_MAX) {
 		(void)fprintf(stderr,
@@ -85,11 +83,7 @@ path_set(p, string)
  * Append specified string to path, inserting '/' if necessary.  Return a
  * pointer to the old end of path for restoration.
  */
-char *
-path_append(p, name, len)
-	register PATH_T *p;
-	char *name;
-	int len;
+char* path_append(register PATH_T* p, char* name, int len)
 {
 	char *old;
 
@@ -124,10 +118,7 @@ path_append(p, name, len)
 /*
  * Restore path to previous value.  (As returned by path_append.)
  */
-void
-path_restore(p, old)
-	PATH_T *p;
-	char *old;
+void path_restore(PATH_T* p, char* old)
 {
 	p->p_end = old;
 	*p->p_end = 0;
@@ -136,9 +127,7 @@ path_restore(p, old)
 /*
  * Return basename of path.
  */
-char *
-path_basename(p)
-	PATH_T *p;
+char* path_basename(PATH_T* p)
 {
 	char *basename;
 

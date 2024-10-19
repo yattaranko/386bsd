@@ -524,7 +524,7 @@ rtinit(struct ifaddr *ifa, int cmd, int flags)
 	rtrequest, rtredirect, rt_missmsg, rtioctl
 }; */
 
-KERNEL_MODCONFIG(route) {
+KERNEL_MODCONFIG(rt) {
 
 	/*_router_ = router;*/
 	esym_bind(rtinit);

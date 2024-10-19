@@ -8,6 +8,9 @@
 LIB=c
 CFLAGS+=-DLIBC_SCCS -DSYSLIBC_SCCS
 AINC=	-I${.CURDIR}/${MACHINE}
+NONSTDINC=-I${SRCHOME}/usr/src/include -I${SRCHOME}/usr/src/include/nonstd
+NONSTDINC+=-I${SRCHOME}/usr/src/kernel/include -I${SRCHOME}/usr/src/kernel/include/sys
+NONSTDINC+=-I${SRCHOME}/usr/src/kernel/include/fs
 
 .include "${.CURDIR}/compat-43/Makefile.inc"
 #.include "${.CURDIR}/compat-sysv/Makefile.inc"

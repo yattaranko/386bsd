@@ -41,14 +41,14 @@
 /*
  * flags to malloc
  */
-#define	M_WAITOK	0x0000
-#define	M_NOWAIT	0x0001
-#define	M_ZERO_IT	0x0002
-#define	M_SPACE_ONLY	0x0004	/* kmem_alloc() only */
-#define	M_IO		0x0018	/* kmem_alloc() only */
-#define	 M_IO1		0x0008		/* bus specific qualifications */
-#define	 M_IO2		0x0010
-#define	 M_IO3		0x0018
+#define	M_WAITOK		0x0000
+#define	M_NOWAIT		0x0001
+#define	M_ZERO_IT		0x0002
+#define	M_SPACE_ONLY	0x0004		/* kmem_alloc() only */
+#define	M_IO			0x0018		/* kmem_alloc() only */
+#define	M_IO1			0x0008		/* bus specific qualifications */
+#define	M_IO2			0x0010
+#define	M_IO3			0x0018
 
 /*
  * Types of memory to be allocated

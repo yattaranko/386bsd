@@ -188,7 +188,7 @@ u_long	sb_max;
 struct	socket *sonewconn1 __P((struct socket *head, int connstatus));
 
 /* strings for sleep message: */
-/* extern	char netio[], netcon[], netcls[]; */
+extern	char netio[], netcon[], netcls[];
 
 /*
  * File operations on sockets.
@@ -197,7 +197,7 @@ int	soo_read __P((struct file *fp, struct uio *uio, struct ucred *cred));
 int	soo_write __P((struct file *fp, struct uio *uio, struct ucred *cred));
 int	soo_ioctl __P((struct file *fp, int com, caddr_t data, struct proc *p));
 int	soo_select __P((struct file *fp, int which, struct proc *p));
-int soo_close __P((struct file *fp, struct proc *p));
+int 	soo_close __P((struct file *fp, struct proc *p));
 
 void sowakeup(struct socket *so, struct sockbuf *sb);
 #endif

@@ -49,7 +49,7 @@ enum	uio_rw { UIO_READ, UIO_WRITE };
 enum	uio_seg {
 	UIO_USERSPACE,		/* from user data space */
 	UIO_SYSSPACE,		/* from system space */
-	/* UIO_USERISPACE	*/ /* from user I space */
+	/* UIO_USERISPACE */	/* from user I space */
 };
 
 struct uio {
@@ -78,13 +78,13 @@ int	writev __P((int, const struct iovec *, int));
 __END_DECLS
 
 #else
-static struct iovec *uio_advance(struct uio *uio, struct iovec *iov, int cnt);
+struct iovec *uio_advance(struct uio *uio, struct iovec *iov, int cnt);
 int uiomove(caddr_t cp, int len, struct uio *uio);
 
 /*
  * Advance a uio and its iov by cnt bytes, returning next iov.
  */
-static inline struct iovec *
+extern inline struct iovec *
 uio_advance(struct uio *uio, struct iovec *iov, int cnt) {
 
 	/* consume an iov, possibly fetching the next one */

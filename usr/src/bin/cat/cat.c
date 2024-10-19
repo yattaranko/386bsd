@@ -46,8 +46,8 @@ static char sccsid[] = "@(#)cat.c	5.15 (Berkeley) 5/23/91";
 
 #include <sys/param.h>
 #include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
+#include <sys/fcntl.h>
+#include <sys/errno.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,16 +58,13 @@ int bflag, eflag, nflag, sflag, tflag, vflag;
 int rval;
 char *filename;
 
-void cook_args	__P((char **));
-void cook_buf	__P((FILE *));
-void raw_args	__P((char **));
-void raw_cat	__P((int));
-void err	__P((int, const char *, ...));
+static void cook_args	__P((char **));
+static void cook_buf	__P((FILE *));
+static void raw_args	__P((char **));
+static void raw_cat	__P((int));
+static void err	__P((int, const char *, ...));
 
-int
-main(argc, argv)
-	int argc;
-	char **argv;
+int main(int argc, char** argv)
 {
 	extern int optind;
 	int ch;
@@ -109,12 +106,11 @@ main(argc, argv)
 		raw_args(argv);
 	if (fclose(stdout))
 		err(1, "stdout: %s", strerror(errno));
-	exit(rval);
+//	exit(rval);
+	return rval;
 }
 
-void
-cook_args(argv)
-	char **argv;
+static void cook_args(char** argv)
 {
 	register FILE *fp;
 
@@ -137,9 +133,7 @@ cook_args(argv)
 	} while (*argv);
 }
 
-void
-cook_buf(fp)
-	register FILE *fp;
+void cook_buf(register FILE* fp)
 {
 	register int ch, gobble, line, prev;
 
@@ -200,9 +194,7 @@ cook_buf(fp)
 		err(1, "stdout: %s", strerror(errno));
 }
 
-void
-raw_args(argv)
-	char **argv;
+void raw_args(char** argv)
 {
 	register int fd;
 
@@ -225,9 +217,7 @@ raw_args(argv)
 	} while (*argv);
 }
 
-void
-raw_cat(rfd)
-	register int rfd;
+void raw_cat(register int rfd)
 {
 	register int nr, nw, off, wfd;
 	static int bsize;

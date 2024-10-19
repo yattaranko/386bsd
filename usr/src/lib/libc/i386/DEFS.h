@@ -37,11 +37,12 @@
  */
 
 #ifdef PROF
-#define	ENTRY(x)	.globl _/**/x; _/**/x:  \
+#define	ENTRY(x)	.globl x; x:  \
 			.data; 1:; .long 0; .text; lea 1b,%eax ; call mcount
 #define	ASENTRY(x)	.globl x; x: \
 			.data; 1:; .long 0; .text; lea 1b,%eax ; call mcount
 #else
-#define	ENTRY(x)	.globl _/**/x; _/**/x: 
+/* #define	ENTRY(x)	.globl _##x; _##x: */
+#define	ENTRY(x)	.globl x; x: 
 #define	ASENTRY(x)	.globl x; x: 
 #endif

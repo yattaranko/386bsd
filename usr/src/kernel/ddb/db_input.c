@@ -237,7 +237,7 @@ db_readline(lstart, lsize)
 	/*while (!db_inputchar(cngetc()))*/
 	    continue;
 
-/* 	db_putchar('\r');	*/ /* synch output position */
+/* 	db_putchar('\r');	/* synch output position */
 	db_printf("\r                              \r");
 
 	*db_le = 0;

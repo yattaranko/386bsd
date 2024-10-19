@@ -59,7 +59,7 @@ struct	rusage {
 	long	ru_maxrss;		/* max resident set size */
 #define	ru_first	ru_ixrss
 	long	ru_ixrss;		/* integral sharable memory size */
-/*	long	ru_ilrss;		*/ /* integral shared memory size */
+/*	long	ru_ilrss; */	/* integral shared memory size */
 	long	ru_idrss;		/* integral unshared data " */
 	long	ru_isrss;		/* integral unshared stack " */
 	long	ru_minflt;		/* page reclaims */
@@ -78,12 +78,12 @@ struct	rusage {
 /*
  * Resource limits
  */
-#define	RLIMIT_CPU	0		/* cpu time in milliseconds */
+#define	RLIMIT_CPU		0		/* cpu time in milliseconds */
 #define	RLIMIT_FSIZE	1		/* maximum file size */
-#define	RLIMIT_DATA	2		/* data size */
+#define	RLIMIT_DATA		2		/* data size */
 #define	RLIMIT_STACK	3		/* stack size */
-#define	RLIMIT_CORE	4		/* core file size */
-#define	RLIMIT_RSS	5		/* resident set size */
+#define	RLIMIT_CORE		4		/* core file size */
+#define	RLIMIT_RSS		5		/* resident set size */
 #define	RLIMIT_MEMLOCK	6		/* locked-in-memory address space */
 #define	RLIMIT_NPROC	7		/* number of processes */
 #define	RLIMIT_OFILE	8		/* number of open files */

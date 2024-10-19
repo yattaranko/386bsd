@@ -1758,7 +1758,7 @@ blknum, nblocks,dumplo,num); */
 	/*if ((dumplo < 0) || ((dumplo + num) > nblocks))
 		return(EINVAL);*/
 
-	/*astab.b_active = 1;		*/ /* mark controller active for if we
+	/*astab.b_active = 1;		/* mark controller active for if we
 					   panic during the dump */
 	/* transfer in progress */
 	while(as->active)

@@ -1,0 +1,38 @@
+# -I/home/share/386bsd-2.0/usr/src/include -I/home/share/386bsd-2.0/usr/src/kernel/include cp.c path.c
+cp.o: cp.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/dirent.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/fcntl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/include/stdio.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h cp.h
+path.o: path.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/include/stdio.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h cp.h

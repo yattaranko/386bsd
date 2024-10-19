@@ -37,10 +37,11 @@ static char sccsid[] = "@(#)disklabel.c	5.17 (Berkeley) 2/23/91";
 
 #include <sys/param.h>
 #include <sys/errno.h>
+#include "ufs_dinode.h"
 #include "ufs.h"
 #include <sys/file.h>
 #define DKTYPENAMES
-#include "disklabel.h"
+#include <dev/disklabel.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

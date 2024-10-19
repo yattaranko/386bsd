@@ -265,64 +265,85 @@ vm_pageout_scan(void)
 }
 
 /* vm_pageout is the high level pageout daemon. */
-volatile void
+void
 vm_pageout(void)
 {
 
 	/* set absolute minimum free pages to avoid deadlock */
-	if (vm_page_free_min == 0) {
+	if (vm_page_free_min == 0)
+	{
 		vm_scan_min = vm_page_free_min = vm_page_free_count / 20;
 		vm_scan_max = vm_scan_min / 2;
 		if (vm_page_free_min > vm_page_free_min_sanity)
+		{
 			vm_page_free_min = vm_page_free_min_sanity;
+		}
 	}
 
 	/* set desired number of free pages */
 	if (vm_page_free_target == 0)
+	{
 		vm_page_free_target = (vm_page_free_min * 4) / 3;
+	}
 
 	/* set desired number of inactive pages */
 	if (vm_page_inactive_target == 0)
+	{
 		vm_page_inactive_target = vm_page_free_min * 2;
+	}
 
 	if (vm_page_free_target <= vm_page_free_min)
+	{
 		vm_page_free_target = vm_page_free_min + 1;
+	}
 
 	if (vm_page_inactive_target <= vm_page_free_target)
+	{
 		vm_page_inactive_target = vm_page_free_target + 1;
+	}
 
 	/* scan for pages to reclaim when awoken */
-	for (;;) {
+	for (;;)
+	{
 		int rate;
 
-		if (vm_page_free_count <= vm_page_free_target) {
+		if (vm_page_free_count <= vm_page_free_target)
+		{
+			/* reclaim any outstanding pageouts from previous scan */
+			vm_pager_sync();
 
-		/* reclaim any outstanding pageouts from previous scan */
-		vm_pager_sync();
+			/* scan pages */
+			vm_pageout_scan();
 
-		/* scan pages */
-		vm_pageout_scan();
+			/* immediate reclaim from this scan operation */
+			vm_pager_sync();
 
-		/* immediate reclaim from this scan operation */
-		vm_pager_sync();
+			/* broadcast wakeup */
+			wakeup((caddr_t) &vm_page_free_count);
 
-		/* broadcast wakeup */
-		wakeup((caddr_t) &vm_page_free_count);
-
-		/* if target not reached, reschedule ourselves */
-		if (vm_page_free_count < vm_scan_min) {
-
-			/* determine rate to run based on linear ramp */ 
-			if (vm_page_free_count < vm_scan_max)
-				rate = max(hz/100, 1); 
+			/* if target not reached, reschedule ourselves */
+			if (vm_page_free_count < vm_scan_min)
+			{
+				/* determine rate to run based on linear ramp */ 
+				if (vm_page_free_count < vm_scan_max)
+				{
+					rate = max(hz/100, 1); 
+				}
+				else
+				{
+					rate = hz * (vm_page_free_count - vm_scan_max)
+						/ (vm_scan_min - vm_scan_max);
+				}
+			}
 			else
-				rate = hz * (vm_page_free_count - vm_scan_max)
-					/ (vm_scan_min - vm_scan_max);
+			{
+				rate = 0;
+			}
 		}
 		else
+		{
 			rate = 0;
-		} else
-			rate = 0;
+		}
 
 		(void) tsleep((caddr_t)&proc0, PVM, "pageout", rate);
 	}
@@ -333,14 +354,16 @@ vm_pageout(void)
  */
 extern int swap_empty;
 
-int
-chk4space(int pages) {
+int chk4space(int pages)
+{
 
 	if (swap_empty && vm_page_free_count < vm_page_free_target
 	    && vm_page_inactive_count < vm_page_inactive_target
 	    && vm_page_free_count + vm_page_inactive_count - pages
 		- vm_pages_needed < vm_page_free_min)
+	{
 		return (0);
+	}
 	return (1);
 }
 
@@ -372,8 +395,8 @@ vm_init_limits(struct proc *p)
  * Wait for free pages, jabbing the pageout process.
  */
 void
-vm_page_wait(char *s, int npages) {
-
+vm_page_wait(char *s, int npages)
+{
 	vm_pages_needed += npages;
 	wakeup((caddr_t)&proc0);
 	(void) tsleep((caddr_t)&vm_page_free_count, PVM, s, 0);

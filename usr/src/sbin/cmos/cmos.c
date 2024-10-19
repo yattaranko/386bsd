@@ -1,6 +1,6 @@
 #include <sys/param.h>
-#include "isa_stdports.h"
-#include "rtc.h"
+#include <dev/isa_stdports.h>
+#include <dev/rtc.h>
 
 #define	ISA "/dev/isa"
 u_char rtcin(u_char  adr);
@@ -69,7 +69,9 @@ rtcin(u_char  adr)
 	 * to reference the RTC; any interviening i/o operations cancel
 	 * the reference to the clock (e.g. the NOP).
 	 */
-	asm volatile ("out%z0 %b0, %2 ; xorl %0, %0 ; in%z0 %3, %b0"
+//	__asm__ volatile ("out%z0 %b0, %2 ; xorl %0, %0 ; in%z0 %3, %b0"
+//		: "=a"(adr) : "0"(adr), "i"(IO_RTC), "i"(IO_RTC + 1));
+	__asm__ volatile ("outb %b0, %2 ; xorb %0, %0 ; inb %3, %b0"
 		: "=a"(adr) : "0"(adr), "i"(IO_RTC), "i"(IO_RTC + 1));
 	return (adr);
 }

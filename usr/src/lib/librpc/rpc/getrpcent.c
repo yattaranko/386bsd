@@ -62,6 +62,8 @@ struct rpcdata {
 static	struct rpcent *interpret();
 struct	hostent *gethostent();
 char	*inet_ntoa();
+void	setrpcent(int f);
+void	endrpcent();
 
 static char RPCDB[] = "/etc/rpc";
 
@@ -118,8 +120,7 @@ getrpcbyname(name)
 	return (NULL);
 }
 
-setrpcent(f)
-	int f;
+void setrpcent(int f)
 {
 	register struct rpcdata *d = _rpcdata();
 
@@ -135,7 +136,7 @@ setrpcent(f)
 	d->stayopen |= f;
 }
 
-endrpcent()
+void endrpcent()
 {
 	register struct rpcdata *d = _rpcdata();
 
@@ -177,7 +178,7 @@ interpret(val, len)
 	register char *cp, **q;
 
 	if (d == 0)
-		return;
+		return (0);
 	strncpy(d->line, (char*) val, len);
 	p = d->line;
 	d->line[len] = '\n';

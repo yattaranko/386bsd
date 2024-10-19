@@ -6,6 +6,9 @@
  * Network to Host Long byte order conversion.
  */
 
+#ifndef	_NTOHL_H_
+#define	_NTOHL_H_
+
 __INLINE unsigned long
 ntohl(unsigned long wd)
 {	unsigned long rv;
@@ -19,3 +22,5 @@ ntohl(unsigned long wd)
 #endif
 	return (rv);
 }
+
+#endif	/* _HTOHL_H_ */

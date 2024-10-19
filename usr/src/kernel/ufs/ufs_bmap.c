@@ -48,16 +48,17 @@
 
 #include "prototypes.h"
 
+extern daddr_t blkpref(struct inode*, daddr_t, int, daddr_t*);
+extern int	   realloccg(register struct inode*, off_t, daddr_t, int, int, struct buf**);
+extern int	   alloc(register struct inode*, daddr_t, daddr_t, int, daddr_t*);
+
 /*
  * Bmap converts a the logical block number of a file
  * to its physical block number on the disk. The conversion
  * is done by using the logical block number to index into
  * the array of block pointers described by the dinode.
  */
-bmap(ip, bn, bnp)
-	register struct inode *ip;
-	register daddr_t bn;
-	daddr_t	*bnp;
+int bmap(register struct inode* ip, register daddr_t bn, daddr_t* bnp)
 {
 	register struct fs *fs;
 	register daddr_t nb;
@@ -104,8 +105,8 @@ bmap(ip, bn, bnp)
 		return (0);
 	}
 	for (; j <= NIADDR; j++) {
-		if (error = bread(ip->i_devvp, fsbtodb(fs, nb),
-		    (int)fs->fs_bsize, NOCRED, &bp)) {
+		error = bread(ip->i_devvp, fsbtodb(fs, nb), (int)fs->fs_bsize, NOCRED, &bp);
+		if (error != 0) {
 			brelse(bp);
 			return (error);
 		}
@@ -129,19 +130,15 @@ bmap(ip, bn, bnp)
  * by allocating the physical blocks on a device given
  * the inode and the logical block number in a file.
  */
-balloc(ip, bn, size, bpp, flags)
-	register struct inode *ip;
-	register daddr_t bn;
-	int size;
-	struct buf **bpp;
-	int flags;
+int balloc(register struct inode* ip, register daddr_t bn,
+		   int size, struct buf** bpp, int flags)
 {
 	register struct fs *fs;
 	register daddr_t nb;
 	struct buf *bp, *nbp;
 	struct vnode *vp = ITOV(ip);
 	int osize, nsize, i, j, sh, error;
-	daddr_t newb, lbn, *bap, pref, blkpref();
+	daddr_t newb, lbn, *bap, pref;
 
 	*bpp = (struct buf *)0;
 	if (bn < 0)
@@ -246,7 +243,8 @@ balloc(ip, bn, size, bpp, flags)
 	nb = ip->i_ib[NIADDR - j];
 	if (nb == 0) {
 		pref = blkpref(ip, lbn, 0, (daddr_t *)0);
-	        if (error = alloc(ip, lbn, pref, (int)fs->fs_bsize, &newb))
+	    error = alloc(ip, lbn, pref, (int)fs->fs_bsize, &newb);
+		if (error != 0)
 			return (error);
 		nb = newb;
 		bp = getblk(ip->i_devvp, fsbtodb(fs, nb), fs->fs_bsize);
@@ -289,7 +287,8 @@ balloc(ip, bn, size, bpp, flags)
 		}
 		if (pref == 0)
 			pref = blkpref(ip, lbn, 0, (daddr_t *)0);
-		if (error = alloc(ip, lbn, pref, (int)fs->fs_bsize, &newb)) {
+		error = alloc(ip, lbn, pref, (int)fs->fs_bsize, &newb);
+		if (error != 0) {
 			brelse(bp);
 			return (error);
 		}
@@ -330,7 +329,8 @@ balloc(ip, bn, size, bpp, flags)
 	 */
 	if (nb == 0) {
 		pref = blkpref(ip, lbn, i, &bap[0]);
-		if (error = alloc(ip, lbn, pref, (int)fs->fs_bsize, &newb)) {
+		error = alloc(ip, lbn, pref, (int)fs->fs_bsize, &newb);
+		if (error != 0) {
 			brelse(bp);
 			return (error);
 		}

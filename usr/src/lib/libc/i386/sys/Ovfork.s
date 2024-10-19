@@ -67,4 +67,4 @@ verror:
 child:
 	movl	$0,%eax
 parent:
-	jmp	%ecx
+	jmp	%ec

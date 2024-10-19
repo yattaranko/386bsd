@@ -42,20 +42,23 @@ static char sccsid[] = "@(#)passwd.c	5.5 (Berkeley) 7/6/91";
 #endif /* not lint */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #ifdef KERBEROS
 int use_kerberos = 1;
 #endif
 
-main(argc, argv)
-	int argc;
-	char **argv;
+extern int local_passwd(char *uname);
+static void usage();
+
+int main(int argc, char** argv)
 {
 	extern int optind;
 	register int ch;
 	char *uname;
 
+fprintf(stderr, "main:1\n");
 #ifdef KERBEROS
 	while ((ch = getopt(argc, argv, "l")) != EOF)
 		switch (ch) {
@@ -71,11 +74,14 @@ main(argc, argv)
 			usage();
 			exit(1);
 		}
+fprintf(stderr, "main:2\n");
+for(int i = 0; i < 1000; i++) fprintf(stderr, "%d\r", i);
 
 	argc -= optind;
 	argv += optind;
 
 	uname = getlogin();
+fprintf(stderr, "main:3, uname = %s\n", uname);
 
 	switch(argc) {
 	case 0:
@@ -84,9 +90,9 @@ main(argc, argv)
 #ifdef	KERBEROS
 		if (use_kerberos && strcmp(argv[1], uname)) {
 			(void)fprintf(stderr, "passwd: %s\n\t%s\n%s\n",
-"to change another user's Kerberos password, do",
-"\"kinit user; passwd; kdestroy\";",
-"to change a user's local passwd, use \"passwd -l user\"");
+			"to change another user's Kerberos password, do",
+			"\"kinit user; passwd; kdestroy\";",
+			"to change a user's local passwd, use \"passwd -l user\"");
 			exit(1);
 		}
 #endif
@@ -94,17 +100,22 @@ main(argc, argv)
 		break;
 	default:
 		usage();
-		exit(1);
+//		exit(1);
+		return 1;
 	}
+fprintf(stderr, "main:4\n");
 
 #ifdef	KERBEROS
 	if (use_kerberos)
 		exit(krb_passwd());
 #endif
-	exit(local_passwd(uname));
+//	exit(local_passwd(uname));
+	return (local_passwd(uname));
+
+	return 0;
 }
 
-usage()
+static void usage()
 {
 #ifdef	KERBEROS
 	(void)fprintf(stderr, "usage: passwd [-l] user\n");

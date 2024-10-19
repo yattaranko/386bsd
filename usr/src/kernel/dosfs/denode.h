@@ -183,7 +183,7 @@ struct defid {
 	u_long	defid_dirclust;	/* cluster this dir entry came from	*/
 	u_long	defid_dirofs;	/* index of entry within the cluster	*/
 
-/*	u_long	defid_gen;	*/ /* generation number */
+/*	u_long	defid_gen;	/* generation number */
 };
 
 /*

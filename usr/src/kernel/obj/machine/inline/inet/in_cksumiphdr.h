@@ -6,6 +6,9 @@
  * Calculate 16 bit ones compliment checksum for minimal ip header(no options)
  */
 
+#ifndef	_IN_CHSUMIPHDR_H_
+#define	_IN_CHSUMIPHDR_H_
+
 __INLINE u_short
 in_cksumiphdr(void *ip) {
 	u_long val, acc;
@@ -25,3 +28,4 @@ in_cksumiphdr(void *ip) {
 	return (~val);
 }
 
+#endif	/* _IN_CHSUMIPHDR_H_ */

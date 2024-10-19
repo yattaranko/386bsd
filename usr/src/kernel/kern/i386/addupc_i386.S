@@ -2,7 +2,7 @@
  * Copyright (c) 1994 William F. Jolitz.
  * 386BSD Copyright Restrictions Apply. All Other Rights Reserved.
  *
- * $Id: addupc_i386.s,v 1.1 94/10/19 17:39:53 bill Exp $
+ * $Id: addupc_i386.S,v 1.1 94/10/19 17:39:53 bill Exp $
  *
  * addupc(int pc, struct uprof *up, int ticks):
  * update profiling information for the user process.
@@ -10,7 +10,7 @@
  */
 
 #include "asm.h"
-#include "assym.s"
+#include "assym.S"
 
 ENTRY(addupc)
 	pushl %ebp
@@ -29,7 +29,7 @@ ENTRY(addupc)
 	cmpl PR_SIZE(%edx),%eax		/* if (praddr > up->pr_size) return */
 	ja L1
 
-/*	addl %eax,%eax			*/ /* praddr -> word offset */
+/*	addl %eax,%eax*/			/* praddr -> word offset */
 	addl PR_BASE(%edx),%eax		/* praddr += up-> pr_base */
 	movl 16(%ebp),%ecx		/* ticks */
 

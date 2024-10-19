@@ -130,4 +130,4 @@ system$O: ../general/general.h ../ctlr/api.h ../api/api_exch.h
 system$O: ../general/globals.h
 termout$O: ../general/general.h terminal.h ../api/disp_asc.h ../ctlr/hostctlr.h
 termout$O: ../ctlr/externs.h ../ctlr/declare.h ../ctlr/oia.h ../ctlr/screen.h
-termout$O: ../general/globals.h ../telextrn.h
+termout$O: ../ctlr/scrnctlr.h ../general/globals.h ../telextrn.h

@@ -50,10 +50,9 @@ extern int bdev;
 static daddr_t bap[2*1024];
 static daddr_t bnobap;
 
-bmap(dip, bn, bnp)
-	register struct dinode *dip;
-	register daddr_t bn;
-	daddr_t	*bnp;
+int bread(int bdev, int off, char* addr, int sz);
+
+int bmap(struct dinode* dip, daddr_t bn, daddr_t* bnp)
 {
 	register daddr_t nb;
 	int i, j, sh;
@@ -103,7 +102,7 @@ bmap(dip, bn, bnp)
 		daddr_t bno = fsbtodb(fs, nb);
 
 		if (bnobap != bno &&
-(error = bread(bdev, bno, &bap,
+(error = bread(bdev, bno, (char*)&bap,
 			(int)fs->fs_bsize))) {
 			return (error);
 		}

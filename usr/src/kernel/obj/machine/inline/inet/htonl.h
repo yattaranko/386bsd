@@ -6,6 +6,9 @@
  * Host to Network Long byte order conversion.
  */
 
+#ifndef _HTONL_H_
+#define	_HTONL_H_
+
 __INLINE unsigned long
 htonl(unsigned long wd)
 {
@@ -20,3 +23,5 @@ htonl(unsigned long wd)
 #endif
 	return (rv);
 }
+
+#endif	/* _HTONL_H_ */

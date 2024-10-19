@@ -70,26 +70,26 @@ enum vtagtype	{ VT_NON, VT_UFS, VT_NFS, VT_MFS };
 #define	VN_MAXNAME	16
 
 struct vnode {
-	u_long		v_flag;			/* vnode flags (see below) */
-	short		v_usecount;		/* reference count of users */
-	short		v_writecount;		/* reference count of writers */
-	long		v_holdcnt;		/* page & buffer references */
-	off_t		v_lastr;		/* last read (read-ahead) */
-	u_long		v_id;			/* capability identifier */
+	u_long			v_flag;			/* vnode flags (see below) */
+	short			v_usecount;		/* reference count of users */
+	short			v_writecount;	/* reference count of writers */
+	long			v_holdcnt;		/* page & buffer references */
+	off_t			v_lastr;		/* last read (read-ahead) */
+	u_long			v_id;			/* capability identifier */
 	struct mount	*v_mount;		/* ptr to vfs we are in */
 	struct vnodeops	*v_op;			/* vnode operations */
 	struct vnode	*v_freef;		/* vnode freelist forward */
 	struct vnode	**v_freeb;		/* vnode freelist back */
 	struct vnode	*v_mountf;		/* vnode mountlist forward */
 	struct vnode	**v_mountb;		/* vnode mountlist back */
-	struct buf	*v_cleanblkhd;		/* clean blocklist head */
-	struct buf	*v_dirtyblkhd;		/* dirty blocklist head */
-	long		v_numoutput;		/* num of writes in progress */
-	enum vtype	v_type;			/* vnode type */
+	struct buf		*v_cleanblkhd;	/* clean blocklist head */
+	struct buf		*v_dirtyblkhd;	/* dirty blocklist head */
+	long			v_numoutput;	/* num of writes in progress */
+	enum vtype		v_type;			/* vnode type */
 	union {
 		struct mount	*vu_mountedhere;/* ptr to mounted vfs (VDIR) */
-		struct socket	*vu_socket;	/* unix ipc (VSOCK) */
-		caddr_t		vu_vmdata;	/* private data for vm (VREG) */
+		struct socket	*vu_socket;		/* unix ipc (VSOCK) */
+		caddr_t			vu_vmdata;		/* private data for vm (VREG) */
 		struct specinfo	*vu_specinfo;	/* device (VCHR, VBLK) */
 		struct fifoinfo	*vu_fifoinfo;	/* fifo (VFIFO) */
 	} v_un;
@@ -120,28 +120,35 @@ struct vnode {
  * (getattr) or which is not to be changed (setattr).
  */
 struct vattr {
-	enum vtype	va_type;	/* vnode type (for create) */
-	u_short		va_mode;	/* files access mode and type */
-	short		va_nlink;	/* number of references to file */
-	uid_t		va_uid;		/* owner user id */
-	gid_t		va_gid;		/* owner group id */
-	long		va_fsid;	/* file system id (dev for now) */
-	long		va_fileid;	/* file id */
-	u_quad		va_qsize;	/* file size in bytes */
-	long		va_blocksize;	/* blocksize preferred for i/o */
-	struct timeval	va_atime;	/* time of last access */
-	struct timeval	va_mtime;	/* time of last modification */
-	struct timeval	va_ctime;	/* time file changed */
-	u_long		va_gen;		/* generation number of file */
-	u_long		va_flags;	/* flags defined for file */
-	dev_t		va_rdev;	/* device the special file represents */
-	u_quad		va_qbytes;	/* bytes of disk space held by file */
+	enum vtype		va_type;		/* vnode type (for create) */
+	u_short			va_mode;		/* files access mode and type */
+	short			va_nlink;		/* number of references to file */
+	uid_t			va_uid;			/* owner user id */
+	gid_t			va_gid;			/* owner group id */
+	long			va_fsid;		/* file system id (dev for now) */
+	long			va_fileid;		/* file id */
+	u_quad			va_qsize;		/* file size in bytes */
+	long			va_blocksize;	/* blocksize preferred for i/o */
+	struct timeval	va_atime;		/* time of last access */
+	struct timeval	va_mtime;		/* time of last modification */
+	struct timeval	va_ctime;		/* time file changed */
+	u_long			va_gen;			/* generation number of file */
+	u_long			va_flags;		/* flags defined for file */
+	dev_t			va_rdev;		/* device the special file represents */
+	u_quad			va_qbytes;		/* bytes of disk space held by file */
 };
 #if BYTE_ORDER == LITTLE_ENDIAN
+#if 0
 #define	va_size		va_qsize.val[0]
 #define	va_size_rsv	va_qsize.val[1]
 #define	va_bytes	va_qbytes.val[0]
 #define	va_bytes_rsv	va_qbytes.val[1]
+#else
+#define	va_size			va_qsize
+#define	va_size_rsv		va_qsize
+#define	va_bytes		va_qbytes
+#define	va_bytes_rsv	va_qbytes
+#endif
 #else
 #define	va_size		va_qsize.val[1]
 #define	va_size_rsv	va_qsize.val[0]
@@ -285,18 +292,18 @@ struct vnodeops {
 /*
  * public vnode manipulation functions
  */
-int 	bdevvp __P((dev_t dev, struct vnode **vpp));
-int 	vcount __P((struct vnode *vp));	/* total references to a device */
+int		bdevvp __P((dev_t dev, struct vnode **vpp));
+int		vcount __P((struct vnode *vp));	/* total references to a device */
 void 	vgoneall __P((struct vnode *vp));/* recycle vnode and all its aliases */
-void vfsinit(void);
-void vwakeup(struct buf *bp);
-void bgetvp(struct vnode *vp, struct buf *bp);
-void brelvp(struct buf *bp);
-void reassignbuf(struct buf *bp, struct vnode *newvp);
-int vfinddev(dev_t dev, enum vtype type, struct vnode **vpp);
-void vclean(struct vnode *vp, int flags);
+void	vfsinit(void);
+void	vwakeup(struct buf *bp);
+void	bgetvp(struct vnode *vp, struct buf *bp);
+void	brelvp(struct buf *bp);
+void	reassignbuf(struct buf *bp, struct vnode *newvp);
+int		vfinddev(dev_t dev, enum vtype type, struct vnode **vpp);
+void	vclean(struct vnode *vp, int flags);
 	/* check for special device aliases */
-struct 	vnode *checkalias __P((struct vnode *vp, dev_t nvp_rdev,
+struct vnode *checkalias __P((struct vnode *vp, dev_t nvp_rdev,
 	    struct mount *mp));
 
 /* interface symbols */
@@ -305,10 +312,10 @@ struct 	vnode *checkalias __P((struct vnode *vp, dev_t nvp_rdev,
 
 /* global variables used in core kernel and other modules */
 __ISYM__(struct vattr, va_null,) /* predefined null vattr structure */
-__ISYM__(long, desiredvnodes,)	/* number of vnodes desired */
+__ISYM__(const long, desiredvnodes,)	/* number of vnodes desired */
 __ISYM__(struct vnode *, rootvp,)	/* root vnode */
 #if defined(DEBUG) || defined(DIAGNOSTIC)
-__ISYM__(int, prtactive,)	/* diagnostic flag */
+//__ISYM__(int, prtactive,)	/* diagnostic flag */
 #endif
 
 /* functions used in modules */
@@ -327,7 +334,7 @@ __ISYM__(void, vattr_null, (struct vattr *vap))
 __ISYM__(void, vhold, (struct vnode *vp))
 __ISYM__(void, vref, (struct vnode *vp))	/* increase reference to a vnode */
 __ISYM__(void, holdrele, (struct vnode *vp))
-__ISYM__(void, vprint, (char *string, struct vnode *vp))
+//__ISYM__(void, vprint, (char *string, struct vnode *vp))
 __ISYM__(void, cache_purge, (struct vnode *vp))
 /* XXX temp vm interface */
 __ISYM__(int, vnode_pager_uncache, (struct vnode *vp))
@@ -341,9 +348,18 @@ __ISYM__(void, vnode_pager_setsize, (struct vnode *vp, u_long nsize))
 /*
  * Flags to various vnode functions.
  */
+#if 0
 #define	SKIPSYSTEM	0x0001		/* vflush: skip vnodes marked VSYSTEM */
 #define	FORCECLOSE	0x0002		/* vflush: force file closeure */
 #define	DOCLOSE		0x0004		/* vclean: close active files */
+#else
+#define	SKIPSYSTEM	0x0001		/* vflush: skip vnodes marked VSYSTEM */
+#define	FORCECLOSE	0x0002		/* vflush: force file closeure */
+#define	WRITECLOSE	0x0004		/* vflush: only close writeable files */
+#define	DOCLOSE		0x0008		/* vclean: close active files */
+#define	V_SAVE		0x0001		/* vinvalbuf: sync file first */
+#define	V_SAVEMETA	0x0002		/* vinvalbuf: leave indirect blocks */
+#endif
 
 #ifndef DIAGNOSTIC
 #define	VREF(vp)	(vp)->v_usecount++	/* increase reference */

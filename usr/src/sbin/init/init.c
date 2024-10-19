@@ -36,9 +36,12 @@
 #include <sys/errno.h>
 #include <sys/signal.h>
 #include <sys/wait.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <setjmp.h>
 #include <ttyent.h>
 #include <unistd.h>
+#include <string.h>
 
 #define NTTY 32			/* max ttys */
 #define NARG 16			/* max args to login/getty */
@@ -72,9 +75,20 @@ char arg[128], nam[64], term[64], *env[] = { term, 0 };
 jmp_buf single, reread;
 char *Reboot = "autoboot";
 
-char *newstring(), *malloc();
 extern int errno;
 sigset_t zeromask = 0;
+
+extern int open(char*, int);
+extern void* malloc(unsigned int);
+extern int login_tty(int);
+extern void logwtmp(char* line, char* name, char* host);
+extern int logout(register char *line);
+extern struct ttyent* getttyent();
+
+static char* newstring(register char* s);
+static void warn(char* s);
+static void fatal(char* s);
+static void writes(int n, char* s);
 
 /* signal state of child process */
 #define	SIGNALSFORCHILD	 \
@@ -84,16 +98,17 @@ sigset_t zeromask = 0;
 	signal(SIGTTIN, SIG_DFL); signal(SIGTTOU, SIG_DFL); \
 	sigprocmask(SIG_SETMASK, &zeromask, (sigset_t *) 0);
 
+void getty(struct ttytab*tt);
+
+
 /* SIGHUP: reread /etc/ttys */
-void
-shup(sig)
+void shup(int sig)
 {
 	longjmp(reread, 1);
 }
 
 /* SIGALRM: abort wait and go single user */
-void
-salrm(sig)
+void salrm(int sig)
 {
 	signal(SIGALRM, SIG_DFL);
 	warn("process hung");
@@ -101,8 +116,7 @@ salrm(sig)
 }
 
 /* SIGTERM: go single user */
-void
-sterm(sig)
+void sterm(int sig)
 {
 	register struct ttytab *tt;
 
@@ -133,16 +147,14 @@ sterm(sig)
 }
 
 /* SIGTSTP: drain system */
-void
-ststp(sig)
+void ststp(int sig)
 {
 	drain = 1;
 }
 
 /* init [-[s][f]] */
 
-main(argc, argv)
-char **argv;
+int main(int argc, char** argv)
 {
 	register int pid;
 	register struct ttytab *tt;
@@ -170,10 +182,16 @@ char **argv;
 
 	/* handle arguments, if any */
 	if(argc > 1)
+	{
 		if(!strcmp(argv[1], "-s"))
+		{
 			sflag++;
+		}
 		else if(!strcmp(argv[1], "-f"))
+		{
 			Reboot = 0;
+		}
+	}
 top:
 	/* Single user mode? */
 	if(sflag) {
@@ -249,7 +267,9 @@ top:
 
 		/* first pass. find and clean the entries that have changed */
 		setttyent();
-		while(ty = getttyent()) {
+//		while(ty = getttyent()) {
+		for(ty = getttyent(); ty != 0; ty = getttyent())
+		{
 			for(tt = ttytab; tt < ttytabend; tt++)
 			if(!strcmp(tt->tt_name, ty->ty_name)) {
 				/* if a process present, mark */
@@ -331,12 +351,13 @@ top:
 				break;
 			}
 	}
+
+	return 0;
 }
 
 /* process a getty for a "line". N.B. by having getty do open, init
    is not limited by filedescriptors for number of possible users */
-getty(tt)
-struct ttytab *tt;
+void getty(struct ttytab*tt)
 {
 	char *sargv[NARG];
 	register char *p = arg, **sp = sargv;
@@ -382,9 +403,7 @@ bad:
 	fatal(tt->tt_name);
 }
 
-char *
-newstring(s)
-register char *s;
+char* newstring(register char* s)
 {
 	register char *n;
 
@@ -394,8 +413,7 @@ register char *s;
 	return(n);
 }
 
-warn(s)
-char *s;
+static void warn(char* s)
 {
 	register int pid;
 	int fd;
@@ -407,8 +425,7 @@ char *s;
 	close(fd);
 }
 
-fatal(s)
-char *s;
+static void fatal(char* s)
 {
 	login_tty(open("/dev/console", 2));
 	writes(2, "init FATAL error: ");
@@ -417,8 +434,7 @@ char *s;
 	/* panic: init died */
 }
 
-writes(n, s)
-char *s;
+static void writes(int n, char* s)
 {
 	write(n, s, strlen(s));
 }

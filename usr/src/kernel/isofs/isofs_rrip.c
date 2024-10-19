@@ -59,7 +59,7 @@ ISO_RRIP_ANALYZE *ana;
 	ana->inode.iso_uid   = (uid_t)isonum_731(p->uid_l);
 	ana->inode.iso_gid   = (gid_t)isonum_731(p->gid_l);
 	ana->inode.iso_links = isonum_731(p->links_l);
-	return;
+	return ( 0 );
 }
 
 int isofs_rrip_defattr(  isodir, ana )
@@ -92,7 +92,7 @@ ISO_RRIP_ANALYZE *ana;
 					 ); */
 	ana->inode.iso_dev   = makedev(isonum_731(p->dev_t_high_l),
 				isonum_731(p->dev_t_low_l));
-	return;
+	return ( 0 );
 }
 
 /*
@@ -102,7 +102,7 @@ static int isofs_rrip_slink( p, ana )
 ISO_RRIP_SLINK  *p;
 ISO_RRIP_ANALYZE *ana;
 {
-	return;
+	return ( 0 );
 }
 
 /*
@@ -112,7 +112,7 @@ static int isofs_rrip_altname( p, ana )
 ISO_RRIP_ALTNAME *p;
 ISO_RRIP_ANALYZE *ana;
 {
-	return;
+	return ( 0 );
 }
 
 /*
@@ -132,7 +132,7 @@ ISO_RRIP_ANALYZE *ana;
 				isonum_733(p->dir_loc)
 							);
 	ana->inode.iso_cln = isonum_733(p->dir_loc);
-	return;
+	return ( 0 );
 }
 
 /*
@@ -153,7 +153,7 @@ ISO_RRIP_ANALYZE *ana;
 				isonum_733(p->dir_loc)
 							);
 	ana->inode.iso_pln = isonum_733(p->dir_loc);
-	return;
+	return ( 0 );
 }
 
 /*
@@ -170,7 +170,7 @@ ISO_RRIP_ANALYZE *ana;
 	buf[2]	= 0x00;
 
 	printf("isofs:%s[%d]\n",buf, isonum_711(p->h.length) );
-	return;
+	return ( 0 );
 }
 
 /*
@@ -301,7 +301,7 @@ ISO_RRIP_ANALYZE *ana;
 			else
         			ana->inode.iso_atime = ana->inode.iso_ctime;
 	}
-	return;
+	return ( 0 );
 }
 
 int isofs_rrip_deftstamp( isodir, ana )
@@ -332,7 +332,7 @@ ISO_RRIP_ANALYZE *ana;
 				buf,
 				isonum_711(p->h.length),
 				p->flags );
-	return;
+	return ( 0 );
 }
 
 /*
@@ -353,7 +353,7 @@ ISO_RRIP_ANALYZE *ana;
 				buf,
 				isonum_711(p->h.length),
 				p->flags );
-	return;
+	return ( 0 );
 }
 
 /*
@@ -364,7 +364,7 @@ static int isofs_rrip_unknown( p, ana )
 ISO_RRIP_EXFLAG  *p;
 ISO_RRIP_ANALYZE *ana;
 {
-	return;
+	return ( 0 );
 }
 
 typedef struct {

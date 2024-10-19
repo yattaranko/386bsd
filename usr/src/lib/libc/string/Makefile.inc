@@ -12,7 +12,7 @@ SRCS+=	bcmp.s bcopy.s bzero.s ffs.s index.s memchr.c memcmp.c memset.c \
 	strncat.c strncmp.s strncpy.s strpbrk.c strsep.c \
 	strspn.c strstr.c
 .elif (${MACHINE} == "i386")
-SRCS+=	bcmp.c bcopy.c bzero.s ffs.c index.c memchr.c memcmp.c memset.c \
+SRCS+=	bcmp.c bcopy.c bzero.S ffs.c index.c memchr.c memcmp.c memset.c \
 	rindex.c strcat.c strcmp.c strcpy.c strcspn.c strlen.c \
 	strncat.c strncmp.c strncpy.c strpbrk.c strsep.c \
 	strspn.c strstr.c
@@ -33,13 +33,16 @@ SRCS+=	memmove.s strchr.s strrchr.s
 # if no machine specific memmove(3), build one out of bcopy(3).
 .if empty(SRCS:Mmemmove.s)
 OBJS+=	memmove.o
-memmove.o: bcopy.c
+#memmove.o: bcopy.c
+memmove.o:
 	${CC} -DMEMMOVE ${CFLAGS} -c ${.ALLSRC} -o ${.TARGET}
 	@${LD} -x -r ${.TARGET}
 	@mv a.out ${.TARGET}
 
-memmove.po: bcopy.c
-	${CC} -DMEMMOVE ${CFLAGS} -c -p ${.ALLSRC} -o ${.TARGET}
+#memmove.po: bcopy.c
+memmove.po:
+#	${CC} -DMEMMOVE ${CFLAGS} -c -p ${.ALLSRC} -o ${.TARGET}
+	${CC} -DMEMMOVE ${CFLAGS} -c ${.ALLSRC} -o ${.TARGET}
 	@${LD} -X -r ${.TARGET}
 	@mv a.out ${.TARGET}
 .endif
@@ -47,13 +50,15 @@ memmove.po: bcopy.c
 # if no machine specific memcpy(3), build one out of bcopy(3).
 .if empty(SRCS:Mmemcpy.s)
 OBJS+=	memcpy.o
-memcpy.o: bcopy.c
+#memcpy.o: bcopy.c
+memcpy.o:
 	${CC} -DMEMCOPY ${CFLAGS} -c ${.ALLSRC} -o ${.TARGET}
 	@${LD} -x -r ${.TARGET}
 	@mv a.out ${.TARGET}
 
-memcpy.po: bcopy.c
-	${CC} -DMEMCOPY ${CFLAGS} -c -p ${.ALLSRC} -o ${.TARGET}
+#memcpy.po: bcopy.c
+memcpy.po:
+	${CC} -DMEMCOPY ${CFLAGS} -c ${.ALLSRC} -o ${.TARGET}
 	@${LD} -X -r ${.TARGET}
 	@mv a.out ${.TARGET}
 .endif
@@ -61,13 +66,15 @@ memcpy.po: bcopy.c
 # if no machine specific strchr(3), build one out of index(3).
 .if empty(SRCS:Mstrchr.s)
 OBJS+=	strchr.o
-strchr.o: index.c
+#strchr.o: index.c
+strchr.o:
 	${CC} -DSTRCHR ${CFLAGS} -c ${.ALLSRC} -o ${.TARGET}
 	@${LD} -x -r ${.TARGET}
 	@mv a.out ${.TARGET}
 
-strchr.po: index.c
-	${CC} -DSTRCHR ${CFLAGS} -c -p ${.ALLSRC} -o ${.TARGET}
+#strchr.po: index.c
+strchr.po:
+	${CC} -DSTRCHR ${CFLAGS} -c ${.ALLSRC} -o ${.TARGET}
 	@${LD} -X -r ${.TARGET}
 	@mv a.out ${.TARGET}
 .endif
@@ -75,13 +82,15 @@ strchr.po: index.c
 # if no machine specific strrchr(3), build one out of rindex(3).
 .if empty(SRCS:Mstrrchr.s)
 OBJS+=	strrchr.o
-strrchr.o: rindex.c
+#strrchr.o: rindex.c
+strrchr.o:
 	${CC} -DSTRRCHR ${CFLAGS} -c ${.ALLSRC} -o ${.TARGET}
 	@${LD} -x -r ${.TARGET}
 	@mv a.out ${.TARGET}
 
-strrchr.po: rindex.c
-	${CC} -DSTRRCHR ${CFLAGS} -c -p ${.ALLSRC} -o ${.TARGET}
+#strrchr.po: rindex.c
+strrchr.po:
+	${CC} -DSTRRCHR ${CFLAGS} -c ${.ALLSRC} -o ${.TARGET}
 	@${LD} -X -r ${.TARGET}
 	@mv a.out ${.TARGET}
 .endif

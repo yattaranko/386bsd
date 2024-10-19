@@ -43,13 +43,14 @@
 #include "kernel.h"	/* hz, avenrunnable, lbolt */
 #include "signalvar.h"
 #include "resourcevar.h"
+#include <vmmeter.h>
 
 #include "machine/cpu.h"
 
 #include "prototypes.h"
 
 u_char	curpri;			/* usrpri of curproc */
-int		lbolt;
+int lbolt;
 
 /* Force switch among equal priority processes every 100ms. */
 void
@@ -257,7 +258,8 @@ tsleep(caddr_t chan, int pri, char *wmesg, int timo)
 	 */
 	if (catch) {
 		p->p_flag |= SSINTR;
-		if (sig = CURSIG(p)) {
+		sig = CURSIG(p);
+		if (sig != 0) {
 			if (p->p_wchan)
 				unsleep(p);
 			p->p_stat = SRUN;
@@ -271,7 +273,6 @@ tsleep(caddr_t chan, int pri, char *wmesg, int timo)
 	p->p_stat = SSLEEP;
 	p->p_stats->p_ru.ru_nvcsw++;
 	swtch();
-
 	/* handy breakpoint location after process "wakes" */
 /*
 #define	BP(s)	asm (".globl bp" # s " ; bp" # s ": ; ")
@@ -354,7 +355,7 @@ wakeup(caddr_t chan)
 	s = splhigh();
 	qp = &slpque[HASH(chan)];
 restart:
-	for (q = &qp->sq_head; p = *q; ) {
+	for (q = &qp->sq_head; (p = *q) != 0; ) {
 #ifdef DIAGNOSTIC
 		if (p->p_rlink || p->p_stat != SSLEEP && p->p_stat != SSTOP)
 			panic("wakeup");

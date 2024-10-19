@@ -75,7 +75,8 @@ static struct ldiscif *ldisc;
 
 /* skip over any whitespace in string, including comments */
 char *
-cfg_skipwhite(char **ptr) {
+cfg_skipwhite(char **ptr)
+{
 	char *p = *ptr;
 
 rescan:
@@ -95,7 +96,8 @@ rescan:
 
 /* is character a digit in given base? */
 static int
-isdigit(char c, int base) {
+isdigit(char c, int base)
+{
 
 	if (base == 10)
 		return ((c >= '0' && c <= '9') ? 1 : 0);
@@ -114,7 +116,8 @@ isdigit(char c, int base) {
 
 /* alphanumeric character? */
 static int
-isalphanum(char c) {
+isalphanum(char c)
+{
 
 	if (c >= 'a' && c <= 'z')
 		return (1);
@@ -128,7 +131,8 @@ isalphanum(char c) {
 
 /* value of digit */
 static int
-valdigit(char c) {
+valdigit(char c)
+{
 
 	if (c >= '0' && c <= '9')
 		return (c - '0');
@@ -141,7 +145,8 @@ valdigit(char c) {
 }
 
 int
-cfg_number(char **ptr, int *pval) {
+cfg_number(char **ptr, int *pval)
+{
 	char *p;
 	int base = 10, val = 0, sign = 0;
 
@@ -181,7 +186,8 @@ cfg_number(char **ptr, int *pval) {
 
 /* accept a string token of finite length? */
 int
-cfg_string(char **ptr, char *sp, int szval) {
+cfg_string(char **ptr, char *sp, int szval)
+{
 	char *p, *rsp = sp, *lp; 
 	int dummyval;
 
@@ -212,7 +218,8 @@ cfg_string(char **ptr, char *sp, int szval) {
 
 /* accept a character token ? */
 int
-cfg_char(char **ptr, char t) {
+cfg_char(char **ptr, char t)
+{
 	char *p;
 
 	p = cfg_skipwhite(ptr);
@@ -226,7 +233,8 @@ cfg_char(char **ptr, char t) {
 
 /* parse and return any name/token pairs found into respective values */
 int
-cfg_namelist(char **cfg, struct namelist *nmp) {
+cfg_namelist(char **cfg, struct namelist *nmp)
+{
 	char *lcfg = *cfg;
 	char val[80];
 	struct namelist *n;
@@ -263,7 +271,8 @@ static char arg[32];	/* currently configuring module */
 
 /* discover if module should configure itself */
 int
-config_scan(char *cfg, char **cfg_sp) {
+config_scan(char *cfg, char **cfg_sp)
+{
 	extern end;
 	char *lp = (char *)&end /*config_string*/;
 	char strbuf[32];
@@ -320,7 +329,8 @@ extern int etext, edata;	/* XXX scan all kernel loaded data segments */
 
 /* tell all modules of a class type to initialize themselves */
 void
-modscaninit(modtype_t modtype) {
+modscaninit(modtype_t modtype)
+{
 	int *sigp;
 
 	for (sigp = &etext; sigp < &edata; sigp++)
@@ -440,7 +450,7 @@ devif_root(unsigned major, unsigned unit, unsigned subunit, dev_t *rd)
 	/* is there a device driver for the root? */
 	if (major >= NDEVIF || (dif = blkmajtodevif[major]) == 0)
 		return (0);
-	
+
 	/* turn a boot dev set of parameters into the root dev */
 	*rd = makedev(major, ((unit) << dif->di_minor_unit_shift)
 		+ ((subunit) << dif->di_minor_subunit_shift));
@@ -625,20 +635,23 @@ devif_read(dev_t dev, devif_type_t typ, struct uio *uio, int flag) {
 }
 
 /* locate and call a device driver write routine via the device driver interface */
-int
-devif_write(dev_t dev, devif_type_t typ, struct uio *uio, int flag) {
+int devif_write(dev_t dev, devif_type_t typ, struct uio *uio, int flag)
+{
 	struct devif *dif;
 	unsigned major = major(dev);
 
 	/* if a BSD UN*X character device ... */
-	if (typ == CHRDEV &&
-	    major < sizeof chrmajtodevif / sizeof chrmajtodevif[0]) {
+	if (typ == CHRDEV && major < (sizeof(chrmajtodevif) / sizeof(chrmajtodevif[0])))
+	{
 		dif = chrmajtodevif[major];
 		if (dif == console_devif)
+		{
 			dev = makedev(major, console_minor);
+		}
 		if (dif)
+		{
 			return ((dif->di_write)(dev, uio, flag));
-			
+		}	
 		return (ENODEV);
 	}
 
@@ -848,11 +861,11 @@ devif_config(char **cfg, struct devif *dif)
 	/* check sanity - all devices */
 	if (cmaj >= 0 || bmaj >= 0) {
 		if ((int)dif->di_open == 0)
-			dif->di_open = (void*)nullop;
+			 dif->di_open = (void *)nullop;
 		if ((int)dif->di_close == 0)
-			dif->di_close = (void*)nullop;
+			 dif->di_close = (void *)nullop;
 		if ((int)dif->di_ioctl == 0)
-			dif->di_ioctl = (void*)_ENODEV_;
+			 dif->di_ioctl = (void *)_ENODEV_;
 	}
 
 	/* check sanity - character devices */
@@ -864,11 +877,11 @@ devif_config(char **cfg, struct devif *dif)
 				dif->di_write = rawwrite;
 		}
 		if ((int)dif->di_select == 0)
-			dif->di_select = (void*)seltrue;
+			dif->di_select = seltrue;
 		if (dif->di_write == 0)
-			dif->di_write = (void*)_ENODEV_;
+			dif->di_write = (void *)_ENODEV_;
 		if (dif->di_read == 0)
-			dif->di_read = (void*)_ENODEV_;
+			dif->di_read = (void *)_ENODEV_;
 	}
 
 	/* check sanity - block devices */
@@ -880,9 +893,9 @@ devif_config(char **cfg, struct devif *dif)
 			return (0);
 		}
 		if ((int)dif->di_dump == 0)
-			dif->di_dump = (void*)_ENODEV_;
+			 dif->di_dump = (void *)_ENODEV_;
 		if ((int)dif->di_psize == 0)
-			dif->di_psize = (void*)_ENODEV_;
+			 dif->di_psize = (void *)_ENODEV_;
 	}
 
 	return (1);
@@ -1066,23 +1079,23 @@ ldiscif_config(char **cfg, struct ldiscif *lif)
 			
 	/* check sanity */
 	if ((int)lif->li_open == 0)
-		lif->li_open = (void*)_ENODEV_;
+		 lif->li_open = (void *)_ENODEV_;
 	if ((int)lif->li_close == 0)
-		lif->li_close = (void*)_ENODEV_;
+		 lif->li_close = (void *)_ENODEV_;
 	if ((int)lif->li_read == 0)
-		lif->li_read = (void*)_ENODEV_;
+		 lif->li_read = (void *)_ENODEV_;
 	if ((int)lif->li_write == 0)
-		lif->li_write = (void*)_ENODEV_;
+		 lif->li_write = (void *)_ENODEV_;
 	if ((int)lif->li_ioctl == 0)
-		lif->li_ioctl = (void*)_ENODEV_;
+		 lif->li_ioctl = (void *)_ENODEV_;
 	if ((int)lif->li_rint == 0)
-		lif->li_rint = (void*)_ENODEV_;
+		 lif->li_rint = (void *)_ENODEV_;
 	if ((int)lif->li_start == 0)
-		lif->li_start = (void*)_ENODEV_;
+		 lif->li_start = (void *)_ENODEV_;
 	if ((int)lif->li_modem == 0)
-		lif->li_modem = (void*)_ENODEV_;
+		 lif->li_modem = (void *)_ENODEV_;
 	/* if ((int)lif->li_qsize == 0)
-		lif->li_qsize = def_qsize; */
+		 lif->li_qsize = def_qsize; */
 
 	return (1);
 }

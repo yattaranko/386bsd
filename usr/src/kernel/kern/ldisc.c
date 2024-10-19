@@ -57,7 +57,6 @@
 
 #include "prototypes.h"
 
-
 static int proc_compare (struct proc *p1, struct proc *p2);
 static int ttnread(struct tty *tp);
 static void ttyrubo(struct tty *tp, int cnt);
@@ -151,6 +150,19 @@ char partab[] = {
 
 extern struct tty *constty;		/* temporary virtual console */
 
+inline int
+memcmp(const void *s1, const void *s2, size_t n)
+{
+	if (n != 0) {
+		const unsigned char *p1 = s1, *p2 = s2;
+
+		do {
+			if (*p1++ != *p2++)
+				return (*--p1 - *--p2);
+		} while (--n != 0);
+	}
+	return (0);
+}
 
 void
 ttychars(struct tty *tp)
@@ -232,7 +244,6 @@ ttyflush(struct tty *tp, int rw)
 void
 ttstart(struct tty *tp)
 {
-
 	if (tp->t_oproc)		/* kludge for pty */
 		(*tp->t_oproc)(tp);
 }
@@ -249,7 +260,7 @@ ttstart(struct tty *tp)
 int
 ttioctl(struct tty *tp, int com, caddr_t data, int flag, struct proc *p)
 {
-	/* struct proc *p = curproc;		*/ /* XXX */
+	/* struct proc *p = curproc;		/* XXX */
 	int s, error;
 
 	/*

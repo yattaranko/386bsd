@@ -5,6 +5,7 @@ CFLAGS+=-DNFS
 NONSTDINC= $(INCOLDBSD)
 NOMAN=	noman
 DPADD=	${LIBRPC}
-LDADD=	-lrpc
+LDADD=	-lrpc -lc
+SRCS=	umount.c
 
 .include <bsd.prog.mk>

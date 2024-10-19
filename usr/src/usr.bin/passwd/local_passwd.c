@@ -37,30 +37,42 @@ static char sccsid[] = "@(#)local_passwd.c	5.5 (Berkeley) 5/6/91";
 
 #include <sys/types.h>
 #include <pwd.h>
-#include <errno.h>
+#include <sys/errno.h>
+#include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
-uid_t uid;
+static uid_t uid;
 
 char *progname = "passwd";
 char *tempname;
 
-local_passwd(uname)
-	char *uname;
+extern void pw_error(char* name, int err, int eval);
+extern void pw_copy(int ffd, int tfd, struct passwd* pw);
+extern int pw_lock();
+extern int pw_tmp();
+extern int pw_mkdb();
+extern int pw_init();
+static char* getnewpasswd(register struct passwd* pw);
+static void to64(register char* s, register long v, register int n);
+
+int local_passwd(char *uname)
 {
 	struct passwd *pw;
 	int pfd, tfd;
-	char *getnewpasswd();
+//	char *getnewpasswd();
 
 	if (!(pw = getpwnam(uname))) {
 		(void)fprintf(stderr, "passwd: unknown user %s.\n", uname);
-		exit(1);
+		return (1);
 	}
 
 	uid = getuid();
 	if (uid && uid != pw->pw_uid) {
 		(void)fprintf(stderr, "passwd: %s\n", strerror(EACCES));
-		exit(1);
+		return (1);
 	}
 
 	pw_init();
@@ -72,22 +84,25 @@ local_passwd(uname)
 	 * classes are implemented, go and get the "offset" value for this
 	 * class and reset the timer.
 	 */
+printf("local_passwd:1\n");
 	pw->pw_passwd = getnewpasswd(pw);
+printf("local_passwd:2\n");
 	pw->pw_change = 0;
+printf("local_passwd:3\n");
 	pw_copy(pfd, tfd, pw);
+printf("local_passwd:4\n");
+printf("local_passwd:5\n");
 
 	if (!pw_mkdb())
 		pw_error((char *)NULL, 0, 1);
-	exit(0);
+	return (0);
 }
 
-char *
-getnewpasswd(pw)
-	register struct passwd *pw;
+static char* getnewpasswd(register struct passwd* pw)
 {
 	register char *p, *t;
 	int tries;
-	char buf[_PASSWORD_LEN+1], salt[9], *crypt(), *getpass();
+	char buf[_PASSWORD_LEN+1], salt[9] /*, *crypt(), *getpass() */ ;
 
 	(void)printf("Changing local password for %s.\n", pw->pw_name);
 
@@ -141,10 +156,7 @@ getnewpasswd(pw)
 static unsigned char itoa64[] =		/* 0 ... 63 => ascii - 64 */
 	"./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-to64(s, v, n)
-	register char *s;
-	register long v;
-	register int n;
+static void to64(register char* s, register long v, register int n)
 {
 	while (--n >= 0) {
 		*s++ = itoa64[v&0x3f];

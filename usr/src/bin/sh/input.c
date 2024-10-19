@@ -44,8 +44,8 @@ static char sccsid[] = "@(#)input.c	5.4 (Berkeley) 7/1/91";
 
 #include <stdio.h>	/* defines BUFSIZ */
 #include "shell.h"
-#include <fcntl.h>
-#include <errno.h>
+#include <sys/fcntl.h>
+#include <sys/errno.h>
 #include "syntax.h"
 #include "input.h"
 #include "output.h"

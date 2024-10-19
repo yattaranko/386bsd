@@ -35,6 +35,7 @@
 
 #include <sys/param.h>
 
+#include "fs/ufs_dinode.h"
 #include "ufs.h"
 #ifdef KERNEL
 #include "sys/errno.h"
@@ -50,11 +51,7 @@ extern	u_char *fragtbl[];
  * Update the frsum fields to reflect addition or deletion 
  * of some frags.
  */
-fragacct(fs, fragmap, fraglist, cnt)
-	struct fs *fs;
-	int fragmap;
-	long fraglist[];
-	int cnt;
+void fragacct(struct fs* fs, int fragmap, long fraglist[], int cnt)
 {
 	int inblk;
 	register int field, subfield;
@@ -85,10 +82,7 @@ fragacct(fs, fragmap, fraglist, cnt)
  *
  * check if a block is available
  */
-isblock(fs, cp, h)
-	struct fs *fs;
-	unsigned char *cp;
-	daddr_t h;
+int isblock(struct fs* fs, unsigned char* cp, daddr_t h)
 {
 	unsigned char mask;
 
@@ -113,10 +107,7 @@ isblock(fs, cp, h)
 /*
  * take a block out of the map
  */
-void clrblock(fs, cp, h)
-	struct fs *fs;
-	u_char *cp;
-	daddr_t h;
+void clrblock(struct fs* fs, u_char* cp, daddr_t h)
 {
 
 	switch ((int)fs->fs_frag) {
@@ -140,10 +131,7 @@ void clrblock(fs, cp, h)
 /*
  * put a block into the map
  */
-void setblock(fs, cp, h)
-	struct fs *fs;
-	unsigned char *cp;
-	daddr_t h;
+void setblock(struct fs* fs, unsigned char* cp, daddr_t h)
 {
 
 	switch ((int)fs->fs_frag) {

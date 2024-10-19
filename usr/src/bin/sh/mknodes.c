@@ -51,7 +51,6 @@ static char sccsid[] = "@(#)mknodes.c	5.1 (Berkeley) 3/7/91";
 
 #include <stdio.h>
 
-
 #define MAXTYPES 50		/* max number of node types */
 #define MAXFIELDS 20		/* max fields in a structure */
 #define BUFLEN 100		/* size of character buffers */
@@ -88,7 +87,8 @@ struct str str[MAXTYPES];	/* the structures */
 struct str *curstr;		/* current structure */
 
 
-FILE *infp = stdin;
+/* FILE *infp = stdin; */
+FILE *infp;
 char line[1024];
 int linno;
 char *linep;
@@ -101,6 +101,8 @@ char *savestr();
 main(argc, argv)
 	char **argv;
 	{
+	infp = stdin;
+
 	if (argc != 3)
 		error("usage: mknodes file\n");
 	if ((infp = fopen(argv[1], "r")) == NULL)

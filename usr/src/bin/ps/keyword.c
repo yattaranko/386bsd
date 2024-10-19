@@ -262,6 +262,8 @@ VAR var[] = {
 	{""},
 };
 
+static VAR* findvar(char *p);
+
 showkey()
 {
 	extern int termwidth;
@@ -290,7 +292,7 @@ parsefmt(p)
 	register VAR *v;
 	register char *cp;
 	register struct varent *vent;
-	static VAR *findvar();
+//	static VAR *findvar();
 
 #define	FMTSEP	" \t,\n"
 	while (p && *p) {

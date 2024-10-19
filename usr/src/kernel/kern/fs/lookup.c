@@ -71,14 +71,32 @@
  *		call lookup to search path.
  *		if symbolic link, massage name in buffer and continue
  *	}
+パス名をロックされた inode へのポインタに変換します。
+
+FOLLOW フラグは、名前変換プロセスの最後にシンボリック リンクが発生したとき
+に、シンボリックリンクをたどる場合に設定されます。
+最後のパス名コンポーネント以外のすべてのパス名コンポーネントについては、常
+にシンボリックリンクがたどられます。
+
+segflg は、名前をユーザー空間からコピーするか、カーネル空間からコピーするか
+を定義します。
+
+namei の全体的な概要:
+
+　名前をコピーします。
+　開始ディレクトリを取得します。
+　while (!done && !error) {
+　　検索パスへの lookup を呼び出します。
+　　シンボリック リンクの場合は、バッファー内の名前をマッサージして続行します。
+　}
  */
 int
 namei(struct nameidata *ndp, struct proc *p)
 {
 	struct filedesc *fdp;	/* pointer to file descriptor state */
-	char *cp;		/* pointer into pathname argument */
-	struct vnode *dp;	/* the directory we are searching */
-	struct iovec aiov;	/* uio for reading symbolic links */
+	char *cp;				/* pointer into pathname argument */
+	struct vnode *dp;		/* the directory we are searching */
+	struct iovec aiov;		/* uio for reading symbolic links */
 	struct uio auio;
 	int error, linklen;
 
@@ -367,7 +385,9 @@ dirloop:
 			}
 			if ((dp->v_flag & VROOT) == 0 ||
 			    (ndp->ni_nameiop & NOCROSSMOUNT))
+			{
 				break;
+			}
 			tdp = dp;
 			dp = dp->v_mount->mnt_vnodecovered;
 			vput(tdp);

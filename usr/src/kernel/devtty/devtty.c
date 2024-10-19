@@ -136,7 +136,7 @@ static struct devif ctty_devif =
 	0, 0, 0, 0,
 };
 
-DRIVER_MODCONFIG(ctty) {
+DRIVER_MODCONFIG(tty) {
 	char *cfg_string = ctty_config;
 	
 	/* can configure driver? */

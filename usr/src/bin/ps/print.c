@@ -260,7 +260,7 @@ longtname(k, v)
 		(void) printf("%-*s", v->width, ttname);
 }
 
-started(k, v)
+void started(k, v)
 	KINFO *k;
 	VAR *v;
 {
@@ -289,7 +289,7 @@ started(k, v)
 	(void) printf("%-*s", v->width, buf);
 }
 
-lstarted(k, v)
+void lstarted(k, v)
 	KINFO *k;
 	VAR *v;
 {

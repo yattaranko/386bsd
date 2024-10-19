@@ -539,7 +539,7 @@ bpf_validate(f, len)
 		 * Check for constant division by 0.
 		 */
 		if (p->code == BPF_ALU|BPF_DIV|BPF_K && p->k == 0)
-			return;
+			return 0;
 	}
 	return BPF_CLASS(f[len - 1].code) == BPF_RET;
 }

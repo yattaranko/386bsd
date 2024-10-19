@@ -44,7 +44,7 @@ static char rcsid[] = "$Id$";
 #include <sys/param.h>
 #include <sys/time.h>
 #include <sys/file.h>
-#include <syslog.h>
+#include <sys/syslog.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,6 +53,8 @@ static char rcsid[] = "$Id$";
 
 time_t tval;
 int retval, nflag;
+
+int netsettime(time_t tval);
 
 main(argc, argv)
 	int argc;

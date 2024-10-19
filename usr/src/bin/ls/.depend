@@ -1,0 +1,49 @@
+# -I/home/share/386bsd-2.0/usr/src/include -I/home/share/386bsd-2.0/usr/src/kernel/include cmp.c ls.c print.c util.c
+cmp.o: cmp.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h ls.h
+ls.o: ls.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/ioctl.h \
+  /home/share/386bsd-2.0/usr/src/include/dirent.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/include/stdio.h ls.h
+print.o: print.c \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/include/stdio.h \
+  /home/share/386bsd-2.0/usr/src/include/grp.h \
+  /home/share/386bsd-2.0/usr/src/include/pwd.h \
+  /home/share/386bsd-2.0/usr/src/include/utmp.h \
+  /home/share/386bsd-2.0/usr/src/include/tzfile.h ls.h
+util.o: util.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/stdio.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/include/ctype.h

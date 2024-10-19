@@ -44,11 +44,11 @@
  * The maximum length of a name in a directory is MAXNAMLEN.
  */
 
+#if 0
 struct dirent {
-	u_long	d_fileno;			/* file number of entry */
-	u_short	d_reclen;			/* length of this record */
-	u_char	d_type;				/* file type, see below */
-	u_char	d_namlen;			/* length of string in d_name */
+	u_long	d_fileno;		/* file number of entry */
+	u_short	d_reclen;		/* length of this record */
+	u_short	d_namlen;		/* length of string in d_name */
 #ifdef _POSIX_SOURCE
 	char	d_name[255 + 1];	/* name must be no longer than this */
 #else
@@ -56,6 +56,33 @@ struct dirent {
 	char	d_name[MAXNAMLEN + 1];	/* name must be no longer than this */
 #endif
 };
+#else
+struct dirent {
+	u_long	d_fileno;				/* file number of entry */
+	u_short	d_reclen;				/* length of this record */
+	u_char	d_type;					/* file type, see below */
+	u_char	d_namlen;				/* length of string in d_name */
+#ifdef _POSIX_SOURCE
+	char	d_name[255 + 1];		/* name must be no longer than this */
+#else
+#define	MAXNAMLEN	255
+	char	d_name[MAXNAMLEN + 1];	/* name must be no longer than this */
+#endif
+};
+#endif
+
+/*
+ * File types
+ */
+#define	DT_UNKNOWN	 0
+#define	DT_FIFO		 1
+#define	DT_CHR		 2
+#define	DT_DIR		 4
+#define	DT_BLK		 6
+#define	DT_REG		 8
+#define	DT_LNK		10
+#define	DT_SOCK		12
+#define	DT_WHT		14
 
 #ifdef _POSIX_SOURCE
 typedef void *	DIR;

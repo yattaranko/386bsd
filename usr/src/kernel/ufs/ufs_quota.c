@@ -65,8 +65,7 @@ static char *quotatypes[] = INITQFNAMES;
  * MAXQUOTAS value in quotas.h should be increased, and the
  * additional dquots set up here.
  */
-getinoquota(ip)
-	register struct inode *ip;
+static int getinoquota(register struct inode* ip)
 {
 	struct ufsmount *ump;
 	struct vnode *vp = ITOV(ip);
@@ -97,11 +96,7 @@ getinoquota(ip)
 /*
  * Update disk usage, and take corrective action.
  */
-chkdq(ip, change, cred, flags)
-	register struct inode *ip;
-	long change;
-	struct ucred *cred;
-	int flags;
+int chkdq(register struct inode* ip, long change, struct ucred* cred, int flags)
 {
 	register struct dquot *dq;
 	register int i;

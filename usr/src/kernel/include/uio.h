@@ -55,9 +55,9 @@ enum	uio_seg {
 
 struct uio {
 	struct	iovec *uio_iov;
-	int	uio_iovcnt;
+	int		uio_iovcnt;
 	off_t	uio_offset;
-	int	uio_resid;
+	int		uio_resid;
 	enum	uio_seg uio_segflg;
 	enum	uio_rw uio_rw;
 	struct	proc *uio_procp;
@@ -94,7 +94,7 @@ __ISYM__(int, uiomove, (caddr_t c, int len, struct uio *uio))
 /*
  * Advance a uio and its iov by cnt bytes, returning next iov.
  */
-static inline struct iovec *
+/* extern */ static inline struct iovec *
 uio_advance(struct uio *uio, struct iovec *iov, int cnt) {
 
 	/* consume an iov, possibly fetching the next one */

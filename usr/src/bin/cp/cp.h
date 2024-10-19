@@ -43,8 +43,8 @@ extern char *progname;			/* program name */
 #include <sys/cdefs.h>
 
 __BEGIN_DECLS
-int	 path_set __P((PATH_T *, char *));
-char	*path_append __P((PATH_T *, char *, int));
-char	*path_basename __P((PATH_T *));
-void	 path_restore __P((PATH_T *, char *));
+int   path_set __P((PATH_T *, char *));
+char* path_append __P((PATH_T *, char *, int));
+char* path_basename __P((PATH_T *));
+void  path_restore __P((PATH_T *, char *));
 __END_DECLS

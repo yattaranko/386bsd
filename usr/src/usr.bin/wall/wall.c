@@ -125,8 +125,9 @@ makemsg(fname)
 	char *getlogin(), *strcpy(), *ttyname();
 
 	(void)strcpy(tmpname, _PATH_TMP);
-	(void)strcat(tmpname, "/wall.XXXXXX");
+	(void)strcat(tmpname, "wall.XXXXXX");
 	if (!(fd = mkstemp(tmpname)) || !(fp = fdopen(fd, "r+"))) {
+		fprintf(stderr, "fd = %x, fp = %x", fd, fp);
 		(void)fprintf(stderr, "wall: can't open temporary file.\n");
 		exit(1);
 	}

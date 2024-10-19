@@ -31,7 +31,7 @@ install:
 spell: ${SRCS}
 	spell ${SRCS} | sort | comm -23 - spell.ok > paper.spell
 
-BINDIR?=	/usr/share/doc
-BINGRP?=	bin
-BINOWN?=	bin
+BINDIR?=	${SRCHOME}/usr/share/doc
+BINGRP?=	wheel
+BINOWN?=	root
 BINMODE?=	444

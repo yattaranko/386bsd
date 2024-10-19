@@ -52,14 +52,16 @@
 #include "prototypes.h"
 
 /* strings for sleep message: */
-static char	netio[] = "netio";
+/* static */ char	netio[] = "netio";
+
+void sbflush(struct sockbuf *sb);
+void sbappendrecord(struct sockbuf *sb, struct mbuf *m0);
+void sbcompress(struct sockbuf *sb, struct mbuf *m, struct mbuf *p);
+void sbdrop(struct sockbuf *sb, int len);
+
 
 u_long	sb_max = SB_MAX;	/* patchable administrative size limit */
 
-extern void sbflush(struct sockbuf *sb);
-extern void sbdrop(struct sockbuf *sb, int len);
-static void sbappendrecord(struct sockbuf *sb, struct mbuf *m0);
-static void sbcompress(struct sockbuf *sb, struct mbuf *m, struct mbuf *p);
 
 /*
  * Commit storage to sockbuf to allow the desired largest logical
@@ -195,7 +197,7 @@ sbcheck(struct sockbuf *sb)
  * Append mbuf chain as the start of the new trailing record in a socket
  * buffer. Used by a protocol to deliver data as the start of a new record.
  */
-static void
+void
 sbappendrecord(struct sockbuf *sb, struct mbuf *m0)
 {
 	struct mbuf *m;
@@ -402,7 +404,7 @@ sbappendcontrol(struct sockbuf *sb, struct mbuf *m0,
  * buffer following mbuf "p".  If "p" is null, the buffer
  * is presumed empty.
  */
-static void
+void
 sbcompress(struct sockbuf *sb, struct mbuf *m, struct mbuf *p)
 {
 	int eor = 0;
@@ -606,4 +608,40 @@ sb_lock(struct sockbuf *sb)
 	}
 	sb->sb_flags |= SB_LOCK;
 	return (0);
+}
+
+/*
+ * Wakeup processes waiting on a socket buffer.
+ * Do asynchronous notification via SIGIO
+ * if the socket has the SS_ASYNC flag set.
+ */
+void
+sowakeup(struct socket *so, struct sockbuf *sb)
+{
+
+	if (sb->sb_sel) {
+		selwakeup(sb->sb_sel, sb->sb_flags & SB_COLL);
+		sb->sb_sel = 0;
+		sb->sb_flags &= ~(SB_SEL|SB_COLL);
+	}
+
+	if (sb->sb_flags & SB_WAIT) {
+		sb->sb_flags &= ~SB_WAIT;
+		wakeup((caddr_t)&sb->sb_cc);
+	}
+
+	if (so->so_state & SS_ASYNC) {
+#ifdef nope
+		struct proc *p;
+		struct pgrp *pgrp;
+		pid_t pgid = so->so_pgid;
+
+		if (pgid < 0 && (pgrp = pgfind(-pgid)) != 0)
+			pgsignal(pgrp, SIGIO, 0);
+		else if (pgid > 0 && (p = pfind(pgid)) != 0)
+			psignal(p, SIGIO);
+#else
+		signalpid(so->so_pgid);
+#endif
+	}
 }

@@ -46,10 +46,7 @@ static char sccsid[] = "@(#)fwrite.c	5.5 (Berkeley) 2/24/91";
  * Write `count' objects (each size `size') from memory to the given file.
  * Return the number of whole objects written.
  */
-fwrite(buf, size, count, fp)
-	const void *buf;
-	size_t size, count;
-	FILE *fp;
+unsigned int fwrite(const void* buf, size_t size, size_t count, FILE *fp)
 {
 	size_t n;
 	struct __suio uio;

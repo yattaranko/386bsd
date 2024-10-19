@@ -37,7 +37,7 @@ static char sccsid[] = "@(#)func.c	5.20 (Berkeley) 6/27/91";
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <signal.h>
+#include <sys/signal.h>
 #include <locale.h>
 #include <stdlib.h>
 #include <string.h>

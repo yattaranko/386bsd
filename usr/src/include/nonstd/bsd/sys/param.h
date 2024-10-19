@@ -1,4 +1,5 @@
-#include "/usr/include/sys/param.h"
+//#include "/usr/include/sys/param.h"
+#include <sys/param.h>
 #define	BSD	200012			/* "new" BSDs */
 
 #define	NOFILE		OPEN_MAX	/* max number of open files */

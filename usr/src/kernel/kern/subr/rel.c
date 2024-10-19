@@ -80,6 +80,8 @@
 
 #include "prototypes.h"
 
+#include "db_sym.h"
+
 /* TODO
 	1.  symtab search/merge
 		local and global, no merges
@@ -372,16 +374,16 @@ fail:
 	    kmem_free(kernel_map, (vm_offset_t)base, (vm_size_t)msz); 
 	    if (ndp->ni_nameiop & LOCKLEAF)
 		vput(ndp->ni_vp);
-printf("fail\n");
+		printf("fail\n");
 	    return (0);
 	}
 
 	if (ndp->ni_nameiop & LOCKLEAF)
 		vput(ndp->ni_vp);
 
-#ifdef	DDB
+#ifdef DDB
 	db_add_symbol_table(sym_start, sym_end, s, (char *)0);
-#endif	/* DDB */
+#endif
 
 printf("\n");
 	return (base);

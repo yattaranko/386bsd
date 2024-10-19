@@ -13,26 +13,21 @@ copyout(struct proc *p, void *from, void *to, u_int size)
 	const void *f = from + zero;	/* compiler bug workaround */
 	int rv;
 
-printf("copyout1\n");
 	/* is this in the range of a valid user process address? */
 	if ((unsigned)to > ENDUSERMEM || (unsigned)to + size > ENDUSERMEM)
 		return(EFAULT);
 
-printf("copyout2\n");
 	/* set fault vector */
 	asm volatile ("movl $4f, %0" : "=m" (p->p_md.md_onfault));
 
-printf("copyout3\n");
 	/* copy the string */
 	asm volatile ("cld ; repe ; movsl"
 		 : "=D" (to), "=S" (f)
 		 : "0" (to), "1" (f), "c" (size / 4));
-printf("copyout4\n");
 	asm volatile ("repe ; movsb"
 		 : "=D" (to), "=S" (f)
 		 : "0" (to), "1" (f), "c" (size & 3));
 
-printf("copyout5\n");
 	/* catch the possible fault */
 	asm volatile ("\
 		xorl %0, %0 ;		\

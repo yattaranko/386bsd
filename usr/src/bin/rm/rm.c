@@ -52,6 +52,13 @@ static char sccsid[] = "@(#)rm.c	4.27 (Berkeley) 1/27/92";
 
 int dflag, fflag, iflag, retval, stdin_ok;
 
+static void rmtree(char** argv);
+static void rmfile(char** argv);
+static int  check(char* path, char* name, struct stat* sp);
+static void checkdot(char** argv);
+static void error(char* name, int val);
+static void usage();
+
 /*
  * rm --
  *	This rm is different from historic rm's, but is expected to match
@@ -60,9 +67,7 @@ int dflag, fflag, iflag, retval, stdin_ok;
  * 	file removal.
  */
 
-main(argc, argv)
-	int argc;
-	char **argv;
+int main(int argc, char** argv)
 {
 	extern char *optarg;
 	extern int optind;
@@ -107,10 +112,11 @@ main(argc, argv)
 	else
 		rmfile(argv);
 	exit(retval);
+
+	return (0);
 }
 
-rmtree(argv)
-	char **argv;
+static void rmtree(char** argv)
 {
 	register FTS *fts;
 	register FTSENT *p;
@@ -190,8 +196,7 @@ rmtree(argv)
 	}
 }
 
-rmfile(argv)
-	char **argv;
+static void rmfile(char** argv)
 {
 	register int df;
 	register char *f;
@@ -222,9 +227,7 @@ rmfile(argv)
 	}
 }
 
-check(path, name, sp)
-	char *path, *name;
-	struct stat *sp;
+static int check(char* path, char* name, struct stat* sp)
 {
 	register int first, ch;
 	char modep[15], *user_from_uid(), *group_from_gid();
@@ -255,8 +258,7 @@ check(path, name, sp)
 }
 
 #define ISDOT(a)	((a)[0] == '.' && (!(a)[1] || (a)[1] == '.' && !(a)[2]))
-checkdot(argv)
-	char **argv;
+static void checkdot(char** argv)
 {
 	register char *p, **t, **save;
 	int complained;
@@ -279,15 +281,13 @@ checkdot(argv)
 	}
 }
 
-error(name, val)
-	char *name;
-	int val;
+static void error(char* name, int val)
 {
 	(void)fprintf(stderr, "rm: %s: %s.\n", name, strerror(val));
 	retval = 1;
 }
 
-usage()
+static void usage()
 {
 	(void)fprintf(stderr, "usage: rm [-dfiRr] file ...\n");
 	exit(1);

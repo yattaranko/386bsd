@@ -50,7 +50,7 @@ static char sccsid[] = "@(#)rpc_prot.c 1.36 87/08/11 Copyr 1984 Sun Micro";
 
 /* * * * * * * * * * * * * * XDR Authentication * * * * * * * * * * * */
 
-struct opaque_auth _null_auth;
+//struct opaque_auth _null_auth;
 
 /*
  * XDR an opaque authentication struct

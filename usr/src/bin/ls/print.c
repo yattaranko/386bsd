@@ -47,7 +47,13 @@ static char sccsid[] = "@(#)print.c	5.24 (Berkeley) 10/19/90";
 #include <tzfile.h>
 #include "ls.h"
 
-printscol(stats, num)
+void printcol(LS *stats, int num);
+static void printlink(char* name);
+static int printtype(mode_t mode);
+static void printtime(time_t ftime);
+static int printaname(LS* lp);
+
+void printscol(stats, num)
 	register LS *stats;
 	register int num;
 {
@@ -57,7 +63,7 @@ printscol(stats, num)
 	}
 }
 
-printlong(stats, num)
+void printlong(stats, num)
 	LS *stats;
 	register int num;
 {
@@ -104,9 +110,7 @@ printlong(stats, num)
 
 #define	TAB	8
 
-printcol(stats, num)
-	LS *stats;
-	int num;
+void printcol(LS *stats, int num)
 {
 	extern int termwidth;
 	register int base, chcnt, cnt, col, colwidth;
@@ -155,7 +159,7 @@ printcol(stats, num)
  * print [inode] [size] name
  * return # of characters printed, no trailing characters
  */
-printaname(lp)
+static int printaname(lp)
 	LS *lp;
 {
 	int chcnt;
@@ -172,7 +176,7 @@ printaname(lp)
 	return(chcnt);
 }
 
-printtime(ftime)
+static void printtime(ftime)
 	time_t ftime;
 {
 	int i;
@@ -198,7 +202,7 @@ printtime(ftime)
 	(void)putchar(' ');
 }
 
-printtype(mode)
+static int printtype(mode)
 	mode_t mode;
 {
 	switch(mode & S_IFMT) {
@@ -219,8 +223,7 @@ printtype(mode)
 	return(0);
 }
 
-printlink(name)
-	char *name;
+static void printlink(char* name)
 {
 	int lnklen;
 	char path[PATH_MAX + 1], *strerror();

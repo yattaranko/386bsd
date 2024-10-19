@@ -43,7 +43,7 @@ static char sccsid[] = "@(#)ndbm.c	5.14 (Berkeley) 5/23/93";
  * package described in db(3).
  */
 
-#include <sys/param.h>
+#include <bsd/sys/param.h>
 
 #include <ndbm.h>
 #include <stdio.h>
@@ -57,9 +57,7 @@ static char sccsid[] = "@(#)ndbm.c	5.14 (Berkeley) 5/23/93";
  *	 NULL on failure
  */
 extern DBM *
-dbm_open(file, flags, mode)
-	const char *file;
-	int flags, mode;
+dbm_open(const char *file, int flags, mode_t mode)
 {
 	HASHINFO info;
 	char path[MAXPATHLEN];

@@ -109,6 +109,9 @@ static struct video_state {
 int pcprobe(struct isa_device *dev);
 void pcattach(struct isa_device *dev);
 void pcrint(int dev);
+static void pc_xmode_on();
+static void pc_xmode_off();
+static void sput(u_char c, u_char ka);
 
 struct	isa_driver pcdriver = {
 	pcprobe, pcattach, pcrint, "pc", &ttymask
@@ -118,9 +121,9 @@ struct	isa_driver pcdriver = {
 	the verdamnt cursor -wfj */
 /* #define	FAT_CURSOR */
 
-#define	COL		80
-#define	ROW		25
-#define	CHR		2
+#define	COL			80
+#define	ROW			25
+#define	CHR			2
 #define MONO_BASE	0x3B4
 #define MONO_BUF	0xfe0B0000
 #define CGA_BASE	0x3D4
@@ -129,7 +132,7 @@ struct	isa_driver pcdriver = {
 
 static unsigned int addr_6845 = MONO_BASE;
 u_short *Crtat = (u_short *)MONO_BUF;
-static openf;
+static int openf;
 
 char *sgetc(int);
 static	char	*more_chars;
@@ -144,11 +147,11 @@ static	int	char_count;
 #define	CN_TIMERVAL	(hz)		/* frequency at which to check cons */
 #define	CN_TIMO		(2*60)		/* intervals to allow for output char */
 
-int	pcstart();
-int	pcparam();
-char	partab[];
+static int pcstart();
+static int pcparam();
+static char partab[];
 
-extern pcopen(dev_t, int, int, struct proc *);
+extern int pcopen(dev_t, int, int, struct proc *);
 /*
  * Wait for CP to accept last CP command sent
  * before setting up next command.
@@ -164,44 +167,41 @@ extern pcopen(dev_t, int, int, struct proc *);
 
 unsigned kbd_rd(), kbd_cmd_read_param();
 
-static void sput(u_char c,  u_char ka);
-static void pc_xmode_on();
-static void pc_xmode_off();
-
 /*
  * these are both bad jokes
  */
-int
-pcprobe(struct isa_device *dev)
+int pcprobe(struct isa_device *dev)
 {
 	unsigned c;
 	int again = 0;
 
-if(dev->id_unit == 1) {
-int i;
+	if(dev->id_unit == 1)
+	{
+		int i;
 
-/*outb(0x2fa,0x55);
-outb(0x3fa,0xaa);
-outb(0x3fa,0x36);
-outb(0x3fa,0xe4);
-outb(0x2fa,0x1b);
-outb(0x2fa,0x36); */
-printf("\n[");
-for(i=0; i < 16; i++) {
-outb(0x390, i);
-printf("%x ", inb(0x391));
-}
-printf("]\n");
-outb(0x311, 0x88);
-DELAY(250);
-outb(0x311, 0x80);
-DELAY(2500);
-while((inb(0x311)&4)==0) ;
-outb(0x310, 0xf4);
-while((inb(0x311)&4)==0) ;
-outb(0x311, 0x90);
-return(1);
-}
+		/*outb(0x2fa,0x55);
+		outb(0x3fa,0xaa);
+		outb(0x3fa,0x36);
+		outb(0x3fa,0xe4);
+		outb(0x2fa,0x1b);
+		outb(0x2fa,0x36); */
+		printf("\n[");
+		for(i=0; i < 16; i++)
+		{
+			outb(0x390, i);
+			printf("%x ", inb(0x391));
+		}
+		printf("]\n");
+		outb(0x311, 0x88);
+		DELAY(250);
+		outb(0x311, 0x80);
+		DELAY(2500);
+		while((inb(0x311)&4)==0) ;
+		outb(0x310, 0xf4);
+		while((inb(0x311)&4)==0) ;
+		outb(0x311, 0x90);
+		return(1);
+	}
 
 	(void)kbd_drain();
 	kbd_cmd(K_DISKEY);
@@ -215,8 +215,10 @@ return(1);
 		printf(" type 2 ");
 
 	/* Start keyboard stuff RESET */
-	if ((c = key_cmd(KBC_RESET)) != KBR_RSTDONE && c != KBR_ACK) {
-		if ((c == KBR_RESEND) ||  (c == KBR_OVERRUN)) {
+	if ((c = key_cmd(KBC_RESET)) != KBR_RSTDONE && c != KBR_ACK)
+	{
+		if ((c == KBR_RESEND) ||  (c == KBR_OVERRUN))
+		{
 			DELAY(400);
 		}
 	}
@@ -236,7 +238,7 @@ kbd_drain();
 		printf("!"); */
 	/* if((c = kbd_rd()) != KBR_RSTDONE)
 		printf("aux failed selftest (%x) \n", c); */
-printf("9");
+	printf("9");
 	if(aux_cmd(0xf4) != KBR_ACK);
 
 	/* enable interrupts and keyboard controller */
@@ -248,7 +250,8 @@ printf("9");
 	printf (" kbd cmd %x %x ", kbd_cmd_read_param(K_READ + K__CMDBYTE),
 		kbd_cmd_read_param(0xd0));
 	kbd_cmd(K_DISAUX);
-	return 1;
+
+	return (1);
 }
 
 void
@@ -297,7 +300,7 @@ pcclose(dev_t dev, int flag, int mode, struct proc *p)
 {
 struct tty *tp = &pccons;
 /*extern int xxxcons;*/
-	/*if (flag & O_NONBLOCK) {		*/ /* XXX */
+	/*if (flag & O_NONBLOCK) {		/* XXX */
 	ldiscif_close(&pccons, flag);
 	/* (*linesw[pccons.t_line].l_close)(&pccons, flag);*/
 	ttyclose(&pccons);
@@ -332,27 +335,35 @@ pcrint(int dev)
 	int c;
 	char *cp;
 
-if(_debug_mode_) {
-	(void)inb(KBSTATP);
+	if(_debug_mode_)
+	{
+		(void)inb(KBSTATP);
 		(void)inb(KBDATAP);
-printf("*");
-	return;
-}
+		printf("*");
+		return;
+	}
 	cp = sgetc(1);
 	if (cp == 0)
+	{
 		return;
+	}
 	if (pcconsoftc.cs_flags & CSF_POLLING)
+	{
 		return;
+	}
 #ifdef KDB
 	if (kdbrintr(c, &pccons))
 		return;
 #endif
 	if (!openf)
+	{
 		return;
+	}
 	do
+	{
 		ldiscif_rint(*cp++ & 0xff, &pccons);
 		/*(*linesw[pccons.t_line].l_rint)(*cp++ & 0xff, &pccons);*/
-	while (*cp);
+	} while (*cp);
 }
 
 #define CONSOLE_X_MODE_ON _IO('t',121)
@@ -365,10 +376,13 @@ pcioctl(dev_t dev, int cmd, caddr_t addr, int flag, struct proc *p)
 	register struct tty *tp = &pccons;
 	register error;
  
-	if (cmd == CONSOLE_X_MODE_ON) {
+	if (cmd == CONSOLE_X_MODE_ON)
+	{
 		pc_xmode_on ();
 		return (0);
-	} else if (cmd == CONSOLE_X_MODE_OFF) {
+	}
+	else if (cmd == CONSOLE_X_MODE_OFF)
+	{
 		pc_xmode_off ();
 		return (0);
 	}
@@ -376,10 +390,14 @@ pcioctl(dev_t dev, int cmd, caddr_t addr, int flag, struct proc *p)
 	error = ldiscif_ioctl(tp, cmd, addr, flag, p);
 	/*error = (*linesw[tp->t_line].l_ioctl)(tp, cmd, addr, flag);*/
 	if (error >= 0)
+	{
 		return (error);
+	}
 	error = ttioctl(tp, cmd, addr, flag, p);
 	if (error >= 0)
+	{
 		return (error);
+	}
 	return (ENOTTY);
 }
 
@@ -388,25 +406,24 @@ int	pcconsintr = 1;
  * Got a console transmission interrupt -
  * the console processor wants another character.
  */
-void pcxint(dev)
-	dev_t dev;
-{
-	register struct tty *tp;
-	register int unit;
+//pcxint(dev)
+//	dev_t dev;
+//{
+//	register struct tty *tp;
+//	register int unit;
+//
+//	if (!pcconsintr)
+//		return;
+//	pccons.t_state &= ~TS_BUSY;
+//	pcconsoftc.cs_timo = 0;
+//	if (pccons.t_line)
+//		ldiscif_start(&pccons);
+//		/*(*linesw[pccons.t_line].l_start)(&pccons);*/
+//	else
+//		pcstart(&pccons);
+//}
 
-	if (!pcconsintr)
-		return;
-	pccons.t_state &= ~TS_BUSY;
-	pcconsoftc.cs_timo = 0;
-	if (pccons.t_line)
-		ldiscif_start(&pccons);
-		/*(*linesw[pccons.t_line].l_start)(&pccons);*/
-	else
-		pcstart(&pccons);
-}
-
-pcstart(tp)
-	register struct tty *tp;
+int pcstart(register struct tty* tp)
 {
 	int c, s;
 
@@ -414,28 +431,32 @@ pcstart(tp)
 	if (tp->t_state & (TS_TIMEOUT|TS_BUSY|TS_TTSTOP))
 		goto out;
 	do {
-	if (RB_LEN(&tp->t_out) <= tp->t_lowat) {
-		if (tp->t_state&TS_ASLEEP) {
-			tp->t_state &= ~TS_ASLEEP;
-			wakeup((caddr_t)&tp->t_out);
+		if (RB_LEN(&tp->t_out) <= tp->t_lowat) {
+			if (tp->t_state&TS_ASLEEP) {
+				tp->t_state &= ~TS_ASLEEP;
+				wakeup((caddr_t)&tp->t_out);
+			}
+			if (tp->t_wsel) {
+				selwakeup(tp->t_wsel, tp->t_state & TS_WCOLL);
+				tp->t_wsel = 0;
+				tp->t_state &= ~TS_WCOLL;
+			}
 		}
-		if (tp->t_wsel) {
-			selwakeup(tp->t_wsel, tp->t_state & TS_WCOLL);
-			tp->t_wsel = 0;
-			tp->t_state &= ~TS_WCOLL;
+		if (RB_LEN(&tp->t_out) == 0)
+		{
+			goto out;
 		}
-	}
-	if (RB_LEN(&tp->t_out) == 0)
-		goto out;
-	c = getc(&tp->t_out);
-	tp->t_state |= TS_BUSY;
-	splx(s);
-	sput(c, 0);
-	(void)spltty();
-	tp->t_state &= ~TS_BUSY;
+		c = getc(&tp->t_out);
+		tp->t_state |= TS_BUSY;
+		splx(s);
+		sput(c, 0);
+		(void)spltty();
+		tp->t_state &= ~TS_BUSY;
 	} while(1);
 out:
 	splx(s);
+
+	return (0);
 }
 
 static __color;
@@ -591,7 +612,7 @@ static char bgansitopc[] =
  *   sput has support for emulation of the 'pc3' termcap entry.
  *   if ka, use kernel attributes.
  */
-static void sput(c,  ka)
+void sput(c,  ka)
 u_char c;
 u_char ka;
 {
@@ -800,7 +821,7 @@ addr_6845 = MONO_BASE;
 					memcpy(Crtat, Crtat+vs.ncol*vs.cx, vs.ncol*(vs.nrow-vs.cx)*CHR);
 					memsetw(Crtat+vs.ncol*(vs.nrow-vs.cx),
 						(at <<8)+' ', vs.ncol*vs.cx);
-					/* crtat -= vs.ncol*vs.cx; */ /* XXX */
+					/* crtat -= vs.ncol*vs.cx; /* XXX */
 					vs.esc = 0; vs.ebrac = 0; vs.eparm = 0;
 					break;
 				case 'M': /* delete line. */
@@ -818,7 +839,7 @@ addr_6845 = MONO_BASE;
 					memmove(Crtat+vs.ncol*vs.cx, Crtat, vs.ncol*(vs.nrow-vs.cx)*CHR);
 					memsetw(Crtat, (at <<8)+' ',
 						vs.ncol*vs.cx);
-					/* crtat += vs.ncol*vs.cx; */ /* XXX */
+					/* crtat += vs.ncol*vs.cx; /* XXX */
 					vs.esc = 0; vs.ebrac = 0; vs.eparm = 0;
 					break;
 				case 'L' : /* insert line */
@@ -1551,7 +1572,8 @@ loop:
 		goto loop;
 }
 
-pg(p,q,r,s,t,u,v,w,x,y,z) char *p; {
+u_int pg(char* p, int q, int r, int s, int t, int u, int v, int w, int x, int y, int z)
+{
 	printf(p,q,r,s,t,u,v,w,x,y,z);
 	printf("\n");
 	return(console_getchar());
@@ -1637,7 +1659,7 @@ dprintf(flgs, fmt /*, va_alist */)
 #include "machine/psl.h"
 #include "machine/frame.h"
 
-static void pc_xmode_on ()
+void pc_xmode_on ()
 {
     struct syscframe *fp;
 
@@ -1649,7 +1671,7 @@ static void pc_xmode_on ()
     fp->sf_eflags |= PSL_IOPL;
 }
 
-static void pc_xmode_off ()
+void pc_xmode_off ()
 {
     struct syscframe *fp;
 
@@ -1683,7 +1705,7 @@ struct devif pc_devif =
 	pccngetc,  pccnputc, 
 };
 
-DRIVER_MODCONFIG(pc) {
+DRIVER_MODCONFIG(pccons) {
 	char *cfg_string = pc_config;
 	
 	if (devif_config(&cfg_string, &pc_devif) == 0)
@@ -1693,7 +1715,7 @@ DRIVER_MODCONFIG(pc) {
 	new_isa_configure(&cfg_string, &pcdriver);
 }
 
-CONSOLE_MODCONFIG(pc) {
+CONSOLE_MODCONFIG(pccons) {
 	char *cfg1 = pc_console_config;
 	char *cfg2 = pc_config;
 

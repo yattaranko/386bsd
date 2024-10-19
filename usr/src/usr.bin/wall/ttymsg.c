@@ -37,10 +37,10 @@ static char sccsid[] = "@(#)ttymsg.c	5.8 (Berkeley) 7/1/91";
 
 #include <sys/types.h>
 #include <sys/uio.h>
-#include <signal.h>
-#include <fcntl.h>
+#include <sys/signal.h>
+#include <sys/fcntl.h>
 #include <dirent.h>
-#include <errno.h>
+#include <sys/errno.h>
 #include <paths.h>
 #include <unistd.h>
 #include <stdio.h>

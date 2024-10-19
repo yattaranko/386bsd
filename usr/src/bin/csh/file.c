@@ -40,7 +40,7 @@ static char sccsid[] = "@(#)file.c	5.17 (Berkeley) 6/8/91";
 #include <sys/param.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <termios.h>
+#include <sys/termios.h>
 #include <dirent.h>
 #include <pwd.h>
 #include <stdlib.h>
@@ -101,7 +101,7 @@ static int	 ignored __P((Char *));
  * completion by default.  Filec controls completion, nobeep controls
  * ringing the terminal bell on incomplete expansions.
  */
-bool    filec = 0;
+//extern bool    filec = 0;
 
 static void
 setup_tty(on)

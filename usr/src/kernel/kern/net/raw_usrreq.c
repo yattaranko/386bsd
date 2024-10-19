@@ -134,7 +134,7 @@ raw_ctlinput(cmd, arg)
 {
 
 	if (cmd < 0 || cmd > PRC_NCMDS)
-		return (0);
+		return ( 0 );
 	/* INCOMPLETE */
 }
 

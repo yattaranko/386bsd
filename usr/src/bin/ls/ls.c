@@ -49,13 +49,16 @@ static char sccsid[] = "@(#)ls.c	5.48 (Berkeley) 4/3/91";
 #include <sys/ioctl.h>
 #include <dirent.h>
 #include <string.h>
-#include <errno.h>
+#include <sys/errno.h>
 #include <stdio.h>
 #include "ls.h"
 
 int (*sortfcn)(), (*printfcn)();
 int lstat();
 char *emalloc();
+void subdir(LS *lp);
+
+static void doargs(int argc, char **argv);
 
 int termwidth = 80;		/* default terminal width */
 
@@ -78,18 +81,16 @@ int f_recursive;		/* ls subdirectories also */
 int f_reversesort;		/* reverse whatever sort is used */
 int f_sectime;			/* print the real time for all files */
 int f_singlecol;		/* use single column output */
-int f_size;			/* list size in short listing */
+int f_size;				/* list size in short listing */
 int f_statustime;		/* use time of last mode change */
 int f_dirname;			/* if precede with directory name */
 int f_timesort;			/* sort by time vice name */
 int f_total;			/* if precede with "total" line */
-int f_type;			/* add type character for non-regular files */
+int f_type;				/* add type character for non-regular files */
 
 int (*statfcn)(), stat(), lstat();
 
-main(argc, argv)
-	int argc;
-	char **argv;
+int main(int argc, char **argv)
 {
 	extern int optind, stat();
 	struct winsize win;
@@ -115,7 +116,6 @@ main(argc, argv)
 	/* root is -A automatically */
 	if (!getuid())
 		f_listdot = 1;
-
 	while ((ch = getopt(argc, argv, "1ACFLRTacdfgiklqrstu")) != EOF) {
 		switch (ch) {
 		/*
@@ -246,14 +246,14 @@ main(argc, argv)
 	}
 	doargs(argc, argv);
 	exit(0);
+
+	return (0);
 }
 
 static char path[PATH_MAX + 1];
 static char *endofpath = path;
 
-doargs(argc, argv)
-	int argc;
-	char **argv;
+static void doargs(int argc, char **argv)
 {
 	register LS *dstatp, *rstatp;
 	register int cnt, dircnt, maxlen, regcnt;
@@ -353,14 +353,12 @@ displaydir(stats, num)
 
 	if (num > 1 && !f_nosort) {
 		u_long save1, save2;
-
 		save1 = stats[0].lstat.st_btotal;
 		save2 = stats[0].lstat.st_maxlen;
 		qsort((char *)stats, num, sizeof(LS), sortfcn);
 		stats[0].lstat.st_btotal = save1;
 		stats[0].lstat.st_maxlen = save2;
 	}
-
 	printfcn(stats, num);
 
 	if (f_recursive) {
@@ -381,8 +379,7 @@ displaydir(stats, num)
 	}
 }
 
-subdir(lp)
-	LS *lp;
+void subdir(LS *lp)
 {
 	LS *stats;
 	int num;

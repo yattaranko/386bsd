@@ -357,7 +357,7 @@ swap_pager_putpage(vm_pager_t pager, vm_page_t m, boolean_t sync)
 #endif
 	if (pager == NULL) {
 		(void) swap_pager_clean(NULL, B_WRITE);
-		return (FALSE);
+		return ( 0 );
 	}
 	flags = B_WRITE;
 	if (!sync)
@@ -615,6 +615,7 @@ asm(".globl swap_write; swap_write:");
 		printf("swpg_io: IO start: bp %x, db %x, va %x, pa %x\n",
 		       bp, swb->swb_block+btodb(off), kva, VM_PAGE_TO_PHYS(m));
 #endif
+printf("swap_pager_io\n");
 	VOP_STRATEGY(bp);
 	if ((flags & (B_READ|B_ASYNC)) == B_ASYNC) {
 #ifdef DEBUG
@@ -690,7 +691,7 @@ swap_pager_clean(vm_page_t m, int rw)
 #ifdef DEBUG
 	/* save panic time state */
 	if ((swpagerdebug & SDB_ANOMPANIC) && panicstr)
-		return (FALSE);
+		return ( FALSE );
 	if (swpagerdebug & SDB_FOLLOW)
 		printf("swpg_clean(%x, %d)\n", m, rw);
 #endif

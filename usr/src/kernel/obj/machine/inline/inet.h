@@ -23,10 +23,16 @@ __END_DECLS */
 #endif
 
 #ifndef KERNEL
+/* 2024/07/15 ここをコメントアウトするとlibcの二重定義が解消する。
 #include <machine/inline/inet/htonl.h>
 #include <machine/inline/inet/htons.h>
 #include <machine/inline/inet/ntohl.h>
 #include <machine/inline/inet/ntohs.h>
+*/
+unsigned long htonl(unsigned long wd);
+unsigned short htons(unsigned short wd);
+unsigned long ntohl(unsigned long wd);
+unsigned short ntohs(unsigned short wd);
 #else
 #include "machine/inline/inet/htonl.h"
 #include "machine/inline/inet/htons.h"

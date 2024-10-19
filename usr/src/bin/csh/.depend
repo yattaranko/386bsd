@@ -1,0 +1,450 @@
+# -DFILEC -DNLS -DSHORT_STRINGS -I. -I/home/share/386bsd-2.0/usr/src/include -I/home/share/386bsd-2.0/usr/src/kernel/include alloc.c char.c const.c csh.c dir.c dol.c err.c exec.c exp.c file.c func.c glob.c hist.c init.c lex.c misc.c parse.c print.c printf.c proc.c sem.c set.c str.c time.c
+alloc.o: alloc.c \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+char.o: char.c char.h /home/share/386bsd-2.0/usr/src/include/ctype.h
+const.o: const.c csh.h const.h char.h \
+  /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h
+csh.o: csh.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/ioctl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/fcntl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/include/pwd.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/include/locale.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h pathnames.h
+dir.o: dir.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h dir.h extern.h
+dol.o: dol.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/fcntl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+err.o: err.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+exec.o: exec.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/dirent.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/fcntl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+exp.o: exp.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+file.o: file.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/ioctl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/termios.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/ttydefaults.h \
+  /home/share/386bsd-2.0/usr/src/include/dirent.h \
+  /home/share/386bsd-2.0/usr/src/include/pwd.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+func.o: func.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/locale.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h pathnames.h
+glob.o: glob.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/include/glob.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+hist.o: hist.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+init.o: init.c /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+lex.o: lex.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/ioctl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/termios.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/ttydefaults.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+misc.o: misc.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+parse.o: parse.c \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+print.o: print.c \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+printf.o: printf.c /home/share/386bsd-2.0/usr/src/include/strings.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+proc.o: proc.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/wait.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h dir.h proc.h extern.h
+sem.o: sem.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/ioctl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/fcntl.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h proc.h extern.h
+set.o: set.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+str.o: str.c /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h
+time.o: time.c /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/stdarg.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/stdarg.h csh.h \
+  const.h char.h /home/share/386bsd-2.0/usr/src/include/ctype.h err.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/include/setjmp.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h extern.h

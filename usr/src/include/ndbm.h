@@ -63,15 +63,15 @@ typedef DB DBM;
 #define	dbm_pagfno(a)	DBM_PAGFNO_NOT_AVAILABLE
 
 __BEGIN_DECLS
-void	 dbm_close __P((DBM *));
-int	 dbm_delete __P((DBM *, datum));
-datum	 dbm_fetch __P((DBM *, datum));
-datum	 dbm_firstkey __P((DBM *));
-long	 dbm_forder __P((DBM *, datum));
-datum	 dbm_nextkey __P((DBM *));
-DBM	*dbm_open __P((const char *, int, int));
-int	 dbm_store __P((DBM *, datum, datum, int));
-int	 dbm_dirfno __P((DBM *));
+extern void dbm_close __P((DBM *));
+extern int dbm_delete __P((DBM *, datum));
+extern datum dbm_fetch __P((DBM *, datum));
+extern datum dbm_firstkey __P((DBM *));
+extern long	 dbm_forder __P((DBM *, datum));
+extern datum dbm_nextkey __P((DBM *));
+extern DBM *dbm_open __P((const char *, int, mode_t));
+extern int dbm_store __P((DBM *, datum, datum, int));
+extern int dbm_dirfno __P((DBM *));
 __END_DECLS
 
 #endif /* !_NDBM_H_ */

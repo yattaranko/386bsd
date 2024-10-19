@@ -59,6 +59,7 @@ static char *Bfmt[] = {
 static size_t gsize;
 static char *pt;
 static int _add(), _conv(), _secs();
+static size_t _fmt(register char* format, struct tm*t);
 
 size_t
 strftime(s, maxsize, format, t)
@@ -67,7 +68,7 @@ strftime(s, maxsize, format, t)
 	const char *format;
 	const struct tm *t;
 {
-	static size_t _fmt();
+/*	static size_t _fmt(); */
 
 	pt = s;
 	if ((gsize = maxsize) < 1)
@@ -80,9 +81,7 @@ strftime(s, maxsize, format, t)
 }
 
 static size_t
-_fmt(format, t)
-	register char *format;
-	struct tm *t;
+_fmt(register char* format, struct tm*t)
 {
 	for (; *format; ++format) {
 		if (*format == '%')

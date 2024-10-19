@@ -5,7 +5,7 @@
 
 .PATH:	$S/kern/socket
 KERN_SRCS+= \
-	domain.c mbuf.c sock_fops.c sock_sys.c sockbuf.c sockbufs.c sockconn.c sockops.c
+	domain.c mbuf.c sock_fops.c sock_sys.c sockbuf.c sockconn.c sockops.c
 
 SYMBOLS+= socket.symbols
 # MAN9+=	sockbuf.0 sockops.0 domain.0 protosw.0

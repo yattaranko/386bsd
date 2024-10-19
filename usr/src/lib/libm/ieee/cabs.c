@@ -171,15 +171,13 @@ double x, y;
  */
 
 double
-cabs(z)
-struct { double x, y;} z;
+cabs(complex z)
 {
 	return hypot(z.x,z.y);
 }
 
 double
-z_abs(z)
-struct { double x,y;} *z;
+z_abs(complex* z)
 {
 	return hypot(z->x,z->y);
 }

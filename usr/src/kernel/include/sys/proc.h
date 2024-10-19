@@ -88,7 +88,7 @@ struct	proc {
 #define	p_ucred		p_cred->pc_ucred
 #define	p_rlimit	p_limit->pl_rlimit
 
-	int		p_flag;
+	int	p_flag;
 	char	p_stat;
 /*	char	p_space; */
 
@@ -104,7 +104,7 @@ struct	proc {
 
 	/* scheduling */
 	u_int	p_cpu;		/* cpu usage for scheduling */
-	int		p_cpticks;	/* ticks of cpu time */
+	int	p_cpticks;	/* ticks of cpu time */
 	fixpt_t	p_pctcpu;	/* %cpu for this process during p_time */
 	caddr_t p_wchan;	/* event process is awaiting */
 	u_int	p_time;		/* resident/nonresident time for swapping */
@@ -114,10 +114,10 @@ struct	proc {
 	struct	timeval p_utime;	/* user time */
 	struct	timeval p_stime;	/* system time */
 
-	int		p_traceflag;	/* kernel trace points */
+	int	p_traceflag;	/* kernel trace points */
 	struct	vnode *p_tracep;/* trace to vnode */
 
-	int		p_sig;		/* signals pending to this process */
+	int	p_sig;		/* signals pending to this process */
 
 /* end area that is zeroed on creation */
 #define	p_endzero	p_startcopy
@@ -141,14 +141,14 @@ struct	proc {
 /* end area that is copied on creation */
 #define	p_endcopy	p_wmesg
 	char	*p_wmesg;	/* reason for sleep */
-	/* int	p_thread;	*/ /* id for this "thread" (Mach glue) XXX */
+	/* int	p_thread; */	/* id for this "thread" (Mach glue) XXX */
 	struct	user *p_addr;	/* kernel virtual addr of u-area (PROC ONLY) */
-	/* swblk_t	p_swaddr;	*/ /* disk address of u area when swapped */
+	/* swblk_t	p_swaddr; */	/* disk address of u area when swapped */
 	struct	mdproc p_md;	/* any machine-dependent fields */
 
-	/* u_short	p_xstat;	*/ /* Exit status for wait; also stop signal */
+	/* u_short	p_xstat; */	/* Exit status for wait; also stop signal */
 	short	p_dupfd;	/* sideways return value from fdopen XXX */
-	/* u_short	p_acflag;	*/ /* accounting flags */
+	/* u_short	p_acflag; */	/* accounting flags */
 	u_short	p_stksz;	/* size of per process at p_addr */
 
 	long	p_spare[6];	/* tmp spares to avoid shifting eproc */
@@ -169,7 +169,7 @@ struct	pcred {
 	uid_t	p_svuid;			/* saved effective user id */
 	gid_t	p_rgid;				/* real group id */
 	gid_t	p_svgid;			/* saved effective group id */
-	int		p_refcnt;				/* number of references */
+	int		p_refcnt;			/* number of references */
 };
 
 /* stat codes */
@@ -207,7 +207,7 @@ struct	pcred {
  * by less than 4 (128/32) are actually identical.
  */
 #define	PSWP	0
-#define	PVM		4
+#define	PVM	4
 #define	PINOD	8
 #define	PRIBIO	16
 #define	PVFS	20
@@ -311,10 +311,11 @@ void setpri(struct proc *p);
 int fork1(struct proc *p1, int isvfork, int *retval);
 void volatile exit(struct proc *p, int rv);
 
-extern struct	proc *zombproc, *allproc;	/* lists of procs in various states */
-extern	struct proc proc0;		/* process slot for swapper */
-extern struct	proc *initproc;	/* process slots for init, pager */
-extern	int nprocs, maxproc;		/* current and max number of procs */
+extern struct		proc *zombproc, *allproc;	/* lists of procs in various states */
+extern struct		proc proc0;					/* process slot for swapper */
+extern struct		proc *initproc;				/* process slots for init, pager */
+extern int			nprocs;						/* current number of procs */
+extern const int	maxproc;					/* max number of procs */
 
 #define	NQS	32			/* 32 run queues */
 #define	PPQ	((MAXPRI+1) / NQS)	/* priorities per queue */

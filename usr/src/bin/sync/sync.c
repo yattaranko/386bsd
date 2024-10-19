@@ -31,6 +31,8 @@
  * SUCH DAMAGE.
  */
 
+#include <stdlib.h>
+
 #ifndef lint
 char copyright[] =
 "@(#) Copyright (c) 1987 Regents of the University of California.\n\
@@ -41,8 +43,12 @@ char copyright[] =
 static char sccsid[] = "@(#)sync.c	4.4 (Berkeley) 5/31/90";
 #endif /* not lint */
 
-main()
+extern int sync();
+
+int main()
 {
 	sync();
 	exit(0);
+
+	return (0);
 }

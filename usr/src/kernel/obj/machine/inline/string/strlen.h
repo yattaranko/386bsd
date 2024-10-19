@@ -6,7 +6,7 @@
  * Bell V7 string length.
  */
 
-__INLINE size_t
+__INLINE int
 strlen(const char *str) {
 	int rv;
 	const char *strcp = str;

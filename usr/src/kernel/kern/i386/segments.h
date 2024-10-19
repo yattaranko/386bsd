@@ -240,7 +240,7 @@ tryagain:
 	sdnfree_gdesc--;
 
 	/* fill in the blanks */
-	/* memset(sdp, 0, sizeof(*sdp));		*/ /* XXX overkill */
+	/* memset(sdp, 0, sizeof(*sdp)); */		/* XXX overkill */
 	*(int *) sdp = 0; /* clear lower word */
 	*(((int *) sdp) + 1) = 0; /* clear upper word */
 	sdp->sd_p = 1;
@@ -271,8 +271,8 @@ freedesc(struct segment_descriptor *sdp)
  * Allocate a TSS descriptor to a kernel thread, in the course of
  * creating a new thread. Special version of allocdesc().
  */
-extern inline
-void alloctss(struct proc *p) {
+extern inline void
+alloctss(struct proc *p) {
 	struct segment_descriptor *sdp = allocdesc();
 	sdp->sd_lolimit = sizeof(struct i386tss) - 1;
 	sdp->sd_lobase = (int)p->p_addr;

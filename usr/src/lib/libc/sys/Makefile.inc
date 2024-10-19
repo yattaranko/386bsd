@@ -4,9 +4,9 @@
 .PATH: ${.CURDIR}/${MACHINE}/sys ${.CURDIR}/sys
 
 # modules with non-default implementations on at least one architecture:
-SRCS+=	Ovfork.s brk.s cerror.s exect.s fork.s pipe.s ptrace.s reboot.s \
-	sbrk.s setlogin.s sigpending.s sigprocmask.s sigreturn.s \
-	sigsuspend.s syscall.s
+SRCS+=	Ovfork.S brk.S cerror.S exect.S fork.S pipe.S ptrace.S reboot.S \
+	sbrk.S setlogin.S sigpending.S sigprocmask.S sigreturn.S \
+	sigsuspend.S syscall.S
 
 # modules with default implementations on all architectures:
 ASM=	accept.o access.o acct.o adjtime.o async_daemon.o bind.o chdir.o \
@@ -37,7 +37,6 @@ CLEANFILES+=${ASM} ${PSEUDO} ${POBJS}
 
 ${ASM}: ${.CURDIR}/${MACHINE}/SYS.h /usr/include/sys/syscall.h
 .if !defined(NOPROFILE)
-	@echo creating ${.PREFIX}.o ${.PREFIX}.po
 	@printf '#include "SYS.h"\nRSYSCALL(${.PREFIX})\n' | \
 	    ${CPP} ${CFLAGS:M-[ID]*} ${AINC} | ${AS} -o ${.PREFIX}.o
 	@${LD} -x -r ${.PREFIX}.o
@@ -55,7 +54,6 @@ ${ASM}: ${.CURDIR}/${MACHINE}/SYS.h /usr/include/sys/syscall.h
 .endif
 
 ${PSEUDO}: ${.CURDIR}/${MACHINE}/SYS.h /usr/include/sys/syscall.h
-	@echo creating ${.PREFIX}.o ${.PREFIX}.po
 	@printf '#include "SYS.h"\nPSEUDO(${.PREFIX},${.PREFIX:S/_//})\n' | \
 	    ${CPP} ${CFLAGS:M-[ID]*} ${AINC} | ${AS} -o ${.PREFIX}.o
 	@${LD} -x -r ${.PREFIX}.o

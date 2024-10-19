@@ -42,11 +42,11 @@ extern int hostnamelen;
 /* 1.2 */
 extern struct timeval boottime;
 extern struct timeval time;
-extern struct timezone tz;			/* XXX */
+extern struct timezone tz;		/* XXX */
 
-/*extern int hz;					*/ /* clock frequency */
-extern int phz;				/* alternate clock's frequency */
-extern int tick;
+/*extern int hz; */				/* clock frequency */
+extern int phz;			        /* alternate clock's frequency */
+extern int const tick;
 
 extern fixpt_t	averunnable[3];
 
@@ -59,11 +59,11 @@ extern char *s_lowpc;
 
 /* interface symbols */
 #define	__ISYM_VERSION__ "1"	/* XXX RCS major revision number of hdr file */
-#include "isym.h"		/* this header has interface symbols */
+#include "isym.h"		        /* this header has interface symbols */
 
 /* global variables used in core kernel and other modules */
-__ISYM__(int, hz,)		/* clock frequency */
-__ISYM__(int, lbolt,)		/* once a second sleep address */
+__ISYM__(const int, hz,)		        /* clock frequency */
+__ISYM__(int, lbolt,)	    	/* once a second sleep address */
 __ISYM__(long, hostid,)
 
 #undef __ISYM__

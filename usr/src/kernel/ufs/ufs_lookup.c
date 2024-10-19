@@ -34,6 +34,7 @@
  */
 
 #include "sys/param.h"
+#include "sys/mount.h"
 #include "sys/file.h"
 #include "ucred.h"
 #include "sys/time.h"
@@ -50,12 +51,27 @@
 
 #include "prototypes.h"
 
+#define	IFTODT(mode)	(((mode) & 0170000) >> 12)
+
 struct	nchstats nchstats;
 #ifdef DIAGNOSTIC
 int	dirchk = 1;
 #else
 int	dirchk = 0;
 #endif
+
+extern void dirbad(struct inode* ip, off_t offset, char* how);
+extern int iget(struct inode* xp, ino_t ino, struct inode** ipp);
+extern int iput(register struct inode* ip);
+extern int itrunc(register struct inode*, u_long, int);
+extern void ilock(register struct inode*);
+extern void iunlock(register struct inode*);
+
+static int blkatoff(struct inode* ip, off_t offset, char** res, struct buf** bpp);
+static int dirbadentry(register struct direct*ep, int entryoffsetinblock);
+
+/* true if old FS format...*/
+#define OFSFMT(vp)	((vp)->v_mount->mnt_maxsymlinklen <= 0)
 
 /*
  * Convert a component of a pathname into a pointer to a locked inode.
@@ -91,31 +107,64 @@ int	dirchk = 0;
  *	  nor deleting, add name to cache
  *
  * NOTE: (LOOKUP | LOCKPARENT) currently returns the parent inode unlocked.
- */
-ufs_lookup(vdp, ndp, p)
-	register struct vnode *vdp;
-	register struct nameidata *ndp;
-	struct proc *p;
+パス名のコンポーネントをロックされた inode へのポインタに変換します。
+これは非常に中心的で、かなり複雑なルーチンです。ファイル システムが
+厳密なツリー階層で維持されていない場合、デッドロック状態になる可能性
+があります (以下のコード内のコメントを参照)。
+
+フラグ引数は、名前が検索、作成、名前変更、または削除されるかどうかに
+応じて、LOOKUP、CREATE、RENAME、または DELETE になります。CREATE、
+RENAME、または DELETE が指定されている場合、ディレクトリ エントリの
+作成、名前変更、または削除に使用できる情報が計算される場合があります。
+フラグに LOCKPARENT が or で結合されていて、パス名のターゲットが存在
+する場合、lookup はターゲットとロックされた親ディレクトリの両方を返
+します。作成または名前変更時に LOCKPARENT が指定されている場合、
+ターゲットは "." ではない可能性があります。削除時に LOCKPARENT が指定
+されている場合、ターゲットは "." である可能性がありますが、呼び出し側
+は、2 つの iput ではなく、vrele と iput を実行することを確認する必要
+があります。
+
+ufs_lookup の全体的な概要:
+
+ディレクトリのアクセス可能性をチェックします。
+
+キャッシュで名前を検索し、見つかった場合はパスの末尾で削除または作成中
+の場合は削除し、そうでない場合は名前を返します。
+ディレクトリで名前を検索し、見つかったか見つからないかを確認します。
+見つからない場合:
+作成中の場合はロックされたディレクトリを返し、使用可能なスロットに関す
+る情報を残します。そうでない場合はエラーを返します。
+見つかった場合:
+パスの末尾で削除中の場合は削除を許可する情報を返します。
+パスの末尾で書き換え中の場合は (RENAME および LOCKPARENT)、ターゲットを
+ロックします。
+inode と書き換えを許可する情報を返します。
+末尾でない場合は名前をキャッシュに追加します。末尾で作成も削除もされて
+いない場合は名前をキャッシュに追加します。
+
+注意: (LOOKUP | LOCKPARENT) は現在、ロック解除された親inode を返します。
+*/
+int ufs_lookup(register struct vnode* vdp, register struct nameidata* ndp, struct proc* p)
 {
 	register struct inode *dp;	/* the directory we are searching */
 	register struct fs *fs;		/* file system that directory is in */
-	struct buf *bp = 0;		/* a buffer of directory entries */
+	struct buf *bp = 0;			/* a buffer of directory entries */
 	register struct direct *ep;	/* the current directory entry */
 	int entryoffsetinblock;		/* offset of ep in bp's buffer */
 	enum {NONE, COMPACT, FOUND} slotstatus;
 	int slotoffset = -1;		/* offset of area with free space */
-	int slotsize;			/* size of area at slotoffset */
-	int slotfreespace;		/* amount of space free in slot */
-	int slotneeded;			/* size of the entry we're seeking */
-	int numdirpasses;		/* strategy for directory search */
-	int endsearch;			/* offset to end directory search */
-	int prevoff;			/* ndp->ni_ufs.ufs_offset of previous entry */
-	struct inode *pdp;		/* saved dp during symlink work */
-	struct inode *tdp;		/* returned by iget */
-	off_t enduseful;		/* pointer past last used dir slot */
-	int flag;			/* LOOKUP, CREATE, RENAME, or DELETE */
-	int lockparent;			/* 1 => lockparent flag is set */
-	int wantparent;			/* 1 => wantparent or lockparent flag */
+	int slotsize;				/* size of area at slotoffset */
+	int slotfreespace;			/* amount of space free in slot */
+	int slotneeded;				/* size of the entry we're seeking */
+	int numdirpasses;			/* strategy for directory search */
+	int endsearch;				/* offset to end directory search */
+	int prevoff;				/* ndp->ni_ufs.ufs_offset of previous entry */
+	struct inode *pdp;			/* saved dp during symlink work */
+	struct inode *tdp;			/* returned by iget */
+	off_t enduseful;			/* pointer past last used dir slot */
+	int flag;					/* LOOKUP, CREATE, RENAME, or DELETE */
+	int lockparent;				/* 1 => lockparent flag is set */
+	int wantparent;				/* 1 => wantparent or lockparent flag */
 	int error;
 
 	ndp->ni_dvp = vdp;
@@ -131,7 +180,8 @@ ufs_lookup(vdp, ndp, p)
 	 */
 	if ((dp->i_mode&IFMT) != IFDIR)
 		return (ENOTDIR);
-	if (error = ufs_access(vdp, VEXEC, ndp->ni_cred, p))
+	error = ufs_access(vdp, VEXEC, ndp->ni_cred, p);
+	if (error != 0)
 		return (error);
 
 	/*
@@ -141,7 +191,8 @@ ufs_lookup(vdp, ndp, p)
 	 * check the name cache to see if the directory/name pair
 	 * we are looking for is known already.
 	 */
-	if (error = cache_lookup(ndp)) {
+	error = cache_lookup(ndp);
+	if (error != 0) {
 		int vpid;	/* capability number of vnode */
 
 		if (error == ENOENT)
@@ -163,14 +214,14 @@ ufs_lookup(vdp, ndp, p)
 			VREF(vdp);
 			error = 0;
 		} else if (ndp->ni_isdotdot) {
-			IUNLOCK(pdp);
+			iunlock(pdp);
 			error = vget(vdp);
 			if (!error && lockparent && *ndp->ni_next == '\0')
-				ILOCK(pdp);
+				ilock(pdp);
 		} else {
 			error = vget(vdp);
 			if (!lockparent || error || *ndp->ni_next != '\0')
-				IUNLOCK(pdp);
+				iunlock(pdp);
 		}
 		/*
 		 * Check that the capability number did not change
@@ -181,19 +232,31 @@ ufs_lookup(vdp, ndp, p)
 				return (0);
 			iput(dp);
 			if (lockparent && pdp != dp && *ndp->ni_next == '\0')
-				IUNLOCK(pdp);
+				iunlock(pdp);
 		}
-		ILOCK(pdp);
+		ilock(pdp);
 		dp = pdp;
 		vdp = ITOV(dp);
 		ndp->ni_vp = NULL;
 	}
 
 	/*
-	 * Suppress search for slots unless creating
-	 * file and at end of pathname, in which case
-	 * we watch for a place to put the new file in
-	 * case it doesn't already exist.
+	 * If there is cached information on a previous search of
+	 * this directory, pick up where we last left off.
+	 * We cache only lookups as these are the most common
+	 * and have the greatest payoff. Caching CREATE has little
+	 * benefit as it usually must search the entire directory
+	 * to determine that the entry does not exist. Caching the
+	 * location of the last DELETE or RENAME has not reduced
+	 * profiling time and hence has been removed in the interest
+	 * of simplicity.
+	このディレクトリの以前の検索でキャッシュされた情報がある場合は、最後に
+	中断したところから再開します。検索のみをキャッシュするのは、これが最も
+	一般的で最大の効果があるためです。CREATE をキャッシュしても、エントリ
+	が存在しないことを確認するために通常はディレクトリ全体を検索する必要が
+	あるため、あまりメリットはありません。最後の DELETE または RENAME の場
+	所をキャッシュしてもプロファイリング時間は短縮されないため、簡素化のた
+	めに削除されました。
 	 */
 	slotstatus = FOUND;
 	if ((flag == CREATE || flag == RENAME) && *ndp->ni_next == 0) {
@@ -213,6 +276,13 @@ ufs_lookup(vdp, ndp, p)
 	 * location of the last DELETE or RENAME has not reduced
 	 * profiling time and hence has been removed in the interest
 	 * of simplicity.
+	このディレクトリの以前の検索でキャッシュされた情報がある場合は、最後に
+	中断したところから再開します。検索のみをキャッシュするのは、これが最も
+	一般的で最大の効果があるためです。CREATE をキャッシュしても、エントリ
+	が存在しないことを確認するために通常はディレクトリ全体を検索する必要が
+	あるため、あまりメリットはありません。最後の DELETE または RENAME の場
+	所をキャッシュしてもプロファイリング時間は短縮されないため、簡素化のた
+	めに削除されました。
 	 */
 	if (flag != LOOKUP || dp->i_diroff == 0 || dp->i_diroff > dp->i_size) {
 		ndp->ni_ufs.ufs_offset = 0;
@@ -221,8 +291,8 @@ ufs_lookup(vdp, ndp, p)
 		ndp->ni_ufs.ufs_offset = dp->i_diroff;
 		entryoffsetinblock = blkoff(fs, ndp->ni_ufs.ufs_offset);
 		if (entryoffsetinblock != 0) {
-			if (error = blkatoff(dp, ndp->ni_ufs.ufs_offset,
-			    (char **)0, &bp))
+			error = blkatoff(dp, ndp->ni_ufs.ufs_offset, (char **)0, &bp);
+			if (error != 0)
 				return (error);
 		}
 		numdirpasses = 2;
@@ -237,18 +307,22 @@ searchloop:
 		 * If offset is on a block boundary,
 		 * read the next directory block.
 		 * Release previous if it exists.
+		オフセットがブロック境界上にある場合は、次のディレクトリブロックを
+		読み取ります。前のブロックが存在する場合は解放します。
 		 */
 		if (blkoff(fs, ndp->ni_ufs.ufs_offset) == 0) {
 			if (bp != NULL)
 				brelse(bp);
-			if (error = blkatoff(dp, ndp->ni_ufs.ufs_offset,
-			    (char **)0, &bp))
+			error = blkatoff(dp, ndp->ni_ufs.ufs_offset, (char **)0, &bp);
+			if (error != 0)
 				return (error);
 			entryoffsetinblock = 0;
 		}
 		/*
 		 * If still looking for a slot, and at a DIRBLKSIZE
 		 * boundary, have to start looking for free space again.
+		 まだスロットを探していて、DIRBLKSIZE 境界にある場合は、空き領域を
+		 再度探し始める必要があります。
 		 */
 		if (slotstatus == NONE &&
 		    (entryoffsetinblock & (DIRBLKSIZ - 1)) == 0) {
@@ -261,6 +335,10 @@ searchloop:
 		 * enough to insure forward progress through the
 		 * directory. Complete checks can be run by patching
 		 * "dirchk" to be true.
+		次のエントリへのポインタを取得します。完全な検証チェックは時間がか
+		かるため、ディレクトリ内の前進を確実にするために必要なチェックのみ
+		を行います。完全なチェックは、"dirchk" を true にパッチすることで
+		実行できます。
 		 */
 		ep = (struct direct *)(bp->b_un.b_addr + entryoffsetinblock);
 		if (ep->d_reclen == 0 ||
@@ -279,6 +357,9 @@ searchloop:
 		 * check to see if one is available. Also accumulate space
 		 * in the current block so that we can determine if
 		 * compaction is viable.
+		適切なサイズのスロットがまだ見つからない場合は、空きがあるかどうかを
+		確認します。また、現在のブロックにスペースを蓄積して、圧縮が実行可能
+		かどうかを判断します。
 		 */
 		if (slotstatus != FOUND) {
 			int size = ep->d_reclen;
@@ -352,7 +433,8 @@ searchloop:
 		 * Access for write is interpreted as allowing
 		 * creation of files in the directory.
 		 */
-		if (error = ufs_access(vdp, VWRITE, ndp->ni_cred, p))
+		error = ufs_access(vdp, VWRITE, ndp->ni_cred, p);
+		if (error != 0)
 			return (error);
 		/*
 		 * Return an indication of where the new directory
@@ -390,7 +472,7 @@ searchloop:
 		 */
 		ndp->ni_nameiop |= SAVENAME;
 		if (!lockparent)
-			IUNLOCK(dp);
+			iunlock(dp);
 	}
 	/*
 	 * Insert name into cache (as non-existent) if appropriate.
@@ -433,7 +515,8 @@ found:
 		/*
 		 * Write access to directory required to delete files.
 		 */
-		if (error = ufs_access(vdp, VWRITE, ndp->ni_cred, p))
+		error = ufs_access(vdp, VWRITE, ndp->ni_cred, p);
+		if (error != 0)
 			return (error);
 		/*
 		 * Return pointer to current entry in ndp->ni_ufs.ufs_offset,
@@ -450,7 +533,8 @@ found:
 			ndp->ni_vp = vdp;
 			return (0);
 		}
-		if (error = iget(dp, ndp->ni_ufs.ufs_ino, &tdp))
+		error = iget(dp, ndp->ni_ufs.ufs_ino, &tdp);
+		if (error != 0)
 			return (error);
 		/*
 		 * If directory is "sticky", then user must own
@@ -467,7 +551,7 @@ found:
 		}
 		ndp->ni_vp = ITOV(tdp);
 		if (!lockparent)
-			IUNLOCK(dp);
+			iunlock(dp);
 		return (0);
 	}
 
@@ -478,20 +562,24 @@ found:
 	 * regular file, or empty directory.
 	 */
 	if (flag == RENAME && wantparent && *ndp->ni_next == 0) {
-		if (error = ufs_access(vdp, VWRITE, ndp->ni_cred, p))
+		error = ufs_access(vdp, VWRITE, ndp->ni_cred, p);
+		if (error != 0)
+		{
 			return (error);
+		}
 		/*
 		 * Careful about locking second inode.
 		 * This can only occur if the target is ".".
 		 */
 		if (dp->i_number == ndp->ni_ufs.ufs_ino)
 			return (EISDIR);
-		if (error = iget(dp, ndp->ni_ufs.ufs_ino, &tdp))
+		error = iget(dp, ndp->ni_ufs.ufs_ino, &tdp);
+		if (error != 0)
 			return (error);
 		ndp->ni_vp = ITOV(tdp);
 		ndp->ni_nameiop |= SAVENAME;
 		if (!lockparent)
-			IUNLOCK(dp);
+			iunlock(dp);
 		return (0);
 	}
 
@@ -516,22 +604,24 @@ found:
 	 */
 	pdp = dp;
 	if (ndp->ni_isdotdot) {
-		IUNLOCK(pdp);	/* race to get the inode */
-		if (error = iget(dp, ndp->ni_ufs.ufs_ino, &tdp)) {
-			ILOCK(pdp);
+		iunlock(pdp);	/* race to get the inode */
+		error = iget(dp, ndp->ni_ufs.ufs_ino, &tdp);
+		if (error != 0) {
+			ilock(pdp);
 			return (error);
 		}
 		if (lockparent && *ndp->ni_next == '\0')
-			ILOCK(pdp);
+			ilock(pdp);
 		ndp->ni_vp = ITOV(tdp);
 	} else if (dp->i_number == ndp->ni_ufs.ufs_ino) {
 		VREF(vdp);	/* we want ourself, ie "." */
 		ndp->ni_vp = vdp;
 	} else {
-		if (error = iget(dp, ndp->ni_ufs.ufs_ino, &tdp))
+		error = iget(dp, ndp->ni_ufs.ufs_ino, &tdp);
+		if (error != 0)
 			return (error);
 		if (!lockparent || *ndp->ni_next != '\0')
-			IUNLOCK(pdp);
+			iunlock(pdp);
 		ndp->ni_vp = ITOV(tdp);
 	}
 
@@ -544,10 +634,7 @@ found:
 }
 
 
-dirbad(ip, offset, how)
-	struct inode *ip;
-	off_t offset;
-	char *how;
+void dirbad(struct inode* ip, off_t offset, char* how)
 {
 
 	printf("%s: bad dir ino %d at offset %d: %s\n",
@@ -564,9 +651,7 @@ dirbad(ip, offset, how)
  *	name is not longer than MAXNAMLEN
  *	name must be as long as advertised, and null terminated
  */
-dirbadentry(ep, entryoffsetinblock)
-	register struct direct *ep;
-	int entryoffsetinblock;
+static int dirbadentry(register struct direct*ep, int entryoffsetinblock)
 {
 	register int i;
 
@@ -588,9 +673,7 @@ dirbadentry(ep, entryoffsetinblock)
  * Remaining parameters (ndp->ni_ufs.ufs_offset, ndp->ni_ufs.ufs_count)
  * indicate how the space for the new entry is to be obtained.
  */
-direnter(ip, ndp)
-	struct inode *ip;
-	register struct nameidata *ndp;
+int direnter(struct inode* ip, register struct nameidata* ndp)
 {
 	register struct direct *ep, *nep;
 	register struct inode *dp = VTOI(ndp->ni_dvp);
@@ -610,6 +693,8 @@ direnter(ip, ndp)
 	newdir.d_ino = ip->i_number;
 	newdir.d_namlen = ndp->ni_namelen;
 	memcpy(newdir.d_name, ndp->ni_ptr, (unsigned)ndp->ni_namelen + 1);
+	newdir.d_type = (ndp->ni_dvp->v_mount->mnt_maxsymlinklen > 0) ? 
+					IFTODT(ip->i_mode) : 0;
 	newentrysize = DIRSIZ(&newdir);
 	if (ndp->ni_ufs.ufs_count == 0) {
 		/*
@@ -661,7 +746,8 @@ direnter(ip, ndp)
 	/*
 	 * Get the block containing the space for the new directory entry.
 	 */
-	if (error = blkatoff(dp, ndp->ni_ufs.ufs_offset, (char **)&dirbuf, &bp))
+	error = blkatoff(dp, ndp->ni_ufs.ufs_offset, (char **)&dirbuf, &bp);
+	if (error != 0)
 		return (error);
 	/*
 	 * Find space for the new entry. In the simple case, the entry at
@@ -730,8 +816,7 @@ direnter(ip, ndp)
  * the space of the now empty record by adding the record size
  * to the size of the previous entry.
  */
-dirremove(ndp)
-	register struct nameidata *ndp;
+int dirremove(register struct nameidata *ndp)
 {
 	register struct inode *dp = VTOI(ndp->ni_dvp);
 	struct direct *ep;
@@ -746,6 +831,8 @@ dirremove(ndp)
 		if (error)
 			return (error);
 		ep->d_ino = 0;
+//		ep->d_ino = WINO
+		ep->d_type = DT_WHT;
 #ifdef was
 		error = bwrite(bp);
 #else
@@ -758,8 +845,9 @@ dirremove(ndp)
 	/*
 	 * Collapse new free space into previous entry.
 	 */
-	if (error = blkatoff(dp, ndp->ni_ufs.ufs_offset - ndp->ni_ufs.ufs_count,
-	    (char **)&ep, &bp)) {
+	error = blkatoff(dp, ndp->ni_ufs.ufs_offset - ndp->ni_ufs.ufs_count,
+	    (char **)&ep, &bp);
+	if (error != 0) {
 		return (error);
 	}
 	ep->d_reclen += ndp->ni_ufs.ufs_reclen;
@@ -778,17 +866,18 @@ dirremove(ndp)
  * supplied.  The parameters describing the directory entry are
  * set up by a call to namei.
  */
-dirrewrite(dp, ip, ndp)
-	struct inode *dp, *ip;
-	struct nameidata *ndp;
+int dirrewrite(struct inode* dp, struct inode* ip, struct nameidata* ndp)
 {
 	struct direct *ep;
 	struct buf *bp;
 	int error;
 
-	if (error = blkatoff(dp, ndp->ni_ufs.ufs_offset, (char **)&ep, &bp))
+	error = blkatoff(dp, ndp->ni_ufs.ufs_offset, (char **)&ep, &bp);
+	if (error != 0)
 		return (error);
 	ep->d_ino = ip->i_number;
+	ep->d_type = (dp->i_vnode->v_mount->mnt_maxsymlinklen > 0) ? 
+				 IFTODT(ip->i_mode) : 0;
 #ifdef was
 	error = bwrite(bp);
 #else
@@ -805,11 +894,7 @@ dirrewrite(dp, ip, ndp)
  * is non-zero, fill it in with a pointer to the
  * remaining space in the directory.
  */
-blkatoff(ip, offset, res, bpp)
-	struct inode *ip;
-	off_t offset;
-	char **res;
-	struct buf **bpp;
+static int blkatoff(struct inode* ip, off_t offset, char** res, struct buf** bpp)
 {
 	register struct fs *fs = ip->i_fs;
 	daddr_t lbn = lblkno(fs, offset);
@@ -819,7 +904,8 @@ blkatoff(ip, offset, res, bpp)
 	int error;
 
 	*bpp = 0;
-	if (error = bread(ITOV(ip), lbn, bsize, NOCRED, &bp)) {
+	error = bread(ITOV(ip), lbn, bsize, NOCRED, &bp);
+	if (error != 0) {
 		brelse(bp);
 		return (error);
 	}
@@ -838,10 +924,7 @@ blkatoff(ip, offset, res, bpp)
  *
  * NB: does not handle corrupted directories.
  */
-dirempty(ip, parentino, cred)
-	register struct inode *ip;
-	ino_t parentino;
-	struct ucred *cred;
+int dirempty(register struct inode* ip, ino_t parentino, struct ucred* cred)
 {
 	register off_t off;
 	struct dirtemplate dbuf;
@@ -888,9 +971,7 @@ dirempty(ip, parentino, cred)
  * Target is supplied locked, source is unlocked.
  * The target is always iput() before returning.
  */
-checkpath(source, target, cred)
-	struct inode *source, *target;
-	struct ucred *cred;
+int checkpath(struct inode* source,struct inode* target, struct ucred* cred)
 {
 	struct dirtemplate dirbuf;
 	struct inode *ip;
@@ -927,7 +1008,8 @@ checkpath(source, target, cred)
 		if (dirbuf.dotdot_ino == ROOTINO)
 			break;
 		iput(ip);
-		if (error = iget(ip, dirbuf.dotdot_ino, &ip))
+		error = iget(ip, dirbuf.dotdot_ino, &ip);
+		if (error != 0)
 			break;
 	}
 

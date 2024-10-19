@@ -43,10 +43,10 @@
 #endif
 
 __BEGIN_DECLS
-unsigned long	htonl __P((unsigned long));
-unsigned short	htons __P((unsigned short));
-unsigned long	ntohl __P((unsigned long));
-unsigned short	ntohs __P((unsigned short));
+extern unsigned long	htonl __P((unsigned long));
+extern unsigned short	htons __P((unsigned short));
+extern unsigned long	ntohl __P((unsigned long));
+extern unsigned short	ntohs __P((unsigned short));
 __END_DECLS
 
 /*

@@ -4,7 +4,7 @@ PROG=	login
 SRCS=	login.c
 NONSTDINC= $(INCOLDBSD)
 DPADD=	${LIBUTIL}
-LDADD=	-lutil
+LDADD=	-lutil -lc
 BINOWN=	root
 BINMODE=4555
 

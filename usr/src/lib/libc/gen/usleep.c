@@ -47,6 +47,8 @@ static char sccsid[] = "@(#)usleep.c	5.6 (Berkeley) 2/23/91";
 
 static int ringring;
 
+static void sleephandler();
+
 void
 usleep(useconds)
 	unsigned int useconds;
@@ -55,7 +57,7 @@ usleep(useconds)
 	struct itimerval itv, oitv;
 	struct sigvec vec, ovec;
 	long omask;
-	static void sleephandler();
+/*	static void sleephandler(); */
 
 	itp = &itv;
 	if (!useconds)

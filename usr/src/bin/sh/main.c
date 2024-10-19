@@ -44,8 +44,8 @@ char copyright[] =
 static char sccsid[] = "@(#)main.c	5.2 (Berkeley) 3/13/91";
 #endif /* not lint */
 
-#include <signal.h>
-#include <fcntl.h>
+#include <sys/signal.h>
+#include <sys/fcntl.h>
 #include "shell.h"
 #include "main.h"
 #include "mail.h"

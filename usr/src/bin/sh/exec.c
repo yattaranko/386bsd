@@ -66,8 +66,8 @@ static char sccsid[] = "@(#)exec.c	5.2 (Berkeley) 3/13/91";
 #include "mystring.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
+#include <sys/fcntl.h>
+#include <sys/errno.h>
 
 
 #define CMDTABLESIZE 31		/* should be prime */

@@ -63,7 +63,7 @@ assym.s: $S/include/sys/param.h $S/include/buf.h $S/include/vmmeter.h \
 .include "$S/config/kernel.fs.mk"
 .include "$S/config/kernel.domain.mk"
 
-SRCS= ${KERN_SRCS} ${MACH_SRCS} ${DEV_SRCS} ${FS_SRCS} ${DOMAIN_SRCS}
+SRCS= ${KERN_SRCS} ${MACH_SRCS} ${MACH_SRCS_S} ${DEV_SRCS} ${FS_SRCS} ${DOMAIN_SRCS}
 
 ${KERNEL}: Makefile symbols.sort ${FIRSTOBJ} ${OBJS}
 	@echo loading $@

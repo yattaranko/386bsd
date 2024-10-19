@@ -134,10 +134,10 @@ struct gettyflags {
 #define DX	gettyflags[20].value
 #define	NP	gettyflags[21].value
 
-int	getent();
-long	getnum();
-int	getflag();
-char	*getstr();
+extern int 		getent(char* bp, char* name);
+extern long 	getnum(char* id);
+extern int 		getflag(char* id);
+extern char* 	getstr(char* id, char** area);
 
 extern	struct gettyflags gettyflags[];
 extern	struct gettynums gettynums[];

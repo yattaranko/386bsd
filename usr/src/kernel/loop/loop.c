@@ -195,7 +195,7 @@ loioctl(struct ifnet *ifp, int cmd, caddr_t data)
 	return (error);
 }
 
-LOCALNET_MODCONFIG(loop) {
+LOCALNET_MODCONFIG(lo) {
 
 	loattach();
 	esym_bind(looutput);

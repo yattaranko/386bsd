@@ -189,9 +189,7 @@ struct modes omodes[] = {
 
 #define	CHK(s)	(*name == s[0] && !strcmp(name, s))
 
-msearch(argvp, ip)
-	char ***argvp;
-	struct info *ip;
+int msearch(char*** argvp, struct info* ip)
 {
 	register struct modes *mp;
 	register char *name;

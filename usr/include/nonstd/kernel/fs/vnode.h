@@ -305,7 +305,7 @@ struct 	vnode *checkalias __P((struct vnode *vp, dev_t nvp_rdev,
 
 /* global variables used in core kernel and other modules */
 __ISYM__(struct vattr, va_null,) /* predefined null vattr structure */
-__ISYM__(long, desiredvnodes,)	/* number of vnodes desired */
+__ISYM__(const long, desiredvnodes,)	/* number of vnodes desired */
 __ISYM__(struct vnode *, rootvp,)	/* root vnode */
 #if defined(DEBUG) || defined(DIAGNOSTIC)
 __ISYM__(int, prtactive,)	/* diagnostic flag */

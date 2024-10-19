@@ -103,7 +103,7 @@ void timevalfix(struct timeval *t1);
  */
 #include "queue.h"
 #define	insque(n, h)	_insque((queue_t) n, (queue_t) h)
-#define	remque(n)   	_remque((queue_t) n)
+#define	remque(n)	_remque((queue_t) n)
 
 /*__BEGIN_DECLS
 __END_DECLS */

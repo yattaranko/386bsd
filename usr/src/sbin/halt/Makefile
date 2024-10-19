@@ -3,6 +3,7 @@
 PROG=	halt
 MAN8=	halt.0
 DPADD=	${LIBUTIL}
-LDADD=	-lutil
+LDADD=	-lutil -lc
+SRCS=	halt.c
 
 .include <bsd.prog.mk>

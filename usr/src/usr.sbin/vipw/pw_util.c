@@ -44,10 +44,12 @@ static char sccsid[] = "@(#)pw_util.c	5.4 (Berkeley) 5/21/91";
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <sys/resource.h>
-#include <signal.h>
-#include <fcntl.h>
+#include <sys/signal.h>
+#include <sys/fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <pwd.h>
-#include <errno.h>
+#include <sys/errno.h>
 #include <stdio.h>
 #include <paths.h>
 #include <string.h>
@@ -56,7 +58,9 @@ static char sccsid[] = "@(#)pw_util.c	5.4 (Berkeley) 5/21/91";
 extern char *progname;
 extern char *tempname;
 
-pw_init()
+extern void pw_error(char* name, int err, int eval);
+
+void pw_init()
 {
 	struct rlimit rlim;
 
@@ -87,7 +91,7 @@ pw_init()
 }
 
 static int lockfd;
-pw_lock()
+int pw_lock()
 {
 	/* 
 	 * If we can't lock or obtain the master password file,
@@ -99,39 +103,42 @@ pw_lock()
 	if (lockfd < 0) {
 		(void)fprintf(stderr, "%s: %s: %s\n",
 		    progname, _PATH_MASTERPASSWD, strerror(errno));
-		exit(1);
+		return (1);
 	}
 	return(lockfd);
 }
 
-pw_tmp()
+int pw_tmp()
 {
 	static char path[PATH_MAX] = _PATH_MASTERPASSWD;
 	int fd;
 	char *p;
 
-	if (p = rindex(path, '/'))
+	p = rindex(path, '/');
+	if (p != 0)
 		++p;
 	else
 		p = path;
 	(void)sprintf(p, "%s.XXXXXX", progname);
-	if ((fd = mkstemp(path)) == -1) {
+	fd = mkstemp(path);
+	if (fd == -1) {
 		(void)fprintf(stderr,
 		    "%s: %s: %s\n", progname, path, strerror(errno));
-		exit(1);
+		return (1);
 	}
 	tempname = path;
 	return(fd);
 }
 
-pw_mkdb()
+int pw_mkdb()
 {
 	union wait pstat;
 	pid_t pid;
 
 	(void)printf("%s: rebuilding the database...\n", progname);
 	(void)fflush(stdout);
-	if (!(pid = vfork())) {
+	pid = vfork();
+	if (pid == 0) {
 		execl(_PATH_PWD_MKDB, "pwd_mkdb", "-p", tempname, NULL);
 		pw_error(_PATH_PWD_MKDB, 1, 1);
 	}
@@ -142,16 +149,17 @@ pw_mkdb()
 	return(1);
 }
 
-pw_edit(notsetuid)
-	int notsetuid;
+void pw_edit(int notsetuid)
 {
 	union wait pstat;
 	pid_t pid;
 	char *p, *editor;
 
-	if (!(editor = getenv("EDITOR")))
+	editor = getenv("EDITOR");
+	if (editor == 0)
 		editor = _PATH_VI;
-	if (p = rindex(editor, '/'))
+	p = rindex(editor, '/');
+	if (p != 0)
 		++p;
 	else 
 		p = editor;
@@ -169,7 +177,7 @@ pw_edit(notsetuid)
 		pw_error(editor, 1, 1);
 }
 
-pw_prompt()
+void pw_prompt()
 {
 	register int c;
 
@@ -185,9 +193,7 @@ pw_prompt()
 	}
 }
 
-pw_error(name, err, eval)
-	char *name;
-	int err, eval;
+void pw_error(char* name, int err, int eval)
 {
 	int sverrno;
 

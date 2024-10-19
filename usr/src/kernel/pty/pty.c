@@ -219,7 +219,7 @@ ptsstart(struct tty *tp)
 	register struct pt_ioctl *pti = &pt_ioctl[minor(tp->t_dev)];
 
 	if (tp->t_state & TS_TTSTOP)
-		return (0);
+		return ( 0 );
 
 	if (pti->pt_flags & PF_STOPPED) {
 		pti->pt_flags &= ~PF_STOPPED;

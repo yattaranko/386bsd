@@ -64,14 +64,15 @@ void
 disksort(struct buf *dp, struct buf *bp)
 {
 	struct buf *ap;
-int of = 0;
+	int of = 0;
 
 	/*
 	 * If nothing on the activity queue, then
 	 * we become the only thing.
 	 */
 	ap = dp->b_actf;
-	if(ap == NULL) {
+	if(ap == NULL)
+	{
 		dp->b_actf = bp;
 		dp->b_actl = bp;
 		bp->av_forw = NULL;
@@ -79,30 +80,33 @@ int of = 0;
 	}
 
 	/* check for ordered transfer sequence, skip to end. */
-	if (ap->b_flags & B_ORDER) {
-int oc = 0;
+	if (ap->b_flags & B_ORDER)
+	{
+		int oc = 0;
 		for (; ap->av_forw && (ap->b_flags & B_ORDER); ap = ap->av_forw)
+		{
 			oc++;
-
+		}
 		if (ap->b_flags & B_ORDER)
-{
-/*printf("oe%d ", oc);*/
+		{
+			/*printf("oe%d ", oc);*/
 			goto insert;		/* after last B_ORDER */
-}
-/*printf("o%d ", oc);*/
-of = 1;
+		}
+		/*printf("o%d ", oc);*/
+		of = 1;
 	}
 
 	/* if this is an ordered transfer, make a sequence of the queue. */
-	if (bp->b_flags & B_ORDER) {
-int oc = 0;
+	if (bp->b_flags & B_ORDER)
+	{
+		int oc = 0;
 		for (; ap->av_forw; ap = ap->av_forw)
-{
+		{
 			ap->b_flags |= B_ORDER;
-oc++;
-}
-/*printf("O%d ", oc);*/
-of = 0;
+			oc++;
+		}
+		/*printf("O%d ", oc);*/
+		of = 0;
 		goto insert;			/* after last */
 	}
 
@@ -111,34 +115,42 @@ of = 0;
 	 * request, then we must locate the second request list
 	 * and add ourselves to it.
 	 */
-	if (bp->b_cylin < ap->b_cylin) {
-		while (ap->av_forw) {
+	if (bp->b_cylin < ap->b_cylin)
+	{
+		while (ap->av_forw)
+		{
 			/*
 			 * Check for an ``inversion'' in the
 			 * normally ascending cylinder numbers,
 			 * indicating the start of the second request list.
 			 */
-			if (ap->av_forw->b_cylin < ap->b_cylin) {
-/*if (of) printf("i");*/
+			if (ap->av_forw->b_cylin < ap->b_cylin)
+			{
+				/*if (of) printf("i");*/
 				/*
 				 * Search the second request list
 				 * for the first request at a larger
 				 * cylinder number.  We go before that;
 				 * if there is no such request, we go at end.
 				 */
-				do {
+				do
+				{
 					if (bp->b_cylin < ap->av_forw->b_cylin)
+					{
 						goto insert;
+					}
 					if (bp->b_cylin == ap->av_forw->b_cylin &&
 					    bp->b_blkno < ap->av_forw->b_blkno)
+					{
 						goto insert;
+					}
 					ap = ap->av_forw;
-/*if (of) printf("-");*/
+					/*if (of) printf("-");*/
 				} while (ap->av_forw);
 				goto insert;		/* after last */
 			}
 			ap = ap->av_forw;
-/*if (of) printf("+");*/
+			/*if (of) printf("+");*/
 		}
 		/*
 		 * No inversions... we will go after the last, and
@@ -150,7 +162,8 @@ of = 0;
 	 * Request is at/after the current request...
 	 * sort in the first request list.
 	 */
-	while (ap->av_forw) {
+	while (ap->av_forw)
+	{
 		/*
 		 * We want to go after the current request
 		 * if there is an inversion after it (i.e. it is
@@ -161,8 +174,10 @@ of = 0;
 		    bp->b_cylin < ap->av_forw->b_cylin ||
 		    (bp->b_cylin == ap->av_forw->b_cylin &&
 		    bp->b_blkno < ap->av_forw->b_blkno))
+		{
 			goto insert;
-/*if (of) printf("a");*/
+		}
+		/*if (of) printf("a");*/
 		ap = ap->av_forw;
 	}
 	/*
@@ -174,5 +189,7 @@ insert:
 	bp->av_forw = ap->av_forw;
 	ap->av_forw = bp;
 	if (ap == dp->b_actl)
+	{
 		dp->b_actl = bp;
+	}
 }

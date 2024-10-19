@@ -69,6 +69,7 @@
 #include "pmap.h"
 #include "vm_map.h"
 #include "vmmeter.h"
+#include "vm_fault.h"
 
 #include "machine/cpu.h"
 #include "machine/psl.h"
@@ -83,8 +84,16 @@ extern int npxlasterror;
 int (*cpu_dna)(void *);
 int (*cpu_dna_em)(void *);
 
-extern iret, syscall_entry, syscall_lret;	/* see locore.s */
-static void trapexcept(struct trapframe *tf, int *);
+extern int iret, syscall_entry, syscall_lret;	/* see locore.s */
+
+extern int	splnone(void);
+extern void	qswtch(void);
+extern int	npxerror();
+extern void	ktrsyscall(struct vnode *vp, int code, int narg, int args[]);
+extern void	ktrsysret(struct vnode* vp, int code, int error, int retval);
+extern void	pmap_ptalloc(struct pmap *pmap, pd_entry_t *pde);
+static void	trapexcept(struct trapframe *tf, int *);
+
 #ifdef DDB
 extern int enterddb;
 #endif
@@ -109,7 +118,6 @@ trap(struct trapframe frame)
 
 	frame.tf_eflags &= ~PSL_NT;	/* clear nested trap XXX */
 	type = frame.tf_trapno;
-
 	/* are we in an existing thread/process context? */
 	if (p) {
 
@@ -435,7 +443,7 @@ out:
 	/* any signals for this process? again take care with npx */
 	p->p_md.md_flags |= MDP_SIGPROC;
 	p->p_md.md_flags &= ~MDP_AST;
-	while (signo = CURSIG(p))
+	while ((signo = CURSIG(p)) != 0)
 		psig(signo);
 	p->p_md.md_flags &= ~MDP_SIGPROC;
 	if (p->p_md.md_flags & MDP_NPXCOLL)
@@ -455,7 +463,7 @@ out:
 		 trapsigloop:
 			p->p_md.md_flags &= ~MDP_AST;
 			p->p_md.md_flags |= MDP_SIGPROC;
-			while (signo = CURSIG(p))
+			while ((signo = CURSIG(p)) != 0)
 				psig(signo);
 			p->p_md.md_flags &= ~MDP_SIGPROC;
 			if (p->p_md.md_flags & MDP_NPXCOLL) {
@@ -512,7 +520,7 @@ trapexcept(struct trapframe *tf, int *sp) {
 
 	/* any signals for this process? again take care with npx */
 	p->p_md.md_flags &= ~MDP_AST;
-	while (i = CURSIG(p))
+	while ((i = CURSIG(p)) != 0)
 		psig(i);
 	p->p_md.md_flags &= ~MDP_SIGPROC;
 	if (p->p_md.md_flags & MDP_NPXCOLL)
@@ -532,7 +540,7 @@ trapexcept(struct trapframe *tf, int *sp) {
 		 trapsigloop:
 			p->p_md.md_flags &= ~MDP_AST;
 			p->p_md.md_flags |= MDP_SIGPROC;
-			while (i = CURSIG(p))
+			while ((i = CURSIG(p)) != 0)
 				psig(i);
 			p->p_md.md_flags &= ~MDP_SIGPROC;
 			if (p->p_md.md_flags & MDP_NPXCOLL) {
@@ -598,9 +606,9 @@ copyin3(struct proc *p, void *fromaddr, void *toaddr, u_int sz) {
 		asm (" movl	$4f, %0" : : "m" (p->p_md.md_onfault));
 
 		/* copy the arguments */
-		*((int *)toaddr + 0) = *((int *)fromaddr + 0); /* *((int *) toaddr)++ = *((int *) fromaddr)++; */
-		*((int *)toaddr + 1) = *((int *)fromaddr + 1); /* *((int *) toaddr)++ = *((int *) fromaddr)++; */
-		*((int *)toaddr + 2) = *((int *)fromaddr + 2); /* *((int *) toaddr)++ = *((int *) fromaddr)++; */
+		*((int *) toaddr + 0) = *((int *) fromaddr + 0);
+		*((int *) toaddr + 1) = *((int *) fromaddr + 1);
+		*((int *) toaddr + 2) = *((int *) fromaddr + 2);
 
 		/* catch the possible fault */
 		asm ("\
@@ -664,8 +672,7 @@ syscall(volatile struct syscframe frame)
 
 	/* implement the indirect system call handler inline */
 	if (callp == sysent) {
-		if (error = copyin_(p, (void *)params, (void *)&idx,
-		    sizeof(idx)))
+		if ((error = copyin_(p, (void *)params, (void *)&idx, sizeof(idx))) != 0)
 			goto err;
 		params += sizeof (int);
 		callp = (idx >= nsysent) ? &sysent[0] : &sysent[idx];
@@ -679,7 +686,8 @@ syscall(volatile struct syscframe frame)
 		frame.sf_eflags |= PSL_C;	/* carry bit */
 #ifdef KTRACE
 		if (KTRPOINT(p, KTR_SYSCALL))
-			ktrsyscall(p->p_tracep, idx, callp->sy_narg, &args);
+//			ktrsyscall(p->p_tracep, idx, callp->sy_narg, &args);
+			ktrsyscall(p->p_tracep, idx, callp->sy_narg, args);
 #endif
 		goto done;
 	}
@@ -687,7 +695,8 @@ syscall(volatile struct syscframe frame)
 	/* call system call handler */
 #ifdef KTRACE
 	if (KTRPOINT(p, KTR_SYSCALL))
-		ktrsyscall(p->p_tracep, idx, callp->sy_narg, &args);
+//		ktrsyscall(p->p_tracep, idx, callp->sy_narg, &args);
+		ktrsyscall(p->p_tracep, idx, callp->sy_narg, args);
 #endif
 	rval[0] = 0;
 	rval[1] = frame.sf_edx;
@@ -714,7 +723,7 @@ done:
 	/* any signals for this process? again take care with npx */
 	p->p_md.md_flags |= MDP_SIGPROC;
 	p->p_md.md_flags &= ~MDP_AST;
-	while (i = CURSIG(p))
+	while ((i = CURSIG(p)) != 0)
 		psig(i);
 	p->p_md.md_flags &= ~MDP_SIGPROC;
 
@@ -727,7 +736,7 @@ done:
 		if (p->p_md.md_flags & MDP_AST) {
 			p->p_md.md_flags |= MDP_SIGPROC;
 			p->p_md.md_flags &= ~MDP_AST;
-			while (i = CURSIG(p))
+			while ((i = CURSIG(p)) != 0)
 				psig(i);
 			p->p_md.md_flags &= ~MDP_SIGPROC;
 		}
@@ -789,7 +798,7 @@ systrap(volatile struct syscframe frame) {
 		if (p->p_md.md_flags & MDP_AST) {
 			p->p_md.md_flags |= MDP_SIGPROC;
 			p->p_md.md_flags &= ~MDP_AST;
-			while (i = CURSIG(p))
+			while ((i = CURSIG(p)) != 0)
 				psig(i);
 			p->p_md.md_flags &= ~MDP_SIGPROC;
 		}

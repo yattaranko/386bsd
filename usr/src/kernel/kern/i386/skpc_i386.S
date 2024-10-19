@@ -2,7 +2,7 @@
  * Copyright (c) 1994 William F. Jolitz.
  * 386BSD Copyright Restrictions Apply. All Other Rights Reserved.
  *
- * $Id: skpc_i386.s,v 1.1 94/10/19 17:40:09 bill Exp $
+ * $Id: skpc_i386.S,v 1.1 94/10/19 17:40:09 bill Exp $
  * VAX skpc instruction simulation.
  */
 

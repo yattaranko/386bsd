@@ -37,7 +37,7 @@ static char sccsid[] = "@(#)dir.c	5.12 (Berkeley) 6/27/91";
 
 #include <sys/param.h>
 #include <sys/stat.h>
-#include <errno.h>
+#include <sys/errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -62,6 +62,7 @@ static void 	 dnewcwd __P((struct directory *));
 static void 	 dset __P((Char *));
 
 struct directory dhead;		/* "head" of loop */
+struct directory *dcwd;		/* the one we are in now */
 int     printd;			/* force name to be printed */
 
 static int dirflag = 0;

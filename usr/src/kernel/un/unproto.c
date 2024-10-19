@@ -74,7 +74,7 @@ struct domain unixdomain =
     { 0, "unix", 0, unp_externalize, unp_dispose,
       unixsw, &unixsw[sizeof(unixsw)/sizeof(unixsw[0])] };
 
-NETWORK_MODCONFIG(un) {
+NETWORK_MODCONFIG(raw) {
 	char *cfg_string = un_config;
 
 	if (config_scan(un_config, &cfg_string) == 0)

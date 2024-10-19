@@ -60,7 +60,7 @@ static char sccsid[] = "@(#)output.c	5.1 (Berkeley) 3/7/91";
 #else
 #include <varargs.h>
 #endif
-#include <errno.h>
+#include <sys/errno.h>
 
 
 #define OUTBUFSIZ BUFSIZ

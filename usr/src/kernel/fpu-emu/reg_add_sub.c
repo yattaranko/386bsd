@@ -130,7 +130,7 @@ void reg_add(FPU_REG *a, FPU_REG *b, FPU_REG *dest, int control_w)
 	      if ( (b->tag == TW_Valid) && (b->exp <= EXP_UNDER) &&
 		  denormal_operand() )
 		return;
-#endif	/* DENORM_OPERAND */
+#endif /* DENORM_OPERAND */
 	      reg_move(b, dest);
 	    }
 	  return;
@@ -141,7 +141,7 @@ void reg_add(FPU_REG *a, FPU_REG *b, FPU_REG *dest, int control_w)
 	  if ( (a->tag == TW_Valid) && (a->exp <= EXP_UNDER) &&
 	      denormal_operand() )
 	    return;
-#endif	/* DENORM_OPERAND */
+#endif /* DENORM_OPERAND */
 	  reg_move(a, dest); return;
 	}
       else if (a->tag == TW_Infinity)
@@ -152,7 +152,7 @@ void reg_add(FPU_REG *a, FPU_REG *b, FPU_REG *dest, int control_w)
 	      if ( (b->tag == TW_Valid) && (b->exp <= EXP_UNDER) &&
 		  denormal_operand() )
 		return;
-#endif	/* DENORM_OPERAND */
+#endif /* DENORM_OPERAND */
 	      reg_move(a, dest); return;
 	    }
 	  if (a->sign == b->sign)
@@ -169,7 +169,7 @@ void reg_add(FPU_REG *a, FPU_REG *b, FPU_REG *dest, int control_w)
 	  if ( (a->tag == TW_Valid) && (a->exp <= EXP_UNDER) &&
 	      denormal_operand() )
 	    return;
-#endif	/* DENORM_OPERAND */
+#endif /* DENORM_OPERAND */
 	  reg_move(b, dest); return;
 	}
     }
@@ -214,7 +214,7 @@ void reg_sub(FPU_REG *a, FPU_REG *b, FPU_REG *dest, int control_w)
 	      if ( (b->tag == TW_Valid) && (b->exp <= EXP_UNDER) &&
 		  denormal_operand() )
 		return;
-#endif	/* DENORM_OPERAND */
+#endif /* DENORM_OPERAND */
 	      reg_move(&CONST_Z, dest);
 	      /* sign depends upon rounding mode */
 	      dest->sign = ((control_w & CW_RC) != RC_DOWN)
@@ -260,7 +260,7 @@ void reg_sub(FPU_REG *a, FPU_REG *b, FPU_REG *dest, int control_w)
 	      if ( (a->tag == TW_Valid) && (a->exp <= EXP_UNDER) &&
 		  denormal_operand() )
 		return;
-#endif	/* DENORM_OPERAND */
+#endif /* DENORM_OPERAND */
 	      reg_move(a, dest);
 	    }
 	  return;
@@ -271,7 +271,7 @@ void reg_sub(FPU_REG *a, FPU_REG *b, FPU_REG *dest, int control_w)
 	  if ( (b->tag == TW_Valid) && (b->exp <= EXP_UNDER) &&
 	      denormal_operand() )
 	    return;
-#endif	/* DENORM_OPERAND */
+#endif /* DENORM_OPERAND */
 	  reg_move(b, dest);
 	  dest->sign ^= SIGN_POS^SIGN_NEG;
 	  return;
@@ -284,7 +284,7 @@ void reg_sub(FPU_REG *a, FPU_REG *b, FPU_REG *dest, int control_w)
 	      if ( (b->tag == TW_Valid) && (b->exp <= EXP_UNDER) &&
 		  denormal_operand() )
 		return;
-#endif	/* DENORM_OPERAND */
+#endif /* DENORM_OPERAND */
 	      reg_move(a, dest); return;
 	    }
 	  /* Both args are Infinity */
@@ -302,7 +302,7 @@ void reg_sub(FPU_REG *a, FPU_REG *b, FPU_REG *dest, int control_w)
 	  if ( (a->tag == TW_Valid) && (a->exp <= EXP_UNDER) &&
 	      denormal_operand() )
 	    return;
-#endif	/* DENORM_OPERAND */
+#endif /* DENORM_OPERAND */
 	  reg_move(b, dest);
 	  dest->sign ^= SIGN_POS^SIGN_NEG;
 	  return;

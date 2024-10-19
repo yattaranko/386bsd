@@ -91,7 +91,6 @@ uioapply(int (*func)(), int arg1, struct uio *uio)
 /* pass len bytes to a uio via a function*/
 int
 uiotofunc (int (*func)(caddr_t, char*, int), char *cp, int len, struct uio *uio, int order)
-/* uiotofunc (int (*func)(...), char *cp, int len, struct uio *uio, int order) */
 {
 	struct iovec *iov;
 	int cnt, rv;
@@ -125,8 +124,6 @@ uiotofunc (int (*func)(caddr_t, char*, int), char *cp, int len, struct uio *uio,
 int
 uiotofunc1 (int (*func)(int, caddr_t, char*, int), int arg, char *cp, int len, struct uio *uio,
 	 int order)
-/* uiotofunc1 (int (*func)(...), int arg, char *cp, int len, struct uio *uio,
-	 int order) */
 {
 	struct iovec *iov;
 	int cnt, rv;
@@ -168,10 +165,10 @@ uiomove(caddr_t cp, int len, struct uio *uio)
 	if (uio->uio_segflg == UIO_USERSPACE) {
 		if (uio->uio_rw == UIO_READ)
 			rv = uiotofunc1((int(*)())copyout, (int)uio->uio_procp,
-			    cp, len, uio, 0);
+			    cp, len, uio, 0 | 2);
 		else
 			rv = uiotofunc1((int(*)())copyin, (int)uio->uio_procp,
-			    cp, len, uio, 1);
+			    cp, len, uio, 1 | 2);
 	}
 
 	/* kernel */

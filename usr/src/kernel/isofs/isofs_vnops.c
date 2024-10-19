@@ -299,6 +299,8 @@ isofs_readdir(vp, uio, cred, eofflagp)
 			/* illegal directory, so stop looking */
 			break;
 
+		dirent.d_type = DT_UNKNOWN;
+
 		/*
 		 * if a directory, fake inode number on extent, otherwise
 		 * make unique with entry offset

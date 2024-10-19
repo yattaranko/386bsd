@@ -43,11 +43,11 @@ static char sccsid[] = "@(#)pwd_mkdb.c	5.5 (Berkeley) 5/6/91";
 
 #include <sys/param.h>
 #include <sys/stat.h>
-#include <signal.h>
-#include <fcntl.h>
+#include <sys/signal.h>
+#include <sys/fcntl.h>
 #include <db.h>
 #include <pwd.h>
-#include <errno.h>
+#include <sys/errno.h>
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>

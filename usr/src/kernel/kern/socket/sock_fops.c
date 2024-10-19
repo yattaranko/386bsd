@@ -49,7 +49,8 @@
 #include "route.h"
 
 
-int soo_read(struct file *fp, struct uio *uio, struct ucred *cred),
+/* static */ int
+	soo_read(struct file *fp, struct uio *uio, struct ucred *cred),
 	soo_write(struct file *fp, struct uio *uio, struct ucred *cred),
 	soo_ioctl(struct file *fp, int com, caddr_t data, struct proc *p),
 	soo_select(struct file *fp, int which, struct proc *p),
@@ -60,7 +61,7 @@ struct	fileops socketops =
     { soo_read, soo_write, soo_ioctl, soo_select, soo_close, soo_stat };
 
 /* perform a read() on a socket file descriptor */
-int
+/* static */ int
 soo_read(struct file *fp, struct uio *uio, struct ucred *cred)
 {
 
@@ -69,7 +70,7 @@ soo_read(struct file *fp, struct uio *uio, struct ucred *cred)
 }
 
 /* perform a write() on a socket file descriptor */
-int
+/* static */ int
 soo_write(struct file *fp, struct uio *uio, struct ucred *cred)
 {
 
@@ -78,7 +79,7 @@ soo_write(struct file *fp, struct uio *uio, struct ucred *cred)
 }
 
 /* perform a ioctl() on a socket file descriptor */
-int
+/* static */ int
 soo_ioctl(struct file *fp, int cmd, caddr_t data, struct proc *p)
 {
 	struct socket *so = (struct socket *)fp->f_data;
@@ -149,7 +150,7 @@ soo_ioctl(struct file *fp, int cmd, caddr_t data, struct proc *p)
 }
 
 /* examine socket of the file descriptor to see if it is select()ed */
-int
+/* static */ int
 soo_select(struct file *fp, int which, struct proc *p)
 {
 	struct socket *so = (struct socket *)fp->f_data;
@@ -189,7 +190,7 @@ soo_select(struct file *fp, int which, struct proc *p)
 }
 
 /* return the results for a stat() on a socket file descriptor */
-int
+/* static */ int
 soo_stat(struct file *fp, struct stat *ub, struct proc *p)
 {
 	struct socket *so = (struct socket *)fp->f_data;
@@ -203,7 +204,7 @@ soo_stat(struct file *fp, struct stat *ub, struct proc *p)
 }
 
 /* perform a close() on a socket file descriptor */
-int
+/* static */ int
 soo_close(struct file *fp, struct proc *p)
 {
 	int error = 0;

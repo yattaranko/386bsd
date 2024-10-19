@@ -37,7 +37,7 @@ static char sccsid[] = "@(#)res_init.c	6.15 (Berkeley) 2/24/91";
 
 #include <sys/param.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
+#include <domain/in.h>
 #include <arpa/inet.h>
 #include <arpa/nameser.h>
 #include <resolv.h>

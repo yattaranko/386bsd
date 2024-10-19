@@ -42,6 +42,7 @@ static char *ufs_config = "ufs 1.";
 #include "sys/ioctl.h"
 #include "uio.h"
 #include "sys/errno.h"
+#include "systm.h"	/* nblkdev */
 #include "proc.h"
 #include "specdev.h"
 #include "buf.h"
@@ -56,20 +57,23 @@ static char *ufs_config = "ufs 1.";
 #include "namei.h"
 #include "vnode.h"
 #include "ufs_quota.h"
+#include "ufs_inode.h"
 #include "ufs.h"
 #include "ufs_mount.h"
-#include "ufs_inode.h"
  
 #include "prototypes.h"
 
+extern int iget(struct inode* xp, ino_t ino, struct inode** ipp);
+extern void iput(register struct inode* ip);
+extern int iupdat(register struct inode* ip, struct timeval* ta, struct timeval* tm, int waitfor);
+
+static int sbupdate(struct ufsmount* mp, int waitfor);
 static int ufs_mountroot(void);
 static int ufs_mount(struct mount *mp, char *path, caddr_t data,
 	struct nameidata *ndp, struct proc *p);
 /* used by mfs until mfs independant of ufs */
-/*static*/ int mountfs(struct vnode *devvp, struct mount *mp, struct proc *p);
+/* static */ int mountfs(struct vnode *devvp, struct mount *mp, struct proc *p);
 
-static int ufs_mount(struct mount *mp, char *path, caddr_t data,
-	struct nameidata *ndp, struct proc *p);
 static int ufs_start(struct mount *mp, int flags, struct proc *p);
 static int ufs_unmount(struct mount *mp, int mntflags, struct proc *p);
 static int ufs_root(struct mount *mp, struct vnode **vpp);
@@ -121,6 +125,7 @@ static int
 ufs_mountroot(void)
 {
 	register struct mount *mp;
+	extern struct vnode *rootvp;
 	struct proc *p = curproc;	/* XXX */
 	struct ufsmount *ump;
 	register struct fs *fs;
@@ -138,7 +143,8 @@ ufs_mountroot(void)
 		free((caddr_t)mp, M_MOUNT);
 		return (error);
 	}
-	if (error = vfs_lock(mp)) {
+	error = vfs_lock(mp);
+	if (error != 0) {
 		(void)ufs_unmount(mp, 0, p);
 		free((caddr_t)mp, M_MOUNT);
 		return (error);
@@ -178,7 +184,8 @@ ufs_mount(struct mount *mp, char *path, caddr_t data, struct nameidata *ndp,
 	u_int size;
 	int error;
 
-	if (error = copyin(p, data, (caddr_t)&args, sizeof (struct ufs_args)))
+	error = copyin(p, data, (caddr_t)&args, sizeof (struct ufs_args));
+	if (error != 0)
 		return (error);
 
 	/* if mount request or filesystem is exported, update mount flag */
@@ -198,13 +205,22 @@ ufs_mount(struct mount *mp, char *path, caddr_t data, struct nameidata *ndp,
 	 * If updating, check whether changing from read-only to
 	 * read/write; if there is no device name, that's all we do.
 	 */
-	if (mp->mnt_flag & MNT_UPDATE) {
+	if (mp->mnt_flag & MNT_UPDATE)
+	{
 		ump = VFSTOUFS(mp);
 		fs = ump->um_fs;
 		if (fs->fs_ronly && (mp->mnt_flag & MNT_RDONLY) == 0)
+		{
 			fs->fs_ronly = 0;
+		}
+		if (fs->fs_ronly == 0)
+		{
+			fs->fs_clean = 0;
+		}
 		if (args.fspec == 0)
+		{
 			return (0);
+		}
 	}
 
 	/*
@@ -214,7 +230,8 @@ ufs_mount(struct mount *mp, char *path, caddr_t data, struct nameidata *ndp,
 	ndp->ni_nameiop = LOOKUP | FOLLOW;
 	ndp->ni_segflg = UIO_USERSPACE;
 	ndp->ni_dirp = args.fspec;
-	if (error = namei(ndp, p))
+	error = namei(ndp, p);
+	if (error != 0)
 		return (error);
 	devvp = ndp->ni_vp;
 	if (devvp->v_type != VBLK) {
@@ -249,7 +266,7 @@ ufs_mount(struct mount *mp, char *path, caddr_t data, struct nameidata *ndp,
 /*
  * Common code for mount and mountroot (also used by mfs)
  */
-/*static */int
+/* static */int
 mountfs(struct vnode *devvp, struct mount *mp, struct proc *p)
 {
 	register struct ufsmount *ump = (struct ufsmount *)0;
@@ -257,14 +274,15 @@ mountfs(struct vnode *devvp, struct mount *mp, struct proc *p)
 	register struct fs *fs;
 	dev_t dev = devvp->v_rdev;
 	struct partinfo dpart;
-	caddr_t base, space;
+	void* space;
 	int havepart = 0, blks;
 	int error, i, size;
 	int needclose = 0;
 	int ronly = (mp->mnt_flag & MNT_RDONLY) != 0;
+	extern struct vnode *rootvp;
 
-	if (error = VOP_OPEN(devvp, (ronly ? FREAD : FREAD|FWRITE) | FMOUNT,
-	    NOCRED, p))
+	error = VOP_OPEN(devvp, (ronly ? FREAD : FREAD|FWRITE) | FMOUNT, NOCRED, p);
+	if (error != 0)
 		return (error);
 	needclose = 1;
 	if (VOP_IOCTL(devvp, DIOCGPART, (caddr_t)&dpart, FREAD, NOCRED, p) != 0)
@@ -273,7 +291,8 @@ mountfs(struct vnode *devvp, struct mount *mp, struct proc *p)
 		havepart = 1;
 		size = dpart.disklab->d_secsize;
 	}
-	if (error = bread(devvp, SBLOCK, SBSIZE, NOCRED, &bp))
+	error = bread(devvp, SBLOCK, SBSIZE, NOCRED, &bp);
+	if (error != 0)
 		goto out;
 	fs = bp->b_un.b_fs;
 	if (fs->fs_magic != FS_MAGIC || fs->fs_bsize > MAXBSIZE ||
@@ -293,7 +312,10 @@ mountfs(struct vnode *devvp, struct mount *mp, struct proc *p)
 	fs = ump->um_fs;
 	fs->fs_ronly = ronly;
 	if (ronly == 0)
+	{
 		fs->fs_fmod = 1;
+		fs->fs_clean = 0;
+	}
 	if (havepart) {
 		dpart.part->p_fstype = FS_BSDFFS;
 		dpart.part->p_fsize = fs->fs_fsize;
@@ -301,8 +323,8 @@ mountfs(struct vnode *devvp, struct mount *mp, struct proc *p)
 		dpart.part->p_cpg = fs->fs_cpg;
 	}
 	blks = howmany(fs->fs_cssize, fs->fs_fsize);
-	base = space = (caddr_t)malloc((u_long)fs->fs_cssize, M_SUPERBLK,
-	    M_WAITOK);
+	space = malloc((u_long)fs->fs_cssize, M_SUPERBLK, M_WAITOK);
+	fs->fs_csp = space;
 	for (i = 0; i < blks; i += fs->fs_frag) {
 		size = fs->fs_bsize;
 		if (i + fs->fs_frag > blks)
@@ -310,18 +332,19 @@ mountfs(struct vnode *devvp, struct mount *mp, struct proc *p)
 		error = bread(devvp, fsbtodb(fs, fs->fs_csaddr + i), size,
 			NOCRED, &bp);
 		if (error) {
-			free((caddr_t)base, M_SUPERBLK);
+			free(fs->fs_csp, M_SUPERBLK);
 			goto out;
 		}
 		memcpy(space, (caddr_t)bp->b_un.b_addr, (u_int)size);
-		fs->fs_csp[fragstoblks(fs, i)] = (struct csum *)space;
-		space += size;
+//		fs->fs_csp[fragstoblks(fs, i)] = (struct csum *)space;
+		space = (char*)space + size;
 		brelse(bp);
 		bp = NULL;
 	}
 	mp->mnt_data = (qaddr_t)ump;
 	mp->mnt_stat.f_fsid.val[0] = (long)dev;
 	mp->mnt_stat.f_fsid.val[1] = MOUNT_UFS;
+	mp->mnt_maxsymlinklen = fs->fs_maxsymlinklen;
 	mp->mnt_flag |= MNT_LOCAL;
 	ump->um_mountp = mp;
 	ump->um_dev = dev;
@@ -393,15 +416,20 @@ ufs_unmount(struct mount *mp, int mntflags, struct proc *p)
 		 */
 	}
 #endif
-	if (error = vflush(mp, NULLVP, flags))
+	error = vflush(mp, NULLVP, flags);
+	if (error != 0)
 		return (error);
 	fs = ump->um_fs;
 	ronly = !fs->fs_ronly;
+	if (ronly)
+	{
+		fs->fs_clean = 1;
+	}
 	ump->um_devvp->v_specflags &= ~SI_MOUNTEDON;
 	error = VOP_CLOSE(ump->um_devvp, ronly ? FREAD : FREAD|FWRITE,
 		NOCRED, p);
 	vrele(ump->um_devvp);
-	free((caddr_t)fs->fs_csp[0], M_SUPERBLK);
+	free(fs->fs_csp, M_SUPERBLK);
 	free((caddr_t)fs, M_SUPERBLK);
 	free((caddr_t)ump, M_UFSMNT);
 	mp->mnt_data = (qaddr_t)0;
@@ -598,34 +626,33 @@ loop:
 /*
  * Write a superblock and associated information back to disk.
  */
-sbupdate(mp, waitfor)
-	struct ufsmount *mp;
-	int waitfor;
+int sbupdate(struct ufsmount* mp, int waitfor)
 {
 	register struct fs *fs = mp->um_fs;
 	register struct buf *bp;
 	int blks;
-	caddr_t space;
+	void* space;
 	int i, size, error = 0;
+
 
 	bp = getblk(mp->um_devvp, SBLOCK, (int)fs->fs_sbsize);
 	memcpy(bp->b_un.b_addr, (caddr_t)fs, (u_int)fs->fs_sbsize);
 	/* Restore compatibility to old file systems.		   XXX */
-	if (fs->fs_postblformat == FS_42POSTBLFMT)		/* XXX */
-		bp->b_un.b_fs->fs_nrpos = -1;			/* XXX */
+	if (fs->fs_postblformat == FS_42POSTBLFMT)			/* XXX */
+		bp->b_un.b_fs->fs_nrpos = -1;					/* XXX */
 	if (waitfor == MNT_WAIT)
 		error = bwrite(bp);
 	else
 		bawrite(bp);
 	blks = howmany(fs->fs_cssize, fs->fs_fsize);
-	space = (caddr_t)fs->fs_csp[0];
+	space = fs->fs_csp;
 	for (i = 0; i < blks; i += fs->fs_frag) {
 		size = fs->fs_bsize;
 		if (i + fs->fs_frag > blks)
 			size = (blks - i) * fs->fs_fsize;
 		bp = getblk(mp->um_devvp, fsbtodb(fs, fs->fs_csaddr + i), size);
 		memcpy(bp->b_un.b_addr, space, (u_int)size);
-		space += size;
+		space = (char*)space + size;
 		if (waitfor == MNT_WAIT)
 			error = bwrite(bp);
 		else
@@ -695,7 +722,8 @@ ufs_fhtovp(struct mount *mp, struct fid *fhp, struct vnode **vpp)
 	ip = VTOI(&tvp);
 	ip->i_vnode = &tvp;
 	ip->i_dev = VFSTOUFS(mp)->um_dev;
-	if (error = iget(ip, ufhp->ufid_ino, &nip)) {
+	error = iget(ip, ufhp->ufid_ino, &nip);
+	if (error != 0) {
 		*vpp = NULLVP;
 		return (error);
 	}

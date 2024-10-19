@@ -75,18 +75,18 @@ struct pager_struct;
 struct vm_object {
 	queue_chain_t		memq;		/* Resident memory */
 	queue_chain_t		object_list;	/* list of all objects */
-	int			ref_count;	/* How many refs?? */
-	vm_size_t		size;		/* Object size */
-	short			resident_page_count;
+	int					ref_count;	/* How many refs?? */
+	vm_size_t			size;		/* Object size */
+	short				resident_page_count;
 						/* number of resident pages */
 	struct vm_object	*copy;		/* Object that holds copies of
 						   my changed pages */
 	struct pager_struct	*pager;		/* Where to get data */
 	struct vm_object	*shadow;	/* My shadow */
-	vm_offset_t		shadow_offset;	/* Offset in shadow */
-	vm_offset_t		paging_offset;	/* Offset in pager */
+	vm_offset_t			shadow_offset;	/* Offset in shadow */
+	vm_offset_t			paging_offset;	/* Offset in pager */
 	unsigned int
-				paging_in_progress:16,
+						paging_in_progress:16,
 						/* Paging (in or out) - don't
 						   collapse or destroy */
 	/* boolean_t */		can_persist:1,	/* allow to persist */
@@ -98,20 +98,20 @@ typedef struct vm_object	*vm_object_t;
 
 struct vm_object_hash_entry {
 	queue_chain_t		hash_links;	/* hash chain links */
-	vm_object_t		object;		/* object we represent */
+	vm_object_t			object;		/* object we represent */
 };
 
 typedef struct vm_object_hash_entry	*vm_object_hash_entry_t;
 
 #ifdef	KERNEL
 queue_head_t	vm_object_cached_list;	/* list of objects persisting */
-int		vm_object_cached;	/* size of cached list */
+int				vm_object_cached;	/* size of cached list */
 
-long		vm_object_count;	/* count of all objects */
+long			vm_object_count;	/* count of all objects */
 					/* lock for object list and count */
 
-vm_object_t	kernel_object;		/* the single kernel object */
-vm_object_t	kmem_object;
+vm_object_t		kernel_object;		/* the single kernel object */
+vm_object_t		kmem_object;
 
 #endif	/* KERNEL */
 
@@ -121,7 +121,7 @@ vm_object_t	kmem_object;
 
 void	vm_object_init();
 vm_object_t
-	vm_object_allocate(vm_size_t size);
+		vm_object_allocate(vm_size_t size);
 void	vm_object_reference(vm_object_t object);
 void	vm_object_deallocate(vm_object_t object);
 void	vm_object_terminate(vm_object_t object);
@@ -141,13 +141,13 @@ void	vm_object_shadow(vm_object_t *object, vm_offset_t *offset,
 /*void	vm_object_setpager(vm_object_t object, struct pager_struct *pager,
 		vm_offset_t paging_offset, boolean_t read_only); */
 vm_object_t
-	vm_object_lookup(struct pager_struct *pager);
+		vm_object_lookup(struct pager_struct *pager);
 /*void	vm_object_enter(vm_object_t object, struct pager_struct *pager);*/
 void	vm_object_enter(vm_object_t object);
 void	vm_object_remove(struct pager_struct *pager);
 void	vm_object_collapse(vm_object_t object);
 boolean_t
-	vm_object_coalesce(vm_object_t prev_object, vm_object_t next_object,
+		vm_object_coalesce(vm_object_t prev_object, vm_object_t next_object,
 		vm_offset_t prev_offset, vm_offset_t next_offset,
 		vm_size_t prev_size, vm_size_t next_size);
 
@@ -158,5 +158,5 @@ boolean_t
 void	vm_object_print(vm_object_t object, boolean_t full);
 
 #define	vm_object_sleep(event, object, interruptible) \
-	thread_sleep((event), &(object)->Lock, (interruptible))
+		thread_sleep((event), &(object)->Lock, (interruptible))
 #endif	/* _VM_OBJECT_ */

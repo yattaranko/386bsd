@@ -37,8 +37,7 @@ static char sccsid[] = "@(#)ttydefaults.c	5.1 (Berkeley) 1/19/91";
 
 #include <sys/termios.h>
 
-set_ttydefaults(fd)
-	int fd;
+void set_ttydefaults(int fd)
 {
 	struct termios term;
 

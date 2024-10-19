@@ -37,7 +37,7 @@ static char sccsid[] = "@(#)ttyname.c	5.10 (Berkeley) 5/6/91";
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
+#include <sys/fcntl.h>
 #include <dirent.h>
 #include <sgtty.h>
 #include <db.h>
@@ -45,6 +45,8 @@ static char sccsid[] = "@(#)ttyname.c	5.10 (Berkeley) 5/6/91";
 #include <paths.h>
 
 static char buf[sizeof(_PATH_DEV) + MAXNAMLEN] = _PATH_DEV;
+
+static char* __oldttyname(int fd, struct stat *sb);
 
 char *
 ttyname(fd)
@@ -58,7 +60,7 @@ ttyname(fd)
 		mode_t type;
 		dev_t dev;
 	} bkey;
-	static char *__oldttyname();
+/*	static char *__oldttyname(); */
 
 	/* Must be a terminal. */
 	if (ioctl(fd, TIOCGETP, &ttyb) < 0)
@@ -82,9 +84,7 @@ ttyname(fd)
 }
 
 static char *
-__oldttyname(fd, sb)
-	int fd;
-	struct stat *sb;
+__oldttyname(int fd, struct stat *sb)
 {
 	register struct dirent *dirp;
 	register DIR *dp;

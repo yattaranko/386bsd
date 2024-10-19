@@ -37,7 +37,7 @@ static char sccsid[] = "@(#)linkaddr.c	5.2 (Berkeley) 2/24/91";
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <net/if_dl.h>
+#include <domain/if_dl.h>
 #include <string.h>
 
 /* States*/

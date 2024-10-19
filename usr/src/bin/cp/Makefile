@@ -2,5 +2,6 @@
 
 PROG=	cp
 SRCS=	cp.c path.c
+LDADD=	-lc
 
 .include <bsd.prog.mk>

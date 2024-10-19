@@ -11,6 +11,8 @@ SRCS=	auth_none.c auth_unix.c  authunix_prot.c bindresvport.c \
 	svc.c svc_auth.c svc_auth_unix.c svc_raw.c svc_run.c svc_simple.c \
 	svc_tcp.c svc_udp.c xdr.c xdr_array.c xdr_mem.c \
 	xdr_rec.c xdr_reference.c xdr_stdio.c
+NONSTDINC=-I${SRCHOME}/usr/src/include -I${SRCHOME}/usr/src/include/nonstd
+NONSTDINC+=-I${SRCHOME}/usr/src/kernel/include -I${SRCHOME}/usr/src/kernel/include/sys
 
 UNSUPPORTED=	xdr_float.c 
 
@@ -21,6 +23,6 @@ all: librpc.a
 
 beforeinstall: ${HDRS}
 	cd ${.CURDIR}; install -c -o ${BINOWN} -g ${BINGRP} -m 444 ${HDRS} \
-	    ${DESTDIR}/usr/include/nonstd/sun/rpc
+	    ${DESTDIR}${SRCHOME}/usr/include/nonstd/sun/rpc
 
 .include <bsd.lib.mk>

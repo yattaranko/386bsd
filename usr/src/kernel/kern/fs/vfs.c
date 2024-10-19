@@ -180,7 +180,7 @@ findvfs(int type) {
 	for(vfsp = vfs; vfsp ; vfsp = vfsp->vfs_next)
 		if (vfsp->vfs_type == type)
 			return (vfsp);
-	return (0);
+	return (MOUNT_NONE);
 }
 
 /* compose a partially implemented filesystem with parts from another */

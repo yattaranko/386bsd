@@ -125,24 +125,24 @@ npxattach(dvp)
 /*
  * Initialize floating point unit.
  */
-static void npxinit(control) {
-	static short wd;
-
-	if (npxexists == 0) return;
-
-
-	wd = control;
-	wd = 0x272;
-	asm ("	clts; fninit");
-	asm("	fldcw %0" : : "m" (wd));
-	if (curproc) {
-		struct pcb *pcbp = &curproc->p_addr->u_pcb;
-
-		asm("	fnsave %0 " : : "m" (pcbp->pcb_savefpu));
-		pcbp->pcb_flags |= FP_NEEDSRESTORE;
-	}
-	outb(0xf1,0);			/* reset coprocessor */
-}
+//npxinit(control) {
+//	static short wd;
+//
+//	if (npxexists == 0) return;
+//
+//
+//	wd = control;
+//	wd = 0x272;
+//	asm ("	clts; fninit");
+//	asm("	fldcw %0" : : "m" (wd));
+//	if (curproc) {
+//		struct pcb *pcbp = &curproc->p_addr->u_pcb;
+//
+//		asm("	fnsave %0 " : : "m" (pcbp->pcb_savefpu));
+//		pcbp->pcb_flags |= FP_NEEDSRESTORE;
+//	}
+//	outb(0xf1,0);			/* reset coprocessor */
+//}
 
 /*
  * Load floating point context and record ownership to suite
@@ -289,7 +289,7 @@ DRIVER_MODCONFIG(npx) {
 		return;
 
 	/* configure driver into kernel program */
-	cpu_dna = (void*)npxdna;
+	cpu_dna = npxdna;
 
 	/* probe for hardware */
 	new_isa_configure(&cfg_string, &npxdriver);

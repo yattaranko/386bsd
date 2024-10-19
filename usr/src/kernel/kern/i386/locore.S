@@ -52,7 +52,7 @@
  * primatives.
  */
 
-#include "assym.s"
+#include "assym.S"
 #include "sys/errno.h"
 
 #include "machine/psl.h"
@@ -89,24 +89,23 @@
  * It's used when modifying a process's page tables from a different process.
  */
 	.set	APDRPDROFF, 0x3FF	/* page dir index of alt page dir */
-	.globl	APTmap, _APTD, APTDpde
+	.globl	APTmap, APTD, APTDpde
 	.set	APTmap, 0xFFC00000
-	.set	_APTD, 0xFFFFF000
+	.set	APTD, 0xFFFFF000
 	.set	APTDpde, PTD + 4*APDRPDROFF
 
 /*
  * Initialization
  */
 	.data
-	.globl Exit_stack, cold, boothowto, bootdev, _atdevbase
+	.globl Exit_stack, cold, boothowto, bootdev, atdevbase
 	.globl _atdevphys, zero, VAKernelPTD, KernelPTD, KPTphys
-	.globl sclkpending, netpending
 
 	.space	NBPG
 Exit_stack:	/* Temporary stack to take interrupts on during exit */
 
 cold:			.long 1	/* cold till we are not */
-_atdevbase:		.long 0	/* location of start of iomem in virtual */
+atdevbase:		.long 0	/* location of start of iomem in virtual */
 _atdevphys:		.long 0	/* location of device mapping ptes (phys) */
 zero:			.long 0
 VAKernelPTD:	.long 0
@@ -114,8 +113,6 @@ KernelPTD:		.long 0
 KPTphys:		.long 0
 bootdev:		.long 0
 boothowto:		.long 0
-sclkpending:	.long 0 /* need to do a softclock() on return to basepri */
-netpending:		.long 0	/* need to do a netintr() on return to basepri */
 
 /*
  * run-time start-off of the kernel. the bootstrap has placed the
@@ -151,7 +148,7 @@ start:
 	movl	$bootdev-KERNBASE, %eax
 	call	reloc
 	movl	%edx, (%eax)
-	/* movl	$Exit_stack-KERNBASE, %esp */
+	/* movl	$_Exit_stack-KERNBASE, %esp */
 
 	/* count up memory after kernel image */
 	movl	$_end - KERNBASE, %eax
@@ -234,26 +231,26 @@ start:
 	movl	%esi, %eax
 	call	reloc
 	movl	%eax, %edx
-	movl	$KernelPTD - KERNBASE, %eax
+	movl	$KernelPTD-KERNBASE, %eax
 	call	reloc
 	movl	%edx, (%eax)
 
 	/* virtual address of Kernel PTD */
 	movl	%esi, %edx
 	addl	$KERNBASE, %edx
-	movl	$VAKernelPTD - KERNBASE, %eax
+	movl	$VAKernelPTD-KERNBASE, %eax
 	call	reloc
 	movl	%edx, (%eax)
 
 	/* logical address of proc 0 pcb/stk */
-	lea	NBPG(%esi), %eax
-	lea	KERNBASE(%eax), %edx
+	lea		NBPG(%esi), %eax
+	lea		KERNBASE(%eax), %edx
 	movl	$proc0paddr - KERNBASE, %eax
 	call	reloc
 	movl	%edx, (%eax)
 
 	/* logical address of kernel PT */
-	lea	(UPAGES + 1)*NBPG(%esi), %ebx
+	lea		(UPAGES+1)*NBPG(%esi), %ebx
 	movl	$KPTphys - KERNBASE, %eax
 	call	reloc
 	movl	%ebx, (%eax)
@@ -265,7 +262,7 @@ start:
 	/* kernel text pages */
 	movl	%edi, %ecx		/* this much virtual address space */
 	shrl	$PGSHIFT, %ecx
-	movl	$PG_V | PG_KR, %edx	/* read-only (for 486) */
+	movl	$PG_V|PG_KR, %edx	/* read-only (for 486) */
 	xorl	%eax, %eax		/*  starting at this address - 0 XXX */
 	call	rfillkpt
 
@@ -273,12 +270,12 @@ start:
 	movl	%esi, %ecx
 	subl	%edi, %ecx		/* remaining data pages */
 	shrl	$PGSHIFT, %ecx
-	addl	$UPAGES + 1 + NSYSMAP, %ecx	/* include initial state */
+	addl	$UPAGES+1+NSYSMAP, %ecx /* include initial state */
 	movl	$PG_V|PG_KW, %edx	/* read-write */
 	call	rfillkpt
 
 	/* map I/O memory map XXX */
-	movl	$_atdevphys - KERNBASE, %eax	/* record relative pte base */
+	movl	$_atdevphys-KERNBASE, %eax /* record relative pte base */
 	call	reloc
 	movl	%ebx, (%eax)
 	movl	$0x100-0xa0, %ecx	/* pages to map hole */
@@ -290,36 +287,36 @@ start:
  * Construct a page table directory
  */
 	/* install an entry for a temporary double map of bottom of VA */
-	lea	(UPAGES + 1)*NBPG(%esi), %eax	/* logical address of kernel page table */
+	lea		(UPAGES+1)*NBPG(%esi), %eax /* logical address of kernel page table */
 	movl	$PG_V|PG_KW, %edx	/* read-write */
-	movl	$1, %ecx			/* a single entry */
-	movl	%esi, %ebx			/* at the start of the page directory */
+	movl	$1, %ecx		/* a single entry */
+	movl	%esi, %ebx		/* at the start of the page directory */
 	call	rfillkpt
 
 	/* install a set of entries for the kernel's page tables */
-	lea	(UPAGES + 1)*NBPG(%esi), %eax /* logical address of kernel page table */
+	lea		(UPAGES+1)*NBPG(%esi), %eax /* logical address of kernel page table */
 	movl	$NSYSMAP, %ecx		/* for this many directory entries */
-	lea	SYSPDROFF*4(%esi), %ebx	/* offset into page directory of kernel program */
+	lea		SYSPDROFF*4(%esi), %ebx	/* offset into page directory of kernel program */
 	call	rfillkpt
 
 	/* install an entry recursively mapping the page directory as a page table */
-	movl	%esi, %eax			/* logical address of PTD in proc 0 */
-	movl	$1, %ecx			/* a single entry */
-	lea	PDRPDROFF*4(%esi), %ebx	/* below the kernel entries */
+	movl	%esi, %eax		/* logical address of PTD in proc 0 */
+	movl	$1, %ecx		/* a single entry */
+	lea		PDRPDROFF*4(%esi), %ebx	/* below the kernel entries */
 	call	rfillkpt
 
 	/* load base of page directory, and enable mapping */
-	movl	%esi, %eax			/* logical address of PTD in proc 0 */
+	movl	%esi, %eax		/* logical address of PTD in proc 0 */
 	call	reloc
 	movl	%eax, %ebx
-	movl	%eax, %cr3			/* load ptd addr into mmu */
-	movl	%cr0, %eax			/* get control word */
-	orl	$CR0_PG, %eax			/* turn on paging mode bit */
-	movl	%eax, %cr0			/* enter paged mode with this instr. */
+	movl	%eax, %cr3		/* load ptd addr into mmu */
+	movl	%cr0, %eax		/* get control word */
+	orl		$CR0_PG, %eax		/* turn on paging mode bit */
+	movl	%eax, %cr0		/* enter paged mode with this instr. */
 
 	/* assign stack for proc 0, at the end of it's pcb */
 	movl	proc0paddr, %eax
- 	addl	$UPAGES*NBPG - 4 * 12, %eax	/* XXX 4*12 is for printf's sake */
+ 	addl	$UPAGES*NBPG-4*12, %eax /* XXX 4*12 is for printf's sake */
  	movl	%eax, %esp
 
 	/* relocate program counter to high addresses */
@@ -337,12 +334,12 @@ begin:
 	subl	KPTphys, %edx		/* remove virt base of ptes */
 	shll	$PGSHIFT-2, %edx
 	addl	$KERNBASE, %edx
-	movl	%edx, _atdevbase	/* save virt addr */
+	movl	%edx, atdevbase	/* save virt addr */
 	addl	%eax, %edx
 	movl	%edx, Crtat
 
 	/* clear bss */
-	movl	$_end, %ecx			/* find end of kernel image */
+	movl	$_end, %ecx /* find end of kernel image */
 	movl	$_edata, %edi
 	subl	%edi, %ecx
 	xorl	%eax, %eax
@@ -351,7 +348,7 @@ begin:
 	stosb
 
 	/* clear first kernel stack */
-	movl	$(UPAGES * NBPG) / 4, %ecx
+	movl	$(UPAGES * NBPG)/4, %ecx
 	movl	proc0paddr, %edi
 	xorl	%eax, %eax
 	cld
@@ -359,7 +356,7 @@ begin:
 	stosl
 
 	/* locate first page after intialization state, pass as argument */
-	lea	(UPAGES+1+NSYSMAP)*NBPG(%esi), %eax
+	lea		(UPAGES+1+NSYSMAP)*NBPG(%esi), %eax
 	call	reloc
 	pushl	%eax
 
@@ -369,13 +366,13 @@ begin:
 	movw	%ax, %fs	/* bootstrap could have used these, zero */
 	movw	%ax, %gs
 
-	movl	$0, PTD		/* blow away temporary "low" directory entry? */
+	movl	$0, PTD /* blow away temporary "low" directory entry? */
 
 	/* bootstrap processor - void init386(int firstphys) */
 	call	init386
 	popl	%esi
 
-	/* void main(void) */
+	/* void _main(void) */
 	call 	_main
 
 	.globl	_ucodesel, _udatasel
@@ -383,14 +380,14 @@ begin:
 	movzwl	_udatasel, %ecx
 
 	/* build an outer stack frame to enter user mode to execute proc 0 */
-	pushl	%ecx			/* user ss */
+	pushl	%ecx		/* user ss */
 	pushl	$USRSTACK - 4	/* user esp */
-	pushl	%eax			/* user cs */
-	pushl	$0				/* user ip */
-	movw	%cx, %ds		/* user ds */
-	movw	%cx, %es		/* user es */
-	movw	%cx, %gs		/* XXX and ds to gs */
- 	lret					/* goto user */
+	pushl	%eax		/* user cs */
+	pushl	$0		/* user ip */
+	movw	%cx, %ds	/* user ds */
+	movw	%cx, %es	/* user es */
+	movw	%cx, %gs	/* XXX and ds to gs */
+ 	lret			/* goto user */
 
 #ifdef	DIAGNOSTIC
 	pushl	$1f	/* lret failed - "should never get here!" */
@@ -448,7 +445,7 @@ fillkpt:
 	popl	%eax
 
 	movl	%eax, (%ebx)	/* stuff pte */
-	orl	%edx, (%ebx)	/* add protection bits to pte */
+	orl		%edx, (%ebx)	/* add protection bits to pte */
 
 	addl	$NBPG, %eax	/* increment physical address */
 	popl	%ebx
@@ -456,14 +453,15 @@ fillkpt:
 	loop	fillkpt
 	ret
 
-.globl	___main
-___main:	ret		/* gcc 2 errata */
+# .globl	___main
+# ___main:	ret		/* gcc 2 errata */
 
 	.set	execve, 59
 	.set	exit, 1
 	.globl	icode
 	.globl	szicode
 
+	.global	printf
 /*
  * Icode is copied out to process 1 to exec /sbin/init.
  * If the execve() fails, process 1 exits.
@@ -507,11 +505,11 @@ szicode:
 	.globl	sigcode, szsigcode
 sigcode:
 	call	*12(%esp)
-	xorl	%eax, %eax			/* smaller movl $103, %eax */
+	xorl	%eax, %eax	/* smaller movl $103, %eax */
 	movb	$103, %al
 	/* enter kernel with args on stack */
 	lcall	$iBCSSYSCALLSEL, $0	/* sigreturn(); */
-	hlt							/* never gets here */
+	hlt			/* never gets here */
 
 szsigcode:
 	.long	szsigcode - sigcode
@@ -568,7 +566,7 @@ ENTRY(copyout_4)
 
 	andb	$7, %dl		/* if we are the one case that won't trap... */
 	cmpb	$5, %dl
-	jne		1f
+	jne	1f
 				/* ... then simulate the trap! */
 	pushl	8(%esp)
 	call	_trapwrite	/* trapwrite(addr) */
@@ -600,7 +598,7 @@ ENTRY(copyout_2)
 	movl	PTmap(%edx), %edx
 	andb	$7, %dl		/* if we are the one case that won't trap... */
 	cmpb	$5, %dl
-	jne		1f
+	jne	1f
 				/* ..., then simulate the trap! */
 	pushl	8(%esp)
 	call	_trapwrite	/* trapwrite(addr) */
@@ -735,10 +733,10 @@ ENTRY(copyoutstr)
 1:	ret
 
 7:	movl	$ENAMETOOLONG, %eax /* ran out of space in user process */
-	jmp		8b
+	jmp	8b
 
 9:	movl	$EFAULT, %eax /* detected a fault, return error */
-	jmp		8b
+	jmp	8b
 
 /*
  * Copy from kernel to user process:
@@ -766,18 +764,18 @@ ENTRY(copyout)
 	andb	$0xfc, %al
 	movl	PTmap(%eax), %eax
 
-	andb	$7, %al			/* if we are the one case that won't trap... */
+	andb	$7, %al		/* if we are the one case that won't trap... */
 	cmpb	$5, %al
 	jne		2f
 				/* ... then simulate the trap! */
 	pushl	%edi
-	call	_trapwrite		/* trapwrite(addr) */
+	call	_trapwrite	/* trapwrite(addr) */
 	popl	%eax
 
-	cmpl	$0, %eax		/* if not ok, return */
+	cmpl	$0, %eax	/* if not ok, return */
 	je		9f
 				/* otherwise, continue with reference */
-2:	movl	%edi, %eax		/* calculate the remainder in this page */
+2:	movl	%edi, %eax	/* calculate the remainder in this page */
 	andl	$NBPG-1, %eax
 	movl	$NBPG, %ecx
 	subl	%eax, %ecx
@@ -787,14 +785,13 @@ ENTRY(copyout)
 3:	subl	%ecx, %ebx
 	movl	%ecx, %edx
 
-	shrl	$2, %ecx		/* move a page fragment */
-	cld;
-	rep; movsl
+	shrl	$2, %ecx	/* move a page fragment */
+	cld; rep; movsl
 	movl	%edx, %ecx
 	andl	$3, %ecx
 	rep; movsb
 
-	cmpl	$0, %ebx		/* any remainder? */
+	cmpl	$0, %ebx	/* any remainder? */
 	jne		1b
 
 	popl	%ebx
@@ -805,7 +802,7 @@ ENTRY(copyout)
 	movl	%eax, PMD_ONFAULT(%edx)
 	ret
 
-9:	popl	%ebx			/* detected a fault, return error */
+9:	popl	%ebx		/* detected a fault, return error */
 	popl	%edi
 	popl	%esi
 	movl	4(%esp), %edx
@@ -817,7 +814,7 @@ ENTRY(copyout)
 
 /*
  * The following primitives manipulate the run queues.
- * whichqs tells which of the 32 queues qs
+ * _whichqs tells which of the 32 queues _qs
  * have processes in them.  Setrq puts processes into queues, Remrq
  * removes them from queues.  The running process is on no queue,
  * other processes are on a queue related to p->p_pri, divided by 4
@@ -832,7 +829,7 @@ ENTRY(copyout)
  * to wait for something to come ready.
  */
 	.globl	Idle
-	.align	4
+	.align 4
 Idle:
 	call	splnone			/* idle with all interrupts unmasked */
 	cmpl	$0, whichqs		/* if any process ready on queue, */
@@ -847,10 +844,9 @@ Idle:
  * volatile void final_swtch(void)
  */
 ENTRY(_swtch)
-ALTENTRY(final_swtch)
+ALTENTRY(_final_swtch)
 	PROC_ENTRY
-	incl	cnt + V_SWTCH
-
+	incl	cnt+V_SWTCH
 	/* mark as not in a process, remembering "old" process */
 	xorl	%eax, %eax
 	xchgl	%eax, curproc
@@ -917,6 +913,7 @@ swtch_selq:
 
 	ljmp	*(PMD_TSEL - 4)(%ecx)
 1:	movl	%eax, curproc		/* into next process */
+
 	ret
 
 #ifdef DIAGNOSTIC
@@ -948,7 +945,7 @@ ENTRY(qswtch)
 	/* stick on a queue */
 #ifdef	DIAGNOSTIC
 	cmpl	$0, P_RLINK(%eax)	/* should not be on q already */
-	jne		1f
+	jne	1f
 #endif
 	andl	$~MDP_RESCHED, PMD_FLAGS(%eax)
 	movzbl	P_PRI(%eax), %edx
@@ -1035,7 +1032,7 @@ common_traps:
 	pushal
 	nop
 	push	%ds
-	push	%es
+	push 	%es
 	movw	$KDSEL, %ax
 	movw	%ax,%ds
 	movw	%ax,%es
@@ -1078,8 +1075,8 @@ common_traps:
 	pushl	$T_ASTFLT ; \
 	pushal ; \
 	NOP ;					/* wait for 8259 recovery */ \
-	movb	$3, %al ; 		/* select ISR ... */ \
-	outb	%al, $IO_ICU1 ;	/* in 8259 unit 1 ...*/ \
+	movb	$3, %al ;	 	/* select ISR ... */ \
+	outb	%al, $IO_ICU1 ; /* in 8259 unit 1 ...*/ \
 	NOP ;					/* wait for 8259 recovery */ \
 	inb		$IO_ICU1, %al ;	/* grab ISR */ \
 	movb	%al, %dl ;		/* save ISR */ \
@@ -1118,7 +1115,7 @@ common_traps:
 	pushl	$T_ASTFLT ; \
 	pushal ; \
 	NOP ;					/* wait for 8259 recovery */ \
-	movb	$3, %al ; 		/* select ISR ... */ \
+	movb	$3, %al ;	 	/* select ISR ... */ \
 	outb	%al, $IO_ICU2 ; /* in 8259 unit 2 ...*/ \
 	NOP ;					/* wait for 8259 recovery */ \
 	inb		$IO_ICU2, %al ;	/* grab ISR */ \
@@ -1224,7 +1221,7 @@ common_traps:
 	outb	%al, $IO_ICU2; \
 	movb	$0x62, %al; 				/* next, as soon as possible send EOI ... */ \
 	outb	%al, $IO_ICU1;				/* ... so in service bit may be cleared ...*/ \
-	pushl	%ds; 						/* save our data and extra segments ... */ \
+	pushl	%ds;						/* save our data and extra segments ... */ \
 	pushl	%es; \
 	movw	$0x10, %ax;					/* ... and reload with kernel's own */ \
 	movw	%ax, %ds; \
@@ -1309,7 +1306,7 @@ splstart:	.long	0
 3:
 #define	DISFAILSAFE	cmpl	$0, splstart ;	\
 	je		4f ;				\
-	movl	$0, splstart ; 		\
+	movl	$0, splstart ;		\
 	call	_failsafe_cancel ;	\
 4:
 #else
@@ -1396,7 +1393,7 @@ je	9f*/
 	.globl	netintr
 #define DONET(s, c)	;		\
 	.globl	c ;				\
-	btrl	$ s , %ebx ; 	\
+	btrl	$ s , %ebx ;	\
 	jnc		1f ;			\
 	incl	cnt+V_SOFT ;	\
 	call	c ;				\
@@ -1405,7 +1402,7 @@ je	9f*/
 #define DONETS(isr, tmp)	;		\
 1:									\
 	bsfl	isr , tmp ;	/* find a software interrupt */ \
-	jz		1f	;					\
+	jz	 	1f	;					\
 	btrl	tmp , isr ; 			\
 	jnc		1f ; 					\
 	incl	cnt + V_SOFT ;			\
@@ -1466,7 +1463,7 @@ je	9f*/
 	NOP ; \
 	movb	%ah, %al ;						\
 	outb	%al, $IO_ICU2+1 ;				\
-	WRPOST ;					/* write post before restoring interrupts */	\
+	WRPOST ;	 				/* write post before restoring interrupts */	\
 	xchgl	%edx, cpl ;			/* exchange old/new priority level */	\
 	movl	%edx, %eax ;					\
 	sti ;						/* enable interrupts */		\

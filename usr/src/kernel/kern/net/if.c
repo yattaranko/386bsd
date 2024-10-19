@@ -57,8 +57,6 @@
 int	ifqmaxlen = IFQ_MAXLEN;
 struct	ifnet *ifnet;	/* head of list of interfaces */
 
-static void link_rtrequest(); /* , ether_output(); */
-
 /*
  * Network interface utility routines.
  *
@@ -66,7 +64,7 @@ static void link_rtrequest(); /* , ether_output(); */
  * parameters.
  */
 
-ifinit()
+void ifinit(void)
 {
 #ifdef nope
 	register struct ifnet *ifp;
@@ -101,7 +99,7 @@ static char *sprint_d();
  * Attach an interface to the
  * list of "active" interfaces.
  */
-void if_attach(ifp)
+if_attach(ifp)
 	struct ifnet *ifp;
 {
 	unsigned socksize, ifasize;
@@ -111,6 +109,7 @@ void if_attach(ifp)
 	register struct sockaddr_dl *sdl;
 	register struct ifaddr *ifa;
 	static int if_indexlim = 8;
+	extern link_rtrequest(); /* , ether_output(); */
 
 	while (*p)
 		p = &((*p)->if_next);
@@ -152,7 +151,7 @@ void if_attach(ifp)
 	ifasize = sizeof(*ifa) + 2 * socksize;
 	ifa = (struct ifaddr *)malloc(ifasize, M_IFADDR, M_WAITOK);
 	if (ifa == 0)
-		return;
+		return ( 0 );
 	ifnet_addrs[if_index - 1] = ifa;
 	(void) memset((caddr_t)ifa, 0, ifasize);
 	sdl = (struct sockaddr_dl *)(ifa + 1);
@@ -170,7 +169,7 @@ void if_attach(ifp)
 	while (namelen != 0)
 		sdl->sdl_data[--namelen] = 0xff;
 	ifa->ifa_next = ifp->if_addrlist;
-	ifa->ifa_rtrequest = (void*)link_rtrequest;
+	ifa->ifa_rtrequest = link_rtrequest;
 	ifp->if_addrlist = ifa;
 }
 /*
@@ -379,7 +378,7 @@ ifa_ifwithroute(int flags, struct sockaddr *dst, struct sockaddr *gateway)
  * Lookup an appropriate real ifa to point to.
  * This should be moved to /sys/net/link.c eventually.
  */
-void link_rtrequest(cmd, rt, sa)
+link_rtrequest(cmd, rt, sa)
 register struct rtentry *rt;
 struct sockaddr *sa;
 {
@@ -389,7 +388,7 @@ struct sockaddr *sa;
 
 	if (cmd != RTM_ADD || ((ifa = rt->rt_ifa) == 0) ||
 	    ((ifp = ifa->ifa_ifp) == 0) || ((dst = rt_key(rt)) == 0))
-		return;
+		return ( 0 );
 	if (ifa = ifaof_ifpforaddr(dst, ifp)) {
 		rt->rt_ifa = ifa;
 		if (ifa->ifa_rtrequest && ifa->ifa_rtrequest != link_rtrequest)
@@ -500,7 +499,7 @@ extern inline int
 arpioctl(int cmd, caddr_t data) {
 	int (*f)(int, caddr_t);
 
-	f = esym_fetch(arpioctl);
+	/*(const void *)*/ f = esym_fetch(arpioctl);
 	if (f == 0)
 		return(0);
 	return ((*f)(cmd, data));
@@ -589,7 +588,7 @@ ifioctl(so, cmd, data, p)
 		if (ifp->if_ioctl == NULL)
 			return (EOPNOTSUPP);
 		return ((*ifp->if_ioctl)(ifp, cmd, data));
-#endif	/* MULTICAST */
+#endif /* MULTICAST */
 
 	default:
 		if (so->so_proto == 0)

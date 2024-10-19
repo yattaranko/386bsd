@@ -42,8 +42,8 @@ static char sccsid[] = "@(#)stty.c	5.28 (Berkeley) 6/5/91";
 #endif /* not lint */
 
 #include <sys/types.h>
-#include <fcntl.h>
-#include <errno.h>
+#include <sys/fcntl.h>
+#include <sys/errno.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -54,9 +54,7 @@ static char sccsid[] = "@(#)stty.c	5.28 (Berkeley) 6/5/91";
 
 char *usage = "usage: stty: [-eg] [-f file] [options]";
 
-main(argc, argv) 
-	int argc;
-	char **argv;
+int main(int argc, char** argv)
 {
 	struct info i;
 	enum FMT fmt;
@@ -146,4 +144,6 @@ args:	argc -= optind;
 	if (i.wset && ioctl(i.fd, TIOCSWINSZ, &i.win) < 0)
 		warn("TIOCSWINSZ: %s", strerror(errno));
 	exit(0);
+
+	return 0;	// never reach here
 }

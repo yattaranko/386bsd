@@ -42,50 +42,50 @@ static char sccsid[] = "@(#)cmp.c	5.4 (Berkeley) 3/8/91";
 #include <sys/stat.h>
 #include "ls.h"
 
-namecmp(a, b)
-	LS *a, *b;
+int namecmp(a, b)
+	const LS *a, *b;
 {
 	return(strcmp(a->name, b->name));
 }
 
-revnamecmp(a, b)
-	LS *a, *b;
+int revnamecmp(a, b)
+	const LS *a, *b;
 {
 	return(strcmp(b->name, a->name));
 }
 
-modcmp(a, b)
-	LS *a, *b;
+int modcmp(a, b)
+	const LS *a, *b;
 {
 	return(b->lstat.st_mtime - a->lstat.st_mtime);
 }
 
-revmodcmp(a, b)
-	LS *a, *b;
+int revmodcmp(a, b)
+	const LS *a, *b;
 {
 	return(a->lstat.st_mtime - b->lstat.st_mtime);
 }
 
-acccmp(a, b)
-	LS *a, *b;
+int acccmp(a, b)
+	const LS *a, *b;
 {
 	return(b->lstat.st_atime - a->lstat.st_atime);
 }
 
-revacccmp(a, b)
-	LS *a, *b;
+int revacccmp(a, b)
+	const LS *a, *b;
 {
 	return(a->lstat.st_atime - b->lstat.st_atime);
 }
 
-statcmp(a, b)
-	LS *a, *b;
+int statcmp(a, b)
+	const LS *a, *b;
 {
 	return(b->lstat.st_ctime - a->lstat.st_ctime);
 }
 
-revstatcmp(a, b)
-	LS *a, *b;
+int revstatcmp(a, b)
+	const LS *a, *b;
 {
 	return(a->lstat.st_ctime - b->lstat.st_ctime);
 }

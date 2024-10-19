@@ -67,6 +67,7 @@
 #include <machine/stdarg.h>
 #undef KERNEL
 
+extern int putchar(char c);
 static void kprintn __P((u_long, int));
 
 void

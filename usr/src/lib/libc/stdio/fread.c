@@ -41,10 +41,7 @@ static char sccsid[] = "@(#)fread.c	5.4 (Berkeley) 5/4/91";
 #include <stdio.h>
 #include <string.h>
 
-fread(buf, size, count, fp)
-	void *buf;
-	size_t size, count;
-	register FILE *fp;
+unsigned int fread(void* buf, size_t size, size_t count, register FILE* fp)
 {
 	register size_t resid;
 	register char *p;

@@ -60,7 +60,7 @@ static char sccsid[] = "@(#)eval.c	5.3 (Berkeley) 4/12/91";
 #include "memalloc.h"
 #include "error.h"
 #include "mystring.h"
-#include <signal.h>
+#include <sys/signal.h>
 
 
 /* flags in argument to evaltree */

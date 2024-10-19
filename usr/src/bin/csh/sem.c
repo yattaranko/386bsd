@@ -38,8 +38,8 @@ static char sccsid[] = "@(#)sem.c	5.17 (Berkeley) 6/17/91";
 #include <sys/param.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <errno.h>
-#include <fcntl.h>
+#include <sys/errno.h>
+#include <sys/fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>

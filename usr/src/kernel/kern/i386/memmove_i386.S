@@ -2,12 +2,12 @@
  * Copyright (c) 1994 William F. Jolitz.
  * 386BSD Copyright Restrictions Apply. All Other Rights Reserved.
  *
- * $Id: memmove_i386.s,v 1.1 94/10/19 17:40:01 bill Exp $
+ * $Id: memmove_i386.S,v 1.1 94/10/19 17:40:01 bill Exp $
  * POSIX (overlapping) block memory move.
  */
 
 #include "asm.h"
-#include "assym.s"
+#include "assym.S"
 
 ENTRY(memmove)
 	pushl	%esi

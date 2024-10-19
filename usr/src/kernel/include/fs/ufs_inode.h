@@ -63,12 +63,111 @@ struct inode {
 	struct	dinode i_din;	/* the on-disk dinode */
 };
 
+/*---------------------------------------------------------------------------*/
+#if 0
+#define	TAILQ_ENTRY(type)						\
+struct {								\
+	struct type *tqe_next;	/* next element */			\
+	struct type **tqe_prev;	/* address of previous next element */	\
+}
+
+struct vn_clusterw {
+	daddr_t	v_cstart;			/* v start block of cluster */
+	daddr_t	v_lasta;			/* v last allocation  */
+	daddr_t	v_lastw;			/* v last write  */
+	int	v_clen;				/* v length of cur. cluster */
+};
+
+struct inode {
+	struct genfs_node i_gnode;
+	TAILQ_ENTRY(inode) i_nextsnap; /* snapshot file list. */
+	struct vnode 	*i_vnode;	/* Vnode associated with this inode. */
+	struct ufsmount *i_ump; /* Mount point associated with this inode. */
+	struct vnode 	*i_devvp;	/* Vnode for block I/O. */
+	u_long			i_flag;	/* flags, see below */
+	dev_t			i_dev;	/* Device associated with the inode. */
+	ino_t			i_number;	/* The identity of the inode. */
+
+	union {			/* Associated filesystem. */
+		struct	fs *fs;		/* FFS */
+		struct	lfs *lfs;	/* LFS */
+		struct	m_ext2fs *e2fs;	/* EXT2FS */
+	} inode_u;
+#define	i_fs	inode_u.fs
+#define	i_lfs	inode_u.lfs
+#define	i_e2fs	inode_u.e2fs
+
+	void			*i_unused1;	/* Unused. */
+	struct dquot	*i_dquot[MAXQUOTAS]; /* Dquot structures. */
+	u_quad			i_modrev;	/* Revision level for NFS lease. */
+	struct lockf	*i_lockf;/* Head of byte-level lock list. */
+
+	/*
+	 * Side effects; used during (and after) directory lookup.
+	 * XXX should not be here.
+	 */
+	struct ufs_lookup_results i_crap;
+	unsigned i_crapcounter;	/* serial number for i_crap */
+
+	/*
+	 * Inode extensions
+	 */
+	union {
+		/* Other extensions could go here... */
+		struct	ffs_inode_ext ffs;
+		struct	ext2fs_inode_ext e2fs;
+		struct  lfs_inode_ext *lfs;
+	} inode_ext;
+#define	i_snapblklist		inode_ext.ffs.ffs_snapblklist
+#define	i_ffs_first_data_blk	inode_ext.ffs.ffs_first_data_blk
+#define	i_ffs_first_indir_blk	inode_ext.ffs.ffs_first_indir_blk
+#define	i_e2fs_last_lblk	inode_ext.e2fs.ext2fs_last_lblk
+#define	i_e2fs_last_blk		inode_ext.e2fs.ext2fs_last_blk
+	/*
+	 * Copies from the on-disk dinode itself.
+	 *
+	 * These fields are currently only used by FFS and LFS,
+	 * do NOT use them with ext2fs.
+	 */
+	u_short		i_mode;		/* IFMT, permissions; see dinode.h. */
+	short		i_nlink;	/* File link count. */
+	u_quad		i_size;		/* File byte count. */
+	u_long		i_flags;	/* Status flags (chflags). */
+	long		i_gen;		/* Generation number. */
+	u_long		i_uid;		/* File owner. */
+	u_long		i_gid;		/* File group. */
+	u_short		i_omode;	/* Old mode, for ufs_reclaim. */
+
+	struct dirhash *i_dirhash;	/* Hashing for large directories */
+
+	/*
+	 * Data for extended attribute modification.
+ 	 */
+	u_char	  *i_ea_area;	/* Pointer to malloced copy of EA area */
+	unsigned  i_ea_len;	/* Length of i_ea_area */
+	int	  i_ea_error;	/* First errno in transaction */
+	int	  i_ea_refs;	/* Number of users of EA area */
+
+	/*
+	 * The on-disk dinode itself.
+	 */
+	union {
+		struct	ufs1_dinode *ffs1_din;	/* 128 bytes of the on-disk dinode. */
+		struct	ufs2_dinode *ffs2_din;
+		struct	ext2fs_dinode *e2fs_din; /* 128 bytes of the on-disk
+						   dinode. */
+	} i_din;
+};
+#endif
+/*---------------------------------------------------------------------------*/
+
 #define	i_mode		i_din.di_mode
 #define	i_nlink		i_din.di_nlink
 #define	i_uid		i_din.di_uid
 #define	i_gid		i_din.di_gid
 #if BYTE_ORDER == LITTLE_ENDIAN || defined(tahoe) /* ugh! -- must be fixed */
-#define	i_size		i_din.di_qsize.val[0]
+//#define	i_size		i_din.di_qsize.val[0]
+#define	i_size		i_din.di_qsize
 #else /* BYTE_ORDER == BIG_ENDIAN */
 #define	i_size		i_din.di_qsize.val[1]
 #endif
@@ -125,11 +224,13 @@ extern int		vttoif_tab[];
 
 extern u_long	nextgennumber;		/* next generation number to assign */
 
-extern ino_t	dirpref();
+/* extern ino_t	dirpref(); */
+extern ino_t dirpref(register struct fs* fs);
 
 /*
  * Lock and unlock inodes.
  */
+#if 0
 #ifdef notdef
 #define	ILOCK(ip) { \
 	while ((ip)->i_flag & ILOCKED) { \
@@ -149,6 +250,7 @@ extern ino_t	dirpref();
 #else
 #define ILOCK(ip)	ilock(ip)
 #define IUNLOCK(ip)	iunlock(ip)
+#endif
 #endif
 
 #define	IUPDAT(ip, t1, t2, waitfor) { \

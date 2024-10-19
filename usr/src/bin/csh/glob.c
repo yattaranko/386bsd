@@ -37,7 +37,7 @@ static char sccsid[] = "@(#)glob.c	5.21 (Berkeley) 6/25/91";
 
 #include <sys/param.h>
 #include <glob.h>
-#include <errno.h>
+#include <sys/errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>

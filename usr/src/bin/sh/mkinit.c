@@ -58,7 +58,7 @@ static char sccsid[] = "@(#)mkinit.c	5.3 (Berkeley) 3/13/91";
 
 #include <sys/cdefs.h>
 #include <stdio.h>
-#include <fcntl.h>
+#include <sys/fcntl.h>
 
 
 /*

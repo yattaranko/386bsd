@@ -33,148 +33,33 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)clock.c	7.2 (Berkeley) 5/12/91
+ *	@(#)isa_clock.c	7.2 (Berkeley) 5/12/91
  */
-
-/*
- * Primitive clock interrupt routines.
- */
-/* standard AT configuration: (will always be configured if loaded) */
-static	char *clk_config =
-	"clock (0 0).	# process timeslice clock $Revision$";
 
 #include "sys/param.h"
 #include "sys/time.h"
 #include "sys/errno.h"
-#include "tzfile.h"
-#include "kernel.h"
-#include "malloc.h"
-#include "modconfig.h"
+
 #include "prototypes.h"
-
-#include "machine/cpu.h"
-#include "machine/pcb.h"
-#include "machine/inline/io.h"
-
-#include "machine/icu.h"
 #include "isa_stdports.h"
-#include "isa_irq.h"
 #include "rtc.h"
-#include "isa_driver.h"
-
-#define DAYST 119
-#define DAYEN 303
-unsigned long it_ticks, it_ticksperintr;
-
 
 void startrtclock()
 {
 	int s;
 
-	/* initialize 8253 clock */
-	/* it_ticksperintr = 1193182/hz;
-	outb (IO_TIMER1+3, 0x34);
-	outb (IO_TIMER1, it_ticksperintr);
-	outb (IO_TIMER1, it_ticksperintr/256); */
-	
-
 	/* initialize brain-dead battery powered clock */
 	outb (IO_RTC, RTC_STATUSA);
-	outb (IO_RTC+1, 0x26);
+	outb (IO_RTC + 1, 0x26);
 	outb (IO_RTC, RTC_STATUSB);
-	outb (IO_RTC+1, 2);
+	outb (IO_RTC + 1, 2);
 
 	outb (IO_RTC, RTC_DIAG);
-	if (s = inb (IO_RTC+1))
+	s = inb (IO_RTC + 1);
+	if (s != 0)
+	{
 		printf("RTC BIOS diagnostic error %b\n", s, RTCDG_BITS);
+	}
 	outb (IO_RTC, RTC_DIAG);
-	outb (IO_RTC+1, 0);
-}
-
-static ena;
-/*
- * Wire clock interrupt in.
- */
-void enablertclock()
-{
-	ena=1;
-}
-
-static int hi = 0xffff;
-static int clkprobe(struct isa_device *dvp);
-static void clkattach(struct isa_device *dvp);
-static void clkintr(struct intrframe f);
-struct	isa_driver clkdriver = {
-	clkprobe, clkattach, (void (*)(int))clkintr, "clk", &hi
-};
-
-/*
- * Probe routine - look device, otherwise set emulator bit
- */
-static int
-clkprobe(struct isa_device *dvp)
-{
-	return (1);
-}
-
-static void
-clkattach(struct isa_device *dvp)
-{
-	printf("<Intel 8253/8254 PIT>");
-
-	splx(0xf); /* XXX */
-}
-
-static void
-clkintr(struct intrframe f)
-{
-	if (!ena) return;
-	splhigh();
-	it_ticks += it_ticksperintr;
-	hardclock(f.if_ppl, f.if_eip, f.if_cs);
-}
-
-extern u_short getit(int unit, int timer);
-unsigned long it_ticksperintr;
-
-KERNEL_MODCONFIG(clk)
-{
-	char *cfg_string;
-	
-	/* find configuration string. */
-	if (!config_scan(clk_config, &cfg_string)) 
-		return;
-
-	/* probe for hardware */
-	new_isa_configure(&cfg_string, &clkdriver);
-
-	/* initialize 8253 clock */
-	it_ticksperintr = 1193182/hz;
-	outb (IO_TIMER1+3, 0x34);
-	outb (IO_TIMER1, it_ticksperintr);
-	outb (IO_TIMER1, it_ticksperintr/256);
-
-	register int cnt;
-	int tick;
-	
-	/*
-	 * Find out how many loops we need to DELAY() a microsecond
-	 */
-
-	/* wait till overflow to insure no wrap around */
-	do
-		tick = getit(0,0);
-	while (tick < getit(0,0));
-
-	/* time a while loop */
-	cnt = 1000;
-	tick = getit(0,0);
-	while (cnt-- > 0)
-		;
-	tick -= getit(0,0);
-
-	/* scale to microseconds per 1000 "loops" */
-	tick *= 1000000;
-	tick /= 1193182;
-	loops_per_usec = (10000/tick + 5) / 10;
+	outb (IO_RTC + 1, 0);
 }

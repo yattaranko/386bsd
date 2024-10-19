@@ -48,32 +48,49 @@ static char sccsid[] = "@(#)umount.c	5.16 (Berkeley) 6/3/91";
 #ifdef NFS
 #include <sys/time.h>
 #include <sys/socket.h>
-#include <sys/socketvar.h>
+#include <domain/socketvar.h>
 #include <netdb.h>
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
 #include <rpc/pmap_prot.h>
-#include <nfs/rpcv2.h>
+#include <fs/nfs_rpc_v2.h>
 #endif
 
 #include <fstab.h>
 #include <stdio.h>
 #include <string.h>
 
+#define	__INLINE	extern inline
+#include "portable/inline/kernel/ulmin.h"
+#include "machine/inline/inet/htonl.h"
+#include "machine/inline/inet/htons.h"
+#include "machine/inline/inet/ntohl.h"
+#include "machine/inline/inet/ntohs.h"
+
 #ifdef NFS
-int xdr_dir();
+//int xdr_dir();
 char *nfshost;
 #endif
 
 int	vflag, all, errs, fake;
 int	fflag = MNT_NOFORCE;
-char	*getmntname();
+//char	*getmntname();
 
 #define	MNTON	1
 #define	MNTFROM	2
 #define	MNTTYPE 3
 
-int *typelist, *maketypelist();
+int *typelist/* , *maketypelist() */;
+static void usage();
+static void umountall(char** typelist);
+static int* maketypelist(char* fslist);
+static struct fstab* allocfsent(register struct fstab* fs);
+static void freefsent(register struct fstab *fs);
+static int umountfs(char *name, int *typelist);
+static char* getmntname(char* name, int what, int* type);
+static int badtype(int type, int *typelist);
+static int namematch(struct hostent *hp, char *nfshost);
+static int xdr_dir(XDR *xdrsp, char *dirp);
 
 main(argc, argv)
 	int argc;
@@ -137,7 +154,7 @@ main(argc, argv)
 	exit(errs);
 }
 
-usage()
+static void usage()
 {
 	fprintf(stderr,
 		"%s\n%s\n",
@@ -151,8 +168,7 @@ usage()
 	exit(1);
 }
 
-umountall(typelist)
-	char **typelist;
+static void umountall(char** typelist)
 {
 	register struct fstab *fs;
 	struct fstab *allocfsent();
@@ -175,9 +191,7 @@ umountall(typelist)
 	freefsent(fs);
 }
 
-struct fstab *
-allocfsent(fs)
-	register struct fstab *fs;
+static struct fstab* allocfsent(register struct fstab* fs)
 {
 	register struct fstab *new;
 	register char *cp;
@@ -197,8 +211,7 @@ allocfsent(fs)
 	return (new);
 }
 
-freefsent(fs)
-	register struct fstab *fs;
+static void freefsent(register struct fstab *fs)
 {
 
 	if (fs->fs_file)
@@ -210,9 +223,7 @@ freefsent(fs)
 	free((char *)fs);
 }
 
-umountfs(name, typelist)
-	char *name;
-	int *typelist;
+static int umountfs(char *name, int *typelist)
 {
 	char *mntpt;
 	struct stat stbuf;
@@ -306,11 +317,7 @@ umountfs(name, typelist)
 	return (1);
 }
 
-char *
-getmntname(name, what, type)
-	char *name;
-	int what;
-	int *type;
+static char* getmntname(char* name, int what, int* type)
 {
 	int mntsize, i;
 	struct statfs *mntbuf;
@@ -336,9 +343,7 @@ getmntname(name, what, type)
 
 static int skipvfs;
 
-badtype(type, typelist)
-	int type;
-	int *typelist;
+static int badtype(int type, int *typelist)
 {
 	if (typelist == 0)
 		return(0);
@@ -350,9 +355,7 @@ badtype(type, typelist)
 	return(!skipvfs);
 }
 
-int *
-maketypelist(fslist)
-	char *fslist;
+static int* maketypelist(char* fslist)
 {
 	register char *nextcp;
 	register int *av, i;
@@ -371,7 +374,8 @@ maketypelist(fslist)
 	if (av == NULL)
 		return(NULL);
 	for (i = 0; fslist; fslist = nextcp) {
-		if (nextcp = index(fslist, ','))
+		nextcp = index(fslist, ',');
+		if (nextcp != 0)
 			*nextcp++ = '\0';
 		if (strcmp(fslist, "ufs") == 0)
 			av[i++] = MOUNT_UFS;
@@ -389,9 +393,7 @@ maketypelist(fslist)
 }
 
 #ifdef	NFS
-namematch(hp, nfshost)
-	struct hostent *hp;
-	char *nfshost;
+static int namematch(struct hostent *hp, char *nfshost)
 {
 	register char *cp;
 	register char **np;
@@ -400,7 +402,8 @@ namematch(hp, nfshost)
 		return(1);
 	if (strcasecmp(nfshost, hp->h_name) == 0)
 		return(1);
-	if (cp = index(hp->h_name, '.')) {
+	cp = index(hp->h_name, '.');
+	if (cp != 0) {
 		*cp = '\0';
 		if (strcasecmp(nfshost, hp->h_name) == 0)
 			return(1);
@@ -408,7 +411,8 @@ namematch(hp, nfshost)
 	for (np = hp->h_aliases; *np; np++) {
 		if (strcasecmp(nfshost, *np) == 0)
 			return(1);
-		if (cp = index(*np, '.')) {
+		cp = index(*np, '.');
+		if (cp != 0) {
 			*cp = '\0';
 			if (strcasecmp(nfshost, *np) == 0)
 				return(1);
@@ -420,9 +424,7 @@ namematch(hp, nfshost)
 /*
  * xdr routines for mount rpc's
  */
-xdr_dir(xdrsp, dirp)
-	XDR *xdrsp;
-	char *dirp;
+static int xdr_dir(XDR *xdrsp, char *dirp)
 {
 	return (xdr_string(xdrsp, &dirp, RPCMNT_PATHLEN));
 }

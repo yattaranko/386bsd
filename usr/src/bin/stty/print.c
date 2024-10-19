@@ -46,12 +46,7 @@ static void  binit __P((char *));
 static void  bput __P((char *));
 static char *ccval __P((int));
 
-void
-print(tp, wp, ldisc, fmt)
-	struct termios *tp;
-	struct winsize *wp;
-	int ldisc;
-	enum FMT fmt;
+void print(struct termios* tp, struct winsize*wp, int ldisc, enum FMT fmt)
 {
 	register struct cchar *p;
 	register long tmp;
@@ -200,9 +195,7 @@ print(tp, wp, ldisc, fmt)
 static int col;
 static char *label;
 
-static void
-binit(lb)
-	char *lb;
+static void binit(char* lb)
 {
 	if (col) {
 		(void)printf("\n");
@@ -211,9 +204,7 @@ binit(lb)
 	label = lb;
 }
 
-static void
-bput(s)
-	char *s;
+static void bput(char* s)
 {
 	if (col == 0) {
 		col = printf("%s: %s", label, s);
@@ -227,9 +218,7 @@ bput(s)
 	col += printf(" %s", s);
 }
 
-static char *
-ccval(c)
-	int c;
+static char* ccval(int c)
 {
 	static char buf[5];
 	char *bp;

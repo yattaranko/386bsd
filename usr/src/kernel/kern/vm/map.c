@@ -296,13 +296,17 @@ vm_map_insert(vm_map_t map, vm_object_t object, vm_offset_t offset,
 	 * if it's part of an existing entry, this range is bogus.
 	 */
 	if (vm_map_lookup_entry(map, start, &prev_entry))
+	{
+//printf("start = %x\n", start);
 		return(KERN_NO_SPACE);
+	}
 
 	/* Assert that the next entry doesn't overlap the end point.*/
 	if ((prev_entry->next != &map->header) &&
 			(prev_entry->next->start < end))
-		return(KERN_NO_SPACE);
-
+	{
+			return(KERN_NO_SPACE);
+	}
 	/*
 	 * See if we can avoid creating a new entry by extending
 	 * one of our neighbors.
@@ -376,7 +380,9 @@ vm_map_lookup_entry(vm_map_t map, vm_offset_t address, vm_map_entry_t *entry)
 
 	/* check hint, and if no hint try first entry. */
 	if ((cur = map->hint) == last)
+	{
 		cur = cur->next;
+	}
 
 	/* is this an empty map ? */
 	if (cur == last) {
@@ -977,7 +983,6 @@ vmspace_allocate(struct vmspace *vs, vm_offset_t *va, vm_size_t sz, int anywhere
 	 * If we cannot allocate any pages of memory, don't
 	 * allow any additional address space allocations.
 	 */
-
 	if (curproc && curproc->p_vmspace == vs && chk4space(atop(sz)) == 0)
 		return(KERN_NO_SPACE);
 

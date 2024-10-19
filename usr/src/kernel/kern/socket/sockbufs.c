@@ -50,13 +50,14 @@
  * Primitive routines for operating on sockets and socket buffers
  */
 
-#if 0
 /* strings for sleep message: */
 char	netio[] = "netio";
 char	netcon[] = "netcon";
 char	netcls[] = "netcls";
 
 u_long	sb_max = SB_MAX;		/* patchable */
+
+static void sbappendrecord(register struct sockbuf* sb, register struct mbuf* m0);
 
 /*
  * Procedures to manipulate state flags of socket
@@ -250,7 +251,6 @@ socantsendmore(so)
 	so->so_state |= SS_CANTSENDMORE;
 	sowwakeup(so);
 }
-#endif
 
 socantrcvmore(so)
 	struct socket *so;
@@ -264,7 +264,6 @@ socantrcvmore(so)
  * Socket select/wakeup routines.
  */
 
-#if 0
 /*
  * Queue a process for a select on a socket buffer.
  */
@@ -314,7 +313,6 @@ sb_lock(sb)
 	sb->sb_flags |= SB_LOCK;
 	return (0);
 }
-#endif
 
 /*
  * Wakeup processes waiting on a socket buffer.
@@ -384,7 +382,6 @@ sowakeup(struct socket *so, struct sockbuf *sb)
  * should be released by calling sbrelease() when the socket is destroyed.
  */
 
-#if 0
 soreserve(so, sndcc, rcvcc)
 	register struct socket *so;
 	u_long sndcc, rcvcc;
@@ -516,9 +513,7 @@ sbcheck(sb)
  * As above, except the mbuf chain
  * begins a new record.
  */
-sbappendrecord(sb, m0)
-	register struct sockbuf *sb;
-	register struct mbuf *m0;
+void sbappendrecord(register struct sockbuf* sb, register struct mbuf* m0)
 {
 	register struct mbuf *m;
 
@@ -550,7 +545,7 @@ sbappendrecord(sb, m0)
  * is inserted at the beginning of the sockbuf,
  * but after any other OOB data.
  */
-sbinsertoob(sb, m0)
+void sbinsertoob(sb, m0)
 	register struct sockbuf *sb;
 	register struct mbuf *m0;
 {
@@ -792,4 +787,3 @@ sbdroprecord(sb)
 		} while (m = mn);
 	}
 }
-#endif

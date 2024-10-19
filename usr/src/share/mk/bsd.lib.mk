@@ -4,35 +4,40 @@
 .include "${.CURDIR}/../Makefile.inc"
 .endif
 
-LIBDIR?=	/usr/lib
-LINTLIBDIR?=	/usr/lib/lint
-LIBGRP?=	bin
-LIBOWN?=	bin
+SRCHOME?=	/home/share/386bsd-2.0
+LIBDIR?=	${SRCHOME}/usr/lib
+LINTLIBDIR?=	${SRCHOME}/usr/lib/lint
+#LIBGRP?=	bin
+LIBGRP?=	wheel
+#LIBOWN?=	bin
+LIBOWN?=	root
 LIBMODE?=	444
 
 STRIP?=	-s
 
-BINGRP?=	bin
-BINOWN?=	bin
+#BINGRP?=	bin
+BINGRP?=	wheel
+#BINOWN?=	bin
+BINOWN?=	root
 BINMODE?=	555
 
-INCARPA?=	-I/usr/include/nonstd/arpa
-INCOLDBSD?=	-I/usr/include/nonstd/bsd
-INCLASTBSD?=	-I/usr/include/nonstd/lastbsd
-INCDB?=		-I/usr/include/nonstd/db
-INCDEV?=	-I/usr/include/nonstd/dev
-INCFS?=		-I/usr/include/nonstd/fs
-INCGNU?=	-I/usr/include/nonstd/gnu
-INCIC?=		-I/usr/include/nonstd/ic
-INCKERNEL?=	-I/usr/include/nonstd/kernel
-INCNET?=	-I/usr/include/nonstd/net
-INCSUN?=	-I/usr/include/nonstd/sun
-CFLAGS+= ${NONSTDINC}
+INCARPA?=	-I${SRCHOME}/usr/include/nonstd/arpa
+INCOLDBSD?=	-I${SRCHOME}/usr/include/nonstd/bsd
+INCLASTBSD?=	-I${SRCHOME}/usr/include/nonstd/lastbsd
+INCDB?=		-I${SRCHOME}/usr/include/nonstd/db
+INCDEV?=	-I${SRCHOME}/usr/include/nonstd/dev
+INCFS?=		-I${SRCHOME}/usr/include/nonstd/fs
+INCGNU?=	-I${SRCHOME}/usr/include/nonstd/gnu
+INCIC?=		-I${SRCHOME}/usr/include/nonstd/ic
+INCKERNEL?=	-I${SRCHOME}/usr/include/nonstd/kernel
+INCNET?=	-I${SRCHOME}/usr/include/nonstd/net
+INCSUN?=	-I${SRCHOME}/usr/include/nonstd/sun
+CFLAGS+= -nostdinc -nostdlib -r ${NONSTDINC}
 .MAIN: all
 
 # prefer .s to a .c, add .po, remove stuff not used in the BSD libraries
 .SUFFIXES:
-.SUFFIXES: .out .o .po .s .c .f .y .l .9 .8 .7 .6 .5 .4 .3 .2 .1 .0
+.SUFFIXES: .out .o .po .s .S .c .f .y .l .9 .8 .7 .6 .5 .4 .3 .2 .1 .0
 
 .9.0 .8.0 .7.0 .6.0 .5.0 .4.0 .3.0 .2.0 .1.0:
 	nroff -mandoc ${.IMPSRC} > ${.TARGET}
@@ -43,7 +48,8 @@ CFLAGS+= ${NONSTDINC}
 	@mv a.out ${.TARGET}
 
 .c.po:
-	${CC} -p ${CFLAGS} -c ${.IMPSRC} -o ${.TARGET}
+#	${CC} -p ${CFLAGS} -c ${.IMPSRC} -o ${.TARGET}
+	${CC} ${CFLAGS} -c ${.IMPSRC} -o ${.TARGET}
 	@${LD} -X -r ${.TARGET}
 	@mv a.out ${.TARGET}
 
@@ -53,8 +59,20 @@ CFLAGS+= ${NONSTDINC}
 	@${LD} -x -r ${.TARGET}
 	@mv a.out ${.TARGET}
 
+.S.o:
+	${CC} -E ${CFLAGS:M-[ID]*} ${AINC} ${.IMPSRC} | \
+	    ${AS} -o ${.TARGET}
+	@${LD} -x -r ${.TARGET}
+	@mv a.out ${.TARGET}
+
 .s.po:
 	${CPP} -E -DPROF ${CFLAGS:M-[ID]*} ${AINC} ${.IMPSRC} | \
+	    ${AS} -o ${.TARGET}
+	@${LD} -X -r ${.TARGET}
+	@mv a.out ${.TARGET}
+
+.S.po:
+	${CC} -E -DPROF ${CFLAGS:M-[ID]*} ${AINC} ${.IMPSRC} | \
 	    ${AS} -o ${.TARGET}
 	@${LD} -X -r ${.TARGET}
 	@mv a.out ${.TARGET}
@@ -75,21 +93,21 @@ lib${LIB}.a:: ${OBJS}
 	@echo building standard ${LIB} library
 	@rm -f lib${LIB}.a
 	@${AR} cTq lib${LIB}.a `lorder ${OBJS} | tsort` ${LDADD}
-	ranlib lib${LIB}.a
+#	ranlib lib${LIB}.a
 
 POBJS+=	${OBJS:.o=.po}
 lib${LIB}_p.a:: ${POBJS}
 	@echo building profiled ${LIB} library
 	@rm -f lib${LIB}_p.a
 	@${AR} cTq lib${LIB}_p.a `lorder ${POBJS} | tsort` ${LDADD}
-	ranlib lib${LIB}_p.a
+#	ranlib lib${LIB}_p.a
 
 llib-l${LIB}.ln: ${SRCS}
 	${LINT} -C${LIB} ${CFLAGS} ${.ALLSRC:M*.c}
 
 .if !target(clean)
 clean:
-	rm -f a.out Errs errs mklog core ${CLEANFILES} ${OBJS} ${POBJS} \
+	rm -f .depend a.out Errs errs mklog core ${CLEANFILES} ${OBJS} ${POBJS} \
 	    profiled/*.o lib${LIB}.a lib${LIB}_p.a llib-l${LIB}.ln ${MANALL}
 .endif
 

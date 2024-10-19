@@ -57,6 +57,7 @@
 #include "sys/errno.h"
 #include "proc.h"
 #include "uio.h"
+#include "ufs_dinode.h"
 #include "buf.h"
 #include "specdev.h"
 #include "malloc.h"
@@ -69,6 +70,9 @@
 #include "vnode.h"
 
 #include "prototypes.h"
+
+extern int splbio();
+extern void ktrbio(struct vnode* vp, int func, int a1, int a2);
 
 struct buf *getnewbuf(int);
 extern	vm_map_t buffer_map;
@@ -115,17 +119,21 @@ bufinit()
 /*
  * Check to see if a block is currently memory resident.
  */
-extern inline struct buf *
+/* extern */ static inline struct buf *
 incore(struct vnode *vp, daddr_t blkno)
 {
 	struct buf *bh = BUFHASH(vp, blkno), *bp;
 
 	/* search hash chain, looking for a hit. */
 	for (bp = bh->b_forw; bp != bh ; bp = bp->b_forw)
+	{
 		/* hit? */
 		if (bp->b_lblkno == blkno && bp->b_vp == vp
 		    && (bp->b_flags & B_INVAL) == 0)
+		{
 			return (bp);
+		}
+	}
 	/* nope, a miss */
 	return(0);
 }
@@ -136,8 +144,7 @@ incore(struct vnode *vp, daddr_t blkno)
  * its contents according to the filesystem fill routine.
  */
 int
-bread(struct vnode *vp, daddr_t blkno, int size, struct ucred *cred,
-	struct buf **bpp)
+bread(struct vnode *vp, daddr_t blkno, int size, struct ucred *cred, struct buf **bpp)
 {
 	struct buf *bp;
 	int rv = 0;
@@ -145,26 +152,33 @@ bread(struct vnode *vp, daddr_t blkno, int size, struct ucred *cred,
 	bp = getblk (vp, blkno, size);
 
 	/* if not found in cache, do some I/O */
-	if ((bp->b_flags & B_CACHE) == 0 || (bp->b_flags & B_INVAL) != 0) {
+	if ((bp->b_flags & B_CACHE) == 0 || (bp->b_flags & B_INVAL) != 0)
+	{
 		bp->b_flags |= B_READ;
 		bp->b_flags &= ~(B_DONE|B_ERROR|B_INVAL);
 		if (cred != NOCRED)
+		{
 			crhold(cred);
+		}
 		bp->b_rcred = cred;
 		if (cred != NOCRED)
+		{
 			crhold(cred);
+		}
 		bp->b_wcred = cred;
 #ifdef KTRACE
 		if (curproc && KTRPOINT(curproc, KTR_BIO))
-			ktrbio(curproc->p_tracep, KTBIO_READ, vp, blkno);
+			ktrbio(curproc->p_tracep, KTBIO_READ, (int)vp, blkno);
 #endif
 		if (curproc)
+		{
 			curproc->p_stats->p_ru.ru_inblock++;
+		}
 		VOP_STRATEGY(bp);
 		rv = biowait (bp);
 	}
 	*bpp = bp;
-	
+
 	return (rv);
 }
 
@@ -182,32 +196,42 @@ breada(struct vnode *vp, daddr_t blkno, int size, daddr_t rablkno, int rabsize,
 	bp = getblk (vp, blkno, size);
 
 	/* if not found in cache, do some I/O */
-	if ((bp->b_flags & B_CACHE) == 0 || (bp->b_flags & B_INVAL) != 0) {
+	if ((bp->b_flags & B_CACHE) == 0 || (bp->b_flags & B_INVAL) != 0)
+	{
 		bp->b_flags |= B_READ;
 		bp->b_flags &= ~(B_DONE|B_ERROR|B_INVAL);
 		if (cred != NOCRED)
+		{
 			crhold(cred);
+		}
 		bp->b_rcred = cred;
 		if (cred != NOCRED)
+		{
 			crhold(cred);
+		}
 		bp->b_wcred = cred;
 #ifdef KTRACE
 		if (curproc && KTRPOINT(curproc, KTR_BIO))
-			ktrbio(curproc->p_tracep, KTBIO_READA1, vp, blkno);
+			ktrbio(curproc->p_tracep, KTBIO_READA1, (int)vp, blkno);
 #endif
 		if (curproc)
+		{
 			curproc->p_stats->p_ru.ru_inblock++;
+		}
 		VOP_STRATEGY(bp);
 		needwait++;
 	}
 	
 retry:
 	/* if not found in cache, allocate and do some I/O (overlapped with first) */
-	if ((rabp = incore(vp, rablkno)) == 0) {
+	if ((rabp = incore(vp, rablkno)) == 0)
+	{
 		struct buf *bh;
 
 		if ((rabp = getnewbuf(size)) == 0)
+		{
 			goto retry;
+		}
 		rabp->b_blkno = rabp->b_lblkno = rablkno;
 		bgetvp(vp, rabp);
 		x = splbio();
@@ -219,37 +243,48 @@ retry:
 		/* age block since it has not proven it's effectiveness */
 		rabp->b_flags |= B_READ | B_ASYNC | B_AGE;
 		if (cred != NOCRED)
+		{
 			crhold(cred);
+		}
 		rabp->b_rcred = cred;
 		if (cred != NOCRED)
+		{
 			crhold(cred);
+		}
 		rabp->b_wcred = cred;
 #ifdef KTRACE
 		if (curproc && KTRPOINT(curproc, KTR_BIO))
-			ktrbio(curproc->p_tracep, KTBIO_READA2, vp, rablkno);
+			ktrbio(curproc->p_tracep, KTBIO_READA2, (int)vp, rablkno);
 #endif
 		if (curproc)
+		{
 			curproc->p_stats->p_ru.ru_inblock++;
+		}
 		VOP_STRATEGY(rabp);
 	}
 	/* block has proven it's reason to be in buffer cache */
 	else
-	if (rabp->b_flags & B_AGE) {
+	if (rabp->b_flags & B_AGE)
+	{
 		/* put on the tail of the age queue */
-		if ((rabp->b_flags & B_BUSY) == 0) {
+		if ((rabp->b_flags & B_BUSY) == 0)
+		{
 			x = splbio();
 			rabp->b_flags |= B_BUSY;
 			bremfree(rabp);
 			splx(x);
 			brelse(rabp);
 		} else
+		{
 			rabp->b_flags &= ~B_AGE;
-			
+		}	
 	}
 	
 	/* wait for original I/O */
 	if (needwait)
+	{
 		rv = biowait (bp);
+	}
 
 	*bpp = bp;
 	return (rv);
@@ -286,7 +321,7 @@ bwrite(register struct buf *bp)
 #ifdef KTRACE
 		if (curproc && KTRPOINT(curproc, KTR_BIO))
 			ktrbio(curproc->p_tracep, KTBIO_WRITE,
-				bp->b_vp, bp->b_lblkno);
+				(int)bp->b_vp, bp->b_lblkno);
 #endif
 		VOP_STRATEGY(bp);
 		rv = biowait(bp);
@@ -354,21 +389,29 @@ bawrite(register struct buf *bp)
 {
 
 	if(!(bp->b_flags & B_BUSY))
+	{
 		panic("bawrite: not busy");
+	}
 
 	if(bp->b_flags & B_INVAL)
+	{
 		brelse(bp);
-	else {
+	}
+	else
+	{
 		int wasdelayed;
 
 		wasdelayed = bp->b_flags & B_DELWRI;
 		bp->b_flags &= ~(B_READ|B_DONE|B_ERROR|B_DELWRI);
-		if(wasdelayed) {
+		if(wasdelayed)
+		{
 			reassignbuf(bp, bp->b_vp);
 			bp->b_flags |= B_AGE;
 		}
 		else if (curproc)
+		{
 			curproc->p_stats->p_ru.ru_oublock++;
+		}
 
 		bp->b_flags |= B_DIRTY | B_ASYNC;
 		bp->b_vp->v_numoutput++;
@@ -376,7 +419,7 @@ bawrite(register struct buf *bp)
 		if (curproc && KTRPOINT(curproc, KTR_BIO))
 			ktrbio(curproc->p_tracep,
 			    wasdelayed ? KTBIO_DTOA: KTBIO_AWRITE,
-			    bp->b_vp, bp->b_lblkno);
+			    (int)bp->b_vp, bp->b_lblkno);
 #endif
 		VOP_STRATEGY(bp);
 	}
@@ -397,7 +440,7 @@ brelse(register struct buf *bp)
 		    (bp->b_flags & B_INVAL) ? KTBIO_INVALID :
 			((bp->b_flags & B_DELWRI) ? KTBIO_MODIFY :
 			    KTBIO_RELEASE),
-		    bp->b_vp, bp->b_lblkno);
+		    (int)bp->b_vp, bp->b_lblkno);
 #endif
 	/* anyone need a "free" block? */
 	x=splbio();
@@ -500,7 +543,7 @@ tryfree:
 
 #ifdef KTRACE
 	if (curproc && KTRPOINT(curproc, KTR_BIO))
-		ktrbio(curproc->p_tracep, KTBIO_RECYCLE, bp->b_vp,
+		ktrbio(curproc->p_tracep, KTBIO_RECYCLE, (int)bp->b_vp,
 			bp->b_lblkno);
 #endif
 
@@ -545,14 +588,20 @@ getblk(register struct vnode *vp, daddr_t blkno, int size)
 	struct buf *bp, *bh;
 	int x;
 
-	for (;;) {
-		if (bp = incore(vp, blkno)) {
+	for (;;)
+	{
+		bp = incore(vp, blkno);
+		if (bp != 0)
+		{
 			x = splbio();
-			if (bp->b_flags & B_BUSY) {
+			if (bp->b_flags & B_BUSY)
+			{
 #ifdef KTRACE
 				if (curproc && KTRPOINT(curproc, KTR_BIO))
+				{
 					ktrbio(curproc->p_tracep, KTBIO_BUSY,
-					    vp, blkno);
+					    (int)vp, blkno);
+				}
 #endif
 				bp->b_flags &= ~B_AGE;
 				bp->b_flags |= B_WANTED | B_CACHE;
@@ -563,17 +612,23 @@ getblk(register struct vnode *vp, daddr_t blkno, int size)
 #ifdef KTRACE
 			if (curproc && KTRPOINT(curproc, KTR_BIO))
 				ktrbio(curproc->p_tracep, KTBIO_REFERENCE,
-				    vp, blkno);
+				    (int)vp, blkno);
 #endif
 			bp->b_flags &= ~B_AGE;
 			bp->b_flags |= B_BUSY | B_CACHE;
 			bremfree(bp);
 			if (bp->b_bufsize != size)
+			{
 				allocbuf(bp, size);
-		} else {
-
-			if ((bp = getnewbuf(size)) == 0)
+			}
+		}
+		else
+		{
+			bp = getnewbuf(size);
+			if (bp == 0)
+			{
 				continue;
+			}
 			bp->b_blkno = bp->b_lblkno = blkno;
 			bgetvp(vp, bp);
 			x = splbio();
@@ -645,27 +700,68 @@ allocbuf(register struct buf *bp, int size)
  * Extract and return any errors associated with the I/O.
  * If an invalid block, force it off the lookup hash chains.
  */
+#if 1
 int
 biowait(register struct buf *bp)
 {
 	int x;
 
 	x = splbio();
-	while ((bp->b_flags & B_DONE) == 0) {
+	while ((bp->b_flags & B_DONE) == 0)
+	{
 		char *msg;
 
 		if (curproc->p_flag & SPAGE)
+		{
 			msg = "biowaitpg";
+		}
 		else
+		{
 			msg = "biowait";
+		}
 
 		tsleep((caddr_t)bp, PRIBIO, msg, 0);
 	}
 #ifdef KTRACE
 	if (curproc && KTRPOINT(curproc, KTR_BIO))
-		ktrbio(curproc->p_tracep, KTBIO_WAIT, bp->b_vp,
+		ktrbio(curproc->p_tracep, KTBIO_WAIT, (int)bp->b_vp,
 			bp->b_lblkno);
 #endif
+	if((bp->b_flags & B_ERROR) || bp->b_error)
+	{
+		if ((bp->b_flags & B_INVAL) == 0)
+		{
+			bp->b_flags |= B_INVAL;
+			bremhash(bp);
+			binshash(bp, bfreelist + BQ_AGE);
+		}
+
+		if (!bp->b_error)
+		{
+			bp->b_error = EIO;
+		}
+		else
+		{
+			bp->b_flags |= B_ERROR;
+		}
+		splx(x);
+		return (bp->b_error);
+	}
+	else
+	{
+		splx(x);
+		return (0);
+	}
+}
+#else
+int
+biowait(register struct buf *bp)
+{
+	int x;
+
+	x = splbio();
+	while ((bp->b_flags & B_DONE) == 0)
+		tsleep((caddr_t)bp, PRIBIO, "biowait", 0);
 	if((bp->b_flags & B_ERROR) || bp->b_error) {
 		if ((bp->b_flags & B_INVAL) == 0) {
 			bp->b_flags |= B_INVAL;
@@ -683,6 +779,7 @@ biowait(register struct buf *bp)
 		return (0);
 	}
 }
+#endif
 
 /*
  * Finish up operations on a buffer, calling an optional

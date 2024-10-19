@@ -10,7 +10,7 @@ __INLINE int
 copystr(void *from, void *to, u_int maxlength, u_int *lencopied)
 {
 	extern const int zero;		/* compiler bug workaround */
-	/* const void *f = from + zero;	*/ /* compiler bug workaround */
+	/* const void *f = from + zero; */	/* compiler bug workaround */
 	u_int req /* = maxlength */;
 	int rv;
 

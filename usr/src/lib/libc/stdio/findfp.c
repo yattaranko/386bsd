@@ -48,8 +48,8 @@ static char sccsid[] = "@(#)findfp.c	5.10 (Berkeley) 2/24/91";
 
 int	__sdidinit;
 
-#define NSTATIC	20	/* stdin + stdout + stderr + the usual */
-#define	NDYNAMIC 10	/* add ten more whenever necessary */
+#define NSTATIC		20	/* stdin + stdout + stderr + the usual */
+#define	NDYNAMIC	10	/* add ten more whenever necessary */
 
 #define	std(flags, file) \
 	{0,0,0,flags,file,{0},0,__sF+file,__sclose,__sread,__sseek,__swrite}
@@ -59,9 +59,9 @@ static FILE usual[NSTATIC - 3];	/* the usual */
 static struct glue uglue = { 0, NSTATIC - 3, usual };
 
 FILE __sF[3] = {
-	std(__SRD, STDIN_FILENO),		/* stdin */
-	std(__SWR, STDOUT_FILENO),		/* stdout */
-	std(__SWR|__SNBF, STDERR_FILENO)	/* stderr */
+	std(__SRD,			STDIN_FILENO),	/* stdin */
+	std(__SWR,			STDOUT_FILENO),	/* stdout */
+	std(__SWR|__SNBF,	STDERR_FILENO)	/* stderr */
 };
 struct glue __sglue = { &uglue, 3, __sF };
 

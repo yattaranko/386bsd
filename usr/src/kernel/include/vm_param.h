@@ -96,28 +96,29 @@ typedef int	boolean_t;
 
 #define	PAGE_SIZE	page_size	/* size of page in addressible units */
 #define PAGE_SHIFT	page_shift	/* number of bits to shift for pages */
+#define	PAGE_MASK	page_mask
 
 /* 
  *	Return values from the VM routines.
  */
-#define	KERN_SUCCESS		0
-#define	KERN_INVALID_ADDRESS	1
-#define	KERN_PROTECTION_FAILURE	2
-#define	KERN_NO_SPACE		3
-#define	KERN_INVALID_ARGUMENT	4
-#define	KERN_FAILURE		5
-#define	KERN_RESOURCE_SHORTAGE	6
-#define	KERN_NOT_RECEIVER	7
-#define	KERN_NO_ACCESS		8
+#define	KERN_SUCCESS				0
+#define	KERN_INVALID_ADDRESS		1
+#define	KERN_PROTECTION_FAILURE		2
+#define	KERN_NO_SPACE				3
+#define	KERN_INVALID_ARGUMENT		4
+#define	KERN_FAILURE				5
+#define	KERN_RESOURCE_SHORTAGE		6
+#define	KERN_NOT_RECEIVER			7
+#define	KERN_NO_ACCESS				8
 
 /*
  * 	Thread block return status.
  */
-#define	THREAD_AWAKENED		1
+#define	THREAD_AWAKENED				1
 
 
 #ifdef	ASSEMBLER
-#else	/* ASSEMBLER */
+#else	// ASSEMBLER
 /*
  *	Convert addresses to pages and vice versa.
  *	No rounding is used.

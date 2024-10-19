@@ -51,7 +51,7 @@ static char sccsid[] = "@(#)ps.c	5.43 (Berkeley) 7/1/91";
 #include <sys/kinfo.h>
 #include <nlist.h>
 #include <kvm.h>
-#include <errno.h>
+#include <sys/errno.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>

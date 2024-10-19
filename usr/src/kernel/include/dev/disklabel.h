@@ -159,7 +159,7 @@ struct disklabel {
 		u_short	p_cpg;		/* filesystem cylinders per group */
 	} d_partitions[MAXPARTITIONS];	/* actually may be more */
 };
-#else	/* LOCORE */
+#else /* LOCORE */
 	/*
 	 * offsets for asm boot files.
 	 */
@@ -170,7 +170,7 @@ struct disklabel {
 	.set	d_secpercyl,56
 	.set	d_secperunit,60
 	.set	d_end_,276		/* size of disk label */
-#endif	/* LOCORE */
+#endif /* LOCORE */
 
 /* d_type values: */
 #define	DTYPE_SMD		1		/* SMD, XSMD; VAX hp/up */
@@ -352,7 +352,7 @@ int writedisklabel(int, int (*)(), struct disklabel *,
 
 int bounds_check_with_label(struct buf *, struct disklabel *, int);
 #endif
-#endif	/* LOCORE */
+#endif /* LOCORE*/ 
 
 #if !defined(KERNEL) && !defined(LOCORE)
 

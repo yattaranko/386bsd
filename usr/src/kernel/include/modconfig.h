@@ -51,17 +51,17 @@
 enum modtype {
 	__MODT_FIRST__,		/* */
 	__MODT_ALL__,		/* (configure all) */
-	MODT_BUS,		/* bus adaptor/motherboard driver */
+	MODT_BUS,			/* bus adaptor/motherboard driver */
 	MODT_CONSOLE,		/* system console device driver */
 	MODT_EXTDMOD,		/* extended module services */
 	MODT_OLDMODT,		/* older version module configuration */
 	MODT_DRIVER,		/* device driver */
 	MODT_NETWORK, 		/* network protocol (or domain) */
 	MODT_FILESYSTEM,	/* filesystem */
-	MODT_LDISC,		/* terminal line discipline */
+	MODT_LDISC,			/* terminal line discipline */
 	MODT_SYSCALLS,		/* system calls */
 	MODT_KERNEL,		/* extended kernel function */
-	MODT_SLIP,		/* serial line ip  XXX */
+	MODT_SLIP,			/* serial line ip  XXX */
 	MODT_LOCALNET,		/* local net interface XXX */
 	/* add more here */
 	__MODT_LAST__,		/* */
@@ -103,7 +103,7 @@ struct modconfig {
 #define	NETWORK_MODCONFIG(dev)		__MODULE_CONFIG__(dev ## _ ## network, MODT_NETWORK)
 #define	FILESYSTEM_MODCONFIG(dev)	__MODULE_CONFIG__(dev ## _ ## filesystem, MODT_FILESYSTEM)
 #define	LDISC_MODCONFIG(dev)		__MODULE_CONFIG__(dev ## _ ## ldisc, MODT_LDISC)
-#define	SYSCALLS_MODCONFIG(dev) 	__MODULE_CONFIG__(dev ## _ ## syscalls, MODT_SYSCALLS)
+#define	SYSCALLS_MODCONFIG(dev)	 	__MODULE_CONFIG__(dev ## _ ## syscalls, MODT_SYSCALLS)
 #define	KERNEL_MODCONFIG(dev)		__MODULE_CONFIG__(dev ## _ ## kernel, MODT_KERNEL)
 #define	SLIP_MODCONFIG(dev)			__MODULE_CONFIG__(dev ## _ ## slip, MODT_SLIP)
 #define	LOCALNET_MODCONFIG(dev)		__MODULE_CONFIG__(dev ## _ ## localnet, MODT_LOCALNET)

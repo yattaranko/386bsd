@@ -469,6 +469,7 @@ obreak(p, uap, retval)
 		return(ENOMEM);
 	old = round_page(old + ctob(vm->vm_dsize));
 	diff = new - old;
+//printf("old = %x, new = %x, diff = %x\n", old, new, diff);
 	if (diff > 0) {
 		rv = vmspace_allocate(vm, &old, diff, FALSE);
 		if (rv != KERN_SUCCESS) {

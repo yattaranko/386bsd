@@ -9,11 +9,11 @@ FIRSTOBJ=	locore.o
 
 I386?=		$S/kern/i386
 
-locore.o: assym.s ${I386}/locore.S $S/include/${MACHINE}/trap.h \
+locore.o: assym.S ${I386}/locore.S $S/include/${MACHINE}/trap.h \
 	$S/include/${MACHINE}/psl.h \
 	$S/include/${MACHINE}/pmap.h $S/include/dev/isa_stdports.h \
 	$S/include/dev/isa_irq.h
-	${CPP} -I. -DLOCORE ${COPTS} ${I386}/locore.S | \
+	${CC} -E -traditional -I. -DLOCORE ${COPTS} ${I386}/locore.S | \
 		${AS} ${ASFLAGS} -o locore.o
 
 # symbols

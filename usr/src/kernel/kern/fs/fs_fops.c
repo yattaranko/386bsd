@@ -196,17 +196,8 @@ vn_close(vp, flags, cred, p)
  * Package up an I/O request on a vnode into a uio and do it.
  * [internal interface to file i/o for kernel only]
  */
-vn_rdwr(rw, vp, base, len, offset, segflg, ioflg, cred, aresid, p)
-	enum uio_rw rw;
-	struct vnode *vp;
-	caddr_t base;
-	int len;
-	off_t offset;
-	enum uio_seg segflg;
-	int ioflg;
-	struct ucred *cred;
-	int *aresid;
-	struct proc *p;
+int vn_rdwr(enum uio_rw rw, struct vnode* vp, caddr_t base, int len, off_t offset, enum uio_seg segflg,
+			int ioflg, struct ucred* cred, int* aresid, struct proc* p)
 {
 	struct uio auio;
 	struct iovec aiov;
@@ -296,7 +287,6 @@ vn_write(struct file *fp, struct uio *uio, struct ucred *cred)
 static int
 vn_statfile(struct file *fp, struct stat *sb, struct proc *p)
 {
-
 	return (vn_stat(((struct vnode *)fp->f_data), sb, p));
 }
 
@@ -352,11 +342,11 @@ vn_stat(struct vnode *vp, struct stat *sb, struct proc *p)
 	sb->st_rdev = vap->va_rdev;
 	sb->st_size = vap->va_size;
 	sb->st_atime = vap->va_atime.tv_sec;
-	sb->st_spare1 = 0;
+	sb->st_atimensec = 0;
 	sb->st_mtime = vap->va_mtime.tv_sec;
-	sb->st_spare2 = 0;
+	sb->st_mtimensec = 0;
 	sb->st_ctime = vap->va_ctime.tv_sec;
-	sb->st_spare3 = 0;
+	sb->st_ctimensec = 0;
 	sb->st_blksize = vap->va_blocksize;
 	sb->st_flags = vap->va_flags;
 	sb->st_gen = vap->va_gen;

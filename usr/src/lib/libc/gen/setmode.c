@@ -59,6 +59,8 @@ struct bitcmd {
 #define	CMD2_OBITS	0x08
 #define	CMD2_UBITS	0x10
 
+static void compress_mode(register struct bitcmd *set);
+
 /*
  * Given the old mode and an array of bitcmd structures, apply the operations
  * described in the bitcmd structures to the old mode, and return the new mode.
@@ -215,7 +217,7 @@ setmode(p)
 	mode_t mask;
 	struct bitcmd *set, *saveset, *endset;
 	int permXbits, setlen;
-	static int compress_mode();
+/*	static int compress_mode(); */
 
 	/*
 	 * Get a copy of the mask for the permissions that are mask relative.
@@ -389,9 +391,8 @@ dumpmode(set)
  * 'g' and 'o' commands continue to be separate.  They could probably be 
  * compacted, but it's not worth the effort.
  */
-static
-compress_mode(set)
-	register struct bitcmd *set;
+static void
+compress_mode(register struct bitcmd *set)
 {
 	register struct bitcmd *nset;
 	register int setbits, clrbits, Xbits, op;

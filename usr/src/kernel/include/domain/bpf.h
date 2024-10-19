@@ -221,7 +221,7 @@ extern inline void
 bpfattach(caddr_t *driverp, struct ifnet *ifp, u_int dlt, u_int hdrlen) {
 	void (*f)(caddr_t *, struct ifnet *, u_int, u_int);
 
-	(const void *) f = esym_fetch(bpfattach);
+	/* (const void *) */ f = esym_fetch(bpfattach);
 	if (f == 0) {
 		*driverp = 0;
 		return;
@@ -233,7 +233,7 @@ extern inline void
 bpf_mtap(caddr_t arg, struct mbuf *m) {
 	void (*f)(caddr_t, struct mbuf *);
 
-	(const void *) f = esym_fetch(bpf_mtap);
+	/* (const void *) */ f = esym_fetch(bpf_mtap);
 	if (f == 0)
 		return;
 	(*f)(arg, m);
@@ -243,7 +243,7 @@ extern inline void
 bpf_tap(caddr_t arg, u_char *pkt, u_int pktlen) {
 	void (*f)(caddr_t, u_char *, u_int);
 
-	(const void *) f = esym_fetch(bpf_tap);
+	/* (const void *) */ f = esym_fetch(bpf_tap);
 	if (f == 0)
 		return;
 	(*f)(arg, pkt, pktlen);

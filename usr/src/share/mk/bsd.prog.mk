@@ -9,43 +9,51 @@
 .9.0 .8.0 .7.0 .6.0 .5.0 .4.0 .3.0 .2.0 .1.0:
 	nroff -mandoc ${.IMPSRC} > ${.TARGET}
 
-CFLAGS+=${COPTS} ${NONSTDINC}
+LDONLY=ldonly
+
+SRCHOME?=		/home/share/386bsd-2.0
+CFLAGS+=		${COPTS} ${NONSTDINC}
+CFLAGS+=		-Os -nostdinc -nostdlib -nodefaultlibs
+CFLAGS+=		-I${SRCHOME}/usr/src/include -I${SRCHOME}/usr/src/kernel/include
+LDFLAGS+=		--image-base 0x00000000 -e start
+
+LDADD+=			-L${SRCHOME}/usr/lib -lutil
 
 STRIP?=	-s
 
-BINGRP?=	bin
-BINOWN?=	bin
-BINMODE?=	555
+BINGRP?=		wheel
+BINOWN?=		root
+BINMODE?=		555
 
-LIBCRT0?=	/usr/lib/crt0.o
-LIBC?=          /usr/lib/libc.a
+LIBCRT0?=		${SRCHOME}/usr/lib/crt0.o
+LIBC?=          ${SRCHOME}/usr/lib/libc.a
 # LIBCOMPAT?=	/usr/lib/libcompat.a
-LIBCURSES?=	/usr/lib/libcurses.a
-LIBDES?=	/usr/lib/libdes.a
-LIBL?=		/usr/lib/libl.a
-LIBLN?=		/usr/lib/libln.a
-LIBKDB?=	/usr/lib/libkdb.a
-LIBKRB?=	/usr/lib/libkrb.a
-LIBM?=		/usr/lib/libm.a
-LIBMP?=		/usr/lib/libmp.a
-LIBPC?=		/usr/lib/libpc.a
-LIBPLOT?=	/usr/lib/libplot.a
-LIBRESOLV?=	/usr/lib/libresolv.a
-LIBRPC?=	/usr/lib/librpc.a
-LIBTERM?=	/usr/lib/libterm.a
-LIBUTIL?=	/usr/lib/libutil.a
+LIBCURSES?=		${SRCHOME}/usr/lib/libcurses.a
+LIBDES?=		${SRCHOME}/usr/lib/libdes.a
+LIBL?=			${SRCHOME}/usr/lib/libl.a
+LIBLN?=			${SRCHOME}/usr/lib/libln.a
+LIBKDB?=		${SRCHOME}/usr/lib/libkdb.a
+LIBKRB?=		${SRCHOME}/usr/lib/libkrb.a
+LIBM?=			${SRCHOME}/usr/lib/libm.a
+LIBMP?=			${SRCHOME}/usr/lib/libmp.a
+LIBPC?=			${SRCHOME}/usr/lib/libpc.a
+LIBPLOT?=		${SRCHOME}/usr/lib/libplot.a
+LIBRESOLV?=		${SRCHOME}/usr/lib/libresolv.a
+LIBRPC?=		${SRCHOME}/usr/lib/librpc.a
+LIBTERM?=		${SRCHOME}/usr/lib/libterm.a
+LIBUTIL?=		${SRCHOME}/usr/lib/libutil.a
 
-INCARPA?=	-I/usr/include/nonstd/arpa
-INCOLDBSD?=	-I/usr/include/nonstd/bsd
-INCLASTBSD?=	-I/usr/include/nonstd/lastbsd
-INCDB?=		-I/usr/include/nonstd/db
-INCDEV?=	-I/usr/include/nonstd/dev
-INCFS?=		-I/usr/include/nonstd/fs
-INCGNU?=	-I/usr/include/nonstd/gnu
-INCIC?=		-I/usr/include/nonstd/ic
-INCKERNEL?=	-I/usr/include/nonstd/kernel
-INCNET?=	-I/usr/include/nonstd/net
-INCSUN?=	-I/usr/include/nonstd/sun
+INCARPA?=		-I${SRCHOME}/usr/include/nonstd/arpa
+INCOLDBSD?=		-I${SRCHOME}/usr/include/nonstd/bsd
+INCLASTBSD?=	-I${SRCHOME}/usr/include/nonstd/lastbsd
+INCDB?=			-I${SRCHOME}/usr/include/nonstd/db
+INCDEV?=		-I${SRCHOME}/usr/include/nonstd/dev
+INCFS?=			-I${SRCHOME}/usr/include/nonstd/fs
+INCGNU?=		-I${SRCHOME}/usr/include/nonstd/gnu
+INCIC?=			-I${SRCHOME}/usr/include/nonstd/ic
+INCKERNEL?=		-I${SRCHOME}/usr/include/nonstd/kernel
+INCNET?=		-I${SRCHOME}/usr/include/nonstd/net
+INCSUN?=		-I${SRCHOME}/usr/include/nonstd/sun
 
 .if defined(SHAREDSTRINGS)
 CLEANFILES+=strings
@@ -65,14 +73,14 @@ OBJS+=  ${SRCS:R:S/$/.o/g}
 ${PROG}: ${LIBCRT0} ${LIBC} ${OBJS} ${DPADD} 
 	${LD} ${LDFLAGS} -o ${.TARGET} ${LIBCRT0} ${OBJS} ${LIBC} ${LDADD}
 
-.else defined(LDONLY)
+.else # defined(LDONLY)
 
 ${PROG}: ${OBJS} ${LIBC} ${DPADD}
 	${CC} ${LDFLAGS} -o ${.TARGET} ${OBJS} ${LDADD}
 
 .endif
 
-.else defined(PROG)
+.else # defined(PROG)
 
 SRCS= ${PROG}.c
 

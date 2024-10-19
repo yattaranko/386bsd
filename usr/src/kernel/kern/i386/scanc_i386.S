@@ -2,7 +2,7 @@
  * Copyright (c) 1994 William F. Jolitz.
  * 386BSD Copyright Restrictions Apply. All Other Rights Reserved.
  *
- * $Id: scanc_i386.s,v 1.1 94/10/19 17:40:04 bill Exp $
+ * $Id: scanc_i386.S,v 1.1 94/10/19 17:40:04 bill Exp $
  * VAX scanc instruction simulation (used in UFS).
  */
 

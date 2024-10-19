@@ -5,7 +5,7 @@
  * $Id: ffs.h,v 1.1 94/06/09 18:19:56 bill Exp Locker: bill $
  * BSD find first set bit.
  */
-
+/*
 __INLINE int
 ffs(int bits) {
 	int rv;
@@ -16,3 +16,4 @@ ffs(int bits) {
 	asm ("1:");
 	return (0);
 }
+*/

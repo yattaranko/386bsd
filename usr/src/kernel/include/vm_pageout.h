@@ -87,4 +87,4 @@ extern int	vm_pages_needed;	/* should be some "event" structure */
 	(void) tsleep((caddr_t)&vm_page_free_count, PVM, s, 0); \
 }
 
-volatile void	vm_pageout(void);
+void	vm_pageout();

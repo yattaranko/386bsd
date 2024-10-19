@@ -47,18 +47,26 @@
 #include "ufs.h"
 #include "prototypes.h"
 
-extern u_long		hashalloc();
-extern ino_t		ialloccg();
-extern daddr_t		alloccg();
-extern daddr_t		alloccgblk();
-extern daddr_t		fragextend();
-extern daddr_t		blkpref();
-extern daddr_t		mapsearch();
-extern int		inside[], around[];
+extern u_long  hashalloc(struct inode*, int, long, int,
+						 u_long (*allocator)(struct inode*, int, daddr_t, int));
+extern ino_t   ialloccg(struct inode*, int, daddr_t, int);
+extern daddr_t alloccg(struct inode*, int, daddr_t, int);
+extern daddr_t alloccgblk(register struct fs*, register struct cg*, daddr_t);
+extern daddr_t fragextend(struct inode*, int, long, int, int);
+extern daddr_t blkpref(struct inode*, daddr_t, int, daddr_t*);
+extern daddr_t mapsearch(register struct fs*, register struct cg*, daddr_t, int);
+extern int	   realloccg(register struct inode*, off_t, daddr_t, int, int, struct buf**);
+extern void	   clrblock(struct fs*, u_char*, daddr_t);
+extern int	   isblock(struct fs*, unsigned char*, daddr_t);
+extern void	   setblock(struct fs*, unsigned char*, daddr_t);
+extern void	   fragacct(struct fs*, int, long fraglist[], int);
+extern int 	   iget(struct inode*, ino_t, struct inode**);
+extern int				inside[], around[];
 extern unsigned char	*fragtbl[];
 
-extern void blkfree(register struct inode *ip, daddr_t bno, off_t size);
-extern void ifree(struct inode *ip, ino_t ino, int mode);
+void blkfree(register struct inode*, daddr_t, off_t);
+void ifree(struct inode*, ino_t, int);
+static void fserr(struct fs*, uid_t, char*);
 
 /*
  * Allocate a block in the file system.
@@ -79,11 +87,7 @@ extern void ifree(struct inode *ip, ino_t ino, int mode);
  *   2) quadradically rehash into other cylinder groups, until an
  *      available block is located.
  */
-alloc(ip, lbn, bpref, size, bnp)
-	register struct inode *ip;
-	daddr_t lbn, bpref;
-	int size;
-	daddr_t *bnp;
+int alloc(register struct inode *ip, daddr_t lbn, daddr_t bpref, int size, daddr_t* bnp)
 {
 	daddr_t bno;
 	register struct fs *fs;
@@ -140,12 +144,8 @@ nospace:
  * the original block. Failing that, the regular block allocator is
  * invoked to get an appropriate block.
  */
-realloccg(ip, lbprev, bpref, osize, nsize, bpp)
-	register struct inode *ip;
-	off_t lbprev;
-	daddr_t bpref;
-	int osize, nsize;
-	struct buf **bpp;
+int realloccg(register struct inode* ip, off_t lbprev, daddr_t bpref,
+			  int osize, int nsize, struct buf** bpp)
 {
 	register struct fs *fs;
 	struct buf *bp, *obp;
@@ -171,7 +171,8 @@ realloccg(ip, lbprev, bpref, osize, nsize, bpp)
 	/*
 	 * Allocate the extra space in the buffer.
 	 */
-	if (error = bread(ITOV(ip), lbprev, osize, NOCRED, &bp)) {
+	error = bread(ITOV(ip), lbprev, osize, NOCRED, &bp);
+	if (error != 0) {
 		brelse(bp);
 		return (error);
 	}
@@ -185,7 +186,8 @@ realloccg(ip, lbprev, bpref, osize, nsize, bpp)
 	 * Check for extension in the existing location.
 	 */
 	cg = dtog(fs, bprev);
-	if (bno = fragextend(ip, cg, (long)bprev, osize, nsize)) {
+	bno = fragextend(ip, cg, (long)bprev, osize, nsize);
+	if (bno != 0) {
 		if (bp->b_blkno != fsbtodb(fs, bno))
 			panic("bad blockno");
 		ip->i_blocks += btodb(nsize - osize);
@@ -292,12 +294,7 @@ nospace:
  *   2) quadradically rehash into other cylinder groups, until an
  *      available inode is located.
  */
-ialloc(pip, ipref, mode, cred, ipp)
-	register struct inode *pip;
-	ino_t ipref;
-	int mode;
-	struct ucred *cred;
-	struct inode **ipp;
+int ialloc(register struct inode* pip, ino_t ipref, int mode, struct ucred* cred, struct inode** ipp)
 {
 	ino_t ino;
 	register struct fs *fs;
@@ -352,8 +349,7 @@ noinodes:
  * free inodes, the one with the smallest number of directories.
  */
 ino_t
-dirpref(fs)
-	register struct fs *fs;
+dirpref(register struct fs* fs)
 {
 	int cg, minndir, mincg, avgifree;
 
@@ -396,11 +392,7 @@ dirpref(fs)
  * schedule another I/O transfer.
  */
 daddr_t
-blkpref(ip, lbn, indx, bap)
-	struct inode *ip;
-	daddr_t lbn;
-	int indx;
-	daddr_t *bap;
+blkpref(struct inode* ip, daddr_t lbn, int indx, daddr_t* bap)
 {
 	register struct fs *fs;
 	register int cg;
@@ -471,12 +463,8 @@ blkpref(ip, lbn, indx, bap)
  */
 /*VARARGS5*/
 u_long
-hashalloc(ip, cg, pref, size, allocator)
-	struct inode *ip;
-	int cg;
-	long pref;
-	int size;	/* size for data blocks, mode for inodes */
-	u_long (*allocator)();
+hashalloc(struct inode *ip, int cg, long pref, int size,
+		  u_long (*allocator)(struct inode* ip, int cg, daddr_t ipref, int mode))
 {
 	register struct fs *fs;
 	long result;
@@ -524,11 +512,7 @@ hashalloc(ip, cg, pref, size, allocator)
  * if they are, allocate them.
  */
 daddr_t
-fragextend(ip, cg, bprev, osize, nsize)
-	struct inode *ip;
-	int cg;
-	long bprev;
-	int osize, nsize;
+fragextend(struct inode* ip, int cg, long bprev, int osize, int nsize)
 {
 	register struct fs *fs;
 	register struct cg *cgp;
@@ -594,11 +578,7 @@ fragextend(ip, cg, bprev, osize, nsize)
  * and if it is, allocate it.
  */
 daddr_t
-alloccg(ip, cg, bpref, size)
-	struct inode *ip;
-	int cg;
-	daddr_t bpref;
-	int size;
+alloccg(struct inode* ip, int cg, daddr_t bpref, int size)
 {
 	register struct fs *fs;
 	register struct cg *cgp;
@@ -688,29 +668,30 @@ alloccg(ip, cg, bpref, size)
  * blocks may be fragmented by the routine that allocates them.
  */
 daddr_t
-alloccgblk(fs, cgp, bpref)
-	register struct fs *fs;
-	register struct cg *cgp;
-	daddr_t bpref;
+alloccgblk(register struct fs* fs, register struct cg* cgp, daddr_t bpref)
 {
 	daddr_t bno;
-	int cylno, pos, delta;
-	short *cylbp;
-	register int i;
+	int cylno/* , pos, delta*/;
+//	short *cylbp;
+//	register int i;
 
-	if (bpref == 0) {
+	if (bpref == 0 || dtog(fs, bpref) != cgp->cg_cgx)
+	{
 		bpref = cgp->cg_rotor;
-		goto norot;
 	}
-	bpref = blknum(fs, bpref);
-	bpref = dtogd(fs, bpref);
-	/*
-	 * if the requested block is available, use it
-	 */
-	if (isblock(fs, cg_blksfree(cgp), fragstoblks(fs, bpref))) {
-		bno = bpref;
-		goto gotit;
+	else
+	{
+		bpref = blknum(fs, bpref);
+		bno = dtogd(fs, bpref);
+		/*
+		* if the requested block is available, use it
+		*/
+		if (isblock(fs, cg_blksfree(cgp), fragstoblks(fs, bno)))
+		{
+			goto gotit;
+		}
 	}
+#if 0
 	/*
 	 * check for a block available on the same cylinder
 	 */
@@ -766,6 +747,7 @@ alloccgblk(fs, cgp, bpref)
 		panic("alloccgblk: can't find blk in cyl");
 	}
 norot:
+#endif
 	/*
 	 * no blocks in the requested cylinder, so take next
 	 * available one in this cylinder group.
@@ -782,7 +764,7 @@ gotit:
 	cylno = cbtocylno(fs, bno);
 	cg_blks(fs, cgp, cylno)[cbtorpos(fs, bno)]--;
 	cg_blktot(cgp)[cylno]--;
-	fs->fs_fmod++;
+	fs->fs_fmod = 1;
 	return (cgp->cg_cgx * fs->fs_fpg + bno);
 }
 
@@ -796,11 +778,7 @@ gotit:
  *      inode in the specified cylinder group.
  */
 ino_t
-ialloccg(ip, cg, ipref, mode)
-	struct inode *ip;
-	int cg;
-	daddr_t ipref;
-	int mode;
+ialloccg(struct inode* ip, int cg, daddr_t ipref, int mode)
 {
 	register struct fs *fs;
 	register struct cg *cgp;
@@ -875,10 +853,7 @@ gotit:
  * free map. If a fragment is deallocated, a possible 
  * block reassembly is checked.
  */
-void blkfree(ip, bno, size)
-	register struct inode *ip;
-	daddr_t bno;
-	off_t size;
+void blkfree(register struct inode *ip, daddr_t bno, off_t size)
 {
 	register struct fs *fs;
 	register struct cg *cgp;
@@ -968,7 +943,8 @@ void blkfree(ip, bno, size)
 			cg_blktot(cgp)[i]++;
 		}
 	}
-	fs->fs_fmod++;
+//	fs->fs_fmod++;
+	fs->fs_fmod = 1;
 	bdwrite(bp, bp->b_vp);
 }
 
@@ -977,10 +953,7 @@ void blkfree(ip, bno, size)
  *
  * The specified inode is placed back in the free map.
  */
-void ifree(ip, ino, mode)
-	struct inode *ip;
-	ino_t ino;
-	int mode;
+void ifree(struct inode *ip, ino_t ino, int mode)
 {
 	register struct fs *fs;
 	register struct cg *cgp;
@@ -1035,11 +1008,7 @@ void ifree(ip, ino, mode)
  * available.
  */
 daddr_t
-mapsearch(fs, cgp, bpref, allocsiz)
-	register struct fs *fs;
-	register struct cg *cgp;
-	daddr_t bpref;
-	int allocsiz;
+mapsearch(register struct fs* fs, register struct cg* cgp, daddr_t bpref, int allocsiz)
 {
 	daddr_t bno;
 	int start, len, loc, i;
@@ -1099,10 +1068,7 @@ mapsearch(fs, cgp, bpref, allocsiz)
  * The form of the error message is:
  *	fs: error message
  */
-fserr(fs, uid, cp)
-	struct fs *fs;
-	uid_t uid;
-	char *cp;
+static void fserr(struct fs *fs, uid_t uid, char *cp)
 {
 
 	log(LOG_ERR, "uid %d on %s: %s\n", uid, fs->fs_fsmnt, cp);

@@ -36,7 +36,7 @@
 #include "proc.h"
 #include "prototypes.h"
 
-#include "../obj/assym.s"
+#include "../obj/assym.S"
 
 extern int cnt;
 extern int whichqs;
@@ -73,20 +73,13 @@ void swtch()
 {
     (*(&cnt + V_SWTCH))++;
 
-#if 1
     __asm__ volatile ("             \
         xorl    %eax, %eax;         \
         xchgl   %eax, curproc;      \
     	pushl	%eax;               \
     	pushl	%ebx;               \
 	    pushl	%esi");
-#else
-    __asm__ volatile ("             \
-        movl    curproc, %eax;      \
-    	pushl	%eax;               \
-    	pushl	%ebx;               \
-	    pushl	%esi");
-#endif
+
 __asm__ volatile
 ("swtch_selq:");
 

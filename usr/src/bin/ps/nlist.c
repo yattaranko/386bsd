@@ -39,7 +39,7 @@ static char sccsid[] = "@(#)nlist.c	5.5 (Berkeley) 7/1/91";
 #include <sys/time.h>
 #include <proc.h>
 #include <nlist.h>
-#include <errno.h>
+#include <sys/errno.h>
 #include <stdio.h>
 #include <string.h>
 

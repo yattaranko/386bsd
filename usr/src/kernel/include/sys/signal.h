@@ -216,5 +216,5 @@ int	sigvec __P((int, struct sigvec *, struct sigvec *));
 #endif /* !_ANSI_SOURCE && !_POSIX_SOURCE */
 __END_DECLS
 
-#endif	/* !KERNEL */
-#endif	/* !_SIGNAL_H_ */
+#endif	/* KERNEL */
+#endif	/* _SIGNAL_H_ */

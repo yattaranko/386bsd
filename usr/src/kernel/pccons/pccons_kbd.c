@@ -135,14 +135,16 @@ u_char shfts, ctls, alts, caps, num, stp;
 
 u_char odt, bdt;
 
+extern void wait(int n);
+
 u_char kbd() {
 	u_char dt, brk, act;
 	
 loop:
-	while(inb(0x64)&1 == 0);
+	while((inb(0x64)&1) == 0);
 	dt = inb(0x60);
 	do {
-		while(inb(0x64)&1 == 0);
+		while((inb(0x64)&1) == 0);
 	} while(dt == inb(0x60));
 	odt = dt;
 
@@ -199,7 +201,7 @@ loop:
 	goto loop;
 }
 
-scankbd() {
+int scankbd() {
 u_char c;
 	
 #ifdef notdef
@@ -220,7 +222,7 @@ u_char c;
 	return(1);
 }
 
-kbdreset()
+void kbdreset()
 {
 	u_char c;
 
@@ -258,7 +260,7 @@ u_char getchar() {
 }
 #endif
 
-reset_cpu() {
+void reset_cpu() {
 
 	while (inb(0x64)&2);	/* wait input ready */
 	outb(0x64,0xFE);	/* Reset Command */

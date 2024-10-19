@@ -2,5 +2,6 @@
 
 PROG=	sync
 MAN8=	sync.0
+SRCS=	sync.c
 
 .include <bsd.prog.mk>

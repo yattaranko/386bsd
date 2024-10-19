@@ -2,7 +2,8 @@
 
 PROG=	reboot
 DPADD=	${LIBUTIL}
-LDADD=	-lutil
+LDADD=	-lc -lutil
+SRCS=	reboot.c 
 
 MAN8=	reboot_${MACHINE}.0
 MLINKS=	reboot_${MACHINE}.8 reboot.8

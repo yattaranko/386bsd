@@ -56,8 +56,8 @@
  */
 
 /* Thread create/destroy */
-int cpu_tfork(struct proc *, struct proc *);
-void cpu_texit(struct proc *);
+extern int cpu_tfork(struct proc *, struct proc *);
+extern void cpu_texit(struct proc *);
 
 /* POSIX specific cpu-dependant functions */
 #define cpu_wait(p)			/* recover resources after exit() */
@@ -113,7 +113,7 @@ typedef struct clock_frame clockframe;
 #define	cpu_signotify(p)	(p)->p_md.md_flags |= MDP_AST
 
 extern int	sclkpending;	/* need to do a softclock() on return to basepri */
-extern int	netpending;		/* need to do a netintr() on return to basepri */
+extern int	netpending;	/* need to do a netintr() on return to basepri */
 extern volatile int	cpl;	/* current priority level(mask) of interrupt controller */
 
 /* global bit vector of options */

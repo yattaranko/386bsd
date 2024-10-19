@@ -219,7 +219,7 @@ vnode_pager_putpage(vm_pager_t pager, vm_page_t m, boolean_t sync)
 		printf("vnode_pager_putpage(%x, %x)\n", pager, m);
 #endif
 	if (pager == NULL)
-		return VM_PAGER_BAD;
+		return ( 0 );
 	err = vnode_pager_io((vn_pager_t)pager->pg_data, m, UIO_WRITE);
 	if (err == VM_PAGER_OK) {
 		m->clean = TRUE;			/* XXX - wrong place */

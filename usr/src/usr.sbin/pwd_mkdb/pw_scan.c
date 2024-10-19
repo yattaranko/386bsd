@@ -41,9 +41,9 @@ static char sccsid[] = "@(#)pw_scan.c	5.1 (Berkeley) 2/12/91";
  */
 
 #include <sys/param.h>
-#include <fcntl.h>
+#include <sys/fcntl.h>
 #include <pwd.h>
-#include <errno.h>
+#include <sys/errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

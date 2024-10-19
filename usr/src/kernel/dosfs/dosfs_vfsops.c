@@ -639,7 +639,7 @@ struct vfsops dosfs_vfsops = {
 	pcfs_start,
 	pcfs_unmount,
 	pcfs_root,
-	pcfs_quotactl,
+	(void *)pcfs_quotactl,
 	pcfs_statfs,
 	pcfs_sync,
 	pcfs_fhtovp,

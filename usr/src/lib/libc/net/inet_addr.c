@@ -36,7 +36,7 @@ static char sccsid[] = "@(#)inet_addr.c	5.10 (Berkeley) 2/24/91";
 #endif /* LIBC_SCCS and not lint */
 
 #include <sys/param.h>
-#include <netinet/in.h>
+#include <domain/in.h>
 #include <arpa/inet.h>
 #include <ctype.h>
 

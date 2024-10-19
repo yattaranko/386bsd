@@ -100,6 +100,7 @@ const struct varinit varinit[] = {
 };
 
 struct var *vartab[VTABSIZE];
+struct localvar *localvars;
 
 STATIC void unsetvar __P((char *));
 STATIC struct var **hashvar __P((char *));

@@ -1,0 +1,62 @@
+# -I/home/share/386bsd-2.0/usr/src/usr.bin/passwd -I/home/share/386bsd-2.0/usr/src/include -I/home/share/386bsd-2.0/usr/src/kernel/include local_passwd.c passwd.c /home/share/386bsd-2.0/usr/src/usr.bin/passwd/../../usr.bin/chpass/pw_copy.c /home/share/386bsd-2.0/usr/src/usr.bin/passwd/../../usr.sbin/vipw/pw_util.c
+local_passwd.o: local_passwd.c \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/include/pwd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/include/ctype.h \
+  /home/share/386bsd-2.0/usr/src/include/stdio.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h
+passwd.o: passwd.c /home/share/386bsd-2.0/usr/src/include/stdio.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h
+pw_copy.o: \
+  /home/share/386bsd-2.0/usr/src/usr.bin/passwd/../../usr.bin/chpass/pw_copy.c \
+  /home/share/386bsd-2.0/usr/src/include/pwd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/include/stdio.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h
+pw_util.o: \
+  /home/share/386bsd-2.0/usr/src/usr.bin/passwd/../../usr.sbin/vipw/pw_util.c \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/ansi.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/types.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/syslimits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/signal.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/trap.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/cdefs.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/param.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/endian.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/inline/inet.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/machine/limits.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/wait.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/time.h \
+  /home/share/386bsd-2.0/usr/src/include/time.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/fcntl.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/stat.h \
+  /home/share/386bsd-2.0/usr/src/include/unistd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd-2.0/usr/src/include/pwd.h \
+  /home/share/386bsd-2.0/usr/src/kernel/include/sys/errno.h \
+  /home/share/386bsd-2.0/usr/src/include/stdio.h \
+  /home/share/386bsd-2.0/usr/src/include/paths.h \
+  /home/share/386bsd-2.0/usr/src/include/string.h \
+  /home/share/386bsd-2.0/usr/src/include/stdlib.h

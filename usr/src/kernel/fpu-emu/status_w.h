@@ -88,6 +88,6 @@
   status_word &= ~(SW_C0|SW_C1|SW_C2|SW_C3); \
   status_word |= (cc) & (SW_C0|SW_C1|SW_C2|SW_C3); })
 
-#endif	/* __ASSEMBLER__ */
+#endif /* __ASSEMBLER__ */
 
-#endif	/* _STATUS_H_ */
+#endif /* _STATUS_H_ */

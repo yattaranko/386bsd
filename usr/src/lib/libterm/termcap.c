@@ -62,10 +62,10 @@ static	int hopcount;	/* detect infinite loops in termcap, init 0 */
 static	char pathbuf[PBUFSIZ];		/* holds raw path of filenames */
 static	char *pathvec[PVECSIZ];		/* to point to names in pathbuf */
 static	char **pvec;			/* holds usable tail of path vector */
-char	*tskip();
 char	*tgetstr();
-char	*tdecode();
 char	*getenv();
+static char* tskip(register char* bp);
+static char* tdecode(register char* str, char** area);
 
 /*
  * Get an entry for terminal name in buffer bp from the termcap file.
@@ -285,8 +285,7 @@ tnamatch(np)
  * into the termcap file in octal.
  */
 static char *
-tskip(bp)
-	register char *bp;
+tskip(register char* bp)
 {
 
 	while (*bp && *bp != ':')
@@ -389,9 +388,7 @@ tgetstr(id, area)
  * string capability escapes.
  */
 static char *
-tdecode(str, area)
-	register char *str;
-	char **area;
+tdecode(register char* str, char** area)
 {
 	register char *cp;
 	register int c;

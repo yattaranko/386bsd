@@ -62,8 +62,8 @@ struct lockf {
 /*
  * Public lock manipulation routines
  */
-extern struct lockf *lf_remove();	/* Remove a lock */
-extern struct lockf *lf_getblock();	/* Return the first blocking lock */
+extern struct lockf* lf_remove();	/* Remove a lock */
+extern struct lockf* lf_getblock(register struct lockf*);	/* Return the first blocking lock */
 
 #ifdef	LOCKF_DEBUG
 extern int lockf_debug;

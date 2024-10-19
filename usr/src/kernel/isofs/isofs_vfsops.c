@@ -328,6 +328,7 @@ iso_mountfs(devvp, mp, p)
 	mp->mnt_data = (qaddr_t)isomp;
 	mp->mnt_stat.f_fsid.val[0] = (long)dev;
 	mp->mnt_stat.f_fsid.val[1] = MOUNT_ISOFS;
+	mp->mnt_maxsymlinklen = 0;
 	mp->mnt_flag |= MNT_LOCAL;
 	isomp->im_mountp = mp;
 	isomp->im_dev = dev;

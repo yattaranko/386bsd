@@ -8,8 +8,10 @@
 
 #include "sys/types.h"
 
-putchar(c)
-char c;
+extern void sput(u_char c);
+extern void kbdreset();
+
+int putchar(char c)
 {
         if (c == '\n')
 		sput('\r');
@@ -17,7 +19,7 @@ char c;
 	return(0);
 }
 
-wait(n) {
+void wait(int n) {
 	int v;
 
 	while(n-- /* && (v = scankbd()) == 0*/);

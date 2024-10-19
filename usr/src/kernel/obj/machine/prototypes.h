@@ -16,7 +16,9 @@ __ISYM__(int, splhigh, (void))
 #undef __ISYM_ALIAS__
 #undef __ISYM_VERSION__
 u_char inb(u_short);
+#ifdef nope
 u_char inb_(const u_char);	/* constant */
+#endif
 u_char __inb(u_short);		/* recovery time */
 u_short inw(u_short);
 int inl(u_short);
@@ -24,7 +26,11 @@ void insb (u_short, caddr_t, int);
 void insw (u_short, caddr_t, int);
 void insl (u_short, caddr_t, int);
 void outb(u_short, u_char);
+void enable_intr();
+void disable_intr();
+#ifdef nope
 void outb_(const u_char, u_char);
+#endif
 void __outb(u_short, u_char);
 void outw(u_short, u_short);
 void outl(u_short, int);

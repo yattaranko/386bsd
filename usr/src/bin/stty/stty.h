@@ -34,7 +34,7 @@
  */
 
 #include <sys/ioctl.h>
-#include <termios.h>
+#include <sys/termios.h>
 
 struct info {
 	int fd;					/* file descriptor */

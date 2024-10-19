@@ -3,6 +3,7 @@
 LIB=	termcap
 CFLAGS+=-DCM_N -DCM_GT -DCM_B -DCM_D
 SRCS=	termcap.c tgoto.c tputs.c
+NONSTDINC=-I${SRCHOME}/usr/src/include -I${SRCHOME}/usr/src/kernel/include
 
 MAN3=	termcap.0
 MLINKS=	termcap.3 tgetent.3 termcap.3 tgetflag.3 termcap.3 tgetnum.3 \

@@ -43,7 +43,7 @@ static char *kern_config =
 #include "dmap.h"
 #include "machine/cpu.h"
 #include "filedesc.h"
-#include "kernel.h"		/* for boot time and time */
+#include "kernel.h"			/* for boot time and time */
 #include <kmem.h>
 #include <mbuf.h>
 #include "resourcevar.h"
@@ -58,38 +58,30 @@ static char *kern_config =
 #include "prototypes.h"
 
 
-char	copyright1[] =
-"386BSD Release 2.0 by William & Lynne Jolitz.";
-char	copyright2[] =
-"Copyright (c) 1989-1994 William F. Jolitz. All rights reserved.\n";
-
 /* kernel starts out with a single, statically created process */
-int	nprocs = 1;
+int	nprocs	= 1;
 
 /*
  * Components of process 0;
  * never freed.
  */
-struct	session session0;
-struct	pgrp pgrp0;
-struct	proc proc0;
+struct session session0;
+struct pgrp pgrp0;
+struct proc proc0;
 /* credentials never to be freed, superuser, role all, group wheel */
-struct	ucred ucred0 = { 2, 0, 0, 1, { 0 } };
-struct	pcred cred0 = { &ucred0, 0, 0, 0, 0, 1 };
-struct	filedesc0 filedesc0;
-struct	plimit limit0;
-struct	vmspace vmspace0, kernspace;
-struct	pstats pstat0;
-struct	proc *curproc = &proc0;
-struct	proc *initproc, *pageproc;
-struct	timeval boottime;
-
-extern	struct user *proc0paddr;
-extern	int (*mountroot)();
-
+struct ucred ucred0 = { 2, 0, 0, 1, { 0 } };
+struct pcred cred0 = { &ucred0, 0, 0, 0, 0, 1 };
+struct filedesc0 filedesc0;
+struct plimit limit0;
+struct vmspace vmspace0, kernspace;
+struct pstats pstat0;
+struct proc *curproc = &proc0;
+struct proc *initproc, *pageproc;
 struct vfsops *rootvfs;
 struct vnode *rootvp;
 struct vnode *rootdir;
+
+extern struct user *proc0paddr;
 extern int boothowto;
 extern int bootdev;
 extern int cold;
@@ -104,16 +96,17 @@ int tzh, dst;
 #define MAXPROC		(20 + 16 * MAXUSERS)
 
 /* process rescheduling clock interval */
-int	 hz				= HZ;
-int	 tick 			= 1000000 / HZ;			/* microseconds in a clock "tick" */
-int	 tickadj		= 240000 / (60 * HZ);	/* microseconds of adjustment in a minute */
-int  maxusers		= MAXUSERS;
-int  maxproc		= MAXPROC;
-long desiredvnodes	= 2 * MAXPROC + 100;
-int  maxfiles		= 3 * MAXPROC + 100;
-int  ncallout		= 16 + MAXPROC;
+const int	hz				= HZ;
+const int	tick 			= 1000000 / HZ;			/* microseconds in a clock "tick" */
+const int	tickadj			= 240000 / (60 * HZ);	/* microseconds of adjustment in a minute */
+const int	maxusers		= MAXUSERS;
+const int	maxproc			= MAXPROC;
+const long	desiredvnodes	= 2 * MAXPROC + 100;
+const int	maxfiles		= 3 * MAXPROC + 100;
+const int	ncallout		= 16 + MAXPROC;
 
 struct timezone tz;
+
 struct proc *pidhash[64];
 struct pgrp *pgrphash[64];
 int pidhashmask = 64 - 1;
@@ -121,27 +114,21 @@ int pidhashmask = 64 - 1;
 /* virtual memory */
 static int pgsz, kmemsz, kmemall;
 
-struct namelist kern_options[] =
+static struct namelist kern_options[] =
 {
-	"maxusers",			&maxusers,		NUMBER,
-	"hz", 				&hz,			NUMBER,
-	"maxproc",			&maxproc,		NUMBER,
-	"desiredvnodes",	&desiredvnodes,	NUMBER,
-	"maxfiles",			&maxfiles,		NUMBER,
-	"ncallout",			&ncallout,		NUMBER,
-	"tz",				&tzh,			NUMBER,
-	"dst",				&dst,			NUMBER,
-	"pagesize",			&pgsz,			NUMBER,
-	"kmemsize",			&kmemsz,		NUMBER,
-	"kmemalloc",		&kmemall,		NUMBER,
-	0,					0,				0
+	"maxusers",			(void*)&maxusers,		NUMBER,
+	"hz", 				(void*)&hz,				NUMBER,
+	"maxproc",			(void*)&maxproc,		NUMBER,
+	"desiredvnodes",	(void*)&desiredvnodes,	NUMBER,
+	"maxfiles",			(void*)&maxfiles,		NUMBER,
+	"ncallout",			(void*)&ncallout,		NUMBER,
+	"tz",				&tzh,					NUMBER,
+	"dst",				&dst,					NUMBER,
+	"pagesize",			&pgsz,					NUMBER,
+	"kmemsize",			&kmemsz,				NUMBER,
+	"kmemalloc",		&kmemall,				NUMBER,
+	0,					0,						0
 };
-
-/*
- * Usually not configurable parameters
- */
-int fscale = FSCALE;			/* kernel uses `FSCALE', user uses `fscale' */
-int nmbclusters = NMBCLUSTERS;	/* number of mbuf clusters in free pool*/
 
 extern void		startrtclock(void);
 extern void		enablertclock(void);
@@ -154,12 +141,28 @@ extern void		smodscaninit(modtype_t modtype, int *sstart, int *send);
 extern int		devif_root(unsigned major, unsigned unit, unsigned subunit, dev_t *rd);
 extern caddr_t	load_module(char *s, int *ss, int *se);
 extern int		fork(struct proc *p, void* uap, int retval[]);
+extern int		(*mountroot)();
 
-static void		init_proc0(struct proc* p);
-static void		init_vmemsys();
-static void		init_limits(struct proc* p);
-static void		mount_rootfs(struct vnode** rootdir);
-static void		init_fdesctbl(struct proc* p, struct vnode* rootdir);
+static void		proc0init(struct proc* p);
+static void		vmsinit();
+static void		liminit(struct proc* p);
+static void		fsinit(struct proc* p);
+
+extern char		version[];
+
+/*
+ * Good {morning,afternoon,evening,night}.
+ */
+static inline void show_copyright()
+{
+	const char	copyright1[] =
+		"386BSD Release 2.0 by William & Lynne Jolitz.";
+	const char	copyright2[] =
+		"Copyright (c) 1989-1994 William F. Jolitz. All rights reserved.\n";
+
+	printf("%s [2.0.%s]\n", copyright1, version+9);
+	printf(copyright2);
+}
 
 /*
  * System startup; initialize the world, create process 0,
@@ -170,21 +173,16 @@ static void		init_fdesctbl(struct proc* p, struct vnode* rootdir);
  */
 void _main()
 {
-	int i;
-	struct proc *p;
-	struct filedesc0 *fdp;
-	int s, fs, rval[2];
-	dev_t tdev;
-	char *cfg;
+	int32_t		s;
+	int32_t		rval[2];
+	dev_t		tdev;
+	int8_t		*cfg;
+	struct proc	*p;
 
-	/*
-	 * Initialize curproc before any possible traps/probes
-	 * to simplify trap processing.
-	 */
+	show_copyright();
+
 	p = &proc0;
-	curproc = p;
-	p->p_addr = proc0paddr;				/* XXX */
-	p->p_stats = &pstat0;
+	proc0init(p);
 
 	/*
  	 * Configure kernel variables prior to configuring major
@@ -196,28 +194,11 @@ void _main()
 	/* local time zone & daylight savings -- needed for rtc */
 	tz.tz_minuteswest = tzh * 60 * 60;
 	tz.tz_dsttime = dst;
-	
+
 	startrtclock();
 
-	/*
-	 * Initialize the virtual memory system, layer by layer.
-	 */
-
-	/* physical layer */
-	/* vm_set_page_size(pgsz);  XXX temp moved to init386 */
-	vm_page_startup();
-	vm_object_init();
-
-	/* virtual layer */
-	vm_map_startup();
-	kmem_init();
-
-	/* address translation layer */
-	pmap_init();
-	/* pager layer */
-	vm_pager_init();
-
-	kmeminit();
+	/* Initialize the virtual memory system, layer by layer. */
+	vmsinit();
 
 	/* configure any extended module services before rest of modules */
 	modscaninit(MODT_EXTDMOD);
@@ -227,6 +208,8 @@ void _main()
 	modscaninit(MODT_LDISC);
 
 #ifdef notyet
+	int32_t	i;
+
 	/*
 	 * Allocate process list hash tables
 	 */
@@ -241,50 +224,8 @@ void _main()
 	pidhashmask = i - 1;
 #endif
 
-	/*
-	 * Attach the substructures of the statically allocated
-	 * system process 0 (pageout), and insert it into the kernel
-	 * global data variables and lists.
-	 */
-//	p = &proc0;
-//	curproc = p;					/* current running process */
-
-	allproc = p;					/* on the allproc list */
-	p->p_prev = &allproc;
-
-	p->p_pgrp = &pgrp0;				/* in the first process group, ... */
-	pgrphash[0] = &pgrp0;
-	pgrp0.pg_mem = p;
-	pgrp0.pg_session = &session0;	/* ... the first session. */
-	session0.s_count = 1;
-	session0.s_leader = p;
-
-	p->p_flag = SLOAD|SSYS;			/* running system process */
-	p->p_stat = SRUN;
-	p->p_nice = NZERO;
-	memcpy(p->p_comm, "pageout", sizeof ("pageout"));
-
-	/* next, link on credentials, ... */
-	p->p_cred = &cred0;
-
-	/* ... a initial file descriptor table, ... */
-	fdp = &filedesc0;
-	p->p_fd = &fdp->fd_fd;
-	fdp->fd_fd.fd_refcnt = 1;
-	fdp->fd_fd.fd_cmask = CMASK;
-	fdp->fd_fd.fd_ofiles = fdp->fd_dfiles;
-	fdp->fd_fd.fd_ofileflags = fdp->fd_dfileflags;
-	fdp->fd_fd.fd_nfiles = NDFILE;
-
 	/* ... an initial set of resource limits */
-	p->p_limit = &limit0;
-	for (i = 0; i < sizeof(p->p_rlimit)/sizeof(p->p_rlimit[0]); i++)
-		limit0.pl_rlimit[i].rlim_cur =
-		    limit0.pl_rlimit[i].rlim_max = RLIM_INFINITY;
-	limit0.pl_rlimit[RLIMIT_OFILE].rlim_cur = OPEN_MAX;
-	limit0.pl_rlimit[RLIMIT_OFILE].rlim_max = FD_SETSIZE; /* XXX */
-	limit0.pl_rlimit[RLIMIT_NPROC].rlim_cur = CHILD_MAX;
-	limit0.p_refcnt = 1;
+	liminit(p);
 
 	/*
 	 * Allocate a prototype map so we have something to fork
@@ -296,7 +237,7 @@ void _main()
 	vm_map_init(&p->p_vmspace->vm_map, round_page(VM_MIN_ADDRESS),
 	    trunc_page(VM_MAX_ADDRESS), TRUE);
 	vmspace0.vm_map.pmap = &vmspace0.vm_pmap;
-	p->p_addr = proc0paddr;				/* XXX */
+	p->p_addr = proc0paddr;					/* XXX */
 	p->p_stksz = UPAGES * CLBYTES;			/* XXX */
 
 	/* initialize signals */
@@ -335,7 +276,6 @@ void _main()
 	 */
 	mbinit();
 	modscaninit(MODT_SLIP);
-	
 	modscaninit(MODT_LOCALNET);
 
 	/*
@@ -358,28 +298,7 @@ void _main()
 	schedcpu();
 	enablertclock();		/* enable realtime clock interrupts */
 
-	fs = B_FS(bootdev);
-	/* old bootstrap XXX */
-	if (fs == 0)
-		fs = 1;	/* assume UFS */
-
-	/* locate requested file system */
-	if ((rootvfs = findvfs(fs)) == 0)
-		panic("findvfs");
-
-	/* mount the root filesystem, making the root vnode accessible */
-	if ((*(rootvfs->vfs_mountroot))())
-		panic("cannot mount root");
-
-	/* obtain the root vnode */
-	if (VFS_ROOT(rootfs, &rootdir))
-		panic("cannot find root vnode");
-
-	/* set default root and current directory of initial process */
-	fdp->fd_fd.fd_cdir = rootdir;
-	VREF(fdp->fd_fd.fd_cdir);
-	VOP_UNLOCK(rootdir);
-	fdp->fd_fd.fd_rdir = NULL;
+	fsinit(p);				/* ファイルディスクリプタテーブルを初期化 */
 
 	int sstart, send;
 	if (load_module("inet", &sstart, &send)) {
@@ -399,19 +318,21 @@ void _main()
 	/*domaininit();*/
 
 	swapinit();	/* XXX */
-
 	/*
 	 * Now can look at time, having had a chance
 	 * to verify the time from the file system.
 	 */
 	boottime = p->p_stats->p_start = time;
-
 	/*
 	 * make the init process
 	 */
 	if (fork(p, (void *) NULL, rval))
+	{
 		panic("fork init");
-	if (rval[1]) {
+	}
+
+	if (rval[1])
+	{
 		static char initflags[] = "-sf";
 		char *ip = initflags + 1;
 		vm_offset_t addr = 0;
@@ -426,22 +347,30 @@ void _main()
 		 */
 		initproc = p = curproc;
 		if (boothowto & RB_SINGLE)
+		{
 			*ip++ = 's';
+		}
 #ifdef notyet
 		if (boothowto&RB_FASTBOOT)
 			*ip++ = 'f';
 #endif
 		*ip++ = '\0';
+
 		/* allocate space for user bootstrap program */
 		if (vmspace_allocate(p->p_vmspace, &addr,
 		    szicode + sizeof(initflags), FALSE) != 0)
+		{
 			panic("init: couldn't allocate at zero");
+		}
 
 		/* need just enough stack to exec from */
 		addr = trunc_page(USRSTACK - NBPG);
+
 		if (vmspace_allocate(p->p_vmspace, &addr, NBPG, FALSE)
 		    != KERN_SUCCESS)
+		{
 			panic("init: couldn't allocate init stack");
+		}
 
 		p->p_vmspace->vm_maxsaddr = (caddr_t)addr + NBPG - MAXSSIZ;
 		(void) copyout(p, (caddr_t)icode, (caddr_t)0, (unsigned)szicode);
@@ -454,4 +383,113 @@ void _main()
 	p->p_flag |= SLOAD | SSYS;		/* XXX */
 	vm_pageout();
 	/* NOTREACHED */
+}
+
+/*
+ * Initialize curproc before any possible traps/probes
+ * to simplify trap processing.
+ */
+static void proc0init(struct proc* p)
+{
+	curproc = p;
+	p->p_addr = proc0paddr;				/* XXX */
+	p->p_stats = &pstat0;
+
+	/*
+	 * Attach the substructures of the statically allocated
+	 * system process 0 (pageout), and insert it into the kernel
+	 * global data variables and lists.
+	 */
+
+	allproc = p;					/* on the allproc list */
+	p->p_prev = &allproc;
+
+	p->p_pgrp = &pgrp0;				/* in the first process group, ... */
+	pgrphash[0] = &pgrp0;
+	pgrp0.pg_mem = p;
+	pgrp0.pg_session = &session0;	/* ... the first session. */
+	session0.s_count = 1;
+	session0.s_leader = p;
+
+	p->p_flag = SLOAD | SSYS;		/* running system process */
+	p->p_stat = SRUN;
+	p->p_nice = NZERO;
+	memcpy(p->p_comm, "pageout", sizeof ("pageout"));
+
+	/* next, link on credentials, ... */
+	p->p_cred = &cred0;
+}
+
+/*
+ *	Initialize the virtual memory system, layer by layer.
+ */
+static void vmsinit()
+{
+	/* physical layer */
+	vm_page_startup();
+	vm_object_init();
+
+	/* virtual layer */
+	vm_map_startup();
+	kmem_init();
+
+	/* address translation layer */
+	pmap_init();
+	/* pager layer */
+	vm_pager_init(/*VM_PHYS_SIZE*/);
+
+	kmeminit();
+}
+
+/*
+ *	... an initial set of resource limits
+ */
+static void liminit(struct proc* p)
+{
+	int32_t	i;
+
+	p->p_limit = &limit0;
+	for (i = 0; i < sizeof(p->p_rlimit)/sizeof(p->p_rlimit[0]); i++)
+		limit0.pl_rlimit[i].rlim_cur =
+		    limit0.pl_rlimit[i].rlim_max = RLIM_INFINITY;
+	limit0.pl_rlimit[RLIMIT_OFILE].rlim_cur = OPEN_MAX;
+	limit0.pl_rlimit[RLIMIT_OFILE].rlim_max = FD_SETSIZE; /* XXX */
+	limit0.pl_rlimit[RLIMIT_NPROC].rlim_cur = CHILD_MAX;
+	limit0.p_refcnt = 1;
+}
+
+static void fsinit(struct proc* p)
+{
+	struct filedesc0* fdp = &filedesc0;
+
+	/* locate requested file system */
+	rootvfs = findvfs(MOUNT_UFS);
+	if (rootvfs == 0)
+	{
+		panic("findvfs");
+	}
+	/* mount the root filesystem, making the root vnode accessible */
+	if ((*(rootvfs->vfs_mountroot))())
+	{
+		panic("cannot mount root");
+	}
+	/* obtain the root vnode */
+	if (VFS_ROOT(rootfs, &rootdir))
+	{
+		panic("cannot find root vnode");
+	}
+
+	/* ... a initial file descriptor table, ... */
+	p->p_fd = &fdp->fd_fd;
+	fdp->fd_fd.fd_refcnt = 1;
+	fdp->fd_fd.fd_cmask = CMASK;
+	fdp->fd_fd.fd_ofiles = fdp->fd_dfiles;
+	fdp->fd_fd.fd_ofileflags = fdp->fd_dfileflags;
+	fdp->fd_fd.fd_nfiles = NDFILE;
+
+	/* set default root and current directory of initial process */
+	fdp->fd_fd.fd_cdir = rootdir;
+	VREF(fdp->fd_fd.fd_cdir);
+	VOP_UNLOCK(rootdir);
+	fdp->fd_fd.fd_rdir = NULL;
 }

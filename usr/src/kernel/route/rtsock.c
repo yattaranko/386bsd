@@ -54,13 +54,11 @@ static char *route_config = "route 17.";	/* AF_ROUTE */
 #undef _ROUTE_PROTOTYPES
 /*#include "route_.h"*/
 #include "raw_cb.h"
-
+void m_copyback(struct	mbuf *m0, register int off, register int len, caddr_t cp);
 struct sockaddr route_dst = { 2, PF_ROUTE, };
 struct sockaddr route_src = { 2, PF_ROUTE, };
 struct sockproto route_proto = { PF_ROUTE, };
 struct route_cb route_cb;
-
-static void m_copyback(struct mbuf* m0, register int offm, register int len, caddr_t cp);
 
 /*ARGSUSED*/
 route_usrreq(so, req, m, nam, control)
@@ -395,7 +393,7 @@ rt_setmetrics(which, in, out)
  * starting "off" bytes from the beginning, extending the mbuf
  * chain if necessary.
  */
-static void m_copyback(m0, off, len, cp)
+void m_copyback(m0, off, len, cp)
 	struct	mbuf *m0;
 	register int off;
 	register int len;
@@ -666,7 +664,7 @@ struct domain routedomain =
     { 0, "route", 0, 0, 0,
       routesw, &routesw[sizeof(routesw)/sizeof(routesw[0])] };
 
-NETWORK_MODCONFIG(raw) {
+NETWORK_MODCONFIG(route) {
 	char *cfg_string = route_config;
 
 	if (config_scan(route_config, &cfg_string) == 0)
@@ -682,7 +680,7 @@ static struct kinfoif
 	kinfo_rtable_kif = { "rtable", KINFO_RT, kinfo_rtable };
 
 /* configure servers */
-KERNEL_MODCONFIG(raw) {
+KERNEL_MODCONFIG(route) {
 
 	kinfo_addserver(&kinfo_rtable_kif);
 }

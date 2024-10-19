@@ -78,6 +78,9 @@ struct svcudp_data {
 };
 #define	su_data(xprt)	((struct svcudp_data *)(xprt->xp_p2))
 
+static int cache_get(SVCXPRT* xprt, struct rpc_msg* msg, char** replyp, u_long* replylenp);
+static void cache_set(SVCXPRT* xprt, u_long replylen);	
+
 /*
  * Usage:
  *	xprt = svcudp_create(sock);
@@ -174,7 +177,7 @@ svcudp_recv(xprt, msg)
 	register int rlen;
 	char *reply;
 	u_long replylen;
-	static int cache_get();
+/*	static int cache_get(); */
 
     again:
 	xprt->xp_addrlen = sizeof(struct sockaddr_in);
@@ -208,7 +211,7 @@ svcudp_reply(xprt, msg)
 	register XDR *xdrs = &(su->su_xdrs);
 	register int slen;
 	register bool_t stat = FALSE;
-	static void cache_set();
+/*	static void cache_set(); */
 
 	xdrs->x_op = XDR_ENCODE;
 	XDR_SETPOS(xdrs, 0);
@@ -374,9 +377,7 @@ svcudp_enablecache(transp, size)
  * Set an entry in the cache
  */
 static void
-cache_set(xprt, replylen)
-	SVCXPRT *xprt;
-	u_long replylen;	
+cache_set(SVCXPRT* xprt, u_long replylen)	
 {
 	register cache_ptr victim;	
 	register cache_ptr *vicp;
@@ -438,12 +439,8 @@ cache_set(xprt, replylen)
  * Try to get an entry from the cache
  * return 1 if found, 0 if not found
  */
-static
-cache_get(xprt, msg, replyp, replylenp)
-	SVCXPRT *xprt;
-	struct rpc_msg *msg;
-	char **replyp;
-	u_long *replylenp;
+static int
+cache_get(SVCXPRT* xprt, struct rpc_msg* msg, char** replyp, u_long* replylenp)
 {
 	u_int loc;
 	register cache_ptr ent;

@@ -342,7 +342,7 @@ procxmt(p)
 				if (i == 10)
 					*uadr |= SEL_UPL;
 				if (i == 8)
-					*((unsigned int*)uadr) %= VM_MAX_ADDRESS;
+					*((unsigned*)uadr) %= VM_MAX_ADDRESS;
 #endif
 				break;
 			};

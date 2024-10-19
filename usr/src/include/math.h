@@ -41,6 +41,12 @@ typedef	union	_h_val {
 	unsigned long	i[2];
 } _h_val;
 
+typedef struct _complex
+{
+	double		x;
+	double		y;
+} complex;
+
 extern	const	_h_val	__huge_val;
 #define	HUGE_VAL	__huge_val.d	/* IEEE: positive infinity */
 
@@ -98,7 +104,7 @@ double	tanh __P((double));
 double	acosh __P((double));
 double	asinh __P((double));
 double	atanh __P((double));
-double	cabs();		/* we can't describe cabs()'s argument properly */
+double	cabs __P((complex));		/* we can't describe cabs()'s argument properly */
 double	cbrt __P((double));
 double	copysign __P((double, double));
 double	drem __P((double, double));

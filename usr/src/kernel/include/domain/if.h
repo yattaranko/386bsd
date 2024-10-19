@@ -262,7 +262,7 @@ __ISYM__(struct	ifqueue, rawintrq,)		/* raw packet input queue */
 __ISYM__(struct	ifnet *, ifnet,)
 
 /* functions used in modules */
-__ISYM__(void, if_attach, (struct ifnet *))	/* XXX void */
+__ISYM__(int, if_attach, (struct ifnet *))	/* XXX void */
 __ISYM__(struct	ifaddr *, ifa_ifwithaddr, (struct sockaddr *))
 __ISYM__(struct	ifaddr *, ifa_ifwithnet, (struct sockaddr *))
 __ISYM__(struct	ifaddr *, ifa_ifwithdstaddr, (struct sockaddr *))
@@ -272,4 +272,4 @@ __ISYM__(int, ifioctl, (struct socket *so, int cmd, caddr_t data, struct proc *p
 #undef __ISYM_ALIAS__
 #undef __ISYM_VERSION__
 
-#endif	/* KERNEL */
+#endif /* KERNEL */

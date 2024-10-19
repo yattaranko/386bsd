@@ -141,14 +141,14 @@ struct	proc {
 /* end area that is copied on creation */
 #define	p_endcopy	p_wmesg
 	char	*p_wmesg;	/* reason for sleep */
-	/* int	p_thread;	*/ /* id for this "thread" (Mach glue) XXX */
+	/* int	p_thread; */	/* id for this "thread" (Mach glue) XXX */
 	struct	user *p_addr;	/* kernel virtual addr of u-area (PROC ONLY) */
-	/* swblk_t	p_swaddr;	*/ /* disk address of u area when swapped */
+	/* swblk_t	p_swaddr; */	/* disk address of u area when swapped */
 	struct	mdproc p_md;	/* any machine-dependent fields */
 
-	/* u_short	p_xstat;	*/ /* Exit status for wait; also stop signal */
+	/* u_short	p_xstat; */	/* Exit status for wait; also stop signal */
 	short	p_dupfd;	/* sideways return value from fdopen XXX */
-	/* u_short	p_acflag;	*/ /* accounting flags */
+	/* u_short	p_acflag; */	/* accounting flags */
 	u_short	p_stksz;	/* size of per process at p_addr */
 
 	long	p_spare[6];	/* tmp spares to avoid shifting eproc */
@@ -165,11 +165,11 @@ struct	proc {
  */
 struct	pcred {
 	struct	ucred *pc_ucred;	/* current credentials */
-	uid_t	p_ruid;			/* real user id */
-	uid_t	p_svuid;		/* saved effective user id */
-	gid_t	p_rgid;			/* real group id */
-	gid_t	p_svgid;		/* saved effective group id */
-	int	p_refcnt;		/* number of references */
+	uid_t	p_ruid;				/* real user id */
+	uid_t	p_svuid;			/* saved effective user id */
+	gid_t	p_rgid;				/* real group id */
+	gid_t	p_svgid;			/* saved effective group id */
+	int		p_refcnt;			/* number of references */
 };
 
 /* stat codes */
@@ -311,10 +311,11 @@ void setpri(struct proc *p);
 int fork1(struct proc *p1, int isvfork, int *retval);
 void volatile exit(struct proc *p, int rv);
 
-extern struct	proc *zombproc, *allproc;	/* lists of procs in various states */
-extern	struct proc proc0;		/* process slot for swapper */
-extern struct	proc *initproc;	/* process slots for init, pager */
-extern	int nprocs, maxproc;		/* current and max number of procs */
+extern struct		proc *zombproc, *allproc;	/* lists of procs in various states */
+extern struct		proc proc0;					/* process slot for swapper */
+extern struct		proc *initproc;				/* process slots for init, pager */
+extern int			nprocs;						/* current number of procs */
+extern const int	maxproc;					/* max number of procs */
 
 #define	NQS	32			/* 32 run queues */
 #define	PPQ	((MAXPRI+1) / NQS)	/* priorities per queue */

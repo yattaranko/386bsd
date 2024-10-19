@@ -616,7 +616,6 @@ write(p, uap, retval)
 		ktrgenio(p->p_tracep, uap->fdes, UIO_WRITE,
 		    &ktriov, cnt, error);
 #endif
-
 	*retval = cnt;
 	return (error);
 }
@@ -1280,8 +1279,7 @@ fdfree(struct proc *p)
 }
 
 /* Close any files on execve()? */
-void
-fdcloseexec(struct proc *p)
+void fdcloseexec(struct proc *p)
 {
 	struct filedesc *fdp = p->p_fd;
 	struct file **fpp;
@@ -1440,7 +1438,7 @@ static struct devif fd_devif =
 	0,  0, 
 };
 
-DRIVER_MODCONFIG(fdesc) {
+DRIVER_MODCONFIG(descrip) {
 	char *cfg_string = "fdesc 53.";
 	
 	if (devif_config(&cfg_string, &fd_devif) == 0)

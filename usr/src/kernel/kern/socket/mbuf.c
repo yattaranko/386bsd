@@ -52,7 +52,7 @@ extern	vm_map_t mb_map;
 struct	mbuf *mbutl;
 char	*mclrefcnt;
 struct mbstat mbstat;
-int nmbclusters;
+// int nmbclusters;
 union mcluster *mclfree;
 int max_linkhdr;			/* largest link-level header */
 int max_protohdr;		/* largest protocol header */

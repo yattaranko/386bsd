@@ -49,7 +49,7 @@ static char sccsid[] = "@(#)halt.c	5.10 (Berkeley) 4/3/91";
 #include <sys/time.h>
 #include <sys/syslog.h>
 #include <sys/signal.h>
-#include <errno.h>
+#include <sys/errno.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <paths.h>

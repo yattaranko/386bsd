@@ -78,15 +78,15 @@ struct cchar cchars2[] = {
 	NULL,
 };
 
-csearch(argvp, ip)
-	char ***argvp;
-	struct info *ip;
+static int c_cchar(const void*a, const void* b);
+
+int csearch(char*** argvp, struct info*ip)
 {
 	extern char *usage;
 	register struct cchar *cp;
 	struct cchar tmp;
 	char *arg, *name;
-	static int c_cchar __P((const void *, const void *));
+/*	static int c_cchar __P((const void *, const void *)); */
 		
 	name = **argvp;
 
@@ -114,9 +114,7 @@ csearch(argvp, ip)
 	return(1);
 }
 
-static
-c_cchar(a, b)
-        const void *a, *b;
+static int c_cchar(const void*a, const void* b)
 {
         return(strcmp(((struct cchar *)a)->name, ((struct cchar *)b)->name));
 }

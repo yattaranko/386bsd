@@ -39,7 +39,7 @@ static char sccsid[] = "@(#)netdate.c	5.2 (Berkeley) 2/25/91";
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <sys/errno.h>
-#include <netinet/in.h>
+#include <domain/in.h>
 #include <netdb.h>
 #define TSPTYPES
 #include <protocols/timed.h>
@@ -47,10 +47,14 @@ static char sccsid[] = "@(#)netdate.c	5.2 (Berkeley) 2/25/91";
 #include <stdio.h>
 #include <string.h>
 
+#define __INLINE	inline
+#include <machine/inline/inet/htonl.h>
+#include <machine/inline/inet/htons.h>
+#include <machine/inline/inet/ntohl.h>
+#include <machine/inline/inet/ntohs.h>
+
 #define	WAITACK		2	/* seconds */
 #define	WAITDATEACK	5	/* seconds */
-
-extern int retval;
 
 /*
  * Set the date in the machines controlled by timedaemons by communicating the
@@ -59,8 +63,7 @@ extern int retval;
  * notifies the master that a correction is needed.
  * Returns 0 on success.  Returns > 0 on failure, setting retval to 2;
  */
-netsettime(tval)
-	time_t tval;
+int netsettime(time_t tval)
 {
 	struct timeval tout;
 	struct servent *sp;
@@ -70,10 +73,12 @@ netsettime(tval)
 	long waittime;
 	int s, length, port, timed_ack, found, err;
 	char hostname[MAXHOSTNAMELEN];
+	extern int retval;
 
 	if ((sp = getservbyname("timed", "udp")) == NULL) {
 		(void)fprintf(stderr, "date: udp/timed: unknown service.n");
-		return (retval = 2);
+		retval = 2;
+		return (retval);
 	}
 
 	dest.sin_port = sp->s_port;
@@ -83,7 +88,8 @@ netsettime(tval)
 	if (s < 0) {
 		if (errno != EPROTONOSUPPORT)
 			perror("date: timed");
-		return(retval = 2);
+		retval = 2;
+		return(retval);
 	}
 
 	bzero((char *)&sin, sizeof(sin));
@@ -174,5 +180,6 @@ loop:
 
 bad:
 	(void)close(s);
-	return(retval = 2);
+	retval = 2;
+	return(retval);
 }

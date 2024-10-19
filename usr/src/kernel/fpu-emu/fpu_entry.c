@@ -160,7 +160,7 @@ static FUNC st_instr_table[64] = {
   fdivr_,   trig_b,  __BAD__, __BAD__, fdiv_i,  __BAD__, fdivp_,  __BAD__,
 };
 
-#endif	/* NO_UNDOC_CODE */
+#endif /* NO_UNDOC_CODE */
 
 
 #define _NONE_ 0   /* Take no special action */
@@ -202,7 +202,7 @@ static unsigned char type_table[64] = {
   _REGI_, _NONE_, _null_, _null_, _REGIi, _null_, _REGIp, _null_
 };
 
-#endif	/* NO_UNDOC_CODE */
+#endif /* NO_UNDOC_CODE */
 
 
 /* Be careful when using any of these global variables...
@@ -213,7 +213,7 @@ FPU_REG       *FPU_st0_ptr;
 
 #ifdef PARANOID
 char emulating=0;
-#endif	/* PARANOID */
+#endif /* PARANOID */
 
 unsigned char get_fs_byte(char *adr) { unsigned char val; (void)copyin_(curproc, adr, &val, sizeof val); return (val); }
 unsigned short get_fs_word(unsigned short *adr) {
@@ -246,7 +246,7 @@ void math_emulate(long arg)
       printk("ERROR: wm-FPU-emu is not RE-ENTRANT!\n");
     }
   RE_ENTRANT_CHECK_ON
-#endif	/* PARANOID */
+#endif /* PARANOID */
 
 #ifdef LINUX
   if (!current->used_math)
@@ -548,7 +548,7 @@ FPU_instruction_done:
   RE_ENTRANT_CHECK_OFF
   emu_printall();
   RE_ENTRANT_CHECK_ON
-#endif	/* DEBUG */
+#endif /* DEBUG */
 
   if ((curproc->p_addr->u_pcb.pcb_flags & FP_SOFTFP_LOOK))
   /*if (FPU_lookahead && !need_resched)*/
@@ -594,7 +594,7 @@ void __math_abort(struct info * info, unsigned int signal)
 	__asm__("movl %0,%%esp ; ret"::"g" (((long) info)-4));
 #ifdef PARANOID
       printk("ERROR: wm-FPU-emu math_abort failed!\n");
-#endif	/* PARANOID */
+#endif /* PARANOID */
 }
 #endif
 

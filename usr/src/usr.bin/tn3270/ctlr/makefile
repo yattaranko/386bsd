@@ -144,7 +144,7 @@ depend:
 
 # DO NOT DELETE THIS LINE
 
-api$O: api.h ../general/general.h ../api/disp_asc.h screen.h oia.h
+api$O: api.h ../general/general.h ../api/disp_asc.h screen.h hostctlr.h oia.h
 api$O: ../general/globals.h
 function$O: function.h
 inbound$O: ../general/general.h function.h hostctlr.h oia.h scrnctlr.h screen.h

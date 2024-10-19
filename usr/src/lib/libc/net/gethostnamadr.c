@@ -37,7 +37,7 @@ static char sccsid[] = "@(#)gethostnamadr.c	6.45 (Berkeley) 2/24/91";
 
 #include <sys/param.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
+#include <domain/in.h>
 #include <arpa/inet.h>
 #include <arpa/nameser.h>
 #include <netdb.h>
@@ -78,7 +78,7 @@ typedef union {
     char ac;
 } align;
 
-int h_errno;
+extern int h_errno;
 
 static struct hostent *
 getanswer(answer, anslen, iquery)

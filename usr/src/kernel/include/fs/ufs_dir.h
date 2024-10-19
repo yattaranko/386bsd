@@ -104,11 +104,25 @@ struct dirtemplate {
 	short	dot_reclen;
 	u_char	dot_type;
 	u_char	dot_namlen;
-	char	dot_name[4];		/* must be multiple of 4 */
+	char	dot_name[4];	/* must be multiple of 4 */
 	u_long	dotdot_ino;
 	short	dotdot_reclen;
 	u_char	dotdot_type;
 	u_char	dotdot_namlen;
+	char	dotdot_name[4];	/* ditto */
+};
+
+/*
+ * This is the old format of directories, sans type element.
+ */
+struct odirtemplate {
+	u_long	dot_ino;
+	short	dot_reclen;
+	short	dot_namlen;
+	char	dot_name[4];		/* must be multiple of 4 */
+	u_long	dotdot_ino;
+	short	dotdot_reclen;
+	short	dotdot_namlen;
 	char	dotdot_name[4];		/* ditto */
 };
-#endif /* !_DIR_H_ */
+#endif /* _DIR_H_ */

@@ -2,7 +2,7 @@
  * Copyright (c) 1994 William F. Jolitz.
  * 386BSD Copyright Restrictions Apply. All Other Rights Reserved.
  *
- * $Id: locc_i386.s,v 1.1 94/10/19 17:39:57 bill Exp $
+ * $Id: locc_i386.S,v 1.1 94/10/19 17:39:57 bill Exp $
  * VAX locc instruction simulation (UFS).
  */
 

@@ -49,20 +49,29 @@ static char sccsid[] = "@(#)mount.c	5.44 (Berkeley) 2/26/91";
 #include <sys/signal.h>
 #include <sys/mount.h>
 #ifdef NFS
-#include <sys/socketvar.h>
+#include <domain/socketvar.h>
 #include <netdb.h>
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
 #include <rpc/pmap_prot.h>
-#include <nfs/rpcv2.h>
-#include <nfs/nfsv2.h>
-#include <nfs/nfs.h>
+#include <rpc/clnt.h>
+#include <fs/nfs_rpc_v2.h>
+#include <fs/nfs_v2.h>
+#include <fs/nfs.h>
 #endif
 #include <fstab.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "pathnames.h"
+
+#define	__INLINE	extern inline
+#include "portable/inline/kernel/ulmin.h"
+#include "machine/inline/inet/htonl.h"
+#include "machine/inline/inet/htons.h"
+#include "machine/inline/inet/ntohl.h"
+#include "machine/inline/inet/ntohs.h"
 
 #define DEFAULT_ROOTUID	-2
 
@@ -74,12 +83,35 @@ static char sccsid[] = "@(#)mount.c	5.44 (Berkeley) 2/26/91";
 
 int fake, verbose, updateflg, mnttype;
 char *mntname, **envp;
-char **vfslist, **makevfslist();
-static void prmount();
+char **vfslist; /* , **makevfslist(); */
+
+extern void clnt_pcreateerror(char *msg);
+extern u_short pmap_getport(struct sockaddr_in *address,
+		u_long program, u_long version, u_int protocol);
+extern void clnt_perror(CLIENT* rpch, char* s);
+
+static int mountfs(char* spec, char* name, int flags,
+				   char* type, char* options, char* mntopts);
+static void prmount(char* spec, char* name, register short flags);
+static void getufsopts(char* options, int* flagp);
+static char** makevfslist(char*fslist);
+static int getmnttype(char *fstype);
+static int badvfstype(short vfstype, char **vfslist);
+static int badvfsname(char *vfsname, char **vfslist);
+static int getexecopts(char *options, char **argv);
+static struct statfs* getmntpt(char* name);
+static void getstdopts(char *options, int *flagp);
+static void usage();
 
 #ifdef NFS
-int xdr_dir(), xdr_fh();
-char *getnfsargs();
+static int exclusive(char* a, char* b);
+static int xdr_dir(XDR *xdrsp, char *dirp);
+static int xdr_fh(/* XDR *xdrsp, struct nfhret *np */);
+static char* getnfsargs(char *spec, struct nfs_args* nfsargsp);
+static void getnfsopts(char* optarg, register struct nfs_args* nfsargsp,
+					   int* opflagsp, int* retrycntp);
+/* int xdr_dir(), xdr_fh(); */
+/* char *getnfsargs(); */
 struct nfs_args nfsdefargs = {
 	(struct sockaddr *)0,
 	SOCK_DGRAM,
@@ -114,7 +146,7 @@ main(argc, argv, arge)
 	register struct fstab *fs;
 	int all, ch, rval, flags, ret, pid, i;
 	long mntsize;
-	struct statfs *mntbuf, *getmntpt();
+	struct statfs *mntbuf/* , *getmntpt()*/ ;
 	char *type, *options = NULL;
 	FILE *pidfile;
 
@@ -258,9 +290,7 @@ main(argc, argv, arge)
 	exit (ret);
 }
 
-mountfs(spec, name, flags, type, options, mntopts)
-	char *spec, *name, *type, *options, *mntopts;
-	int flags;
+static int mountfs(char* spec, char* name, int flags, char* type, char* options, char* mntopts)
 {
 	union wait status;
 	pid_t pid;
@@ -303,7 +333,8 @@ mountfs(spec, name, flags, type, options, mntopts)
 			getnfsopts(mntopts, &nfsargs, &opflags, &retrycnt);
 		if (options)
 			getnfsopts(options, &nfsargs, &opflags, &retrycnt);
-		if (argp = getnfsargs(spec, &nfsargs))
+		argp = getnfsargs(spec, &nfsargs);
+		if (argp != 0)
 			break;
 		return (1);
 #endif /* NFS */
@@ -334,7 +365,8 @@ mountfs(spec, name, flags, type, options, mntopts)
 		}
 		if (fake)
 			break;
-		if (pid = vfork()) {
+		pid = vfork();
+		if (pid != 0) {
 			if (pid == -1) {
 				perror("mount: vfork starting file system");
 				return (1);
@@ -392,10 +424,7 @@ out:
 	return(0);
 }
 
-static void
-prmount(spec, name, flags)
-	char *spec, *name;
-	register short flags;
+static void prmount(char* spec, char* name, register short flags)
 {
 	register int first;
 
@@ -425,15 +454,20 @@ prmount(spec, name, flags)
 	if (flags & MNT_LOCAL)
 		PR("local");
 	if (flags & MNT_EXPORTED)
+	{
 		if (flags & MNT_EXRDONLY)
+		{
 			PR("NFS exported read-only");
+		}
 		else
+		{
 			PR("NFS exported");
+		}
+	}
 	(void)printf(")\n");
 }
 
-getmnttype(fstype)
-	char *fstype;
+static int getmnttype(char *fstype)
 {
 
 	mntname = fstype;
@@ -446,7 +480,7 @@ getmnttype(fstype)
 	return (0);
 }
 
-usage()
+static void usage()
 {
 
 	(void) fprintf(stderr,
@@ -458,9 +492,7 @@ usage()
 	exit(1);
 }
 
-getstdopts(options, flagp)
-	char *options;
-	int *flagp;
+static void getstdopts(char *options, int *flagp)
 {
 	register char *opt;
 	int negative;
@@ -514,16 +546,12 @@ getstdopts(options, flagp)
 }
 
 /* ARGSUSED */
-getufsopts(options, flagp)
-	char *options;
-	int *flagp;
+static void getufsopts(char* options, int* flagp)
 {
 	return;
 }
 
-getexecopts(options, argv)
-	char *options;
-	char **argv;
+static int getexecopts(char *options, char **argv)
 {
 	register int argc = 0;
 	register char *opt;
@@ -540,9 +568,7 @@ getexecopts(options, argv)
 	return (argc);
 }
 
-struct statfs *
-getmntpt(name)
-	char *name;
+static struct statfs* getmntpt(char* name)
 {
 	long mntsize;
 	register long i;
@@ -559,9 +585,7 @@ getmntpt(name)
 
 static int skipvfs;
 
-badvfstype(vfstype, vfslist)
-	short vfstype;
-	char **vfslist;
+static int badvfstype(short vfstype, char **vfslist)
 {
 
 	if (vfslist == 0)
@@ -574,9 +598,7 @@ badvfstype(vfstype, vfslist)
 	return (!skipvfs);
 }
 
-badvfsname(vfsname, vfslist)
-	char *vfsname;
-	char **vfslist;
+static int badvfsname(char *vfsname, char **vfslist)
 {
 
 	if (vfslist == 0)
@@ -589,9 +611,7 @@ badvfsname(vfsname, vfslist)
 	return (!skipvfs);
 }
 
-char **
-makevfslist(fslist)
-	char *fslist;
+static char** makevfslist(char*fslist)
 {
 	register char **av, *nextcp;
 	register int i;
@@ -620,8 +640,7 @@ makevfslist(fslist)
 }
 
 #ifdef NFS
-exclusive(a, b)
-	char *a, *b;
+static int exclusive(char* a, char* b)
 {
 
 	(void) fprintf(stderr, "mount: Options %s, %s mutually exclusive\n",
@@ -633,11 +652,8 @@ exclusive(a, b)
  * Handle the getoption arg.
  * Essentially update "opflags", "retrycnt" and "nfsargs"
  */
-getnfsopts(optarg, nfsargsp, opflagsp, retrycntp)
-	char *optarg;
-	register struct nfs_args *nfsargsp;
-	int *opflagsp;
-	int *retrycntp;
+static void getnfsopts(char* optarg, register struct nfs_args* nfsargsp,
+					   int* opflagsp, int* retrycntp)
 {
 	register char *cp, *nextcp;
 	int num;
@@ -658,11 +674,11 @@ getnfsopts(optarg, nfsargsp, opflagsp, retrycntp)
 			*opflagsp |= BGRND;
 		} else if (!strcmp(cp, "soft")) {
 			if (nfsargsp->flags & NFSMNT_SPONGY)
-				exclusive("soft, spongy");
+				exclusive("soft", "spongy");
 			nfsargsp->flags |= NFSMNT_SOFT;
 		} else if (!strcmp(cp, "spongy")) {
 			if (nfsargsp->flags & NFSMNT_SOFT)
-				exclusive("soft, spongy");
+				exclusive("soft", "spongy");
 			nfsargsp->flags |= NFSMNT_SPONGY;
 		} else if (!strcmp(cp, "compress")) {
 			nfsargsp->flags |= NFSMNT_COMPRESS;
@@ -696,10 +712,7 @@ getnfsopts(optarg, nfsargsp, opflagsp, retrycntp)
 	}
 }
 
-char *
-getnfsargs(spec, nfsargsp)
-	char *spec;
-	struct nfs_args *nfsargsp;
+static char* getnfsargs(char *spec, struct nfs_args* nfsargsp)
 {
 	register CLIENT *clp;
 	struct hostent *hp;
@@ -795,16 +808,12 @@ getnfsargs(spec, nfsargsp)
 /*
  * xdr routines for mount rpc's
  */
-xdr_dir(xdrsp, dirp)
-	XDR *xdrsp;
-	char *dirp;
+static int xdr_dir(XDR *xdrsp, char *dirp)
 {
 	return (xdr_string(xdrsp, &dirp, RPCMNT_PATHLEN));
 }
 
-xdr_fh(xdrsp, np)
-	XDR *xdrsp;
-	struct nfhret *np;
+static int xdr_fh(XDR *xdrsp, struct nfhret *np)
 {
 	if (!xdr_u_long(xdrsp, &(np->stat)))
 		return (0);

@@ -4,8 +4,8 @@
 
 STRIP?=	-s
 
-BINGRP?=	bin
-BINOWN?=	bin
+BINGRP?=	wheel
+BINOWN?=	root
 BINMODE?=	555
 
 _SUBDIRUSE: .USE

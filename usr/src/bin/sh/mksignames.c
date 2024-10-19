@@ -48,7 +48,7 @@ static char sccsid[] = "@(#)mksignames.c	5.1 (Berkeley) 3/7/91";
  * This program generates the signames.h and signames.c files.
  */
 #include <stdio.h>
-#include <signal.h>
+#include <sys/signal.h>
 
 
 

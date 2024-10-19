@@ -37,8 +37,9 @@ static char sccsid[] = "@(#)exec.c	5.17 (Berkeley) 6/17/91";
 
 #include <sys/types.h>
 #include <dirent.h>
-#include <fcntl.h>
-#include <errno.h>
+#include <sys/fcntl.h>
+#include <sys/cdefs.h>
+#include <sys/errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>

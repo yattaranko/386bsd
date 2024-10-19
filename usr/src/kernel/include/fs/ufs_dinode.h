@@ -34,6 +34,30 @@
  */
 
 /*
+ * The root inode is the root of the file system.  Inode 0 can't be used for
+ * normal purposes and historically bad blocks were linked to inode 1, thus
+ * the root inode is 2.  (Inode 1 is no longer used for this purpose, however
+ * numerous dump tapes make this assumption, so we are stuck with it).
+ */
+#define	ROOTINO	((ino_t)2)
+
+/*
+ * The Whiteout inode# is a dummy non-zero inode number which will
+ * never be allocated to a real file.  It is used as a place holder
+ * in the directory entry which has been tagged as a DT_W entry.
+ * See the comments about ROOTINO above.
+ */
+#define	WINO	((ino_t)1)
+
+/*
+ * The size of physical and logical block numbers and time fields in UFS.
+ */
+typedef	int32_t	ufs1_daddr_t;
+typedef	int64_t	ufs2_daddr_t;
+typedef int64_t ufs_lbn_t;
+typedef int64_t ufs_time_t;
+
+/*
  * A dinode contains all the meta-data associated with a UFS file.
  * This structure defines the on-disk format of a dinode.
  */
@@ -41,6 +65,7 @@
 #define	NDADDR	12		/* direct addresses in inode */
 #define	NIADDR	3		/* indirect addresses in inode */
 
+#if 0
 struct dinode {
 	u_short	di_mode;	/*  0: mode and type of file */
 	short	di_nlink;	/*  2: number of links to file */
@@ -60,6 +85,33 @@ struct dinode {
 	long	di_gen;		/* 108: generation number */
 	long	di_spare[4];	/* 112: reserved, currently unused */
 };
+#else
+/*---------------------------------------------------------------------------*/
+struct dinode {
+	u_short		di_mode;	/*   0: IFMT, permissions; see below. */
+	short		di_nlink;	/*   2: File link count. */
+	union {
+		u_short oldids[2];	/*   4: Ffs: old user and group ids. */
+		long	inumber;	/*   4: Lfs: inode number. */
+	} di_u;
+	u_quad		di_qsize;	/*   8: File byte count. */
+	long		di_atime;	/*  16: Last access time. */
+	long		di_atimensec;	/*  20: Last access time. */
+	long		di_mtime;	/*  24: Last modified time. */
+	long		di_mtimensec;	/*  28: Last modified time. */
+	long		di_ctime;	/*  32: Last inode change time. */
+	long		di_ctimensec;	/*  36: Last inode change time. */
+	daddr_t		di_db[NDADDR];	/*  40: Direct disk blocks. */
+	daddr_t		di_ib[NIADDR];	/*  88: Indirect disk blocks. */
+	u_long		di_flags;	/* 100: Status flags (chflags). */
+	long		di_blocks;	/* 104: Blocks actually held. */
+	long		di_gen;		/* 108: Generation number. */
+	u_long		di_uid;		/* 112: File owner. */
+	u_long		di_gid;		/* 116: File group. */
+	long		di_spare[2];	/* 120: Reserved; currently unused */
+};
+/*---------------------------------------------------------------------------*/
+#endif
 
 #if BYTE_ORDER == LITTLE_ENDIAN || defined(tahoe) /* ugh! -- must be fixed */
 #define	di_size		di_qsize.val[0]

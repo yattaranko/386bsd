@@ -148,7 +148,7 @@ extern int	vm_page_inactive_target;/* How many do we want inactive? */
 #define PHYS_TO_VM_PAGE(pa) \
 		(&vm_page_array[atop(pa) - first_page ])
 
-void	vm_set_page_size();
+extern void	vm_set_page_size(int);
 void /* vm_offset_t*/
 	vm_page_startup(void /*vm_offset_t start, vm_offset_t end, vm_offset_t vaddr*/);
 vm_page_t

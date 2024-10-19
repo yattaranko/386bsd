@@ -51,8 +51,10 @@ static u_char	att = 0x7 ;
 u_char *Crtat = (u_char *)CGA_BUF;
 
 static unsigned int addr_6845 = CGA_BASE;
-cursor(pos)
-int pos;
+
+extern void bcopy(char* src, char* dst, int cnt);
+
+void cursor(int pos)
 {
 	outb(addr_6845,14);
 	outb(addr_6845+1,pos >> 8);
@@ -60,8 +62,7 @@ int pos;
 	outb(addr_6845+1,pos&0xff);
 }
 
-sput(c)
-u_char c;
+void sput(u_char c)
 {
 
 	static u_char *crtat = 0;
@@ -87,7 +88,7 @@ u_char c;
 
 		if(cursorat <= COL*ROW) {
 			crtat = Crtat + cursorat*CHR;
-			/* att = crtat[1];	*/ /* use current attribute present */
+			/* att = crtat[1]; */	/* use current attribute present */
 		} else	crtat = Crtat;
 
 		/* clean display */
@@ -128,7 +129,7 @@ u_char c;
 	/* implement a scroll */
 	if (crtat >= Crtat+COL*ROW*CHR) {
 		/* move text up */
-		bcopy(Crtat+COL*CHR, Crtat, COL*(ROW-1)*CHR);
+		bcopy((char*)(Crtat+COL*CHR), (char*)Crtat, COL*(ROW-1)*CHR);
 
 		/* clear line */
 		for (cp = Crtat+ COL*(ROW-1)*CHR;

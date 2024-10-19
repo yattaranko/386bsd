@@ -62,12 +62,22 @@ union ihead {
 	struct inode *ih_chain[2];
 } ihead[INOHSZ];
 
+extern void ilock(register struct inode*);
+extern void iunlock(register struct inode*);
+extern void iput(register struct inode*);
+extern int itrunc(register struct inode*, u_long, int);
+extern void blkfree(register struct inode*, daddr_t, off_t);
+extern int balloc(register struct inode*, register daddr_t, int, struct buf**, int);
+extern int iupdat(register struct inode*, struct timeval*, struct timeval*, int);
+extern void ifree(struct inode*, ino_t, int);
+static int indirtrunc(register struct inode*, daddr_t, daddr_t, int, long*);
+
 u_long nextgennumber;
 
 /*
  * Initialize hash links for inodes.
  */
-ufs_init()
+void ufs_init()
 {
 	int i;
 	union ihead *ih = ihead;
@@ -102,10 +112,7 @@ ufs_init()
  * return the inode locked. Detection and handling of mount
  * points must be done by the calling routine.
  */
-iget(xp, ino, ipp)
-	struct inode *xp;
-	ino_t ino;
-	struct inode **ipp;
+int iget(struct inode* xp, ino_t ino, struct inode** ipp)
 {
 	dev_t dev = xp->i_dev;
 	struct mount *mntp = ITOV(xp)->v_mount;
@@ -121,23 +128,31 @@ iget(xp, ino, ipp)
 
 	ih = &ihead[INOHASH(dev, ino)];
 loop:
-	for (ip = ih->ih_chain[0]; ip != (struct inode *)ih; ip = ip->i_forw) {
+	for (ip = ih->ih_chain[0]; ip != (struct inode *)ih; ip = ip->i_forw)
+	{
 		if (ino != ip->i_number || dev != ip->i_dev)
+		{
 			continue;
-		if ((ip->i_flag&ILOCKED) != 0) {
+		}
+		if ((ip->i_flag&ILOCKED) != 0)
+		{
 			ip->i_flag |= IWANT;
 			(void) tsleep((caddr_t)ip, PINOD, "iget", 0);
 			goto loop;
 		}
 		if (vget(ITOV(ip)))
+		{
 			goto loop;
+		}
 		*ipp = ip;
 		return(0);
 	}
 	/*
 	 * Allocate a new inode.
 	 */
-	if (error = getnewvnode(VT_UFS, mntp, &ufs_vnodeops, &nvp)) {
+	error = getnewvnode(VT_UFS, mntp, &ufs_vnodeops, &nvp);
+	if (error != 0)
+	{
 		*ipp = 0;
 		return (error);
 	}
@@ -161,12 +176,14 @@ loop:
 	ip->i_dev = dev;
 	ip->i_number = ino;
 	insque(ip, ih);
-	ILOCK(ip);
+	ilock(ip);
 	/*
 	 * Read in the disk contents for the inode.
 	 */
-	if (error = bread(VFSTOUFS(mntp)->um_devvp, fsbtodb(fs, itod(fs, ino)),
-	    (int)fs->fs_bsize, NOCRED, &bp)) {
+	error = bread(VFSTOUFS(mntp)->um_devvp, fsbtodb(fs, itod(fs, ino)),
+				  (int)fs->fs_bsize, NOCRED, &bp);
+	if (error != 0)
+	{
 		/*
 		 * The inode does not contain anything useful, so it would
 		 * be misleading to leave it on its hash chain.
@@ -192,7 +209,8 @@ loop:
 	 */
 	vp = ITOV(ip);
 	vp->v_type = IFTOVT(ip->i_mode);
-	if (vp->v_type == VFIFO) {
+	if (vp->v_type == VFIFO)
+	{
 #ifdef FIFO
 		extern struct vnodeops fifo_inodeops;
 		vp->v_op = &fifo_inodeops;
@@ -202,9 +220,12 @@ loop:
 		return (EOPNOTSUPP);
 #endif /* FIFO */
 	}
-	if (vp->v_type == VCHR || vp->v_type == VBLK) {
+	if (vp->v_type == VCHR || vp->v_type == VBLK)
+	{
 		vp->v_op = &spec_inodeops;
-		if (nvp = checkalias(vp, ip->i_rdev, mntp)) {
+		nvp = checkalias(vp, ip->i_rdev, mntp);
+		if (nvp != 0)
+		{
 			/*
 			 * Reinitialize aliased inode.
 			 */
@@ -212,7 +233,7 @@ loop:
 			iq = VTOI(vp);
 			iq->i_vnode = vp;
 			iq->i_flag = 0;
-			ILOCK(iq);
+			ilock(iq);
 			iq->i_din = ip->i_din;
 			iq->i_dev = dev;
 			iq->i_number = ino;
@@ -226,7 +247,9 @@ loop:
 		}
 	}
 	if (ino == ROOTINO)
+	{
 		vp->v_flag |= VROOT;
+	}
 	/*
 	 * Finish inode initialization.
 	 */
@@ -237,12 +260,17 @@ loop:
 	 * Set up a generation number for this inode if it does not
 	 * already have one. This should only happen on old filesystems.
 	 */
-	if (ip->i_gen == 0) {
+	if (ip->i_gen == 0)
+	{
 		if (++nextgennumber < (u_long)time.tv_sec)
+		{
 			nextgennumber = time.tv_sec;
+		}
 		ip->i_gen = nextgennumber;
 		if ((vp->v_mount->mnt_flag & MNT_RDONLY) == 0)
+		{
 			ip->i_flag |= IMOD;
+		}
 	}
 	*ipp = ip;
 	return (0);
@@ -251,13 +279,12 @@ loop:
 /*
  * Unlock and decrement the reference count of an inode structure.
  */
-iput(ip)
-	register struct inode *ip;
+void iput(register struct inode* ip)
 {
 
 	if ((ip->i_flag & ILOCKED) == 0)
 		panic("iput");
-	IUNLOCK(ip);
+	iunlock(ip);
 	vrele(ITOV(ip));
 }
 
@@ -265,9 +292,7 @@ iput(ip)
  * Last reference to an inode, write the inode out and if necessary,
  * truncate and deallocate the file.
  */
-ufs_inactive(vp, p)
-	struct vnode *vp;
-	struct proc *p;
+int ufs_inactive(struct vnode* vp, struct proc* p)
 {
 	register struct inode *ip = VTOI(vp);
 	int mode, error = 0;
@@ -285,7 +310,7 @@ ufs_inactive(vp, p)
 			vgone(vp);
 		return (0);
 	}
-	ILOCK(ip);
+	ilock(ip);
 	if (ip->i_nlink <= 0 && (vp->v_mount->mnt_flag & MNT_RDONLY) == 0) {
 #ifdef QUOTA
 		if (!getinoquota(ip))
@@ -299,7 +324,7 @@ ufs_inactive(vp, p)
 		ifree(ip, ip->i_number, mode);
 	}
 	IUPDAT(ip, &time, &time, 0);
-	IUNLOCK(ip);
+	iunlock(ip);
 	ip->i_flag = 0;
 	/*
 	 * If we are done with the inode, reclaim it
@@ -313,8 +338,7 @@ ufs_inactive(vp, p)
 /*
  * Reclaim an inode so that it can be used for other purposes.
  */
-ufs_reclaim(vp)
-	register struct vnode *vp;
+int ufs_reclaim(register struct vnode* vp)
 {
 	register struct inode *ip = VTOI(vp);
 	int i;
@@ -359,10 +383,7 @@ ufs_reclaim(vp)
  * time is always taken from the current time. If waitfor is set,
  * then wait for the disk write of the inode to complete.
  */
-iupdat(ip, ta, tm, waitfor)
-	register struct inode *ip;
-	struct timeval *ta, *tm;
-	int waitfor;
+int iupdat(register struct inode* ip, struct timeval* ta, struct timeval* tm, int waitfor)
 {
 	struct buf *bp;
 	struct vnode *vp = ITOV(ip);
@@ -391,13 +412,7 @@ iupdat(ip, ta, tm, waitfor)
 	dp = bp->b_un.b_dino + itoo(fs, ip->i_number);
 	*dp = ip->i_din;
 	if (waitfor) {
-#ifdef nope
 		return (bwrite(bp));
-#else
-#define	bowrite(b)	{ (b)->b_flags |= B_ORDER; bawrite((b)); }
-		bowrite(bp);
-		return (0);
-#endif
 	} else {
 		bdwrite(bp, bp->b_vp);
 		return (0);
@@ -413,10 +428,7 @@ iupdat(ip, ta, tm, waitfor)
  *
  * NB: triple indirect blocks are untested.
  */
-itrunc(oip, length, flags)
-	register struct inode *oip;
-	u_long length;
-	int flags;
+int itrunc(register struct inode *oip, u_long length, int flags)
 {
 	register daddr_t lastblock;
 	daddr_t bn, lbn, lastiblock[NIADDR];
@@ -467,19 +479,18 @@ itrunc(oip, length, flags)
 		if (error = getinoquota(oip))
 			return (error);
 #endif
-		if (error = balloc(oip, lbn, offset, &bp, aflags))
+		error = balloc(oip, lbn, offset, &bp, aflags);
+		if (error != 0)
+		{
 			return (error);
+		}
 		oip->i_size = length;
 		size = blksize(fs, oip, lbn);
 		(void) vnode_pager_uncache(ITOV(oip));
 		memset(bp->b_un.b_addr + offset, 0, (unsigned)(size - offset));
 		allocbuf(bp, size);
 		if (flags & IO_SYNC)
-#ifdef nope
 			bwrite(bp);
-#else
-{ bowrite(bp); }
-#endif
 		else
 			bdwrite(bp, bp->b_vp);
 	}
@@ -601,11 +612,8 @@ done:
  *
  * NB: triple indirect blocks are untested.
  */
-indirtrunc(ip, bn, lastbn, level, countp)
-	register struct inode *ip;
-	daddr_t bn, lastbn;
-	int level;
-	long *countp;
+int indirtrunc(register struct inode*ip, daddr_t bn, daddr_t lastbn,
+			   int level, long *countp)
 {
 	register int i;
 	struct buf *bp;
@@ -647,13 +655,9 @@ indirtrunc(ip, bn, lastbn, level, countp)
 	  (u_int)(NINDIR(fs) - (last + 1)) * sizeof (daddr_t));
 	if (last == -1)
 		bp->b_flags |= B_INVAL;
-#ifdef was
 	error = bwrite(bp);
 	if (error)
 		allerror = error;
-#else
-	bowrite(bp);
-#endif
 	bap = copy;
 
 	/*
@@ -695,10 +699,8 @@ indirtrunc(ip, bn, lastbn, level, countp)
 /*
  * Lock an inode. If its already locked, set the WANT bit and sleep.
  */
-ilock(ip)
-	register struct inode *ip;
+void ilock(register struct inode* ip)
 {
-
 	while (ip->i_flag & ILOCKED) {
 		ip->i_flag |= IWANT;
 		if (ip->i_spare0 == curproc->p_pid)
@@ -714,8 +716,7 @@ ilock(ip)
 /*
  * Unlock an inode.  If WANT bit is on, wakeup.
  */
-iunlock(ip)
-	register struct inode *ip;
+void iunlock(register struct inode* ip)
 {
 
 #ifdef	DEBUG

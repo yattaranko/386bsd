@@ -70,8 +70,13 @@ typedef	long long			  int64_t;
 typedef	unsigned long long	u_int64_t;
 
 #ifndef _POSIX_SOURCE
+#if 0
 typedef	struct	_uquad	{ u_long val[2]; } u_quad;
 typedef	struct	_quad	{   long val[2]; } quad;
+#else
+typedef	unsigned long long	u_quad;
+typedef	long long			quad;
+#endif
 typedef	long *	qaddr_t;	/* should be typedef quad * qaddr_t; */
 
 #define	major(x)	((int)(((u_int)(x) >> 8)&0xff))	/* major number */

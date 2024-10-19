@@ -37,7 +37,7 @@ static char sccsid[] = "@(#)getnetent.c	5.8 (Berkeley) 2/24/91";
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
+#include <domain/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <stdio.h>

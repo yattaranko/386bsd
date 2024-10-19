@@ -6,7 +6,11 @@ SRCS=	builtins.c cd.c dirent.c echo.c error.c eval.c exec.c expand.c \
 	mystring.c nodes.c options.c parser.c redir.c show.c signames.c \
 	syntax.c trap.c output.c var.c
 OBJS+=	init.o
-CFLAGS+=-DSHELL -I. -I${.CURDIR}
+#LDONLY=ldonly
+#SRCHOME=/home/share/386bsd-2.0
+CFLAGS+=-DSHELL -I. -I${.CURDIR} #-nostdinc -nostdlib -nodefaultlibs -L${SRCHOME}/usr/lib -lc
+#CFLAGS+=-I${SRCHOME}/usr/src/include -I${SRCHOME}/usr/src/kernel/include
+#LDFLAGS+=--image-base 0x00000000 -e start
 .PATH:	${.CURDIR}/bltin
 .EXEC:	mkinit
 CLEANFILES+=\
@@ -21,28 +25,33 @@ builtins.h builtins.c: ${.CURDIR}/mkbuiltins ${.CURDIR}/builtins
 	cd ${.CURDIR}; sh mkbuiltins
 
 init.c: mkinit.c ${SRCS}
-	${CC} ${CFLAGS} ${.CURDIR}/mkinit.c -o mkinit
+#	${CC} ${CFLAGS} ${.CURDIR}/mkinit.c -o mkinit
+	${CC} -DSHELL -I. -I${.CURDIR} ${.CURDIR}/mkinit.c -o mkinit
 	./mkinit '${CC} -c ${CFLAGS} init.c' ${.ALLSRC}
 
 mkinit: ${.CURDIR}/mkinit.c
-	${CC} ${CFLAGS} ${.CURDIR}/mkinit.c -o $@
+#	${CC} ${CFLAGS} ${.CURDIR}/mkinit.c -o $@
+	${CC} -DSHELL -I. -I${.CURDIR} ${.CURDIR}/mkinit.c -o $@
 
 nodes.c nodes.h: mknodes ${.CURDIR}/nodetypes ${.CURDIR}/nodes.c.pat
 	./mknodes ${.CURDIR}/nodetypes ${.CURDIR}/nodes.c.pat
 
 mknodes: ${.CURDIR}/mknodes.c
-	${CC} ${CFLAGS} ${.CURDIR}/mknodes.c -o $@
+#	${CC} ${CFLAGS} ${.CURDIR}/mknodes.c -o $@
+	${CC} -DSHELL -I. -I${.CURDIR} ${.CURDIR}/mknodes.c -o $@
 
 signames.c signames.h: mksignames
 	./mksignames
 
 mksignames: ${.CURDIR}/mksignames.c
-	${CC} ${CFLAGS} ${.CURDIR}/mksignames.c -o $@
+#	${CC} ${CFLAGS} ${.CURDIR}/mksignames.c -o $@
+	${CC} -DSHELL -I. -I${.CURDIR} ${.CURDIR}/mksignames.c -o $@
 
 syntax.c syntax.h: mksyntax
 	./mksyntax
 
 mksyntax: ${.CURDIR}/mksyntax.c ${.CURDIR}/parser.h
-	${CC} ${CFLAGS} ${.CURDIR}/mksyntax.c -o $@
+#	${CC} ${CFLAGS} ${.CURDIR}/mksyntax.c -o $@
+	${CC} -DSHELL -I. -I${.CURDIR} ${.CURDIR}/mksyntax.c -o $@
 
 .include <bsd.prog.mk>

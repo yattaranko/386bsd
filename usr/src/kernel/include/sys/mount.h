@@ -33,7 +33,7 @@
  *	$Id$
  */
 
-typedef quad fsid_t;			/* file system id type */
+typedef struct fsid { int val[2]; } fsid_t;	/* file system id type */
 
 /*
  * File identifier.
@@ -87,26 +87,27 @@ struct statfs {
  * The file systems are put on a doubly linked list.
  */
 struct mount {
-	struct mount	*mnt_next;		/* next in mount list */
-	struct mount	*mnt_prev;		/* prev in mount list */
-	struct vfsops	*mnt_op;		/* operations on fs */
+	struct mount	*mnt_next;			/* next in mount list */
+	struct mount	*mnt_prev;			/* prev in mount list */
+	struct vfsops	*mnt_op;			/* operations on fs */
 	struct vnode	*mnt_vnodecovered;	/* vnode we mounted on */
 	struct vnode	*mnt_mounth;		/* list of vnodes this mount */
-	int		mnt_flag;		/* flags */
-	uid_t		mnt_exroot;		/* exported mapping for uid 0 */
-	struct statfs	mnt_stat;		/* cache of filesystem stats */
-	qaddr_t		mnt_data;		/* private data */
+	int				mnt_flag;			/* flags */
+	int				mnt_maxsymlinklen;	/* max size of short symlink */
+	uid_t			mnt_exroot;			/* exported mapping for uid 0 */
+	struct statfs	mnt_stat;			/* cache of filesystem stats */
+	qaddr_t			mnt_data;			/* private data */
 };
 
 /*
  * Mount flags.
  */
-#define	MNT_RDONLY	0x00000001	/* read only filesystem */
+#define	MNT_RDONLY		0x00000001	/* read only filesystem */
 #define	MNT_SYNCHRONOUS	0x00000002	/* file system written synchronously */
-#define	MNT_NOEXEC	0x00000004	/* can't exec from filesystem */
-#define	MNT_NOSUID	0x00000008	/* don't honor setuid bits on fs */
-#define	MNT_NODEV	0x00000010	/* don't interpret special files */
-#define	MNT_WCHR	0x00000020	/* use wide characters instead */
+#define	MNT_NOEXEC		0x00000004	/* can't exec from filesystem */
+#define	MNT_NOSUID		0x00000008	/* don't honor setuid bits on fs */
+#define	MNT_NODEV		0x00000010	/* don't interpret special files */
+#define	MNT_WCHR		0x00000020	/* use wide characters instead */
 
 /*
  * exported mount flags.
@@ -117,8 +118,8 @@ struct mount {
 /*
  * Flags set by internal operations.
  */
-#define	MNT_LOCAL	0x00001000	/* filesystem is stored locally */
-#define	MNT_QUOTA	0x00002000	/* quotas are enabled on filesystem */
+#define	MNT_LOCAL		0x00001000	/* filesystem is stored locally */
+#define	MNT_QUOTA		0x00002000	/* quotas are enabled on filesystem */
 
 /*
  * Mask of flags that are visible to statfs()
@@ -132,12 +133,13 @@ struct mount {
  * past the mount point.  This keeps the subtree stable during mounts
  * and unmounts.
  */
-#define	MNT_UPDATE	0x00010000	/* not a real mount, just an update */
-#define	MNT_MLOCK	0x00100000	/* lock so that subtree is stable */
-#define	MNT_MWAIT	0x00200000	/* someone is waiting for lock */
-#define MNT_MPBUSY	0x00400000	/* scan of mount point in progress */
-#define MNT_MPWANT	0x00800000	/* waiting for mount point */
-#define MNT_UNMOUNT	0x01000000	/* unmount in progress */
+#define	MNT_UPDATE		0x00010000	/* not a real mount, just an update */
+#define	MNT_MLOCK		0x00100000	/* lock so that subtree is stable */
+#define	MNT_MWAIT		0x00200000	/* someone is waiting for lock */
+#define MNT_MPBUSY		0x00400000	/* scan of mount point in progress */
+#define MNT_MPWANT		0x00800000	/* waiting for mount point */
+#define MNT_UNMOUNT		0x01000000	/* unmount in progress */
+#define MNT_WANTRDWR	0x02000000	/* want upgrade to read/write */
 
 /*
  * Operations supported on mounted file system.
@@ -216,7 +218,7 @@ struct mfs_args {
 	caddr_t	base;		/* base address of file system in memory */
 	u_long size;		/* size of file system */
 };
-#endif	/* MFS */
+#endif /* MFS */
 
 #ifdef NFS
 /*
@@ -259,7 +261,7 @@ struct nfs_args {
 #define	NFSMNT_SPONGY	0x0400	/* spongy mount (soft for stat and lookup) */
 #define	NFSMNT_COMPRESS	0x0800	/* Compress nfs rpc xdr */
 #define	NFSMNT_LOCKBITS	(NFSMNT_SCKLOCK | NFSMNT_WANTSCK)
-#endif	/* NFS */
+#endif /* NFS */
 
 #ifdef KERNEL
 /*
@@ -293,12 +295,12 @@ __ISYM__(void, cache_purgevfs, (struct mount *mp))
 /* XXX temp vm interface */
 void vnode_pager_umount(struct mount *mp);
 
-/* struct	vfsops *vfssw[];	*/ /* mount filesystem type table */
+/* struct	vfsops *vfssw[]; */	/* mount filesystem type table */
 extern struct	vfsops *vfs;		/* head of vfs list */
 struct	vfsops *findvfs(int type);	/* return vfs associated with type */
 /* use another filesystem to complete a different filesystem */
 void incoporatefs(struct vfsops *, struct vfsops *);
-/*int	(*mountroot)();		*/ /* perform mount of root filesystem */
+/*int	(*mountroot)(); */		/* perform mount of root filesystem */
 
 #else /* KERNEL */
 

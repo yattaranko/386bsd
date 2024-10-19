@@ -10,8 +10,8 @@ IDENT+=	-DINET	# XXX -- eliminate conditional compilation dependancies
 # machine dependant checksum, or portable version?
 .if exists(in_cksum_${MACHINE}.c)
 MACH_SRCS+= in_cksum_${MACHINE}.c
-.elif exists(in_cksum_${MACHINE}.s)
-MACH_SRCS+= in_cksum_${MACHINE}.s
+.elif exists(in_cksum_${MACHINE}.S)
+MACH_SRCS+= in_cksum_${MACHINE}.S
 .else
 DOMAIN_SRCS+= in_cksum.c
 .endif

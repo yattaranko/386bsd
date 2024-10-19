@@ -107,7 +107,7 @@ struct syscframe {
 	int	sf_eax;
 	int	sf_eflags;
 	/* below portion defined in 386 hardware */
-/*	int	sf_args[N]; 	*/ /* if call gate copy args enabled!*/
+/*	int	sf_args[N]; */ 	/* if call gate copy args enabled!*/
 	int	sf_eip;
 	int	sf_cs;
 	/* below only when transitting rings (e.g. user to kernel) */

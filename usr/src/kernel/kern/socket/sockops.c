@@ -55,11 +55,11 @@
 #include "prototypes.h"
 
 /* strings for sleep message: */
-static char	netcls[] = "netcls";
+/* static */ char	netcls[] = "netcls";
 
-extern void sofree(struct socket *so);
+extern void socantrcvmore(struct socket *so);
 static void sorflush(struct socket *so);
-static void socantrcvmore(struct socket *so);
+extern void sofree(struct socket *so);
 
 /* Create a socket */
 int
@@ -858,7 +858,7 @@ soshutdown(struct socket *so, int how)
 }
 
 /* */
-static void
+void
 sorflush(struct socket *so)
 {
 	struct sockbuf *sb = &so->so_rcv, asb;
@@ -1123,7 +1123,7 @@ socantsendmore(struct socket *so)
 	sowwakeup(so);
 }
 
-static void
+void
 socantrcvmore(struct socket *so)
 {
 

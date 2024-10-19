@@ -6,6 +6,9 @@
  * Host to Network Short byte order conversion.
  */
 
+#ifndef	_HTONS_H_
+#define	_HTONS_H_
+
 __INLINE unsigned short
 htons(unsigned short wd)
 {	unsigned short rv;
@@ -13,3 +16,5 @@ htons(unsigned short wd)
 	asm ("xchgb %b0, %h0" : "=q" (rv) : "0" (wd));
 	return (rv);
 }
+
+#endif	/* _HTONS_H_ */

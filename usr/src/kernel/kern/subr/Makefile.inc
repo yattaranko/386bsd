@@ -7,7 +7,7 @@
 KERN_SRCS+= \
 	disklabel.c disksort.c esym.c nullop.c printf.c ring.c rlist.c uio.c rel.c
 
-KERN_SRCS+= strcat.c strcpy.c strncpy.c strcmp.c strlen.c memcmp.c
+KERN_SRCS+= strcat.c strcpy.c strncpy.c strcmp.c strlen.c
 # XXX should be conditional.
 MACH_SRCS_S+= \
 	memmove_${MACHINE}.S scanc_${MACHINE}.S skpc_${MACHINE}.S locc_${MACHINE}.S

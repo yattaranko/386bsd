@@ -37,7 +37,7 @@ static char sccsid[] = "@(#)proc.c	5.22 (Berkeley) 6/14/91";
 
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <errno.h>
+#include <sys/errno.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -53,6 +53,17 @@ static char sccsid[] = "@(#)proc.c	5.22 (Berkeley) 6/14/91";
 #include "extern.h"
 
 #define BIGINDEX	9	/* largest desirable job index */
+
+struct process proclist;	/* list head of all processes */
+bool    pnoprocesses;		/* pchild found nothing to wait for */
+
+struct process *pholdjob;	/* one level stack of current jobs */
+
+struct process *pcurrjob;	/* current job */
+struct process *pcurrent;	/* current job in table */
+struct process *pprevious;	/* previous job in table */
+
+int    pmaxindex;		/* current maximum job index */
 
 static struct rusage zru;
 

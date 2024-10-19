@@ -17,7 +17,7 @@ remrq(struct proc *p) {
 
 #ifdef	DIAGNOSTIC
 	/* If a run queue is empty, something is definitely wrong */
-	if ((whichqs & (1 << rqidx)) == 0)
+	if (whichqs & (1<<rqidx) == 0)
 		panic("remrq");
 #endif
 

@@ -871,7 +871,7 @@ int mcd_probe(struct isa_device *dev)
 #endif
 
 	/* attempt a soft reset */
-	/* outb(port+mcd_config, 2);  */ /* LU version only */
+	/* outb(port+mcd_config, 2);  /* LU version only */
 printf("soft reset ");
 	mcd_setport(unit, mcd_Data, MCD_SOFTRESET);
 

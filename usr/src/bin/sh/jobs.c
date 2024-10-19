@@ -57,9 +57,9 @@ static char sccsid[] = "@(#)jobs.c	5.1 (Berkeley) 3/7/91";
 #include "error.h"
 #include "mystring.h"
 #include "redir.h"
-#include <fcntl.h>
-#include <signal.h>
-#include <errno.h>
+#include <sys/fcntl.h>
+#include <sys/signal.h>
+#include <sys/errno.h>
 #ifdef BSD
 #include <sys/types.h>
 #include <sys/wait.h>

@@ -62,8 +62,8 @@ static char sccsid[] = "@(#)cp.c	5.24 (Berkeley) 5/6/91";
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <dirent.h>
-#include <fcntl.h>
-#include <errno.h>
+#include <sys/fcntl.h>
+#include <sys/errno.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,17 +76,25 @@ PATH_T to = { to.p_path, "" };
 uid_t myuid;
 int exit_val, myumask;
 int iflag, pflag, orflag, rflag;
-int (*statfcn)();
+int (*statfcn)(const char*, struct stat*);
 char *buf, *progname;
 
-main(argc, argv)
-	int argc;
-	char **argv;
+static void copy();
+static void copy_file(struct stat *fs, int dne);
+static void copy_dir();
+static void copy_link(int exists);
+static void copy_fifo(struct stat* from_stat, int exists);
+static void copy_special(struct stat *from_stat, int exists);
+static void setfile(register struct stat* fs, int fd);
+static void error(char* s);
+static void usage();
+
+int main(int argc, char** argv)
 {
 	extern int optind;
 	struct stat to_stat;
 	register int c, r;
-	int symfollow, lstat(), stat();
+	int symfollow;
 	char *old_to, *p;
 
 	/*
@@ -205,10 +213,12 @@ main(argc, argv)
 		}
 	}
 	exit(exit_val);
+
+	return (0);
 }
 
 /* copy file or directory at "from" to "to". */
-copy()
+static void copy()
 {
 	struct stat from_stat, to_stat;
 	int dne, statval;
@@ -293,9 +303,7 @@ copy()
 	copy_file(&from_stat, dne);
 }
 
-copy_file(fs, dne)
-	struct stat *fs;
-	int dne;
+static void copy_file(struct stat *fs, int dne)
 {
 	register int from_fd, to_fd, rcount, wcount;
 	struct stat to_stat;
@@ -364,7 +372,7 @@ copy_file(fs, dne)
 		error(to.p_path);
 }
 
-copy_dir()
+static void copy_dir()
 {
 	struct stat from_stat;
 	struct dirent *dp, **dir_list;
@@ -446,8 +454,7 @@ done:		dir_list[i] = NULL;
 	free((void *)dir_list);
 }
 
-copy_link(exists)
-	int exists;
+static void copy_link(int exists)
 {
 	int len;
 	char link[PATH_MAX];
@@ -467,9 +474,7 @@ copy_link(exists)
 	}
 }
 
-copy_fifo(from_stat, exists)
-	struct stat *from_stat;
-	int exists;
+static void copy_fifo(struct stat* from_stat, int exists)
 {
 	if (exists && unlink(to.p_path)) {
 		error(to.p_path);
@@ -483,9 +488,7 @@ copy_fifo(from_stat, exists)
 		setfile(from_stat, 0);
 }
 
-copy_special(from_stat, exists)
-	struct stat *from_stat;
-	int exists;
+static void copy_special(struct stat *from_stat, int exists)
 {
 	if (exists && unlink(to.p_path)) {
 		error(to.p_path);
@@ -499,9 +502,7 @@ copy_special(from_stat, exists)
 		setfile(from_stat, 0);
 }
 
-setfile(fs, fd)
-	register struct stat *fs;
-	int fd;
+static void setfile(register struct stat* fs, int fd)
 {
 	static struct timeval tv[2];
 	char path[100];
@@ -535,14 +536,13 @@ setfile(fs, fd)
 	}
 }
 
-error(s)
-	char *s;
+static void error(char* s)
 {
 	exit_val = 1;
 	(void)fprintf(stderr, "%s: %s: %s\n", progname, s, strerror(errno));
 }
 
-usage()
+static void usage()
 {
 	(void)fprintf(stderr,
 "usage: cp [-Rfhip] src target;\n   or: cp [-Rfhip] src1 ... srcN directory\n");

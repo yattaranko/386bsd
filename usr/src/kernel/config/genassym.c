@@ -54,7 +54,9 @@
 #include "vm_map.h"
 #include "machine/pmap.h"
 
-main()
+extern void printf(const char *fmt, ...);
+
+int main(void)
 {
 	struct proc *p = (struct proc *)0;
 	struct vmmeter *vm = (struct vmmeter *)0;

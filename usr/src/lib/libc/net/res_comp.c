@@ -37,7 +37,7 @@ static char sccsid[] = "@(#)res_comp.c	6.22 (Berkeley) 3/19/91";
 
 #include <sys/param.h>
 #include <arpa/nameser.h>
-#include <netinet/in.h>
+#include <domain/in.h>
 #include <resolv.h>
 #include <stdio.h>
 

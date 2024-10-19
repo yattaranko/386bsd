@@ -3,7 +3,7 @@
 PROG=	getty
 SRCS=	main.c init.c subr.c gettytab.c ttydefaults.c
 DPADD=	${LIBUTIL}
-LDADD=	-lutil
+LDADD=	-lutil -lc
 MAN5=	gettytab.0 ttys.0
 MAN8=	getty.0
 

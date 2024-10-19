@@ -223,7 +223,7 @@ extern inline int
 rtinit(struct ifaddr *ifa, int cmd, int flags) {
 	int (*f)(struct ifaddr *, int, int);
 
-	f = esym_fetch(rtinit);
+	/* (const void *) */ f = esym_fetch(rtinit);
 	if (f == 0) {
 		ifa->ifa_rt = 0;
 		return (0);
@@ -236,7 +236,7 @@ rtalloc(struct route *ro)
 {
 	void (*f)(struct route *);
 
-	f = esym_fetch(rtalloc);
+	/* (const void *) */ f = esym_fetch(rtalloc);
 	if (f == 0)
 		ro->ro_rt = 0;
 	else
@@ -249,7 +249,7 @@ rtfree(struct rtentry *rt)
 	void (*f)(struct rtentry *);
 	/*extern void panic(const char *);*/
 
-	f = esym_fetch(rtfree);
+	/* (const void *) */ f = esym_fetch(rtfree);
 	if (f == 0)
 		panic("no rtfree");
 	else
@@ -265,7 +265,7 @@ rtredirect(struct sockaddr *dst, struct sockaddr *gateway,
 		int, struct sockaddr *, struct rtentry **);
 	/*extern void panic(const char *);*/
 
-	f = esym_fetch(rtredirect);
+	/* (const void *) */ f = esym_fetch(rtredirect);
 	if (f == 0)
 		panic("no rtredirect");
 	else
@@ -277,7 +277,7 @@ rtioctl(int req, caddr_t data, struct proc *p)
 {
 	int (*f)(int, caddr_t , struct proc *);
 
-	f = esym_fetch(rtioctl);
+	/* (const void *) */ f = esym_fetch(rtioctl);
 	if (f == 0)
 		return (EOPNOTSUPP);
 	else
@@ -291,7 +291,7 @@ rtrequest(int req, struct sockaddr *dst, struct sockaddr *gateway,
 	int (*f)(int, struct sockaddr *, struct sockaddr *,
 		struct sockaddr *, int, struct rtentry **);
 
-	f = esym_fetch(rtrequest);
+	/* (const void *) */ f = esym_fetch(rtrequest);
 	if (f == 0)
 		return (EINVAL);
 	else
@@ -306,7 +306,7 @@ rtmissmsg(int type, struct sockaddr *dst, struct sockaddr *gate,
 		struct sockaddr *, struct sockaddr *, int, int);
 	/*extern void panic(const char *);*/
 
-	f = esym_fetch(rtmissmsg);
+	/* (const void *) */ f = esym_fetch(rtmissmsg);
 	if (f == 0)
 		panic("no rtmissmsg");
 	else
@@ -320,7 +320,7 @@ looutput(struct ifnet *ifp, struct mbuf *m, struct sockaddr *dst,
 	int (*f)(struct ifnet *, struct mbuf *, struct sockaddr *,
 		struct rtentry *);
 
-	f = esym_fetch(looutput);
+	/* (const void *) */ f = esym_fetch(looutput);
 	if (f == 0)
 		return (EOPNOTSUPP);
 	else

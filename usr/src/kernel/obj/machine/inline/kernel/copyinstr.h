@@ -8,10 +8,10 @@
  */
 
 __INLINE int
-copyinstr(struct proc *p, void *from, void *to, u_int size,
-	u_int *lencopied) {
+copyinstr(struct proc *p, void *from, void *to, u_int size, u_int *lencopied)
+{
 	extern const int zero;		/* compiler bug workaround */
-	/* const void *f = from + zero;	*/ /* compiler bug workaround */
+	/* const void *f = from + zero; */	/* compiler bug workaround */
 	u_int req /* = size + zero */;
 	int rv;
 
@@ -33,21 +33,21 @@ copyinstr(struct proc *p, void *from, void *to, u_int size,
 	asm volatile ("movl $4f, %0" : "=m" (p->p_md.md_onfault));
 
 	/* copy the string */
-	asm volatile (" \
-		cld ;			\
+	asm volatile (" 		\
+		cld ;				\
 	1:	cmpb	$0,(%1) ;	\
-		movsb ;			\
+		movsb ;				\
 		loopne	1b ;		\
 		jne     3f ;		"
 		: "=D" (to), "=S" (from), "=c" (size)
 		: "0" (to), "1" (from), "c" (size));
 
 	/* set the return value, and catch the possible fault */
-	asm volatile ("\
+	asm volatile ("			\
 	2:	xorl %0, %0 ;		\
-		jmp 5f ;		\
+		jmp 5f ;			\
 	3:	movl %2, %0 ;		\
-		jmp 5f ;		\
+		jmp 5f ;			\
 	4:	movl %1, %0 ;		\
 	5:				"
 		: "=r" (rv)

@@ -41,20 +41,20 @@
  * in particular, macros and private variables.
  */
 
-int	__sflush __P((FILE *));
-FILE	*__sfp __P((void));
-int	__srefill __P((FILE *));
-int	__sread __P((void *, char *, int));
-int	__swrite __P((void *, char const *, int));
-fpos_t	__sseek __P((void *, fpos_t, int));
-int	__sclose __P((void *));
-void	__sinit __P((void));
-void	_cleanup __P((void));
-void	(*__cleanup) __P((void));
-void	__smakebuf __P((FILE *));
-int	_fwalk __P((int (*)(FILE *)));
-int	__swsetup __P((FILE *));
-int	__sflags __P((const char *, int *));
+extern int	__sflush __P((FILE *));
+extern FILE	*__sfp __P((void));
+extern int	__srefill __P((FILE *));
+extern int	__sread __P((void *, char *, int));
+extern int	__swrite __P((void *, char const *, int));
+extern fpos_t	__sseek __P((void *, fpos_t, int));
+extern int	__sclose __P((void *));
+extern void	__sinit __P((void));
+extern void	_cleanup __P((void));
+extern void	(*__cleanup) __P((void));
+extern void	__smakebuf __P((FILE *));
+extern int	_fwalk __P((int (*)(FILE *)));
+extern int	__swsetup __P((FILE *));
+extern int	__sflags __P((const char *, int *));
 
 extern int __sdidinit;
 

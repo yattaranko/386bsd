@@ -58,9 +58,9 @@ extern long dumplo;		/* offset into dumpdev */
 #undef __ISYM_VERSION__
 
 extern struct sysent {		/* system call table */
-	int	sy_narg;	/* number of arguments */
-	int	(*sy_call)();	/* implementing function */
+	int	sy_narg;			/* number of arguments */
+	int	(*sy_call)(struct proc*, void*, int*);	/* implementing function */
 } sysent[];
-extern int nsysent;		/* number of system call table entries */
+extern int nsysent;			/* number of system call table entries */
 
 extern int boothowto;		/* reboot flags, from system bootstrap */

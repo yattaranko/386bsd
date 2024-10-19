@@ -66,37 +66,37 @@ struct bufhd
 
 struct buf
 {
-	long	b_flags;		/* too much goes here to describe */
+	long	b_flags;				/* too much goes here to describe */
 	struct	buf *b_forw, *b_back;	/* hash chain (2 way street) */
 	struct	buf *av_forw, *av_back;	/* position on free list if not BUSY */
 	struct	buf *b_blockf, **b_blockb;/* associated vnode */
-#define	b_actf	av_forw			/* alternate names for driver queue */
-#define	b_actl	av_back			/*    head - isn't history wonderful */
-	long	b_bcount;		/* transfer count */
-	long	b_bufsize;		/* size of allocated buffer */
-#define	b_active b_bcount		/* driver queue head: drive active */
-	short	b_error;		/* returned after I/O */
-	dev_t	b_dev;			/* major+minor device name */
+#define	b_actf	av_forw				/* alternate names for driver queue */
+#define	b_actl	av_back				/*    head - isn't history wonderful */
+	long	b_bcount;				/* transfer count */
+	long	b_bufsize;				/* size of allocated buffer */
+#define	b_active b_bcount			/* driver queue head: drive active */
+	short	b_error;				/* returned after I/O */
+	dev_t	b_dev;					/* major+minor device name */
 	union {
-	    caddr_t b_addr;		/* low order core address */
-	    int	*b_words;		/* words for clearing */
-	    struct fs *b_fs;		/* superblocks */
-	    struct csum *b_cs;		/* superblock summary information */
-	    struct cg *b_cg;		/* cylinder group block */
-	    struct dinode *b_dino;	/* ilist */
-	    daddr_t *b_daddr;		/* indirect block */
+	    caddr_t b_addr;				/* low order core address */
+	    int	*b_words;				/* words for clearing */
+	    struct fs *b_fs;			/* superblocks */
+	    struct csum *b_cs;			/* superblock summary information */
+	    struct cg *b_cg;			/* cylinder group block */
+	    struct dinode *b_dino;		/* ilist */
+	    daddr_t *b_daddr;			/* indirect block */
 	} b_un;
-	daddr_t	b_lblkno;		/* logical block number */
-	daddr_t	b_blkno;		/* block # on device */
-	long	b_resid;		/* words not transferred after error */
-#define	b_errcnt b_resid		/* while i/o in progress: # retries */
-	struct  proc *b_proc;		/* proc doing physical or swap I/O */
-	void	(*b_iodone)();		/* function called by iodone */
-	struct	vnode *b_vp;		/* vnode for dev */
-	struct	ucred *b_rcred;		/* ref to read credentials */
-	struct	ucred *b_wcred;		/* ref to write credendtials */
-	int	b_dirtyoff;		/* offset in buffer of dirty region */
-	int	b_dirtyend;		/* offset of end of dirty region */
+	daddr_t	b_lblkno;				/* logical block number */
+	daddr_t	b_blkno;				/* block # on device */
+	long	b_resid;				/* words not transferred after error */
+#define	b_errcnt b_resid			/* while i/o in progress: # retries */
+	struct  proc *b_proc;			/* proc doing physical or swap I/O */
+	void(*b_iodone)(struct buf*);	/* function called by iodone */
+	struct	vnode *b_vp;			/* vnode for dev */
+	struct	ucred *b_rcred;			/* ref to read credentials */
+	struct	ucred *b_wcred;			/* ref to write credendtials */
+	int	b_dirtyoff;					/* offset in buffer of dirty region */
+	int	b_dirtyend;					/* offset of end of dirty region */
 };
 
 #define	BQUEUES		4		/* number of free buffer queues */
@@ -120,10 +120,10 @@ struct buf
 #define	BLK_NODEV	(-1)		/* no block device (yet) */
 
 extern struct	buf *buf;	/* the buffer pool itself */
-extern int	nbuf;		/* number of buffer headers */
-extern int	bufpages;	/* number of memory pages in the buffer pool */
+extern int		nbuf;		/* number of buffer headers */
+extern int		bufpages;	/* number of memory pages in the buffer pool */
 extern struct	buf *swbuf;	/* swap I/O headers */
-extern int	nswbuf;
+extern int		nswbuf;
 extern struct	bufhd bufhash[BUFHSZ];	/* heads of hash lists */
 extern struct	buf bfreelist[BQUEUES];	/* heads of available lists */
 extern struct	buf bswlist;		/* head of free swap header list */

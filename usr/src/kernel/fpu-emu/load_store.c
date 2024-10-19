@@ -114,7 +114,7 @@ void load_store_instr(char type)
 #ifdef PARANOID
     default:
       return EXCEPTION(EX_INTERNAL);
-#endif	/* PARANOID */
+#endif /* PARANOID */
     }
 
 switch ( type )

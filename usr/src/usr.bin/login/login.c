@@ -54,10 +54,10 @@ static char sccsid[] = "@(#)login.c	5.73 (Berkeley) 6/29/91";
 #include <sys/file.h>
 
 #include <utmp.h>
-#include <signal.h>
-#include <errno.h>
+#include <sys/signal.h>
+#include <sys/errno.h>
 #include <ttyent.h>
-#include <syslog.h>
+#include <sys/syslog.h>
 #include <grp.h>
 #include <pwd.h>
 #include <setjmp.h>
@@ -85,7 +85,10 @@ struct	passwd *pwd;
 int	failures;
 char	term[64], *envinit[1], *hostname, *username, *tty;
 
-main(argc, argv)
+static void motd();
+static void badlogin(char* name);
+
+int main(argc, argv)
 	int argc;
 	char **argv;
 {
@@ -387,8 +390,8 @@ main(argc, argv)
 		struct stat st;
 
 		printf("%s%s",
-			"386BSD Release 1.0 by William and Lynne Jolitz.\n",
-"Copyright (c) 1989-1994 William F. Jolitz. All Rights Reserved.\n");
+			"386BSD Release 2.0 by William and Lynne Jolitz.\n",
+			"Copyright (c) 1989-1994 William F. Jolitz. All Rights Reserved.\n");
 
 		motd();
 		(void)sprintf(tbuf, "%s/%s", _PATH_MAILDIR, pwd->pw_name);
@@ -418,6 +421,8 @@ main(argc, argv)
 	execlp(pwd->pw_shell, tbuf, 0);
 	(void)fprintf(stderr, "%s: %s\n", pwd->pw_shell, strerror(errno));
 	exit(1);
+
+	return 0;	// never reached here
 }
 
 #ifdef	KERBEROS
@@ -471,7 +476,7 @@ rootterm(ttyn)
 
 jmp_buf motdinterrupt;
 
-motd()
+static void motd()
 {
 	register int fd, nchars;
 	sig_t oldint;
@@ -539,8 +544,7 @@ dolastlog(quiet)
 	}
 }
 
-badlogin(name)
-	char *name;
+static void badlogin(char* name)
 {
 	if (failures == 0)
 		return;

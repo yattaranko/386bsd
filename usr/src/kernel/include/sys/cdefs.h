@@ -58,7 +58,7 @@
 
 #else	/* !(__STDC__ || __cplusplus) */
 #define	__P(protos)	()		/* traditional C preprocessor */
-#define	__CONCAT(x,y)	x/**/y
+#define	__CONCAT(x,y)	x##y
 #define	__STRING(x)	"x"
 
 #ifdef __GNUC__

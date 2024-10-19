@@ -45,13 +45,13 @@ static char sccsid[] = "@(#)main.c	5.16 (Berkeley) 3/27/91";
 
 #include <sys/param.h>
 #include <sys/stat.h>
-#include <signal.h>
-#include <fcntl.h>
+#include <sys/signal.h>
+#include <sys/fcntl.h>
 #include <sgtty.h>
 #include <time.h>
 #include <ctype.h>
 #include <setjmp.h>
-#include <syslog.h>
+#include <sys/syslog.h>
 #include <unistd.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -78,7 +78,26 @@ char	name[16];
 char	dev[] = _PATH_DEV;
 char	ttyn[32];
 char	*portselector();
-char	*ttyname();
+//char	*ttyname();
+
+extern int login_tty(int);
+extern void edithost(register char *pat);
+extern void setchars();
+extern void setdefaults();
+extern void gendefaults();
+static int getname();
+extern int speed(int val);
+extern long setflags(int n);
+extern void set_ttydefaults(int fd);
+extern void gettable(char* name, char* buf, char* area);
+extern void makeenv(char *env[]);
+
+static void putpad(register char *s);
+static void putchr(int cc);
+static void puts(register char* s);
+static void putf(register char* cp);
+static void oflush();
+static void prompt();
 
 #define	OBUFSIZ		128
 #define	TABBUFSIZ	512
@@ -134,9 +153,7 @@ interrupt()
 	longjmp(intrupt, 1);
 }
 
-main(argc, argv)
-	int argc;
-	char **argv;
+int main(int argc, char** argv)
 {
 	extern	char **environ;
 	char *tname;
@@ -283,9 +300,11 @@ main(argc, argv)
 		if (NX && *NX)
 			tname = NX;
 	}
+
+	return (0);
 }
 
-getname()
+static int getname()
 {
 	register int c;
 	register char *np;
@@ -370,11 +389,10 @@ short	tmspc10[] = {
 	0, 2000, 1333, 909, 743, 666, 500, 333, 166, 83, 55, 41, 20, 10, 5, 15
 };
 
-putpad(s)
-	register char *s;
+static void putpad(register char *s)
 {
-	register pad = 0;
-	register mspc10;
+	register int pad = 0;
+	register int mspc10;
 
 	if (isdigit(*s)) {
 		while (isdigit(*s)) {
@@ -411,8 +429,7 @@ putpad(s)
 		putchr(*PC);
 }
 
-puts(s)
-	register char *s;
+static void puts(register char* s)
 {
 	while (*s)
 		putchr(*s++);
@@ -421,7 +438,7 @@ puts(s)
 char	outbuf[OBUFSIZ];
 int	obufcnt = 0;
 
-putchr(cc)
+static void putchr(int cc)
 {
 	char c;
 
@@ -439,14 +456,14 @@ putchr(cc)
 		write(STDOUT_FILENO, &c, 1);
 }
 
-oflush()
+static void oflush()
 {
 	if (obufcnt)
 		write(STDOUT_FILENO, outbuf, obufcnt);
 	obufcnt = 0;
 }
 
-prompt()
+static void prompt()
 {
 
 	putf(LM);
@@ -454,8 +471,7 @@ prompt()
 		putchr('\n');
 }
 
-putf(cp)
-	register char *cp;
+static void putf(register char* cp)
 {
 	extern char editedhost[];
 	time_t t;

@@ -4,11 +4,11 @@
 .include "${.CURDIR}/../Makefile.inc"
 .endif
 
-MANGRP?=	bin
-MANOWN?=	bin
+MANGRP?=	wheel
+MANOWN?=	root
 MANMODE?=	444
 
-MANDIR?=	/usr/share/man/cat
+MANDIR?=	${SRCHOME}/usr/share/man/cat
 
 MINSTALL=	install -c -o ${MANOWN} -g ${MANGRP} -m ${MANMODE}
 

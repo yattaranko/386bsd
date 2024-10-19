@@ -18,18 +18,19 @@ copyin(struct proc *p, void *from, void *toaddr, u_int size)
 		return(EFAULT);
 
 	/* set fault vector */
-	asm volatile ("movl $4f, %0" : "=m" (p->p_md.md_onfault));
+	__asm__ volatile ("movl $4f, %0" : "=m" (p->p_md.md_onfault));
 
 	/* copy the string */
-	asm volatile ("cld ; repe ; movsl"
+//	asm volatile ("cld ; repe ; movsl"
+	__asm__ volatile ("cld ; rep ; movsl"
 		 : "=D" (toaddr), "=S" (f)
 		 : "0" (toaddr), "1" (f), "c" (size / 4));
-	asm volatile ("repe ; movsb"
+	__asm__ volatile ("rep ; movsb"
 		 : "=D" (toaddr), "=S" (f)
 		 : "0" (toaddr), "1" (f), "c" (size & 3));
 
 	/* catch the possible fault */
-	asm volatile ("\
+	__asm__ volatile ("\
 		xorl %0, %0 ;		\
 		jmp 5f ;		\
 	4:	movl %1, %0 ;		\

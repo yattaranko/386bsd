@@ -59,9 +59,9 @@ eofread(cookie, buf, len)
 }
 
 #if __STDC__
-sscanf(char *str, char const *fmt, ...)
+int sscanf(const char *str, const char *fmt, ...)
 #else
-sscanf(str, fmt, va_alist)
+int sscanf(str, fmt, va_alist)
 	char *str;
 	char *fmt;
 	va_dcl

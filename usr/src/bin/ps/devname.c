@@ -36,7 +36,7 @@ static char sccsid[] = "@(#)devname.c	5.14 (Berkeley) 5/6/91";
 #endif /* LIBC_SCCS and not lint */
 
 #include <sys/types.h>
-#include <fcntl.h>
+#include <sys/fcntl.h>
 #include <db.h>
 #include <stdio.h>
 #include <paths.h>

@@ -60,23 +60,6 @@ typedef	int		ssize_t;	/* POSIX names. */
 #endif
 
 /*
- * If your system doesn't typedef the following basic integral types,
- * change the 0 to a 1, and change the values as necessary.
- */
-#if 0
-typedef	char		   	   int8_t;
-typedef	unsigned char		 u_int8_t;
-typedef	short			  int16_t;
-typedef	unsigned short		u_int16_t;
-typedef	int			  int32_t;
-typedef	unsigned int		u_int32_t;
-#ifdef WE_DONT_NEED_QUADS
-typedef	long long		  int64_t;
-typedef	unsigned long long	u_int64_t;
-#endif
-#endif
-
-/*
  * If your system doesn't have the POSIX type for a signal mask,
  * change the 0 to a 1.
  */

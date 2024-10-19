@@ -69,7 +69,7 @@ static char *ed_config = /*"ed.	# ns derivative ethernet $Revision: 1.1 $";*/
 #ifndef IFF_ALTPHYS
 #define IFF_ALTPHYS IFF_LLC0
 #endif
-static const int zero = 0;
+/* static const int zero = 0; */
  
 /*
  * ed_softc: per line info and status
@@ -2394,7 +2394,7 @@ ed_ring_copy(sc,src,dst,amount)
 		if (sc->mem_shared)
 			memcpy(dst, src, tmp_amount);
 		else
-			ed_pio_readmem(sc,src,dst,tmp_amount);
+			ed_pio_readmem(sc,(unsigned short)src,dst,tmp_amount);
 
 		amount -= tmp_amount;
 		src = sc->mem_ring;
@@ -2404,7 +2404,7 @@ ed_ring_copy(sc,src,dst,amount)
 	if (sc->mem_shared)
 		memcpy(dst, src, amount);
 	else
-		ed_pio_readmem(sc, src, dst, amount);
+		ed_pio_readmem(sc, (unsigned short)src, dst, amount);
 
 	return(src + amount);
 }

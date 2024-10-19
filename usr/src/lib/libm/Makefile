@@ -12,6 +12,8 @@
 
 LIB=	m
 CFLAGS+=-I${.CURDIR}/common_source
+NONSTDINC=-I${SRCHOME}/usr/src/include -I${SRCHOME}/usr/src/kernel/include
+NONSTDINC+=-I${SRCHOME}/usr/src/kernel/include/machine -I${SRCHOME}/usr/src/kernel/include/sys
 
 HARDWARE=i387
 .PATH:	${.CURDIR}/common_source ${.CURDIR}/common \

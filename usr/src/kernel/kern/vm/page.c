@@ -524,7 +524,7 @@ Debugger();
 }
 }
 
-vm_page_print(vm_page_t p) {
+void vm_page_print(vm_page_t p) {
 	if ( (((unsigned int) p) < ((unsigned int) &vm_page_array[0])) ||
 	     (((unsigned int) p) > ((unsigned int) &vm_page_array[last_page-first_page]))){
 		printf("Page %x: not in page array\n ");
@@ -565,7 +565,7 @@ vm_page_queues_print() {
 	vm_page_queue_print(&vm_page_queue_active);
 }
 
-vm_page_queue_print(queue_t q) {
+void vm_page_queue_print(queue_t q) {
 	int cnt=0;
 	vm_page_t mem;
 

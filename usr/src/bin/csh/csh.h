@@ -109,55 +109,55 @@ typedef int bool;
 /*
  * Global flags
  */
-bool    chkstop;		/* Warned of stopped jobs... allow exit */
-bool    didfds;			/* Have setup i/o fd's for child */
-bool    doneinp;		/* EOF indicator after reset from readc */
-bool    exiterr;		/* Exit if error or non-zero exit status */
-bool    child;			/* Child shell ... errors cause exit */
-bool    haderr;			/* Reset was because of an error */
-bool    intty;			/* Input is a tty */
-bool    intact;			/* We are interactive... therefore prompt */
-bool    justpr;			/* Just print because of :p hist mod */
-bool    loginsh;		/* We are a loginsh -> .login/.logout */
-bool    neednote;		/* Need to pnotify() */
-bool    noexec;			/* Don't execute, just syntax check */
-bool    pjobs;			/* want to print jobs if interrupted */
-bool    setintr;		/* Set interrupts on/off -> Wait intr... */
-bool    timflg;			/* Time the next waited for command */
-bool    havhash;		/* path hashing is available */
+extern bool    chkstop;		/* Warned of stopped jobs... allow exit */
+extern bool    didfds;			/* Have setup i/o fd's for child */
+extern bool    doneinp;		/* EOF indicator after reset from readc */
+extern bool    exiterr;		/* Exit if error or non-zero exit status */
+extern bool    child;			/* Child shell ... errors cause exit */
+extern bool    haderr;			/* Reset was because of an error */
+extern bool    intty;			/* Input is a tty */
+extern bool    intact;			/* We are interactive... therefore prompt */
+extern bool    justpr;			/* Just print because of :p hist mod */
+extern bool    loginsh;		/* We are a loginsh -> .login/.logout */
+extern bool    neednote;		/* Need to pnotify() */
+extern bool    noexec;			/* Don't execute, just syntax check */
+extern bool    pjobs;			/* want to print jobs if interrupted */
+extern bool    setintr;		/* Set interrupts on/off -> Wait intr... */
+extern bool    timflg;			/* Time the next waited for command */
+extern bool    havhash;		/* path hashing is available */
 
 #ifdef FILEC
-bool    filec;			/* doing filename expansion */
+extern bool    filec;			/* doing filename expansion */
 #endif
 
 /*
  * Global i/o info
  */
-Char   *arginp;			/* Argument input for sh -c and internal `xx` */
-int     onelflg;		/* 2 -> need line for -t, 1 -> exit on read */
-Char   *ffile;			/* Name of shell file for $0 */
+extern Char   *arginp;			/* Argument input for sh -c and internal `xx` */
+extern int     onelflg;		/* 2 -> need line for -t, 1 -> exit on read */
+extern Char   *ffile;			/* Name of shell file for $0 */
 
-char   *seterr;			/* Error message from scanner/parser */
-Char   *shtemp;			/* Temp name for << shell files in /tmp */
+extern char   *seterr;			/* Error message from scanner/parser */
+extern Char   *shtemp;			/* Temp name for << shell files in /tmp */
 
 #include <sys/time.h>
 #include <sys/resource.h>
 
-struct timeval time0;		/* Time at which the shell started */
-struct rusage ru0;
+extern struct timeval time0;		/* Time at which the shell started */
+extern struct rusage ru0;
 
 /*
  * Miscellany
  */
-Char   *doldol;			/* Character pid for $$ */
-int     uid;			/* Invokers uid */
-int     gid;			/* Invokers gid */
-time_t  chktim;			/* Time mail last checked */
-int     shpgrp;			/* Pgrp of shell */
-int     tpgrp;			/* Terminal process group */
+extern Char   *doldol;			/* Character pid for $$ */
+extern int     uid;			/* Invokers uid */
+extern int     gid;			/* Invokers gid */
+extern time_t  chktim;			/* Time mail last checked */
+extern int     shpgrp;			/* Pgrp of shell */
+extern int     tpgrp;			/* Terminal process group */
 
 /* If tpgrp is -1, leave tty alone! */
-int     opgrp;			/* Initial pgrp and tty pgrp */
+extern int     opgrp;			/* Initial pgrp and tty pgrp */
 
 /*
  * These are declared here because they want to be
@@ -185,10 +185,10 @@ extern int nsrchn;
  * The desired initial values for these descriptors are defined in
  * local.h.
  */
-short   SHIN;			/* Current shell input (script) */
-short   SHOUT;			/* Shell output */
-short   SHDIAG;			/* Diagnostic output... shell errs go here */
-short   OLDSTD;			/* Old standard input (def for cmds) */
+extern short   SHIN;			/* Current shell input (script) */
+extern short   SHOUT;			/* Shell output */
+extern short   SHDIAG;			/* Diagnostic output... shell errs go here */
+extern short   OLDSTD;			/* Old standard input (def for cmds) */
 
 /*
  * Error control
@@ -199,7 +199,7 @@ short   OLDSTD;			/* Old standard input (def for cmds) */
  */
 
 #include <setjmp.h>
-jmp_buf reslab;
+extern jmp_buf reslab;
 
 #define	setexit()	(setjmp(reslab))
 #define	reset()		longjmp(reslab, 1)
@@ -207,11 +207,11 @@ jmp_buf reslab;
 #define	getexit(a)	bcopy((char *)reslab, ((char *)(a)), sizeof reslab)
 #define	resexit(a)	bcopy((char *)(a), (char *)reslab, sizeof reslab)
 
-Char   *gointr;			/* Label for an onintr transfer */
+extern Char   *gointr;			/* Label for an onintr transfer */
 
-#include <signal.h>
-sig_t parintr;			/* Parents interrupt catch */
-sig_t parterm;			/* Parents terminate catch */
+#include <sys/signal.h>
+extern sig_t parintr;			/* Parents interrupt catch */
+extern sig_t parterm;			/* Parents terminate catch */
 
 /*
  * Lexical definitions.
@@ -232,7 +232,7 @@ sig_t parterm;			/* Parents terminate catch */
 #define	TRIM		0177	/* Mask to strip quote bit */
 #endif
 
-int     AsciiOnly;		/* If set only 7 bits is expected in characters */
+extern int     AsciiOnly;		/* If set only 7 bits is expected in characters */
 
 /*
  * Each level of input has a buffered input structure.
@@ -247,7 +247,9 @@ struct Bin {
     off_t   Bfeobp;		/* Seekp of end of buffers */
     short   Bfblocks;		/* Number of buffer blocks */
     Char  **Bfbuf;		/* The array of buffer blocks */
-}       B;
+};
+
+extern struct Bin   B;
 
 #define	fseekp	B.Bfseekp
 #define	fbobp	B.Bfbobp
@@ -260,9 +262,9 @@ struct Bin {
  * For whiles, in particular, it reseeks to the beginning of the
  * line the while was on; hence the while placement restrictions.
  */
-off_t   lineloc;
+extern off_t   lineloc;
 
-bool    cantell;		/* Is current source tellable ? */
+extern bool    cantell;		/* Is current source tellable ? */
 
 /*
  * Input lines are parsed into doubly linked circular
@@ -294,7 +296,7 @@ struct wordent {
  * process id's from `$$', and modified variable values (from qualifiers
  * during expansion in sh.dol.c) here.
  */
-Char   *lap;
+extern Char   *lap;
 
 /*
  * Parser structure
@@ -380,7 +382,8 @@ struct whyle {
     Char  **w_fe, **w_fe0;	/* Current/initial wordlist for fe */
     Char   *w_fename;		/* Name for fe */
     struct whyle *w_next;	/* Next (more outer) loop */
-}      *whyles;
+};
+extern struct whyle *whyles;
 
 /*
  * Variable structure
@@ -392,7 +395,9 @@ struct varent {
     Char   *v_name;		/* Name of variable/alias */
     struct varent *v_link[3];	/* The links, see below */
     int     v_bal;		/* Balance factor */
-}       shvhed, aliases;
+};
+
+extern struct varent    shvhed, aliases;
 
 #define v_left		v_link[0]
 #define v_right		v_link[1]
@@ -407,14 +412,14 @@ struct varent *adrof1();
  * The following are for interfacing redo substitution in
  * aliases to the lexical routines.
  */
-struct wordent *alhistp;	/* Argument list (first) */
-struct wordent *alhistt;	/* Node after last in arg list */
-Char  **alvec;			/* The (remnants of) alias vector */
+extern struct wordent *alhistp;	/* Argument list (first) */
+extern struct wordent *alhistt;	/* Node after last in arg list */
+extern Char  **alvec;			/* The (remnants of) alias vector */
 
 /*
  * Filename/command name expansion variables
  */
-short   gflag;			/* After tglob -> is globbing needed? */
+extern short   gflag;			/* After tglob -> is globbing needed? */
 
 #define MAXVARLEN 30		/* Maximum number of char in a variable name */
 
@@ -429,9 +434,9 @@ extern long gargc;		/* Number args in gargv */
  */
 extern Char **pargv;		/* Pointer to the argv list space */
 extern long pargc;		/* Count of arguments in pargv */
-Char   *pargs;			/* Pointer to start current word */
-long    pnleft;			/* Number of chars left in pargs */
-Char   *pargcp;			/* Current index into pargs */
+extern Char   *pargs;			/* Pointer to start current word */
+extern long    pnleft;			/* Number of chars left in pargs */
+extern Char   *pargcp;			/* Current index into pargs */
 
 /*
  * History list
@@ -450,14 +455,15 @@ struct Hist {
     int     Href;
     long    Htime;
     struct Hist *Hnext;
-}       Histlist;
+};
+extern struct Hist Histlist;
 
-struct wordent paraml;		/* Current lexical word list */
-int     eventno;		/* Next events number */
-int     lastev;			/* Last event reference (default) */
+extern struct wordent paraml;		/* Current lexical word list */
+extern int     eventno;		/* Next events number */
+extern int     lastev;			/* Last event reference (default) */
 
-Char    HIST;			/* history invocation character */
-Char    HISTSUB;		/* auto-substitute character */
+extern Char    HIST;			/* history invocation character */
+extern Char    HISTSUB;		/* auto-substitute character */
 
 /*
  * strings.h:
@@ -503,17 +509,17 @@ Char    HISTSUB;		/* auto-substitute character */
 /*
  * setname is a macro to save space (see sh.err.c)
  */
-char   *bname;
+extern char   *bname;
 
 #define	setname(a)	(bname = (a))
 
-Char   *Vsav;
-Char   *Vdp;
-Char   *Vexpath;
-char  **Vt;
+extern Char   *Vsav;
+extern Char   *Vdp;
+extern Char   *Vexpath;
+extern char  **Vt;
 
-Char  **evalvec;
-Char   *evalp;
+extern Char  **evalvec;
+extern Char   *evalp;
 
 extern struct mesg {
     char   *iname;		/* name from /usr/include */
@@ -523,15 +529,15 @@ extern struct mesg {
 /* word_chars is set by default to WORD_CHARS but can be overridden by
    the worchars variable--if unset, reverts to WORD_CHARS */
 
-Char   *word_chars;
+extern Char   *word_chars;
 
 #define WORD_CHARS "*?_-.[]~="	/* default chars besides alnums in words */
 
-Char   *STR_SHELLPATH;
+extern Char   *STR_SHELLPATH;
 
 #include <paths.h>
 #ifdef _PATH_BSHELL
-Char   *STR_BSHELL;
+extern Char   *STR_BSHELL;
 #endif
-Char   *STR_WORD_CHARS;
-Char  **STR_environ;
+extern Char   *STR_WORD_CHARS;
+extern Char  **STR_environ;

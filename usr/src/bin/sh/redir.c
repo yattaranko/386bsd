@@ -50,9 +50,9 @@ static char sccsid[] = "@(#)redir.c	5.1 (Berkeley) 3/7/91";
 #include "output.h"
 #include "memalloc.h"
 #include "error.h"
-#include <signal.h>
-#include <fcntl.h>
-#include <errno.h>
+#include <sys/signal.h>
+#include <sys/fcntl.h>
+#include <sys/errno.h>
 
 
 #define EMPTY -2		/* marks an unused slot in redirtab */

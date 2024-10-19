@@ -70,7 +70,7 @@ int comprobe(struct isa_device *dev);
 void comattach(struct isa_device *isdp);
 void comintr(int unit);
 int comstop(struct tty *tp, int flag);
-
+void comeint(register int unit,register int stat, register com);
 int 	comstart(), comparam();
 
 struct	isa_driver comdriver = {
@@ -123,8 +123,6 @@ extern int kgdb_debug_init;
 #endif
 
 #define	UNIT(x)		(minor(x)-1)
-
-static void comeint(register int unit, register int stat, register int com);
 
 int
 comprobe(struct isa_device *dev)
@@ -379,7 +377,7 @@ comintr(int unit)
 	}
 }
 
-static void comeint(unit, stat, com)
+void comeint(unit, stat, com)
 	register int unit, stat;
 	register com;
 {

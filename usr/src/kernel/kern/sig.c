@@ -58,9 +58,13 @@
 
 /* forward declarations of private functions as well as inline functions */
 
+extern int  splnone(void);
+extern int  procxmt(register struct proc* p);
+extern void ktrpsig(struct vnode* vp, int sig, sig_t action, int mask, int code);
+
 static void stop(struct proc *p, int swtchit, int sig);
-static void volatile sigexit(struct proc *p, int sig);
-static int killpg(struct proc *cp, int signo, int pgid, int all);
+static void sigexit(struct proc *p, int sig);
+static int  killpg(struct proc *cp, int signo, int pgid, int all);
 
 /*
  * Can process p send the signal signo to process q?
@@ -76,9 +80,13 @@ int cansignal(struct proc *p, struct proc *q, int signo)
 	    pc->p_ruid == q->p_ucred->cr_uid ||
 	    pc->pc_ucred->cr_uid == q->p_ucred->cr_uid ||
 	    (signo == SIGCONT && q->p_session == p->p_session))
+	{
 		return 1;
+	}
 	else
+	{
 		return 0;
+	}
 }
 
 /* system call interfaces to the signal facility. */
@@ -86,61 +94,77 @@ int cansignal(struct proc *p, struct proc *q, int signo)
 /*
  * POSIX sigaction() signal interface.
  */
-int
-sigaction(p, uap, retval)
-	struct proc *p;
+int sigaction(struct proc *p, void *uap, int *retval)
+{
 	struct args {
 		int	signo;
 		struct	sigaction *nsa;
 		struct	sigaction *osa;
-	} *uap;
-	int *retval;
-{
+	} *ap = (struct args*)uap;
+
 	struct sigacts *ps = p->p_sigacts;
 	struct sigaction vec;
 	struct sigaction *sa = &vec;
-	int sig = uap->signo, bit;
+	int sig = ap->signo, bit;
 
 	/* have a valid signal to manipulate action of? */
 	if (sig <= 0 || sig >= NSIG)
+	{
 		return (EINVAL);
+	}
 	bit = sigmask(sig);
 
 	/* return the "current" signal's state? */
-	if (uap->osa) {
+	if (ap->osa)
+	{
 		sa->sa_handler = ps->ps_sigact[sig];
 		sa->sa_mask = ps->ps_catchmask[sig];
 
 		/* assemble flags */
 		sa->sa_flags = 0;
 		if ((ps->ps_sigonstack & bit) != 0)
+		{
 			sa->sa_flags |= SA_ONSTACK;
+		}
 		if ((ps->ps_sigintr & bit) == 0)
+		{
 			sa->sa_flags |= SA_RESTART;
+		}
 		if (p->p_flag & SNOCLDSTOP)
+		{
 			sa->sa_flags |= SA_NOCLDSTOP;
+		}
 
-		if (copyout(p, (caddr_t)sa, (caddr_t)uap->osa, sizeof (vec)))
+		if (copyout(p, (caddr_t)sa, (caddr_t)ap->osa, sizeof (vec)))
+		{
 			return (EFAULT);
+		}
 	}
 
 	/* install a new state for the signal? */
-	if (uap->nsa) {
+	if (ap->nsa)
+	{
 		sig_t act;
 
 		/* valid signal number? */
 		if (bit & sigcantmask)
+		{
 			return (EINVAL);
+		}
 
 		/* can we obtain the action from the process? */
-		if (copyin(p, (caddr_t)uap->nsa, (caddr_t)sa, sizeof (vec)))
+		if (copyin(p, (caddr_t)ap->nsa, (caddr_t)sa, sizeof (vec)))
+		{
 			return (EFAULT);
+		}
 
 		/* signal handler valid? */
 		act = sa->sa_handler;
 		if (act != SIG_DFL && act != SIG_IGN && act != BADSIG
 	    	    && vmspace_access(p->p_vmspace, (caddr_t)act, sizeof(int), PROT_READ) == 0)
+		{
 			return (EFAULT);
+		}
 
 		/* install the signal atomically */
 		(void) splhigh();
@@ -149,40 +173,63 @@ sigaction(p, uap, retval)
 
 		/* decode signal action flag into processes signal state */
 		if ((sa->sa_flags & SA_RESTART) == 0)
+		{
 			ps->ps_sigintr |= bit;
+		}
 		else
+		{
 			ps->ps_sigintr &= ~bit;
+		}
 		if (sa->sa_flags & SA_ONSTACK)
+		{
 			ps->ps_sigonstack |= bit;
+		}
 		else
+		{
 			ps->ps_sigonstack &= ~bit;
+		}
 
 		/* deal with special case of SIGCHLD */
-		if (sig == SIGCHLD) {
+		if (sig == SIGCHLD)
+		{
 			if (sa->sa_flags & SA_NOCLDSTOP)
+			{
 				p->p_flag |= SNOCLDSTOP;
+			}
 			else
+			{
 				p->p_flag &= ~SNOCLDSTOP;
+			}
 		}
 
 		/* mark signals that will be ignored or caught */
 		if (act == SIG_IGN ||
-		    (sigprop[sig] & SA_IGNORE && act == SIG_DFL)) {
+		    (sigprop[sig] & SA_IGNORE && act == SIG_DFL))
+		{
 			p->p_sig &= ~bit;
 
 			/* don't ignore SIGCONT, allow psignal to un-stop it */
 			if (sig != SIGCONT)
+			{
 				p->p_sigignore |= bit;
+			}
 			p->p_sigcatch &= ~bit;
-		} else {
+		}
+		else
+		{
 			p->p_sigignore &= ~bit;
 			if (act == SIG_DFL)
+			{
 				p->p_sigcatch &= ~bit;
+			}
 			else
+			{
 				p->p_sigcatch |= bit;
+			}
 		}
 		(void) splnone();
 	}
+//printf("sigaction ps_sigact[%d] = %x, p = %d\n", sig, p->p_sigacts->ps_sigact[sig], p->p_pid);
 
 	return (0);
 }
@@ -194,30 +241,28 @@ sigaction(p, uap, retval)
  * completely implemented in the user program library that
  * makes use of this system call.
  */
-int
-sigprocmask(p, uap, retval)
-	struct proc *p;
+int sigprocmask(struct proc* p, void* uap, int* retval)
+{
 	struct args {
 		int	how;
 		sigset_t mask;
-	} *uap;
-	int *retval;
-{
+	} *ap = (struct args*)uap;
+
 	/* return the current process signal mask before modification */
 	*retval = p->p_sigmask;
 
 	/* modify the mask as directed */
-	switch (uap->how) {
+	switch (ap->how) {
 	case SIG_BLOCK:
-		p->p_sigmask |= uap->mask &~ sigcantmask;
+		p->p_sigmask |= ap->mask &~ sigcantmask;
 		break;
 
 	case SIG_UNBLOCK:
-		p->p_sigmask &= ~uap->mask;
+		p->p_sigmask &= ~ap->mask;
 		break;
 
 	case SIG_SETMASK:
-		p->p_sigmask = uap->mask &~ sigcantmask;
+		p->p_sigmask = ap->mask &~ sigcantmask;
 		break;
 	
 	default:
@@ -234,11 +279,7 @@ sigprocmask(p, uap, retval)
  * completely implemented in the user program library that
  * makes use of this system call.
  */
-int
-sigpending(p, uap, retval)
-	struct proc *p;
-	void *uap;
-	int *retval;
+int sigpending(struct proc *p, void *uap, int *retval)
 {
 	/* return the set of pending signals */
 	*retval = p->p_sig;
@@ -252,13 +293,11 @@ sigpending(p, uap, retval)
  * when the signal arrives. 
  */
 int
-sigsuspend(p, uap, retval)
-	struct proc *p;
+sigsuspend(struct proc *p, void *uap, int *retval)
+{
 	struct args {
 		sigset_t mask;
-	} *uap;
-	int *retval;
-{
+	} *ap = (struct args*)uap;
 	struct sigacts *ps = p->p_sigacts;
 
 	/* record mask in oldmask, and have it restored instead after signal */
@@ -266,7 +305,7 @@ sigsuspend(p, uap, retval)
 	ps->ps_flags |= SA_OLDMASK;
 
 	/* mask signals during the suspension */
-	p->p_sigmask = uap->mask &~ sigcantmask;
+	p->p_sigmask = ap->mask &~ sigcantmask;
 
 	/* pause. if woken for any reason other than a signal, pause again. */
  	while (tsleep((caddr_t) ps, PPAUSE|PCATCH, "pause", 0) == 0)
@@ -281,24 +320,23 @@ sigsuspend(p, uap, retval)
  * extension of the POSIX signal implementation.
  */
 int
-sigstack(p, uap, retval)
-	struct proc *p;
+sigstack(struct proc* p, void* uap, int* retval)
+{
 	struct args {
 		struct	sigstack *nss;
 		struct	sigstack *oss;
-	} *uap;
-	int *retval;
-{
+	} *ap = (struct args*)uap;
+
 	struct sigstack ss;
 	int error = 0;
 
 	/* return signal stack feature state if requested */
-	if (uap->oss && (error = copyout(p, (caddr_t)&p->p_sigacts->ps_sigstack,
-	    (caddr_t)uap->oss, sizeof (struct sigstack))))
+	if (ap->oss && (error = copyout(p, (caddr_t)&p->p_sigacts->ps_sigstack,
+	    (caddr_t)ap->oss, sizeof (struct sigstack))))
 		return (error);
 
 	/* install signal stack feature state if requested */
-	if (uap->nss && (error = copyin(p, (caddr_t)uap->nss, (caddr_t)&ss,
+	if (ap->nss && (error = copyin(p, (caddr_t)ap->nss, (caddr_t)&ss,
 	    sizeof (ss))) == 0)
 		p->p_sigacts->ps_sigstack = ss;
 
@@ -309,48 +347,46 @@ sigstack(p, uap, retval)
  * POSIX kill() interface, used to generate signals to a process or
  * set of processes.
  */
-int
-kill(cp, uap, retval)
-	struct proc *cp;
+int kill(struct proc* cp, void* uap, int* retval)
+{
 	struct args {
 		int	pid;
 		int	signo;
-	} *uap;
-	void *retval;
-{
+	} *ap = (struct args*)uap;
+
 	struct proc *p;
 
 	/* bounds check the signal to be sent */
-	if ((unsigned) uap->signo >= NSIG)
+	if ((unsigned) ap->signo >= NSIG)
 		return (EINVAL);
 
 	/* signal a single process? ... */
-	if (uap->pid > 0) {
+	if (ap->pid > 0) {
 
 		/* locate the process */
-		p = pfind(uap->pid);
+		p = pfind(ap->pid);
 		if (p == 0)
 			return (ESRCH);
 
 		/* do we have permission to send the signal? */
-		if (!cansignal(cp, p, uap->signo))
+		if (!cansignal(cp, p, ap->signo))
 			return (EPERM);
 
 		/* do we have a signal to send? */
-		if (uap->signo)
-			psignal(p, uap->signo);
+		if (ap->signo)
+			psignal(p, ap->signo);
 
 		return (0);
 	}
 
 	/* ... or to a set of processes? */
-	switch (uap->pid) {
+	switch (ap->pid) {
 	case -1:		/* broadcast signal */
-		return (killpg(cp, uap->signo, 0, 1));
+		return (killpg(cp, ap->signo, 0, 1));
 	case 0:			/* signal own process group */
-		return (killpg(cp, uap->signo, 0, 0));
+		return (killpg(cp, ap->signo, 0, 0));
 	default:		/* negative explicit process group */
-		return (killpg(cp, uap->signo, -uap->pid, 0));
+		return (killpg(cp, ap->signo, -ap->pid, 0));
 	}
 }
 
@@ -412,15 +448,10 @@ killpg(struct proc *cp, int signo, int pgid, int all)
  * resets the signal mask and stack state from context left on the stack
  * by delivering a signal.
  */
-int
-sigreturn(p, uap, retval)
-	struct proc *p;
-	void *uap;
-	int *retval;
+int sigreturn(struct proc *p, void *uap, int *retval)
 {
 	return (cpu_signalreturn(p));
 }
-
 
 
 
@@ -428,13 +459,8 @@ sigreturn(p, uap, retval)
  * Nonexistent system call-- signal process (may want to handle it).
  * Flag error in case process won't see signal immediately (blocked or ignored).
  */
-int
-nosys(p, args, retval)
-	struct proc *p;
-	void *args;
-	int *retval;
+int nosys(struct proc *p, void *args, int *retval)
 {
-
 	psignal(p, SIGSYS);
 	return (ENOSYS);
 }
@@ -741,8 +767,7 @@ issig(struct proc *p)
  * from the current set of pending signals.
  * Called with interrupts blocked.
  */
-void
-psig(int sig)
+void psig(int sig)
 {
 	struct proc *p = curproc;
 	struct sigacts *ps = p->p_sigacts;
@@ -801,8 +826,7 @@ psig(int sig)
  * The file name is "core:progname".
  * Core dumps are not created if the process is setuid.
  */
-int
-coredump(struct proc *p)
+int coredump(struct proc *p)
 {
 	struct vnode *vp;
 	struct pcred *pcred = p->p_cred;
@@ -827,7 +851,8 @@ coredump(struct proc *p)
 	sprintf(name, "%s.core", p->p_comm);
 	nd.ni_dirp = name;
 	nd.ni_segflg = UIO_SYSSPACE;
-	if (error = vn_open(&nd, p, O_CREAT|FWRITE, 0644))
+	error = vn_open(&nd, p, O_CREAT|FWRITE, 0644);
+	if (error != 0)
 		return (error);
 
 	/* if the file is not suitable for use, don't bother */
@@ -961,8 +986,7 @@ siginit(struct proc *p)
 /*
  * Reset signals for an execve() of the specified process.
  */
-void
-execsigs(struct proc *p)
+void execsigs(struct proc *p)
 {
 	struct sigacts *ps = p->p_sigacts;
 	int signo, bit;
@@ -981,6 +1005,7 @@ execsigs(struct proc *p)
 				p->p_sigignore |= bit;
 			p->p_sig &= ~bit;
 		}
+//printf("pid = %d, ps_sigact[%d] = %x\n", p->p_pid, signo, ps->ps_sigact[signo]);
 		ps->ps_sigact[signo] = SIG_DFL;
 	}
 	/*
@@ -1018,7 +1043,7 @@ pgsignal(struct pgrp *pgrp, int sig, int checkctty)
  * unrecoverable failures to terminate the process without changing
  * signal state.
  */
-static volatile void
+static void
 sigexit(struct proc *p, int sig)
 {
 	/* does this signal require a core dump? */

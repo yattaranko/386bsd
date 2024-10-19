@@ -46,11 +46,12 @@
 #include "prototypes.h"
 
 
-fork(p, uap, retval)
+int fork(p, uap, retval)
 	struct proc *p;
 	void *uap;
 	int retval[];
 {
+
 	return (fork1(p, 0, retval));
 }
 

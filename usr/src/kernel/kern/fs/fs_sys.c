@@ -1004,7 +1004,7 @@ lseek(p, uap, retval)
  * Check access permissions.
  */
 /* ARGSUSED */
-saccess(p, uap, retval)
+int saccess(p, uap, retval)
 	struct proc *p;
 	register struct args {
 		char	*fname;
@@ -1055,7 +1055,7 @@ out1:
  * This version follows links.
  */
 /* ARGSUSED */
-stat(p, uap, retval)
+int stat(p, uap, retval)
 	struct proc *p;
 	register struct args {
 		char	*fname;
@@ -1073,12 +1073,18 @@ stat(p, uap, retval)
 	ndp->ni_segflg = UIO_USERSPACE;
 	ndp->ni_dirp = uap->fname;
 	if (error = namei(ndp, p))
+	{
+//printf("3: stat: name = %s, error = %d\n", uap->fname, error);
 		return (error);
+	}
 	error = vn_stat(ndp->ni_vp, &sb, p);
 	vput(ndp->ni_vp);
 	if (error)
+	{
 		return (error);
+	}
 	error = copyout(p, (caddr_t)&sb, (caddr_t)uap->ub, sizeof (sb));
+//printf("3: stat: name = %s, sb.st_mode = %o, error = %d\n", uap->fname, sb.st_mode, error);
 	return (error);
 }
 
@@ -1087,7 +1093,7 @@ stat(p, uap, retval)
  * This version does not follow links.
  */
 /* ARGSUSED */
-lstat(p, uap, retval)
+int lstat(p, uap, retval)
 	struct proc *p;
 	register struct args {
 		char	*fname;
@@ -1239,7 +1245,7 @@ chmod(p, uap, retval)
 	struct proc *p;
 	register struct args {
 		char	*fname;
-		int	fmode;
+		int		fmode;
 	} *uap;
 	int *retval;
 {

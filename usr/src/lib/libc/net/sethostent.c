@@ -36,7 +36,7 @@ static char sccsid[] = "@(#)sethostent.c	6.9 (Berkeley) 3/19/91";
 #endif /* LIBC_SCCS and not lint */
 
 #include <sys/param.h>
-#include <netinet/in.h>
+#include <domain/in.h>
 #include <arpa/nameser.h>
 #include <netdb.h>
 #include <resolv.h>

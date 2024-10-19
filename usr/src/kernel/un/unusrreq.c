@@ -51,11 +51,6 @@
 
 #include "prototypes.h"
 
-static void unp_disconnect(struct unpcb *unp);
-static void unp_gc();
-static void unp_mark(struct file *fp);
-static void unp_discard(struct file *fp);
-
 /*
  * Unix communications domain.
  *
@@ -66,6 +61,9 @@ static void unp_discard(struct file *fp);
  */
 struct	sockaddr sun_noname = { sizeof(sun_noname), AF_UNIX };
 ino_t	unp_ino;			/* prototype for fake inode numbers */
+void unp_disconnect(struct unpcb *unp);
+void unp_gc();
+void unp_mark(struct file *fp);
 
 /*ARGSUSED*/
 uipc_usrreq(so, req, m, nam, control)
@@ -512,7 +510,7 @@ unp_connect2(so, so2)
 	return (0);
 }
 
-static void unp_disconnect(unp)
+void unp_disconnect(unp)
 	struct unpcb *unp;
 {
 	register struct unpcb *unp2 = unp->unp_conn;
@@ -670,7 +668,7 @@ int	unp_defer, unp_gcing;
 //int	unp_mark();
 extern	struct domain unixdomain;
 
-static void unp_gc()
+void unp_gc()
 {
 	register struct file *fp;
 	register struct socket *so;
@@ -769,7 +767,7 @@ unp_scan(m0, op)
 	}
 }
 
-static void unp_mark(fp)
+void unp_mark(fp)
 	struct file *fp;
 {
 
@@ -779,12 +777,12 @@ static void unp_mark(fp)
 	fp->f_flag |= (FMARK|FDEFER);
 }
 
-static void unp_discard(fp)
+unp_discard(fp)
 	struct file *fp;
 {
 
 	if (fp->f_msgcount == 0)
-		return;
+		return ( 0 );
 	fp->f_msgcount--;
 	unp_rights--;
 	(void) closef(fp, curproc);

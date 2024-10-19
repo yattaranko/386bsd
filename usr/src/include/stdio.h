@@ -125,7 +125,7 @@ typedef	struct __sFILE {
 } FILE;
 
 __BEGIN_DECLS
-extern FILE __sF[];
+extern FILE __sF[3];
 __END_DECLS
 
 #define	__SLBF	0x0001		/* line buffered */
@@ -205,13 +205,13 @@ FILE	*fopen __P((const char *, const char *));
 int	 fprintf __P((FILE *, const char *, ...));
 int	 fputc __P((int, FILE *));
 int	 fputs __P((const char *, FILE *));
-int	 fread __P((void *, size_t, size_t, FILE *));
+unsigned int	 fread __P((void *, size_t, size_t, FILE *));
 FILE	*freopen __P((const char *, const char *, FILE *));
 int	 fscanf __P((FILE *, const char *, ...));
 int	 fseek __P((FILE *, long, int));
 int	 fsetpos __P((FILE *, const fpos_t *));
 long	 ftell __P((const FILE *));
-int	 fwrite __P((const void *, size_t, size_t, FILE *));
+unsigned int	 fwrite __P((const void *, size_t, size_t, FILE *));
 int	 getc __P((FILE *));
 int	 getchar __P((void));
 char	*gets __P((char *));
@@ -231,7 +231,7 @@ int	 scanf __P((const char *, ...));
 void	 setbuf __P((FILE *, char *));
 int	 setvbuf __P((FILE *, char *, int, size_t));
 int	 sprintf __P((char *, const char *, ...));
-int	 sscanf __P((char *, const char *, ...));
+int	 sscanf __P((const char *, const char *, ...));
 FILE	*tmpfile __P((void));
 char	*tmpnam __P((char *));
 int	 ungetc __P((int, FILE *));

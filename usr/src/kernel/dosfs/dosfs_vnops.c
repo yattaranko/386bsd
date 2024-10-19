@@ -970,7 +970,7 @@ printf("pcfs_rename(fndp %08x, tndp %08x, p %08x\n", fndp, tndp, p);
 			goto bad;
 		}
 		(void)memcpy(fdep->de_Name, toname, 11);
-		/* bcopy(toname, fdep->de_Name, 11);	*/ /* update denode */
+		/* bcopy(toname, fdep->de_Name, 11);	/* update denode */
 /*
  *  fdep locked
  *  fddep and tddep point to the same denode which is locked
@@ -993,7 +993,7 @@ printf("pcfs_rename(fndp %08x, tndp %08x, p %08x\n", fndp, tndp, p);
  */
 		DELOCK(fdep);
 		(void)memcpy(fdep->de_Name, toname, 11);
-		/* bcopy(toname, fdep->de_Name, 11);	*/ /* update denode */
+		/* bcopy(toname, fdep->de_Name, 11);	/* update denode */
 		if (fdep->de_Attributes & ATTR_DIRECTORY) {
 			dirsize = fdep->de_FileSize;
 			fdep->de_FileSize = 0;

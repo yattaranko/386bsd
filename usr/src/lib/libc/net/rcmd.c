@@ -38,10 +38,10 @@ static char sccsid[] = "@(#)rcmd.c	5.24 (Berkeley) 2/24/91";
 #include <sys/param.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
-#include <netinet/in.h>
+#include <domain/in.h>
 #include <arpa/inet.h>
 #include <signal.h>
-#include <fcntl.h>
+#include <sys/fcntl.h>
 #include <netdb.h>
 #include <pwd.h>
 #include <errno.h>
@@ -49,6 +49,8 @@ static char sccsid[] = "@(#)rcmd.c	5.24 (Berkeley) 2/24/91";
 #include <ctype.h>
 #include <unistd.h>
 #include <string.h>
+
+static int _checkhost(char* rhost, char* lhost, int len);
 
 rcmd(ahost, rport, locuser, remuser, cmd, fd2p)
 	char **ahost;
@@ -287,7 +289,7 @@ _validuser(hostf, rhost, luser, ruser, baselen)
 {
 	register char *p;
 	char *user, ahost[MAXHOSTNAMELEN];
-	static int _checkhost();
+/*	static int _checkhost(); */
 
 	while (fgets(ahost, sizeof (ahost), hostf)) {
 		p = ahost;
@@ -313,10 +315,8 @@ _validuser(hostf, rhost, luser, ruser, baselen)
 	return (-1);
 }
 
-static
-_checkhost(rhost, lhost, len)
-	char *rhost, *lhost;
-	int len;
+static int
+_checkhost(char* rhost, char* lhost, int len)
 {
 	static char ldomain[MAXHOSTNAMELEN + 1];
 	static char *domainp = NULL;
@@ -338,7 +338,7 @@ _checkhost(rhost, lhost, len)
 			nodomain = 1;
 			return(0);
 		}
-		ldomain[MAXHOSTNAMELEN] = NULL;
+		ldomain[MAXHOSTNAMELEN] = 0;
 		if ((domainp = index(ldomain, '.')) == (char *)NULL) {
 			nodomain = 1;
 			return(0);
