@@ -45,27 +45,22 @@
 
 #include "prototypes.h"
 
+extern int cpu_tfork(struct proc *p1, register struct proc *p2);
+extern void ktrace_fork(struct proc *p1, struct proc *p2);
+extern int splclock(void);
+extern int splnone(void);
 
-int fork(p, uap, retval)
-	struct proc *p;
-	void *uap;
-	int retval[];
+int fork(struct proc *p, void *uap, int retval[])
 {
-
 	return (fork1(p, 0, retval));
 }
 
-vfork(p, uap, retval)
-	struct proc *p;
-	void *uap;
-	int retval[];
+int vfork(struct proc *p, void *uap, int retval[])
 {
-
 	return (fork1(p, 1, retval));
 }
 
-int
-fork1(struct proc *p1, int isvfork, int *retval)
+int fork1(struct proc *p1, int isvfork, int *retval)
 {
 	struct proc *p2;
 	struct pstats *ps;

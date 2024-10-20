@@ -41,25 +41,31 @@
 #include "malloc.h"
 #include "signalvar.h"
 #include "resourcevar.h"
+#include "filedesc.h"
+#include "vm.h"
+#include "vmspace.h"
 
 #include "machine/cpu.h"
 
 #include "prototypes.h"
 
+extern void exitsessleader(struct proc *p);
+extern void ktrace_exit(struct proc *p);
+extern void ruadd(struct rusage *ru, struct rusage *ru2);
+
 /*
  * POSIX exit() function system call handler. Force process to exit,
  * returning argument as termination status to parent.
  */
-int
-rexit(p, uap, retval)
-	struct proc *p;
+int rexit(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		int	rval;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 
 	exit(p, W_EXITCODE(uap->rval, 0));
+
+	return 0;
 }
 
 static void reclaimproc(struct proc *p);
@@ -71,8 +77,7 @@ static void reclaimproc(struct proc *p);
  * wait4() by parent). Deal pragmatically with child processes
  * that are being orphaned. Never returns.
  */
-void volatile
-exit(struct proc *p, int rv)
+void exit(struct proc *p, int rv)
 {
 	struct proc *q, *nq;
 
@@ -142,7 +147,7 @@ exit(struct proc *p, int rv)
 	/* make process invisable and unschedulable */
 	curproc = NULL;
 	leavepidhash(p);
-	if (*p->p_prev = p->p_nxt)
+	if ((*p->p_prev = p->p_nxt) != 0)
 		p->p_nxt->p_prev = p->p_prev;
 
 	/* check if process limits are unreferenced and need to be reclaimed */
@@ -155,7 +160,7 @@ exit(struct proc *p, int rv)
 		p->p_stats->p_status = rv;
 
 		/* make process a zombie */
-		if (p->p_nxt = zombproc)
+		if ((p->p_nxt = zombproc) != 0)
 			p->p_nxt->p_prev = &p->p_nxt;
 		p->p_prev = &zombproc;
 		zombproc = p;
@@ -216,16 +221,14 @@ exit(struct proc *p, int rv)
  * state left over to hold information for potential use by wait4().
  */
 int
-wait4(q, uap, retval)
-	struct proc *q;
+wait4(struct proc *q, void* vap, int retval[])
+{
 	struct args {
 		int	pid;
 		int	*status;
 		int	options;
 		struct	rusage *rusage;
-	} *uap;
-	int retval[];
-{
+	} *uap = (struct args*)vap;
 	struct proc *p;
 	struct rusage ru;
 	int nfound, status, error, pid = uap->pid;
@@ -273,7 +276,7 @@ loop:
 			FREE(p->p_stats, M_ZOMBIE);
 
 			/* reclaim this process, unlinking from zombproc */
-			if (*p->p_prev = p->p_nxt)
+			if ((*p->p_prev = p->p_nxt) != 0)
 				p->p_nxt->p_prev = p->p_prev;
 			reclaimproc(p);
 			return (0);
@@ -300,9 +303,9 @@ loop:
 				ru.ru_utime = p->p_utime;
 				ruadd(&ru, &p->p_stats->p_cru);
 
-				if (error = copyout(q, (caddr_t)&ru,
+				if ((error = copyout(q, (caddr_t)&ru,
 			    	    (caddr_t)uap->rusage,
-				    sizeof (struct rusage)))
+				    sizeof (struct rusage))) != 0)
 					return (error);
 			}
 
@@ -325,7 +328,7 @@ loop:
 	}
 
 	/* wait for a child process to exit, signal or wakeup this parent */
-	if (error = tsleep((caddr_t)q, PWAIT | PCATCH, "wait", 0))
+	if ((error = tsleep((caddr_t)q, PWAIT | PCATCH, "wait", 0)) != 0)
 		return (error);
 	goto loop;
 }
@@ -346,11 +349,12 @@ reclaimproc(struct proc *p)
 	leavepgrp(p);
 
 	/* unlink process from its related queues */
-	if (q = p->p_ysptr)
+	if ((q = p->p_ysptr) != 0)
 		q->p_osptr = p->p_osptr;
-	if (q = p->p_osptr)
+	if ((q = p->p_osptr) != 0)
 		q->p_ysptr = p->p_ysptr;
-	if ((q = p->p_pptr)->p_cptr == p)
+	q = p->p_pptr;
+	if (q->p_cptr == p)
 		q->p_cptr = p->p_osptr;
 
 	/* free process entry */

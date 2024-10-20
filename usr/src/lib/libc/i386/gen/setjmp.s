@@ -83,4 +83,4 @@ ENTRY(longjmp)
 	jne	1f
 	movl	$1,%eax
 1:	movl	%ecx,0(%esp)
-	ret
+	re

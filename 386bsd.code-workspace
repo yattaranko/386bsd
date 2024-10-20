@@ -30,7 +30,8 @@
 			"tty.h": "c",
 			"vm_param.h": "c",
 			"stat.h": "c",
-			"vm_map.h": "c"
+			"vm_map.h": "c",
+			"resource.h": "c"
 		}
 	}
 }

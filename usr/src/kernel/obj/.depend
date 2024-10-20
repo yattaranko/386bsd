@@ -398,11 +398,29 @@ exit.o: /home/share/386bsd/usr/src/kernel/kern/exit.c \
   /home/share/386bsd/usr/src/kernel/include/signalvar.h \
   /home/share/386bsd/usr/src/kernel/include/resourcevar.h \
   /home/share/386bsd/usr/src/kernel/include/sys/resource.h \
+  /home/share/386bsd/usr/src/kernel/include/filedesc.h \
+  /home/share/386bsd/usr/src/kernel/include/sys/file.h \
+  /home/share/386bsd/usr/src/kernel/include/sys/fcntl.h \
+  /home/share/386bsd/usr/src/kernel/include/sys/unistd.h \
+  /home/share/386bsd/usr/src/kernel/include/vm.h \
+  /home/share/386bsd/usr/src/kernel/include/vm_param.h \
+  /home/share/386bsd/usr/src/kernel/include/machine/vmparam.h \
+  /home/share/386bsd/usr/src/kernel/include/lock.h \
+  /home/share/386bsd/usr/src/kernel/include/queue.h \
+  /home/share/386bsd/usr/src/kernel/include/vm_prot.h \
+  /home/share/386bsd/usr/src/kernel/include/vm_inherit.h \
+  /home/share/386bsd/usr/src/kernel/include/vm_object.h \
+  /home/share/386bsd/usr/src/kernel/include/vm_page.h \
+  /home/share/386bsd/usr/src/kernel/include/vm_pager.h \
+  /home/share/386bsd/usr/src/kernel/include/vm_statistics.h \
+  /home/share/386bsd/usr/src/kernel/include/pmap.h \
+  /home/share/386bsd/usr/src/kernel/include/machine/pmap.h \
+  /home/share/386bsd/usr/src/kernel/include/vm_map.h \
+  /home/share/386bsd/usr/src/kernel/include/vmspace.h \
   /home/share/386bsd/usr/src/kernel/include/machine/cpu.h \
   /home/share/386bsd/usr/src/kernel/include/machine/frame.h \
   /home/share/386bsd/usr/src/kernel/include/prototypes.h \
   /home/share/386bsd/usr/src/kernel/include/machine/prototypes.h \
-  /home/share/386bsd/usr/src/kernel/include/queue.h \
   /home/share/386bsd/usr/src/kernel/include/machine/inline/string.h \
   /home/share/386bsd/usr/src/kernel/include/machine/inline/string/memcpy.h \
   /home/share/386bsd/usr/src/kernel/include/machine/inline/string/memset.h \

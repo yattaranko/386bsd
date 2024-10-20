@@ -446,8 +446,8 @@ ktrcanset(callp, targetp)
 }
 
 /* if ktrace inherited, copy flags and add reference to trace vnode */
-void
-ktrace_fork(struct proc *p1, struct proc *p2) {
+void ktrace_fork(struct proc *p1, struct proc *p2)
+{
 	if (p1->p_traceflag&KTRFAC_INHERIT) {
 		p2->p_traceflag = p1->p_traceflag;
 		if ((p2->p_tracep = p1->p_tracep) != NULL)
@@ -459,7 +459,7 @@ ktrace_fork(struct proc *p1, struct proc *p2) {
 }
 
 /* ktrace'd process terminating, detach from traced vnode */
-ktrace_exit(struct proc *p) {
+void ktrace_exit(struct proc *p) {
 
 	p->p_traceflag = 0;
 	vrele(p->p_tracep);

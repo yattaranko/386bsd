@@ -40,41 +40,44 @@
  * May eventually be merged with vm_map.
  * Several fields are temporary (text, data stuff).
  */
-struct vmspace {
+#pragma pack(1)
+struct vmspace
+{
 	struct	vm_map vm_map;	/* VM address map */
 	struct	pmap vm_pmap;	/* private physical map */
-	int	vm_refcnt;	/* number of references */
-	caddr_t	vm_shm;		/* SYS5 shared memory private data XXX */
+	int		vm_refcnt;		/* number of references */
+	caddr_t	vm_shm;			/* SYS5 shared memory private data XXX */
 /* we copy from vm_startcopy to the end of the structure on fork */
 #define vm_startcopy vm_rssize
-	segsz_t vm_rssize; 	/* current resident set size in pages */
-//	segsz_t vm_swrss;	/* resident set size before last swap */
-	segsz_t vm_tsize;	/* text size (pages) XXX */
-	segsz_t vm_dsize;	/* data size (pages) XXX */
-	segsz_t vm_ssize;	/* stack size (pages) */
-	caddr_t	vm_taddr;	/* user virtual address of text XXX */
-	caddr_t	vm_daddr;	/* user virtual address of data XXX */
+	segsz_t vm_rssize;		/* current resident set size in pages */
+//	segsz_t vm_swrss;		/* resident set size before last swap */
+	segsz_t vm_tsize;		/* text size (pages) XXX */
+	segsz_t vm_dsize;		/* data size (pages) XXX */
+	segsz_t vm_ssize;		/* stack size (pages) */
+	caddr_t	vm_taddr;		/* user virtual address of text XXX */
+	caddr_t	vm_daddr;		/* user virtual address of data XXX */
 	caddr_t vm_maxsaddr;	/* user VA at max stack growth */
-} __attribute__ ((packed));
+};
+#pragma pack()
 
 extern struct vmspace kernspace;
 
 __BEGIN_DECLS
 struct vmspace *vmspace_fork(struct vmspace *, struct proc *);
-void vmspace_free(struct vmspace *);
-int vmspace_allocate(struct vmspace *vs, vm_offset_t *addr, vm_size_t size,
-    int anywhere);
-void vmspace_delete(struct vmspace *vs, caddr_t va, unsigned sz);
-int vm_mmap(struct vmspace *vs, vm_offset_t *addr, vm_size_t size,
-    vm_prot_t prot, int flags, caddr_t handle, vm_offset_t foff);
-int vmspace_protect(struct vmspace *vs, caddr_t va, unsigned sz, int set_max,
-    vm_prot_t new_prot);
-int vmspace_access(struct vmspace *vs, caddr_t va, unsigned sz, int prot);
-void vmspace_pageable(struct vmspace *vs, caddr_t va, unsigned sz);
-void vmspace_notpageable(struct vmspace *vs, caddr_t va, unsigned sz);
-int vmspace_inherit(struct vmspace *vs, caddr_t va, unsigned sz,
-    vm_inherit_t new_inheritance);
-int vmspace_activate(struct vmspace *vs, caddr_t va, unsigned sz);
+void	vmspace_free(struct vmspace *);
+int		vmspace_allocate(struct vmspace *vs, vm_offset_t *addr, vm_size_t size,
+    					int anywhere);
+void	vmspace_delete(struct vmspace *vs, caddr_t va, unsigned sz);
+int		vm_mmap(struct vmspace *vs, vm_offset_t *addr, vm_size_t size,
+    			vm_prot_t prot, int flags, caddr_t handle, vm_offset_t foff);
+int		vmspace_protect(struct vmspace *vs, caddr_t va, unsigned sz, int set_max,
+    			vm_prot_t new_prot);
+int		vmspace_access(struct vmspace *vs, caddr_t va, unsigned sz, int prot);
+void	vmspace_pageable(struct vmspace *vs, caddr_t va, unsigned sz);
+void	vmspace_notpageable(struct vmspace *vs, caddr_t va, unsigned sz);
+int		vmspace_inherit(struct vmspace *vs, caddr_t va, unsigned sz,
+   				 vm_inherit_t new_inheritance);
+int		vmspace_activate(struct vmspace *vs, caddr_t va, unsigned sz);
 __END_DECLS
 
 #endif	/* VMSPACE_H */

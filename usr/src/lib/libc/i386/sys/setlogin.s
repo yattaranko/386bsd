@@ -44,4 +44,4 @@
 
 SYSCALL(setlogin)
 	movl	$0,__logname_valid
-	ret				/* setlogin(name) */
+	ret				/* setlogin(name) *

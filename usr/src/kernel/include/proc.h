@@ -72,87 +72,89 @@ struct	pgrp {
  * which might be addressible only on a processor on which the process
  * is running.
  */
+#pragma pack(1)
 struct	proc {
-	struct	proc *p_link;		/* doubly-linked run/sleep queue */
-	struct	proc *p_rlink;
-	struct	proc *p_nxt;		/* linked list of active procs */
-	struct	proc **p_prev;		/*    and zombies */
+	struct	proc *p_link;		/* 0   doubly-linked run/sleep queue */
+	struct	proc *p_rlink;		/* 4 */
+	struct	proc *p_nxt;		/* 8   linked list of active procs */
+	struct	proc **p_prev;		/* 12   and zombies */
 
 	/* substructures: */
-	struct	filedesc *p_fd;		/* ptr to open files structure */
-	struct	pstats *p_stats;	/* accounting/statistics (PROC ONLY) */
-	struct	plimit *p_limit;	/* process limits */
-	struct	vmspace *p_vmspace;	/* address space */
-	struct	sigacts *p_sigacts;	/* signal actions, state (PROC ONLY) */
+	struct	filedesc *p_fd;		/* 16  ptr to open files structure */
+	struct	pstats *p_stats;	/* 20  accounting/statistics (PROC ONLY) */
+	struct	plimit *p_limit;	/* 24  process limits */
+	struct	vmspace *p_vmspace;	/* 28  address space */
+	struct	sigacts *p_sigacts;	/* 32  signal actions, state (PROC ONLY) */
 
 #define	p_ucred		p_cred->pc_ucred
 #define	p_rlimit	p_limit->pl_rlimit
 
-	int	p_flag;
-	char	p_stat;
+	int		p_flag;				/* 36  */
+	char	p_stat;				/* 40  */
 /*	char	p_space; */
 
-	pid_t	p_pid;		/* unique process id */
-	struct	proc *p_hash;	/* hashed based on p_pid for kill+exit+... */
-	struct	proc *p_pptr;	/* pointer to process structure of parent */
-	struct	proc *p_osptr;	/* pointer to older sibling processes */
+	pid_t	p_pid;				/* 41  unique process id */
+	struct	proc *p_hash;		/* 43  hashed based on p_pid for kill+exit+... */
+	struct	proc *p_pptr;		/* 47  pointer to process structure of parent */
+	struct	proc *p_osptr;		/* 51  pointer to older sibling processes */
 
 /* The following fields are all zeroed upon creation in fork */
 #define	p_startzero	p_ysptr
-	struct	proc *p_ysptr;	/* pointer to younger siblings */
-	struct	proc *p_cptr;	/* pointer to youngest living child */
+	struct	proc *p_ysptr;		/* 55  pointer to younger siblings */
+	struct	proc *p_cptr;		/* 59  pointer to youngest living child */
 
 	/* scheduling */
-	u_int	p_cpu;		/* cpu usage for scheduling */
-	int	p_cpticks;	/* ticks of cpu time */
-	fixpt_t	p_pctcpu;	/* %cpu for this process during p_time */
-	caddr_t p_wchan;	/* event process is awaiting */
-	u_int	p_time;		/* resident/nonresident time for swapping */
-	u_int	p_slptime;	/* time since last block */
+	u_int	p_cpu;				/* 63  cpu usage for scheduling */
+	int		p_cpticks;			/* 67  ticks of cpu time */
+	fixpt_t	p_pctcpu;			/* 71  %cpu for this process during p_time */
+	caddr_t p_wchan;			/* 75  event process is awaiting */
+	u_int	p_time;				/* 79  resident/nonresident time for swapping */
+	u_int	p_slptime;			/* 83  time since last block */
 
-	struct	itimerval p_realtimer;	/* alarm timer */
-	struct	timeval p_utime;	/* user time */
-	struct	timeval p_stime;	/* system time */
+	struct	itimerval p_realtimer;	/* 87  alarm timer */
+	struct	timeval p_utime;	/* 103 user time */
+	struct	timeval p_stime;	/* 111 system time */
 
-	int	p_traceflag;	/* kernel trace points */
-	struct	vnode *p_tracep;/* trace to vnode */
+	int		p_traceflag;		/* 119 kernel trace points */
+	struct	vnode *p_tracep;	/* 123 trace to vnode */
 
-	int	p_sig;		/* signals pending to this process */
+	int		p_sig;				/* 127 signals pending to this process */
 
 /* end area that is zeroed on creation */
 #define	p_endzero	p_startcopy
 
 /* The following fields are all copied upon creation in fork */
-	sigset_t p_sigmask;	/* current signal mask */
+	sigset_t p_sigmask;			/* 131 current signal mask */
 #define	p_startcopy	p_sigmask
-	sigset_t p_sigignore;	/* signals being ignored */
-	sigset_t p_sigcatch;	/* signals being caught by user */
+	sigset_t p_sigignore;		/* 135 signals being ignored */
+	sigset_t p_sigcatch;		/* 139 signals being caught by user */
 
-	u_char	p_pri;		/* priority, negative is high */
-	u_char	p_usrpri;	/* user-priority based on p_cpu and p_nice */
-	char	p_nice;		/* nice for cpu usage */
+	u_char	p_pri;				/* 143 priority, negative is high */
+	u_char	p_usrpri;			/* 144 user-priority based on p_cpu and p_nice */
+	char	p_nice;				/* 145 nice for cpu usage */
 /*	char	p_space1; */
 
-	struct 	pgrp *p_pgrp;	/* pointer to process group */
-	struct	proc *p_pgrpnxt; /* pointer to next process in process group */
-	struct	pcred *p_cred;		/* process owner's identity */
-	char	p_comm[MAXCOMLEN+1];
+	struct 	pgrp *p_pgrp;		/* 146 pointer to process group */
+	struct	proc *p_pgrpnxt;	/* 150 pointer to next process in process group */
+	struct	pcred *p_cred;		/* 154 process owner's identity */
+	char	p_comm[MAXCOMLEN+1];/* 158 */
 
 /* end area that is copied on creation */
 #define	p_endcopy	p_wmesg
-	char	*p_wmesg;	/* reason for sleep */
-	/* int	p_thread; */	/* id for this "thread" (Mach glue) XXX */
-	struct	user *p_addr;	/* kernel virtual addr of u-area (PROC ONLY) */
+	char	*p_wmesg;			/* 175 reason for sleep */
+	/* int	p_thread; */		/* id for this "thread" (Mach glue) XXX */
+	struct	user *p_addr;		/* 179 kernel virtual addr of u-area (PROC ONLY) */
 	/* swblk_t	p_swaddr; */	/* disk address of u area when swapped */
-	struct	mdproc p_md;	/* any machine-dependent fields */
+	struct	mdproc p_md;		/* 183 any machine-dependent fields */
 
 	/* u_short	p_xstat; */	/* Exit status for wait; also stop signal */
-	short	p_dupfd;	/* sideways return value from fdopen XXX */
+	short	p_dupfd;			/* 199 sideways return value from fdopen XXX */
 	/* u_short	p_acflag; */	/* accounting flags */
-	u_short	p_stksz;	/* size of per process at p_addr */
+	u_short	p_stksz;			/* 201 size of per process at p_addr */
 
-	long	p_spare[6];	/* tmp spares to avoid shifting eproc */
-} __attribute__ ((packed));
+	long	p_spare[6];			/* 203 tmp spares to avoid shifting eproc */
+};
+#pragma pack()
 
 #define	p_session	p_pgrp->pg_session
 #define	p_pgid		p_pgrp->pg_id
@@ -309,7 +311,7 @@ void setpri(struct proc *p);
 
 /* process creation/destruction */
 int fork1(struct proc *p1, int isvfork, int *retval);
-void volatile exit(struct proc *p, int rv);
+void exit(struct proc *p, int rv);
 
 extern struct		proc *zombproc, *allproc;	/* lists of procs in various states */
 extern struct		proc proc0;					/* process slot for swapper */

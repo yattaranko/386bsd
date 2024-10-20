@@ -333,11 +333,11 @@ void _main()
 
 	if (rval[1])
 	{
-		static char initflags[] = "-sf";
-		char *ip = initflags + 1;
-		vm_offset_t addr = 0;
-		extern int icode[];		/* user init code */
-		extern int szicode;		/* size of icode */
+		static char		initflags[] = "-sf";
+		char*			ip = initflags + 1;
+		vm_offset_t		addr = 0;
+		extern int		icode[];		/* user init code */
+		extern int		szicode;		/* size of icode */
 
 		/*
 		 * Now in process 1. Simulate an execve() by setting
@@ -436,7 +436,7 @@ static void vmsinit()
 	/* address translation layer */
 	pmap_init();
 	/* pager layer */
-	vm_pager_init(/*VM_PHYS_SIZE*/);
+	vm_pager_init();
 
 	kmeminit();
 }
@@ -449,9 +449,11 @@ static void liminit(struct proc* p)
 	int32_t	i;
 
 	p->p_limit = &limit0;
-	for (i = 0; i < sizeof(p->p_rlimit)/sizeof(p->p_rlimit[0]); i++)
+	for (i = 0; i < sizeof(p->p_rlimit) / sizeof(p->p_rlimit[0]); i++)
+	{
 		limit0.pl_rlimit[i].rlim_cur =
 		    limit0.pl_rlimit[i].rlim_max = RLIM_INFINITY;
+	}
 	limit0.pl_rlimit[RLIMIT_OFILE].rlim_cur = OPEN_MAX;
 	limit0.pl_rlimit[RLIMIT_OFILE].rlim_max = FD_SETSIZE; /* XXX */
 	limit0.pl_rlimit[RLIMIT_NPROC].rlim_cur = CHILD_MAX;
