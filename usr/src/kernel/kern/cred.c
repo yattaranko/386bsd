@@ -46,7 +46,8 @@
 
 /* if process credentials are to be modified, check if they need to unshare */
 struct pcred *
-modpcred(struct proc *p) {
+modpcred(struct proc *p)
+{
 	struct pcred *pc = p->p_cred;
 
 	/* if not uniquely used, generate unique copy of process credentials */
@@ -76,63 +77,44 @@ modpcred(struct proc *p) {
 }
 
 /* POSIX get current processes real user ID */
-int
-getuid(p, uap, retval)
-	struct proc *p;
-	void *uap;
-	int *retval;
+int getuid(struct proc* p, void* uap, int* retval)
 {
-
 	*retval = p->p_cred->p_ruid;
 	return (0);
 }
 
 /* POSIX get current processes effective user ID */
-int
-geteuid(p, uap, retval)
-	struct proc *p;
-	void *uap;
-	int *retval;
+int geteuid(struct proc* p, void* uap, int* retval)
 {
-
 	*retval = p->p_ucred->cr_uid;
 	return (0);
 }
 
 /* POSIX get current processes real group ID */
 int
-getgid(p, uap, retval)
-	struct proc *p;
-	void *uap;
-	int *retval;
+getgid(struct proc* p, void* uap, int* retval)
 {
-
 	*retval = p->p_cred->p_rgid;
 	return (0);
 }
 
 /* POSIX get current processes effective group ID */
 int
-getegid(p, uap, retval)
-	struct proc *p;
-	void *uap;
-	int *retval;
+getegid(struct proc* p, void* uap, int* retval)
 {
-
 	*retval = p->p_ucred->cr_groups[0];
 	return (0);
 }
 
 /* BSD get supplimentary groups */
 int
-getgroups(p, uap, retval)
-	struct proc *p;
-	struct	arg {
+getgroups(struct proc* p, void* vap, int* retval)
+{
+	struct	args {
 		u_int	gidsetsize;
 		int	*gidset;		/* XXX not yet POSIX */
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
+
 	struct pcred *pc = p->p_cred;
 	gid_t *gp;
 	int *lp;
@@ -156,8 +138,8 @@ getgroups(p, uap, retval)
 		*lp++ = *gp++;
 
 	/* pass the array buffer back to the user process */
-	if (error = copyout(p, (caddr_t)groups, (caddr_t)uap->gidset,
-	    ngrp * sizeof (groups[0])))
+	if ((error = copyout(p, (caddr_t)groups, (caddr_t)uap->gidset,
+	    ngrp * sizeof (groups[0]))) != 0)
 		return (error);
 
 	/* return number of groups returned */
@@ -167,13 +149,11 @@ getgroups(p, uap, retval)
 
 /* POSIX set the real user id of the process */
 int
-setuid(p, uap, retval)
-	struct proc *p;
+setuid(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		int	uid;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct pcred *pc = p->p_cred;
 	uid_t uid = uap->uid;
 	int error;
@@ -194,13 +174,11 @@ setuid(p, uap, retval)
 
 /* POSIX set the effective user id of the process */
 int
-seteuid(p, uap, retval)
-	struct proc *p;
+seteuid(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		int	euid;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct pcred *pc = p->p_cred;
 	uid_t euid = uap->euid;
 	int error;
@@ -219,13 +197,11 @@ seteuid(p, uap, retval)
 
 /* POSIX set the real group id of the process */
 int
-setgid(p, uap, retval)
-	struct proc *p;
+setgid(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		int	gid;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct pcred *pc = p->p_cred;
 	gid_t gid = uap->gid;
 	int error;
@@ -246,13 +222,11 @@ setgid(p, uap, retval)
 
 /* POSIX set effective group id of the current process */
 int
-setegid(p, uap, retval)
-	struct proc *p;
+setegid(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		int	egid;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct pcred *pc = p->p_cred;
 	gid_t egid = uap->egid;
 	int error;
@@ -271,21 +245,19 @@ setegid(p, uap, retval)
 
 /* BSD set supplementary group set */
 int
-setgroups(p, uap, retval)
-	struct proc *p;
+setgroups(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		u_int	gidsetsize;
 		int	*gidset;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct pcred *pc = p->p_cred;
 	gid_t *gp;
 	u_int ngrp;
 	int *lp, error, groups[NGROUPS_MAX];
 
 	/* privilege to set groups */
-	if (error = use_priv(pc->pc_ucred, PRV_SETGID, p))
+	if ((error = use_priv(pc->pc_ucred, PRV_SETGID, p)) != 0)
 		return (error);
 
 	/* more groups than implemented? */
@@ -293,8 +265,8 @@ setgroups(p, uap, retval)
 		return (EINVAL);
 
 	/* copy into temporary buffer array from user process */
-	if (error = copyin(p, (caddr_t)uap->gidset, (caddr_t)groups,
-	    ngrp * sizeof (groups[0])))
+	if ((error = copyin(p, (caddr_t)uap->gidset, (caddr_t)groups,
+	    ngrp * sizeof (groups[0]))) != 0)
 		return (error);
 
 	/* modify process credentials to suit */
@@ -312,10 +284,10 @@ setgroups(p, uap, retval)
 int
 groupmember(gid_t gid, const struct ucred *cred)
 {
-	gid_t *gp, *egp = &(cred->cr_groups[cred->cr_ngroups]);
+	gid_t *gp, *egp = (gid_t*)&(cred->cr_groups[cred->cr_ngroups]);
 
 	/* sift through supplimental group set array in user credentials */
-	for (gp = cred->cr_groups; gp < egp; gp++)
+	for (gp = (gid_t*)cred->cr_groups; gp < egp; gp++)
 		if (*gp == gid)
 			return (1);
 
@@ -323,8 +295,7 @@ groupmember(gid_t gid, const struct ucred *cred)
 }
 
 /* allocate a fresh, zeroed set of credentials */
-struct ucred *
-crget()
+struct ucred* crget()
 {
 	struct ucred *cr;
 
@@ -335,8 +306,7 @@ crget()
 }
 
 /* release a reference on a user credential set, and free when unreferenced */
-void
-crfree(struct ucred *cr)
+void crfree(struct ucred *cr)
 {
 
 	if (--cr->cr_ref != 0)
@@ -345,8 +315,7 @@ crfree(struct ucred *cr)
 }
 
 /* replicate a user credential set */
-struct ucred *
-crdup(const struct ucred *cr)
+struct ucred* crdup(const struct ucred *cr)
 {
 	struct ucred *newcr;
 
@@ -357,15 +326,12 @@ crdup(const struct ucred *cr)
 }
 
 /* BSD get login name. */
-int
-getlogin(p, uap, retval)
-	struct proc *p;
+int getlogin(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		char	*namebuf;
 		u_int	namelen;
-	} *uap;
-	const int *retval;
-{
+	} *uap = (struct args*)vap;
 
 	/* bounds limit string buffer to login buffer */
 	if (uap->namelen > sizeof (p->p_pgrp->pg_session->s_login))
@@ -377,19 +343,16 @@ getlogin(p, uap, retval)
 }
 
 /* BSD set login name. */
-int
-setlogin(p, uap, retval)
-	struct proc *p;
+int setlogin(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		char	*namebuf;
 		/* int	role; */
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	int error;
 
 	/* privilege to set login id? */
-	if (error = use_priv(p->p_ucred, PRV_SETLOGIN, p))
+	if ((error = use_priv(p->p_ucred, PRV_SETLOGIN, p)) != 0)
 		return (error);
 
 	/* copy in variable length string into fixed length field */

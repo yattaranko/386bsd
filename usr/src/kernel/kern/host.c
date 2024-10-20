@@ -45,10 +45,7 @@ long hostid;
 int hostnamelen;
 
 /* BSD get host id */
-gethostid(p, uap, retval)
-	struct proc *p;
-	void *uap;
-	long *retval;
+int gethostid(struct proc* p, void* uap, int* retval)
 {
 
 	*retval = hostid;
@@ -56,30 +53,26 @@ gethostid(p, uap, retval)
 }
 
 /* BSD set host id */
-sethostid(p, uap, retval)
-	struct proc *p;
+int sethostid(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		long	hostid;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	int error;
 
-	if (error = use_priv(p->p_ucred, PRV_SETHOSTID, p))
+	if ((error = use_priv(p->p_ucred, PRV_SETHOSTID, p)) != 0)
 		return (error);
 	hostid = uap->hostid;
 	return (0);
 }
 
 /* BSD get host name */
-gethostname(p, uap, retval)
-	struct proc *p;
+int gethostname(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		char	*hostname;
 		u_int	len;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 
 	if (uap->len > hostnamelen + 1)
 		uap->len = hostnamelen + 1;
@@ -88,17 +81,15 @@ gethostname(p, uap, retval)
 }
 
 /* BSD set host name */
-sethostname(p, uap, retval)
-	struct proc *p;
+int sethostname(struct proc* p, void* vap, int* retval)
+{
 	register struct args {
 		char	*hostname;
 		u_int	len;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	int error;
 
-	if (error = use_priv(p->p_ucred, PRV_SETHOSTNAME, p))
+	if ((error = use_priv(p->p_ucred, PRV_SETHOSTNAME, p)) != 0)
 		return (error);
 
 	if (uap->len > sizeof (hostname) - 1)

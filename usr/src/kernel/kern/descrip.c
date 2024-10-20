@@ -48,7 +48,9 @@
 #include "proc.h"
 /*#include "socketvar.h"*/
 #include "resourcevar.h"
+#include "signalvar.h"
 #include "uio.h"
+#include "vm.h"
 #ifdef KTRACE
 #include "sys/ktrace.h"
 #endif
@@ -62,14 +64,15 @@
  * Descriptor management.
  */
 struct file *filehead;	/* head of list of open files */
-int nfiles;		/* actual number of open files */
+int		nfiles;		/* actual number of open files */
+
 static int fdopen(dev_t dev, int mode, int type, struct proc *p);
 /*int fdalloc(struct proc *p, int want, int *result);*/
 static int selscan(struct proc *p, fd_set *ibits, fd_set *obits, int nfd, int *retval);
-
-
-
-
+extern int splclock(void);
+extern int splnone(void);
+void ktrgenio(struct vnode* vp, int fd, enum uio_rw rw, register struct iovec* iov,
+			int len, int error);
 
 /*
  * Descriptor system calls, both BSD and POSIX.
@@ -77,27 +80,20 @@ static int selscan(struct proc *p, fd_set *ibits, fd_set *obits, int nfd, int *r
 
 /* BSD file descriptor "table" size (number of descriptors */
 int
-getdtablesize(p, uap, retval)
-	struct proc *p;
-	void *uap;
-	int *retval;
+getdtablesize(struct proc* p, void* uap, int* retval)
 {
 
 	*retval = p->p_rlimit[RLIMIT_OFILE].rlim_cur;
 	return (0);
 }
 
-
-
 /* POSIX Duplicate a file descriptor.  */
 int
-dup(p, uap, retval)
-	struct proc *p;
+dup(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		int	i;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	register struct filedesc *fdp = p->p_fd;
 	struct file *fp;
 	int fd, error;
@@ -106,7 +102,7 @@ dup(p, uap, retval)
 	    (fp = fdp->fd_ofiles[uap->i]) == NULL)
 		return (EBADF);
 
-	if (error = fdalloc(p, 0, &fd))
+	if ((error = fdalloc(p, 0, &fd)) != 0)
 		return (error);
 
 	fdp->fd_ofiles[fd] = fp;
@@ -118,19 +114,14 @@ dup(p, uap, retval)
 	return (0);
 }
 
-
-
-
 /* POSIX Duplicate a file descriptor to a particular value.  */
 int
-dup2(p, uap, retval)
-	struct proc *p;
+dup2(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		u_int	from;
 		u_int	to;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	register struct filedesc *fdp = p->p_fd;
 	register struct file *fp;
 	register u_int old = uap->from, new = uap->to;
@@ -146,7 +137,7 @@ dup2(p, uap, retval)
 		return (0);
 
 	if (new >= fdp->fd_nfiles) {
-		if (error = fdalloc(p, new, &i))
+		if ((error = fdalloc(p, new, &i)) != 0)
 			return (error);
 #ifdef DIAGNOSTIC
 		if (new != i)
@@ -167,20 +158,15 @@ dup2(p, uap, retval)
 	return (0);
 }
 
-
-
-
 /* POSIX file control system call.  */
 int
-fcntl(p, uap, retval)
-	struct proc *p;
+fcntl(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		int	fd;
 		int	cmd;
 		int	arg;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct filedesc *fdp = p->p_fd;
 	struct file *fp;
 	char *pop;
@@ -197,7 +183,7 @@ fcntl(p, uap, retval)
 	case F_DUPFD:
 		if ((unsigned)uap->arg >= p->p_rlimit[RLIMIT_OFILE].rlim_cur)
 			return (EINVAL);
-		if (error = fdalloc(p, uap->arg, &i))
+		if ((error = fdalloc(p, uap->arg, &i)) != 0)
 			return (error);
 		fdp->fd_ofiles[i] = fp;
 		fdp->fd_ofileflags[i] = *pop &~ UF_EXCLOSE;
@@ -311,7 +297,7 @@ fcntl(p, uap, retval)
 			return (error);
 		if (fl.l_whence == SEEK_CUR)
 			fl.l_start += fp->f_offset;
-		if (error = VOP_ADVLOCK(vp, (caddr_t)p, F_GETLK, &fl, F_POSIX))
+		if ((error = VOP_ADVLOCK(vp, (caddr_t)p, F_GETLK, &fl, F_POSIX)) != 0)
 			return (error);
 		return (copyout(p, (caddr_t)&fl, (caddr_t)uap->arg, sizeof (fl)));
 
@@ -321,18 +307,13 @@ fcntl(p, uap, retval)
 	/* NOTREACHED */
 }
 
-
-
-
 /* POSIX close a file descriptor. */
 int
-close(p, uap, retval)
-	struct proc *p;
+close(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		int	fd;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct filedesc *fdp = p->p_fd;
 	struct file *fp;
 	int fd = uap->fd;
@@ -355,18 +336,14 @@ close(p, uap, retval)
 	return (closef(fp, p));
 }
 
-
-
 /* POSIX: Return status information about a file descriptor. */
 int
-fstat(p, uap, retval)
-	struct proc *p;
+fstat(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		int	fd;
 		struct	stat *sb;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct filedesc *fdp = p->p_fd;
 	struct file *fp;
 	struct stat ub;
@@ -399,19 +376,15 @@ fstat(p, uap, retval)
 	return (error);
 }
 
-
-
 /* POSIX Read function system call handler.  */
 int
-read(p, uap, retval)
-	struct proc *p;
+read(struct proc* p, void* vap, int* retval)
+{
 	register struct args {
 		int	fdes;
 		char	*cbuf;
 		unsigned count;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	register struct file *fp;
 	register struct filedesc *fdp = p->p_fd;
 	struct uio auio;
@@ -444,7 +417,7 @@ read(p, uap, retval)
 #endif
 
 	cnt = uap->count;
-	if (error = (*fp->f_ops->fo_read)(fp, &auio, fp->f_cred))
+	if ((error = (*fp->f_ops->fo_read)(fp, &auio, fp->f_cred)) != 0)
 		if (auio.uio_resid != cnt && (error == ERESTART ||
 		    error == EINTR || error == EWOULDBLOCK))
 			error = 0;
@@ -459,19 +432,15 @@ read(p, uap, retval)
 	return (error);
 }
 
-
-
 /* BSD scatter readv() system call handler. */
 int
-readv(p, uap, retval)
-	struct proc *p;
+readv(struct proc* p, void* vap, int* retval)
+{
 	register struct args {
 		int	fdes;
 		struct	iovec *iovp;
 		unsigned iovcnt;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct file *fp;
 	struct filedesc *fdp = p->p_fd;
 	struct uio auio;
@@ -506,7 +475,7 @@ readv(p, uap, retval)
 	auio.uio_segflg = UIO_USERSPACE;
 	auio.uio_procp = p;
 
-	if (error = copyin(p, (caddr_t)uap->iovp, (caddr_t)iov, iovlen))
+	if ((error = copyin(p, (caddr_t)uap->iovp, (caddr_t)iov, iovlen)) != 0)
 		goto done;
 
 	auio.uio_resid = 0;
@@ -534,7 +503,7 @@ readv(p, uap, retval)
 #endif
 
 	cnt = auio.uio_resid;
-	if (error = (*fp->f_ops->fo_read)(fp, &auio, fp->f_cred))
+	if ((error = (*fp->f_ops->fo_read)(fp, &auio, fp->f_cred)) != 0)
 		if (auio.uio_resid != cnt && (error == ERESTART ||
 		    error == EINTR || error == EWOULDBLOCK))
 			error = 0;
@@ -557,19 +526,15 @@ done:
 	return (error);
 }
 
-
-
 /* POSIX write() function system call handler */
 int
-write(p, uap, retval)
-	struct proc *p;
+write(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		int	fdes;
 		char	*cbuf;
 		unsigned count;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	register struct file *fp;
 	register struct filedesc *fdp = p->p_fd;
 	struct uio auio;
@@ -602,7 +567,7 @@ write(p, uap, retval)
 #endif
 
 	cnt = uap->count;
-	if (error = (*fp->f_ops->fo_write)(fp, &auio, fp->f_cred)) {
+	if ((error = (*fp->f_ops->fo_write)(fp, &auio, fp->f_cred)) != 0) {
 		if (auio.uio_resid != cnt && (error == ERESTART ||
 		    error == EINTR || error == EWOULDBLOCK))
 			error = 0;
@@ -620,19 +585,15 @@ write(p, uap, retval)
 	return (error);
 }
 
-
-
 /* BSD gather write writev() function system call handler */
 int
-writev(p, uap, retval)
-	struct proc *p;
+writev(struct proc* p, void* vap, int* retval)
+{
 	register struct args {
 		int	fdes;
 		struct	iovec *iovp;
 		unsigned iovcnt;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	register struct file *fp;
 	register struct filedesc *fdp = p->p_fd;
 	struct uio auio;
@@ -666,7 +627,7 @@ writev(p, uap, retval)
 	auio.uio_segflg = UIO_USERSPACE;
 	auio.uio_procp = p;
 
-	if (error = copyin(p, (caddr_t)uap->iovp, (caddr_t)iov, iovlen))
+	if ((error = copyin(p, (caddr_t)uap->iovp, (caddr_t)iov, iovlen)) != 0)
 		goto done;
 
 	auio.uio_resid = 0;
@@ -694,7 +655,7 @@ writev(p, uap, retval)
 #endif
 
 	cnt = auio.uio_resid;
-	if (error = (*fp->f_ops->fo_write)(fp, &auio, fp->f_cred)) {
+	if ((error = (*fp->f_ops->fo_write)(fp, &auio, fp->f_cred)) != 0) {
 		if (auio.uio_resid != cnt && (error == ERESTART ||
 		    error == EINTR || error == EWOULDBLOCK))
 			error = 0;
@@ -720,20 +681,15 @@ done:
 	return (error);
 }
 
-
-
-
 /* POSIX ioctl() function system call handler */
 int
-ioctl(p, uap, retval)
-	struct proc *p;
+ioctl(struct proc* p, void* vap, int* retval)
+{
 	register struct args {
 		int	fdes;
 		int	cmd;
 		caddr_t	cmarg;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct file *fp;
 	struct filedesc *fdp = p->p_fd;
 	int com, cmd, error;
@@ -794,7 +750,7 @@ ioctl(p, uap, retval)
 	switch (com) {
 
 	case FIONBIO:
-		if (tmp = *(int *)data)
+		if ((tmp = *(int *)data) != 0)
 			fp->f_flag |= FNONBLOCK;
 		else
 			fp->f_flag &= ~FNONBLOCK;
@@ -802,7 +758,7 @@ ioctl(p, uap, retval)
 		break;
 
 	case FIOASYNC:
-		if (tmp = *(int *)data)
+		if ((tmp = *(int *)data) != 0)
 			fp->f_flag |= FASYNC;
 		else
 			fp->f_flag &= ~FASYNC;
@@ -853,19 +809,15 @@ ioctl(p, uap, retval)
 
 int	selwait, nselcoll;
 
-
-
 /* BSD select() function system call handler.  */
 int
-select(p, uap, retval)
-	register struct proc *p;
+select(struct proc* p, void* vap, int* retval)
+{
 	register struct args {
 		int	nd;
 		fd_set	*in, *ou, *ex;
 		struct	timeval *tv;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	fd_set ibits[3], obits[3];
 	struct timeval atv;
 	int ncoll, ni, error = 0, timo;
@@ -1003,7 +955,6 @@ seltrue(dev_t dev, int which, struct proc *p)
 	return (1);
 }
 
-
 void
 selwakeup(pid_t pid, int coll)
 {
@@ -1127,7 +1078,7 @@ falloc(struct proc *p, struct file **resultfp, int *resultfd)
 	struct file *fp, *fq, **fpp;
 	int error, i;
 
-	if (error = fdalloc(p, 0, &i))
+	if ((error = fdalloc(p, 0, &i)) != 0)
 		return (error);
 	if (nfiles >= maxfiles) {
 		tablefull("file");
@@ -1142,12 +1093,12 @@ falloc(struct proc *p, struct file **resultfp, int *resultfd)
 	 */
 	nfiles++;
 	MALLOC(fp, struct file *, sizeof(struct file), M_FILE, M_WAITOK);
-	if (fq = p->p_fd->fd_ofiles[0])
+	if ((fq = p->p_fd->fd_ofiles[0]) != 0)
 		fpp = &fq->f_filef;
 	else
 		fpp = &filehead;
 	p->p_fd->fd_ofiles[i] = fp;
-	if (fq = *fpp)
+	if ((fq = *fpp) != 0)
 		fq->f_fileb = &fp->f_filef;
 	fp->f_filef = fq;
 	fp->f_fileb = fpp;
@@ -1175,7 +1126,7 @@ ffree(struct file *fp)
 	struct file *fq;
 
 	/* remove from global file list */
-	if (fq = fp->f_filef)
+	if ((fq = fp->f_filef) != 0)
 		fq->f_fileb = fp->f_fileb;
 	*fp->f_fileb = fq;
 
@@ -1360,14 +1311,12 @@ closef(struct file *fp, struct proc *p)
 
 /* ARGSUSED */
 int
-flock(p, uap, retval)
-	struct proc *p;
+flock(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		int	fd;
 		int	how;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	register struct filedesc *fdp = p->p_fd;
 	register struct file *fp;
 	struct vnode *vp;

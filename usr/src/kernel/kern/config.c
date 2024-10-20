@@ -62,6 +62,8 @@
 
 int query(char *s, ...);
 extern char config_string[];
+extern int strcmp(register const char*, register const char*);
+extern int pg(char*);
 
 static int console_minor;
 extern struct devif pc_devif;
@@ -273,7 +275,7 @@ static char arg[32];	/* currently configuring module */
 int
 config_scan(char *cfg, char **cfg_sp)
 {
-	extern end;
+	extern int end;
 	char *lp = (char *)&end /*config_string*/;
 	char strbuf[32];
 	int dummy, exclaim;
@@ -434,6 +436,7 @@ devif_name(dev_t dev, devif_type_t typ, char *name, int namelen) {
 		*name++ = *fp++;
 		namelen--;
 	}
+	return (0);
 }
 
 /* check and adjust a bootdev's parameters so as to create a root device */
@@ -479,7 +482,7 @@ devif_open(dev_t dev, devif_type_t typ, int flag, struct proc *p) {
 	/* if a BSD UN*X block device ... */
 	if (typ == BLKDEV &&
 	    major < sizeof blkmajtodevif / sizeof blkmajtodevif[0]) {
-		if (dif = blkmajtodevif[major])
+		if ((dif = blkmajtodevif[major]) != 0)
 			return ((dif->di_open)(dev, flag, S_IFBLK, p));
 			
 		return (ENXIO);
@@ -506,6 +509,7 @@ devif_open(dev_t dev, devif_type_t typ, int flag, struct proc *p) {
 	}
 #endif
 	panic("devif_open");	/* unimplemented type */
+	return (0);				/* never reached */
 }
 
 /* locate and call a device driver close routine via the device driver interface */
@@ -529,7 +533,7 @@ devif_close(dev_t dev, devif_type_t typ, int flag, struct proc *p) {
 	/* if a BSD UN*X block device ... */
 	if (typ == BLKDEV &&
 	    major < sizeof blkmajtodevif / sizeof blkmajtodevif[0]) {
-		if (dif = blkmajtodevif[major])
+		if ((dif = blkmajtodevif[major]) != 0)
 			return ((dif->di_close)(dev, flag, S_IFBLK, p));
 			
 		return (ENODEV);
@@ -554,6 +558,7 @@ devif_close(dev_t dev, devif_type_t typ, int flag, struct proc *p) {
 	}
 #endif
 	panic("devif_close");	/* unimplemented type */
+	return (0);				/* never reached */
 }
 
 /* locate and call a device driver ioctl routine via the device driver interface */
@@ -579,7 +584,7 @@ devif_ioctl(dev_t dev, devif_type_t typ, int cmd, caddr_t data, int flag,
 	/* if a BSD UN*X block device ... */
 	if (typ == BLKDEV &&
 	    major < sizeof blkmajtodevif / sizeof blkmajtodevif[0]) {
-		if (dif = blkmajtodevif[major])
+		if ((dif = blkmajtodevif[major]) != 0)
 			return ((dif->di_ioctl)(dev, cmd, data, flag, p));
 			
 		return (ENODEV);
@@ -593,6 +598,7 @@ devif_ioctl(dev_t dev, devif_type_t typ, int cmd, caddr_t data, int flag,
 		goto chrcase;
 #endif
 	panic("devif_ioctl");	/* unimplemented type */
+	return (0);				/* never reached */
 }
 
 /* locate and call a device driver read routine via the device driver interface */
@@ -632,6 +638,7 @@ devif_read(dev_t dev, devif_type_t typ, struct uio *uio, int flag) {
 	}
 #endif
 	panic("devif_read");	/* unimplemented type */
+	return (0);				/* never reached */
 }
 
 /* locate and call a device driver write routine via the device driver interface */
@@ -674,6 +681,7 @@ int devif_write(dev_t dev, devif_type_t typ, struct uio *uio, int flag)
 	}
 #endif
 	panic("devif_write");	/* unimplemented type */
+	return (0);				/* never reached */
 }
 
 /* locate and call a device driver select routine via the device driver interface */
@@ -703,6 +711,7 @@ devif_select(dev_t dev, devif_type_t typ, int rw, struct proc *p) {
 		goto chrcase;
 #endif
 	panic("devif_select");	/* unimplemented type */
+	return (0);				/* never reached */
 }
 
 /* locate and call a device driver mmap routine via the device driver interface */
@@ -725,6 +734,7 @@ devif_mmap(dev_t dev, devif_type_t typ, int offset, int nprot) {
 
 	/* add support for new types here */
 	panic("devif_mmap");	/* unimplemented type */
+	return (0);				/* never reached */
 }
 
 /* locate and call a device driver strategy routine via the device driver interface */
@@ -736,7 +746,7 @@ devif_strategy(devif_type_t typ, struct buf *bp) {
 	/* if a BSD UN*X character device ... */
 	if (typ == CHRDEV &&
 	    major < sizeof chrmajtodevif / sizeof chrmajtodevif[0]) {
-		if (dif = chrmajtodevif[major])
+		if ((dif = chrmajtodevif[major]) != 0)
 			return ((dif->di_strategy)(bp));
 			
 		return (ENODEV);
@@ -745,13 +755,14 @@ devif_strategy(devif_type_t typ, struct buf *bp) {
 	/* if a BSD UN*X block device ... */
 	if (typ == BLKDEV &&
 	    major < sizeof blkmajtodevif / sizeof blkmajtodevif[0]) {
-		if (dif = blkmajtodevif[major])
+		if ((dif = blkmajtodevif[major]) != 0)
 			return ((dif->di_strategy)(bp));
 			
 		return (ENODEV);
 	}
 
 	panic("devif_strategy");	/* illegal type */
+	return (0);					/* never reached */
 }
 
 /* locate and call a device driver size routine via the device driver interface */
@@ -763,13 +774,14 @@ devif_psize(dev_t dev, devif_type_t typ) {
 	/* if a BSD UN*X block device ... */
 	if (typ == BLKDEV &&
 	    major < sizeof blkmajtodevif / sizeof blkmajtodevif[0]) {
-		if (dif = blkmajtodevif[major])
+		if ((dif = blkmajtodevif[major]) != 0)
 			return ((dif->di_psize)(dev));
 			
 		return (0);
 	}
 
 	panic("devif_psize");	/* illegal type */
+	return (0);				/* never reached */
 }
 
 /* locate and call a device driver dump routine via the device driver interface */
@@ -781,7 +793,7 @@ devif_dump(dev_t dev, devif_type_t typ) {
 	/* if a BSD UN*X block device ... */
 	if (typ == BLKDEV &&
 	    major < sizeof blkmajtodevif / sizeof blkmajtodevif[0]) {
-		if (dif = blkmajtodevif[major])
+		if ((dif = blkmajtodevif[major]) != 0)
 			return ((dif->di_dump)(dev));
 	}
 
@@ -823,7 +835,7 @@ devif_config(char **cfg, struct devif *dif)
 		}
 
 		/* device already in use? */
-		if (odif = blkmajtodevif[bmaj]) {
+		if ((odif = blkmajtodevif[bmaj]) != 0) {
 			printf("%s: blkdev %d already used by %s, not configured.\n",
 				arg, bmaj, odif->di_name);
 			return (0);
@@ -846,7 +858,7 @@ devif_config(char **cfg, struct devif *dif)
 		}
 
 		/* device already in use? */
-		if (odif = chrmajtodevif[cmaj]) {
+		if ((odif = chrmajtodevif[cmaj]) != 0) {
 			printf("%s: chrdev %d already used by %s, not configured.\n",
 				arg, cmaj, odif->di_name);
 			return (0);
