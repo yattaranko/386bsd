@@ -44,6 +44,8 @@
 #include "proc.h"
 #include "malloc.h"
 #include "uio.h"
+#include "signalvar.h"
+#include "vnode.h"
 
 /*#include "quota.h"*/
 
@@ -273,10 +275,19 @@ fixjobc(struct proc *p, struct pgrp *pgrp, int entering)
 	 */
 	if ((hispgrp = p->p_pptr->p_pgrp) != pgrp &&
 	    hispgrp->pg_session == mysession)
+	{
 		if (entering)
+		{
 			pgrp->pg_jobc++;
-		else if (--pgrp->pg_jobc == 0)
-			orphanpg(pgrp);
+		}
+		else
+		{
+			if (--pgrp->pg_jobc == 0)
+			{
+				orphanpg(pgrp);
+			}
+		}
+	}
 
 	/*
 	 * Check this process' children to see whether they qualify
@@ -284,13 +295,17 @@ fixjobc(struct proc *p, struct pgrp *pgrp, int entering)
 	 * process groups.
 	 */
 	for (p = p->p_cptr; p; p = p->p_osptr)
+	{
 		if ((hispgrp = p->p_pgrp) != pgrp &&
 		    hispgrp->pg_session == mysession &&
 		    p->p_stat != SZOMB)
+		{
 			if (entering)
 				hispgrp->pg_jobc++;
 			else if (--hispgrp->pg_jobc == 0)
 				orphanpg(hispgrp);
+		}
+	}
 }
 
 /* 
@@ -342,10 +357,7 @@ pgrpdump(void)
 #endif /* DEBUG */
 
 /* POSIX set session ID */
-setsid(p, uap, retval)
-	register struct proc *p;
-	void *uap;
-	int *retval;
+int setsid(register struct proc*p, void *uap, int *retval)
 {
 
 	if (p->p_pgid == p->p_pid || pgfind(p->p_pid)) {
@@ -358,14 +370,12 @@ setsid(p, uap, retval)
 }
 
 /* POSIX insert a specified process into a specified process group */
-setpgid(curp, uap, retval)
-	struct proc *curp;
+int setpgid(struct proc* curp, void* vap, int* retval)
+{
 	struct args {
 		int	pid;	/* target process id */
 		int	pgid;	/* target pgrp id */
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct proc *targp;		/* target process */
 	struct pgrp *pgrp;		/* target pgrp */
 
@@ -404,10 +414,7 @@ setpgid(curp, uap, retval)
 }
 
 /* Get process group ID; note that POSIX getpgrp takes no parameter */
-getpgrp(p, uap, retval)
-	struct proc *p;
-	void *uap;
-	int *retval;
+int getpgrp(struct proc* p, void* uap, int *retval)
 {
 
 	*retval = p->p_pgrp->pg_id;
@@ -415,10 +422,7 @@ getpgrp(p, uap, retval)
 }
 
 /* POSIX get current processes process ID */
-getpid(p, uap, retval)
-	struct proc *p;
-	void *uap;
-	int *retval;
+int getpid(struct proc* p, void* uap, int* retval)
 {
 
 	*retval = p->p_pid;
@@ -426,10 +430,7 @@ getpid(p, uap, retval)
 }
 
 /* POSIX get parent processes process ID */
-getppid(p, uap, retval)
-	struct proc *p;
-	void *uap;
-	int *retval;
+int getppid(struct proc* p, void* uap, int* retval)
 {
 
 	*retval = p->p_pptr->p_pid;

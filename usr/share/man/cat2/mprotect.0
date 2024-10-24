@@ -1,66 +1,20 @@
+[4mMPROTECT[24m(2)                   System Calls Manual                  [4mMPROTECT[24m(2)
 
-
-
-MPROTECT(2)                    1991                   MPROTECT(2)
-
-
-NNAAMMEE
+[1mNAME[0m
        mprotect - control the protection of pages
 
-SSYYNNOOPPSSIISS
+[1mSYNOPSIS[0m
        mprotect(addr, len, prot)
-       ccaaddddrr__tt aaddddrr;;
-       iinntt lleenn,, pprroott;;
+       [1mcaddr_t addr;[0m
+       [1mint len, prot;[0m
 
-DDEESSCCRRIIPPTTIIOONN
-       The  _m_p_r_o_t_e_c_t  system  call changes the specified pages to
-       have  protection  _p_r_o_t.   Not  all  implementations   will
-       guarantee  protection  on a page basis; the granularity of
-       protection changes may be as large as an entire region.
+[1mDESCRIPTION[0m
+       The [4mmprotect[24m system call changes the specified pages to have protection
+       [4mprot[24m.   Not all implementations will guarantee protection on a page ba‐
+       sis; the granularity of protection changes may be as large as an entire
+       region.
 
-SSEEEE AALLSSOO
+[1mSEE ALSO[0m
        msync.2, munmap.2, mprotect.2, madvise.2, mincore.2
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-27,                            May                              1
-
-
+4.4 Berkeley Distribution        May 27, 1991                      [4mMPROTECT[24m(2)

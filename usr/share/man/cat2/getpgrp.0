@@ -1,66 +1,30 @@
-GETPGRP(2)                386BSD Programmer's Manual                GETPGRP(2)
+GETPGRP(2)                    System Calls Manual                   GETPGRP(2)
 
-NNAAMMEE
-     ggeettppggrrpp - get process group
+[1mNAME[0m
+       getpgrp — get process group
 
-SSYYNNOOPPSSIISS
-     _p_i_d__t
-     ggeettppggrrpp(_i_n_t _p_i_d)
+[1mSYNOPSIS[0m
+       [4mpid_t[0m
+       [1mgetpgrp[22m([4mint[24m [4mpid[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The process group of the specified process is returned by ggeettppggrrpp().  If
-     _p_i_d is zero, the call applies to the current process.
+[1mDESCRIPTION[0m
+       The  process  group  of the specified process is returned by [1mgetpgrp[22m().
+       If [4mpid[24m is zero, the call applies to the current process.
 
-     Process groups are used for distribution of signals, and by terminals to
-     arbitrate requests for their input: processes that have the same process
-     group as the terminal are foreground and may read, while others will
-     block with a signal if they attempt to read.
+       Process groups are used for distribution of signals, and  by  terminals
+       to  arbitrate  requests  for  their input: processes that have the same
+       process group as the terminal are foreground and may read, while others
+       will block with a signal if they attempt to read.
 
-     This call is thus used by programs such as csh(1) to create process
-     groups in implementing job control.  The TIOCGPGRP and TIOCSPGRP calls
-     described in termios(4) are used to get/set the process group of the
-     control terminal.
+       This call is thus used by programs such as  [4mcsh[24m(1)  to  create  process
+       groups  in implementing job control.  The TIOCGPGRP and TIOCSPGRP calls
+       described in [4mtermios[24m(4) are used to get/set the process  group  of  the
+       control terminal.
 
-SSEEEE AALLSSOO
-     setpgrp(2),  getuid(2),  termios(4)
+[1mSEE ALSO[0m
+       [4msetpgrp[24m(2), [4mgetuid[24m(2), [4mtermios[24m(4)
 
-HHIISSTTOORRYY
-     The ggeettppggrrpp function call appeared in 4.0BSD.
+[1mHISTORY[0m
+       The [1mgetpgrp [22mfunction call appeared in 4.0BSD.
 
-4.2 Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4.2 Berkeley Distribution       March 10, 1991                      GETPGRP(2)

@@ -1,66 +1,56 @@
-SIGPROCMASK(2)            386BSD Programmer's Manual            SIGPROCMASK(2)
+SIGPROCMASK(2)                System Calls Manual               SIGPROCMASK(2)
 
-NNAAMMEE
-     ssiiggpprrooccmmaasskk - manipulate current signal mask
+[1mNAME[0m
+       sigprocmask — manipulate current signal mask
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssiiggnnaall..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <signal.h>[0m
 
-     _i_n_t
-     ssiiggpprrooccmmaasskk(_i_n_t _h_o_w, _c_o_n_s_t _s_i_g_s_e_t__t *_s_e_t, _s_i_g_s_e_t__t *_o_s_e_t)
+       [4mint[0m
+       [1msigprocmask[22m([4mint[24m [4mhow[24m, [4mconst[24m [4msigset_t[24m [4m*set[24m, [4msigset_t[24m [4m*oset[24m);
 
-     ssiiggmmaasskk(_s_i_g_n_u_m)
+       [1msigmask[22m([4msignum[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssiiggpprrooccmmaasskk() function examines and/or changes the current signal
-     mask (those signals that are blocked from delivery).  Signals are blocked
-     if they are members of the current signal mask set.
+[1mDESCRIPTION[0m
+       The  [1msigprocmask[22m()  function examines and/or changes the current signal
+       mask (those signals that  are  blocked  from  delivery).   Signals  are
+       blocked if they are members of the current signal mask set.
 
-     If _s_e_t is not null, the action of ssiiggpprrooccmmaasskk() depends on the value of
-     the parameter _h_o_w. The signal mask is changed as a function of the
-     specified _s_e_t and the current mask.  The function is specified by _h_o_w
-     using one of the following values from <_s_i_g_n_a_l._h>:
+       If [4mset[24m is not null, the action of [1msigprocmask[22m() depends on the value of
+       the  parameter  [4mhow[24m.   The  signal mask is changed as a function of the
+       specified [4mset[24m and the current mask.  The function is specified  by  [4mhow[0m
+       using one of the following values from ⟨[4msignal.h[24m⟩:
 
-     SIG_BLOCK    The new mask is the union of the current mask and the
-                  specified _s_e_t.
+       SIG_BLOCK    The  new  mask  is  the  union of the current mask and the
+                    specified [4mset[24m.
 
-     SIG_UNBLOCK  The new mask is the intersection of the current mask and the
-                  complement of the specified _s_e_t.
+       SIG_UNBLOCK  The new mask is the intersection of the current  mask  and
+                    the complement of the specified [4mset[24m.
 
-     SIG_SETMASK  The current mask is replaced by the specified _s_e_t.
+       SIG_SETMASK  The current mask is replaced by the specified [4mset[24m.
 
-     If _o_s_e_t is not null, it is set to the previous value of the signal mask.
-     When _s_e_t is null, the value of _h_o_w is insignificant and the mask remains
-     unset providing a way to examine the signal mask without modification.
+       If  [4moset[24m  is  not  null,  it is set to the previous value of the signal
+       mask.  When [4mset[24m is null, the value of [4mhow[24m is insignificant and the mask
+       remains unset providing a way to examine the signal mask without  modi‐
+       fication.
 
-     The system quietly disallows SIGKILL or SIGSTOP to be blocked.
+       The system quietly disallows SIGKILL or SIGSTOP to be blocked.
 
-RREETTUURRNN VVAALLUUEESS
-     A 0 value indicated that the call succeeded.  A -1 return value indicates
-     an error occurred and _e_r_r_n_o is set to indicated the reason.
+[1mRETURN VALUES[0m
+       A  0  value indicated that the call succeeded.  A ‐1 return value indi‐
+       cates an error occurred and [4merrno[24m is set to indicated the reason.
 
-EERRRROORRSS
-     The ssiiggpprrooccmmaasskk() call will fail and the signal mask will be unchanged if
-     one of the following occurs:
+[1mERRORS[0m
+       The [1msigprocmask[22m() call will fail and the signal mask will be  unchanged
+       if one of the following occurs:
 
-     [EINVAL]      _h_o_w has a value other than those listed here.
+       [EINVAL]      [4mhow[24m has a value other than those listed here.
 
-SSEEEE AALLSSOO
-     kill(2),  sigaction(2),  sigsetops(3),  sigsuspend(2)
+[1mSEE ALSO[0m
+       [4mkill[24m(2), [4msigaction[24m(2), [4msigsetops[24m(3), [4msigsuspend[24m(2)
 
-SSTTAANNDDAARRDDSS
-     The ssiiggpprrooccmmaasskk function call is expected to conform to IEEE
-     Std1003.1-1988 (``POSIX'').
+[1mSTANDARDS[0m
+       The  [1msigprocmask  [22mfunction  call  is  expected  to  conform to IEEE Std
+       1003.1‐1988 (“POSIX.1”).
 
-BSD Experimental                 July 23, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     July 23, 1991                  SIGPROCMASK(2)

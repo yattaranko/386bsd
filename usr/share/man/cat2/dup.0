@@ -1,66 +1,55 @@
-DUP(2)                    386BSD Programmer's Manual                    DUP(2)
+DUP(2)                        System Calls Manual                       DUP(2)
 
-NNAAMMEE
-     dduupp, dduupp22 - duplicate an existing file descriptor
+[1mNAME[0m
+       dup, dup2 — duplicate an existing file descriptor
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
 
-     _i_n_t
-     dduupp(_i_n_t _o_l_d_d)
+       [4mint[0m
+       [1mdup[22m([4mint[24m [4moldd[24m);
 
-     _i_n_t
-     dduupp22(_i_n_t _o_l_d_d, _i_n_t _n_e_w_d)
+       [4mint[0m
+       [1mdup2[22m([4mint[24m [4moldd[24m, [4mint[24m [4mnewd[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     DDuupp() duplicates an existing object descriptor and returns its value to
-     the calling process (_n_e_w_d = dduupp(_o_l_d_d)). The argument _o_l_d_d is a small non-
-     negative integer index in the per-process descriptor table.  The value
-     must be less than the size of the table, which is returned by
-     getdtablesize(2).  The new descriptor returned by the call is the lowest
-     numbered descriptor currently not in use by the process.
+[1mDESCRIPTION[0m
+       [1mDup[22m() duplicates an existing object descriptor and returns its value to
+       the  calling  process ([4mnewd[24m = [1mdup[22m([4moldd[24m)).  The argument [4moldd[24m is a small
+       non‐negative integer index in the per‐process  descriptor  table.   The
+       value  must  be  less  than the size of the table, which is returned by
+       [4mgetdtablesize[24m(2).  The new descriptor returned by the call is the  low‐
+       est numbered descriptor currently not in use by the process.
 
-     The object referenced by the descriptor does not distinguish between _o_l_d_d
-     and _n_e_w_d in any way.  Thus if _n_e_w_d and _o_l_d_d are duplicate references to
-     an open file, read(2),  write(2) and lseek(2) calls all move a single
-     pointer into the file, and append mode, non-blocking I/O and asynchronous
-     I/O options are shared between the references.  If a separate pointer
-     into the file is desired, a different object reference to the file must
-     be obtained by issuing an additional open(2) call.  The close-on-exec
-     flag on the new file descriptor is unset.
+       The  object  referenced  by the descriptor does not distinguish between
+       [4moldd[24m and [4mnewd[24m in any way.  Thus if [4mnewd[24m and [4moldd[24m are  duplicate  refer‐
+       ences  to an open file, [4mread[24m(2), [4mwrite[24m(2) and [4mlseek[24m(2) calls all move a
+       single pointer into the file, and append  mode,  non‐blocking  I/O  and
+       asynchronous I/O options are shared between the references.  If a sepa‐
+       rate  pointer into the file is desired, a different object reference to
+       the file must be obtained by issuing an additional [4mopen[24m(2)  call.   The
+       close‐on‐exec flag on the new file descriptor is unset.
 
-     In dduupp22(), the value of the new descriptor _n_e_w_d is specified.  If this
-     descriptor is already in use, the descriptor is first deallocated as if a
-     close(2) call had been done first.
+       In  [1mdup2[22m(), the value of the new descriptor [4mnewd[24m is specified.  If this
+       descriptor is already in use, the descriptor is first deallocated as if
+       a [4mclose[24m(2) call had been done first.
 
-RREETTUURRNN VVAALLUUEESS
-     The value -1 is returned if an error occurs in either call.  The external
-     variable _e_r_r_n_o indicates the cause of the error.
+[1mRETURN VALUES[0m
+       The value ‐1 is returned if an error occurs in either call.  The exter‐
+       nal variable [4merrno[24m indicates the cause of the error.
 
-EERRRROORRSS
-     DDuupp() and dduupp22() fail if:
+[1mERRORS[0m
+       [1mDup[22m() and [1mdup2[22m() fail if:
 
-     [EBADF]       _O_l_d_d or _n_e_w_d is not a valid active descriptor
+       [EBADF]            [4mOldd[24m or [4mnewd[24m is not a valid active descriptor
 
-     [EMFILE]      Too many descriptors are active.
+       [EMFILE]           Too many descriptors are active.
 
-SSEEEE AALLSSOO
-     accept(2),  open(2),  close(2),  fcntl(2),  pipe(2),  socket(2),
-     socketpair(2),  getdtablesize(2)
+[1mSEE ALSO[0m
+       [4maccept[24m(2),   [4mopen[24m(2),   [4mclose[24m(2),   [4mfcntl[24m(2),    [4mpipe[24m(2),    [4msocket[24m(2),
+       [4msocketpair[24m(2), [4mgetdtablesize[24m(2)
 
-SSTTAANNDDAARRDDSS
-     DDuupp() and dduupp22() are expected to conform to IEEE Std 1003.1-1988
-     (``POSIX'').
+[1mSTANDARDS[0m
+       [1mDup[22m()  and  [1mdup2[22m()  are  expected  to  conform  to IEEE Std 1003.1‐1988
+       (“POSIX”).
 
-4th Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       March 10, 1991                          DUP(2)

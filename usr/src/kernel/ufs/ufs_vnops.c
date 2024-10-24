@@ -85,13 +85,15 @@ int ufs_create(struct nameidata* ndp, struct vattr* vap, struct proc* p)
 {
 	struct inode *ip;
 	int error;
-
+printf("ufs_create1");
 	error = maknode(MAKEIMODE(vap->va_type, vap->va_mode), ndp, &ip);
 	if (error != 0)
 	{
 		return (error);
 	}
+printf("2");
 	ndp->ni_vp = ITOV(ip);
+printf("3\n");
 	return (0);
 }
 
@@ -1712,6 +1714,7 @@ int maknode(int mode, register struct nameidata* ndp, struct inode** ipp)
 	ino_t ipref;
 	int error;
 
+printf("makenode1");
 #ifdef DIAGNOSTIC
 	if ((ndp->ni_nameiop & HASBUF) == 0)
 		panic("maknode: no name");
@@ -1724,6 +1727,7 @@ int maknode(int mode, register struct nameidata* ndp, struct inode** ipp)
 	else
 		ipref = pdir->i_number;
 	error = ialloc(pdir, ipref, mode, ndp->ni_cred, &tip);
+printf("2");
 	if (error != 0)
 	{
 		free(ndp->ni_pnbuf, M_NAMEI);
@@ -1747,6 +1751,7 @@ int maknode(int mode, register struct nameidata* ndp, struct inode** ipp)
 	ip->i_mode = mode;
 	ITOV(ip)->v_type = IFTOVT(mode);	/* Rest init'd in iget() */
 	ip->i_nlink = 1;
+printf("3");
 	if ((ip->i_mode & ISGID) && !groupmember(ip->i_gid, ndp->ni_cred) &&
 	    use_priv(ndp->ni_cred, PRV_UFS_MAKNODE, (struct proc *)NULL))
 		ip->i_mode &= ~ISGID;
@@ -1754,11 +1759,13 @@ int maknode(int mode, register struct nameidata* ndp, struct inode** ipp)
 	/*
 	 * Make sure inode goes to disk before directory entry.
 	 */
+printf("4");
 	error = iupdat(ip, &time, &time, 1);
 	if (error != 0)
 	{
 		goto bad;
 	}
+printf("5");
 	error = direnter(ip, ndp);
 	if (error != 0)
 	{
@@ -1770,6 +1777,7 @@ int maknode(int mode, register struct nameidata* ndp, struct inode** ipp)
 	}
 	iput(pdir);
 	*ipp = ip;
+printf("6\n");
 	return (0);
 
 bad:

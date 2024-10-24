@@ -1,66 +1,45 @@
-GETPASS(3)                386BSD Programmer's Manual                GETPASS(3)
+GETPASS(3)                  Library Functions Manual                GETPASS(3)
 
-NNAAMMEE
-     ggeettppaassss - get a password
+[1mNAME[0m
+       getpass — get a password
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ppwwdd..hh>>
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <pwd.h>[0m
+       [1m#include <unistd.h>[0m
 
-     _c_h_a_r *
-     ggeettppaassss(_c_o_n_s_t _c_h_a_r *_p_r_o_m_p_t)
+       [4mchar[24m [4m*[0m
+       [1mgetpass[22m([4mconst[24m [4mchar[24m [4m*prompt[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ggeettppaassss() function displays a prompt to, and reads in a password
-     from, /_d_e_v/_t_t_y. If this file is not accessible, ggeettppaassss displays the
-     prompt on the standard error output and reads from the standard input.
+[1mDESCRIPTION[0m
+       The  [1mgetpass[22m()  function  displays a prompt to, and reads in a password
+       from, [4m/dev/tty[24m.  If this file is not accessible, [1mgetpass  [22mdisplays  the
+       prompt on the standard error output and reads from the standard input.
 
-     The password may be up to _PASSWORD_LEN (currently 128) characters in
-     length.  Any additional characters and the terminating newline character
-     are discarded.
+       The  password  may be up to _PASSWORD_LEN (currently 128) characters in
+       length.  Any additional characters and the terminating newline  charac‐
+       ter are discarded.
 
-     GGeettppaassss turns off character echoing while reading the password.
+       [1mGetpass [22mturns off character echoing while reading the password.
 
-RREETTUURRNN VVAALLUUEESS
-     GGeettppaassss returns a pointer to the null terminated password.
+[1mRETURN VALUES[0m
+       [1mGetpass [22mreturns a pointer to the null terminated password.
 
-FFIILLEESS
-     /dev/tty
+[1mFILES[0m
+       [4m/dev/tty[0m
 
-SSEEEE AALLSSOO
-     crypt(3)
+[1mSEE ALSO[0m
+       [4mcrypt[24m(3)
 
-HHIISSTTOORRYY
-     A ggeettppaassss function appeared in Version 7 AT&T UNIX.
+[1mHISTORY[0m
+       A [1mgetpass [22mfunction appeared in Version 7 AT&T UNIX.
 
-BBUUGGSS
-     The ggeettppaassss function leaves its result in an internal static object and
-     returns a pointer to that object.  Subsequent calls to ggeettppaassss will
-     modify the same object.
+[1mBUGS[0m
+       The [1mgetpass [22mfunction leaves its result in an internal static object and
+       returns  a  pointer  to  that object.  Subsequent calls to [1mgetpass [22mwill
+       modify the same object.
 
-     The calling process should zero the password as soon as possible to avoid
-     leaving the cleartext password visible in the process's address space.
+       The calling process should zero the password as  soon  as  possible  to
+       avoid  leaving  the cleartext password visible in the process’s address
+       space.
 
-BSD Experimental                 May 21, 1991                                1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     May 21, 1991                       GETPASS(3)

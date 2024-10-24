@@ -1,132 +1,96 @@
-READ(2)                   386BSD Programmer's Manual                   READ(2)
+READ(2)                       System Calls Manual                      READ(2)
 
-NNAAMMEE
-     rreeaadd, rreeaaddvv - read input
+[1mNAME[0m
+       read, readv — read input
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
-     ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
-     ##iinncclluuddee <<ssyyss//uuiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
+       [1m#include <sys/types.h>[0m
+       [1m#include <sys/uio.h>[0m
 
-     _s_s_i_z_e__t
-     rreeaadd(_i_n_t _d, _c_h_a_r *_b_u_f, _s_i_z_e__t _n_b_y_t_e_s)
+       [4mssize_t[0m
+       [1mread[22m([4mint[24m [4md[24m, [4mchar[24m [4m*buf[24m, [4msize_t[24m [4mnbytes[24m);
 
-     _i_n_t
-     rreeaaddvv(_i_n_t _d, _s_t_r_u_c_t _i_o_v_e_c *_i_o_v, _i_n_t _i_o_v_c_n_t)
+       [4mint[0m
+       [1mreadv[22m([4mint[24m [4md[24m, [4mstruct[24m [4miovec[24m [4m*iov[24m, [4mint[24m [4miovcnt[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     RReeaadd() attempts to read _n_b_y_t_e_s of data from the object referenced by the
-     descriptor _d into the buffer pointed to by _b_u_f. RReeaaddvv() performs the same
-     action, but scatters the input data into the _i_o_v_c_n_t buffers specified by
-     the members of the _i_o_v array: iov[0], iov[1], ..., iov[iovcnt-1].
+[1mDESCRIPTION[0m
+       [1mRead[22m()  attempts  to  read [4mnbytes[24m of data from the object referenced by
+       the descriptor [4md[24m into the buffer pointed to by [4mbuf[24m.   [1mReadv[22m()  performs
+       the  same  action,  but scatters the input data into the [4miovcnt[24m buffers
+       specified by the  members  of  the  [4miov[24m  array:  iov[0],  iov[1],  ...,
+       iov[iovcnt-1].
 
-     For rreeaaddvv(), the _i_o_v_e_c structure is defined as
-           struct iovec {
-                   caddr_t iov_base;
-                   int     iov_len;
-           };
+       For [1mreadv[22m(), the [4miovec[24m structure is defined as
+             struct iovec {
+                     caddr_t iov_base;
+                     int     iov_len;
+             };
 
-     Each _i_o_v_e_c entry specifies the base address and length of an area in
-     memory where data should be placed.  RReeaaddvv() will always fill an area
-     completely before proceeding to the next.
+       Each  [4miovec[24m  entry  specifies the base address and length of an area in
+       memory where data should be placed.  [1mReadv[22m() will always fill  an  area
+       completely before proceeding to the next.
 
-     On objects capable of seeking, the rreeaadd() starts at a position given by
-     the pointer associated with _d (see lseek(2)).  Upon return from rreeaadd(),
-     the pointer is incremented by the number of bytes actually read.
+       On objects capable of seeking, the [1mread[22m() starts at a position given by
+       the pointer associated with [4md[24m (see [4mlseek[24m(2)).  Upon return from [1mread[22m(),
+       the pointer is incremented by the number of bytes actually read.
 
-     Objects that are not capable of seeking always read from the current
-     position.  The value of the pointer associated with such an object is
-     undefined.
+       Objects  that  are  not capable of seeking always read from the current
+       position.  The value of the pointer associated with such an  object  is
+       undefined.
 
-     Upon successful completion, rreeaadd() and rreeaaddvv() return the number of bytes
-     actually read and placed in the buffer.  The system guarantees to read
-     the number of bytes requested if the descriptor references a normal file
-     that has that many bytes left before the end-of-file, but in no other
-     case.
+       Upon  successful  completion,  [1mread[22m()  and [1mreadv[22m() return the number of
+       bytes actually read and placed in the buffer.  The system guarantees to
+       read the number of bytes requested if the descriptor references a  nor‐
+       mal  file  that has that many bytes left before the end‐of‐file, but in
+       no other case.
 
-RREETTUURRNN VVAALLUUEESS
-     If successful, the number of bytes actually read is returned. Upon
-     reading end-of-file, zero is returned.  Otherwise, a -1 is returned and
-     the global variable _e_r_r_n_o is set to indicate the error.
+[1mRETURN VALUES[0m
+       If successful, the number of bytes  actually  read  is  returned.  Upon
+       reading end‐of‐file, zero is returned.  Otherwise, a ‐1 is returned and
+       the global variable [4merrno[24m is set to indicate the error.
 
-EERRRROORRSS
-     RReeaadd() and rreeaaddvv() will succeed unless:
+[1mERRORS[0m
+       [1mRead[22m() and [1mreadv[22m() will succeed unless:
 
-     [EBADF]       _D is not a valid file or socket descriptor open for
-                   reading.
+       [EBADF]            [4mD[24m  is not a valid file or socket descriptor open for
+                          reading.
 
-     [EFAULT]      _B_u_f points outside the allocated address space.
+       [EFAULT]           [4mBuf[24m points outside the allocated address space.
 
-     [EIO]         An I/O error occurred while reading from the file system.
+       [EIO]              An I/O error occurred while reading  from  the  file
+                          system.
 
-     [EINTR]       A read from a slow device was interrupted before any data
-                   arrived by the delivery of a signal.
+       [EINTR]            A read from a slow device was interrupted before any
+                          data arrived by the delivery of a signal.
 
+       [EINVAL]           The pointer associated with [4md[24m was negative.
 
-     [EINVAL]      The pointer associated with _d was negative.
+       [EWOULDBLOCK]      The  file  was  marked  for non‐blocking I/O, and no
+                          data were ready to be read.
 
-     [EWOULDBLOCK]
-                   The file was marked for non-blocking I/O, and no data were
-                   ready to be read.
+       In addition, [1mreadv[22m() may return one of the following errors:
 
-     In addition, rreeaaddvv() may return one of the following errors:
+       [EINVAL]           [4mIovcnt[24m was less than or equal to 0, or greater  than
+                          16.
 
-     [EINVAL]      _I_o_v_c_n_t was less than or equal to 0, or greater than 16.
+       [EINVAL]           One of the [4miov_len[24m values in the [4miov[24m array was nega‐
+                          tive.
 
-     [EINVAL]      One of the _i_o_v__l_e_n values in the _i_o_v array was negative.
+       [EINVAL]           The sum of the [4miov_len[24m values in the [4miov[24m array over‐
+                          flowed a 32‐bit integer.
 
-     [EINVAL]      The sum of the _i_o_v__l_e_n values in the _i_o_v array overflowed a
-                   32-bit integer.
+       [EFAULT]           Part  of  the [4miov[24m points outside the process’s allo‐
+                          cated address space.
 
-     [EFAULT]      Part of the _i_o_v points outside the process's allocated
-                   address space.
+[1mSEE ALSO[0m
+       [4mdup[24m(2), [4mfcntl[24m(2), [4mopen[24m(2), [4mpipe[24m(2), [4mselect[24m(2), [4msocket[24m(2), [4msocketpair[24m(2)
 
-SSEEEE AALLSSOO
-     dup(2),  fcntl(2),  open(2),  pipe(2),  select(2),  socket(2),
-     socketpair(2)
+[1mSTANDARDS[0m
+       [1mRead[22m() is expected to conform to IEEE Std 1003.1‐1988 (“POSIX”).
 
-SSTTAANNDDAARRDDSS
-     RReeaadd() is expected to conform to IEEE Std 1003.1-1988 (``POSIX'').
+[1mHISTORY[0m
+       The [1mreadv[22m() function call appeared in 4.2BSD.  A [1mread [22mfunction call ap‐
+       peared in Version 6 AT&T UNIX.
 
-HHIISSTTOORRYY
-     The rreeaaddvv() function call appeared in 4.2BSD. A rreeaadd function call
-     appeared in Version 6 AT&T UNIX.
-
-4th Berkeley Distribution       March 10, 1991                               2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       March 10, 1991                         READ(2)

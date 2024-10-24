@@ -1,132 +1,104 @@
-MMAP(2)                   386BSD Programmer's Manual                   MMAP(2)
+MMAP(2)                       System Calls Manual                      MMAP(2)
 
-NNAAMMEE
-     mmmmaapp - map files or devices into memory
+[1mNAME[0m
+       mmap — map files or devices into memory
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
-     ##iinncclluuddee <<ssyyss//mmmmaann..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <sys/types.h>[0m
+       [1m#include <sys/mman.h>[0m
 
-     _c_a_d_d_r__t
-     mmmmaapp(_c_a_d_d_r__t _a_d_d_r, _i_n_t _l_e_n, _i_n_t _p_r_o_t, _i_n_t _f_l_a_g_s, _i_n_t _f_d, _o_f_f__t _o_f_f_s_e_t)
+       [4mcaddr_t[0m
+       [1mmmap[22m([4mcaddr_t[24m [4maddr[24m, [4mint[24m [4mlen[24m, [4mint[24m [4mprot[24m, [4mint[24m [4mflags[24m, [4mint[24m [4mfd[24m, [4moff_t[24m [4moffset[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The mmmmaapp function causes the pages starting at _a_d_d_r and continuing for at
-     most _l_e_n bytes to be mapped from the object described by _f_d, starting at
-     byte offset _o_f_f_s_e_t. If _o_f_f_s_e_t or _l_e_n is not a multiple of the pagesize,
-     the mapped region may extend past the specified range.
+[1mDESCRIPTION[0m
+       The  [1mmmap [22mfunction causes the pages starting at [4maddr[24m and continuing for
+       at most [4mlen[24m bytes to be mapped from the object described by [4mfd[24m,  start‐
+       ing  at  byte offset [4moffset[24m.  If [4moffset[24m or [4mlen[24m is not a multiple of the
+       pagesize, the mapped region may extend past the specified range.
 
-     If _a_d_d_r is non-zero, it is used as a hint to the system.  (As a
-     convenience to the system, the actual address of the region may differ
-     from the address supplied.)  If _a_d_d_r is zero, an address will be selected
-     by the system.  The actual starting address of the region is returned.  A
-     successful _m_m_a_p deletes any previous mapping in the allocated address
-     range.
+       If [4maddr[24m is non‐zero, it is used as a hint to the system.  (As a  conve‐
+       nience  to the system, the actual address of the region may differ from
+       the address supplied.)  If [4maddr[24m is zero, an address will be selected by
+       the system.  The actual starting address of the region is returned.   A
+       successful  [4mmmap[24m  deletes any previous mapping in the allocated address
+       range.
 
-     The protections (region accessibility) are specified in the _p_r_o_t argument
-     by _o_r'ing the following values:
+       The protections (region accessibility) are specified in the [4mprot[24m  argu‐
+       ment by [4mor[24m’ing the following values:
 
-     PROT_EXEC   Pages may be executed.
+       PROT_EXEC   Pages may be executed.
 
-     PROT_READ   Pages may be read.
+       PROT_READ   Pages may be read.
 
-     PROT_WRITE  Pages may be written.
+       PROT_WRITE  Pages may be written.
 
-     The _f_l_a_g_s parameter specifies the type of the mapped object, mapping
-     options and whether modifications made to the mapped copy of the page are
-     private to the process or are to be shared with other references.
-     Sharing, mapping type and options are specified in the _f_l_a_g_s argument by
-     _o_r'ing the following values:
+       The  [4mflags[24m  parameter  specifies the type of the mapped object, mapping
+       options and whether modifications made to the mapped copy of  the  page
+       are  private  to the process or are to be shared with other references.
+       Sharing, mapping type and options are specified in the  [4mflags[24m  argument
+       by [4mor[24m’ing the following values:
 
-     MAP_ANON    Map anonymous memory not associated with any specific file.
-                 The file descriptor used for creating MAP_ANON regions is
-                 used only for naming, and may be specified as -1 if no name
-                 is associated with the region.
+       MAP_ANON    Map anonymous memory not associated with any specific file.
+                   The  file  descriptor used for creating MAP_ANON regions is
+                   used only for naming, and may be specified as -1 if no name
+                   is associated with the region.
 
-     MAP_FILE    Mapped from a regular file or character-special device
-                 memory.
+       MAP_FILE    Mapped from a regular file or character‐special device mem‐
+                   ory.
 
-     MAP_FIXED   Do not permit the system to select a different address than
-                 the one specified.  If the specified address cannot be used,
-                 mmmmaapp will fail.  If MAP_FIXED is specified, _a_d_d_r must be a
-                 multiple of the pagesize.  Use of this option is discouraged.
+       MAP_FIXED   Do not permit the system to select a different address than
+                   the one specified.  If  the  specified  address  cannot  be
+                   used, [1mmmap [22mwill fail.  If MAP_FIXED is specified, [4maddr[24m must
+                   be  a multiple of the pagesize.  Use of this option is dis‐
+                   couraged.
 
-     MAP_HASSEMAPHORE
-                 Notify the kernel that the region may contain semaphores and
-                 that special handling may be necessary.
+       MAP_HASSEMAPHORE
+                   Notify the kernel that the region  may  contain  semaphores
+                   and that special handling may be necessary.
 
-     MAP_INHERIT
-                 Permit regions to be inherited across exec(2) system calls.
+       MAP_INHERIT
+                   Permit regions to be inherited across [4mexec[24m(2) system calls.
 
-     MAP_PRIVATE
-                 Modifications are private.
+       MAP_PRIVATE
+                   Modifications are private.
 
-     MAP_SHARED  Modifications are shared.
+       MAP_SHARED  Modifications are shared.
 
+       The  [4mclose[24m(2)  function does not unmap pages, see [4mmunmap[24m(2) for further
+       information.
 
-     The close(2) function does not unmap pages, see munmap(2) for further
-     information.
+       The current design does not allow a process to specify the location  of
+       swap  space.   In  the future we may define an additional mapping type,
+       MAP_SWAP, in which the file descriptor argument specifies a file or de‐
+       vice to which swapping should be done.
 
-     The current design does not allow a process to specify the location of
-     swap space.  In the future we may define an additional mapping type,
-     MAP_SWAP, in which the file descriptor argument specifies a file or
-     device to which swapping should be done.
+[1mRETURN VALUES[0m
+       Upon successful completion, [1mmmap [22mreturns a pointer to  the  mapped  re‐
+       gion.   Otherwise,  a value of ‐1 is returned and [4merrno[24m is set to indi‐
+       cate the error.
 
-RREETTUURRNN VVAALLUUEESS
-     Upon successful completion, mmmmaapp returns a pointer to the mapped region.
-     Otherwise, a value of -1 is returned and _e_r_r_n_o is set to indicate the
-     error.
+[1mERRORS[0m
+       [1mMmap[22m() will fail if:
 
-EERRRROORRSS
-     MMmmaapp() will fail if:
+       [EACCES]           The flag PROT_READ was specified as part of the [4mprot[0m
+                          parameter and [4mfd[24m was  not  open  for  reading.   The
+                          flags  PROT_WRITE,  MAP_SHARED  and  MAP_WRITE  were
+                          specified as part of the [4mflags[24m and  [4mprot[24m  parameters
+                          and [4mfd[24m was not open for writing.
 
-     [EACCES]      The flag PROT_READ was specified as part of the _p_r_o_t
-                   parameter and _f_d was not open for reading.  The flags
-                   PROT_WRITE, MAP_SHARED and MAP_WRITE were specified as part
-                   of the _f_l_a_g_s and _p_r_o_t parameters and _f_d was not open for
-                   writing.
+       [EBADF]            is not a valid open file descriptor.
 
-     [EBADF]       _F_d is not a valid open file descriptor.
+       [EINVAL]           One  of  MAP_ANON  or  MAP_FILE was not specified as
+                          part of the [4mflags[24m parameter.  MAP_FIXED  was  speci‐
+                          fied  and  the  parameter was not page aligned.  did
+                          not reference a regular or character special file.
 
-     [EINVAL]      One of MAP_ANON or MAP_FILE was not specified as part of
-                   the _f_l_a_g_s parameter.  MAP_FIXED was specified and the
-                   parameter was not page aligned.  _F_d did not reference a
-                   regular or character special file.
+       [ENOMEM]           MAP_FIXED  was  specified  and  the  [4maddr[24m  parameter
+                          wasn’t  available.  MAP_ANON was specified an insuf‐
+                          ficient memory was available.
 
-     [ENOMEM]      MAP_FIXED was specified and the _a_d_d_r parameter wasn't
-                   available.  MAP_ANON was specified an insufficient memory
-                   was available.
+[1mSEE ALSO[0m
+       [4mgetpagesize[24m(2),   [4mmsync[24m(2),   [4mmunmap[24m(2),    [4mmprotect[24m(2),    [4mmadvise[24m(2),
+       [4mmincore[24m(2)
 
-SSEEEE AALLSSOO
-     getpagesize(2),  msync(2),  munmap(2),  mprotect(2),  madvise(2),
-     mincore(2)
-
-4th Berkeley Distribution        June 5, 1991                                2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution        June 5, 1991                          MMAP(2)

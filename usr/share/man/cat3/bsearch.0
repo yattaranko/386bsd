@@ -1,66 +1,37 @@
-BSEARCH(3)                386BSD Programmer's Manual                BSEARCH(3)
+BSEARCH(3)                  Library Functions Manual                BSEARCH(3)
 
-NNAAMMEE
-     bbsseeaarrcchh - binary search of a sorted table
+[1mNAME[0m
+       bsearch — binary search of a sorted table
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddlliibb..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdlib.h>[0m
 
-     _v_o_i_d *
-     bbsseeaarrcchh(_c_o_n_s_t _v_o_i_d *_k_e_y, _c_o_n_s_t _v_o_i_d *_b_a_s_e, _s_i_z_e__t _n_m_e_m_b, _s_i_z_e__t _s_i_z_e,
-             _i_n_t (*_c_o_m_p_a_r) (_c_o_n_s_t _v_o_i_d *, _c_o_n_s_t _v_o_i_d *))
+       [4mvoid[24m [4m*[0m
+       [1mbsearch[22m([4mconst[24m  [4mvoid[24m  [4m*key[24m, [4mconst[24m [4mvoid[24m [4m*base[24m, [4msize_t[24m [4mnmemb[24m, [4msize_t[24m [4msize[24m,
+           [4mint[24m [4m(*compar)[24m [4m(const[24m [4mvoid[24m [4m*,[24m [4mconst[24m [4mvoid[24m [4m*)[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The bbsseeaarrcchh() function searches an array of _n_m_e_m_b objects, the inital
-     member of which is pointed to by _b_a_s_e, for a member that matches the
-     object pointed to by _k_e_y. The size of each member of the array is
-     specified by _s_i_z_e.
+[1mDESCRIPTION[0m
+       The [1mbsearch[22m() function searches an array of [4mnmemb[24m objects,  the  inital
+       member  of  which  is pointed to by [4mbase[24m, for a member that matches the
+       object pointed to by [4mkey[24m.  The size of each  member  of  the  array  is
+       specified by [4msize[24m.
 
-     The contents of the array should be in ascending sorted order according
-     to the comparison function referenced by _c_o_m_p_a_r. The _c_o_m_p_a_r routine is
-     expected to have two two arguments which point to the _k_e_y object and to
-     an array member, in that order, and should return an integer less than,
-     equal to, or greater than zero if the _k_e_y object is found, respectively,
-     to be less than, to match, or be greater than the array member.
+       The contents of the array should be in ascending sorted order according
+       to the comparison function referenced by [4mcompar[24m.  The [4mcompar[24m routine is
+       expected to have two two arguments which point to the [4mkey[24m object and to
+       an array member, in that order, and should return an integer less than,
+       equal  to,  or  greater  than  zero if the [4mkey[24m object is found, respec‐
+       tively, to be less than, to match, or be greater than the array member.
 
-RREETTUURRNN VVAALLUUEESS
-     The bbsseeaarrcchh() function returns a pointer to a matching member of the
-     array, or a null pointer if no match is found.  If two members compare as
-     equal, which member is matched is unspecified.
+[1mRETURN VALUES[0m
+       The [1mbsearch[22m() function returns a pointer to a matching  member  of  the
+       array,  or a null pointer if no match is found.  If two members compare
+       as equal, which member is matched is unspecified.
 
-SSEEEE AALLSSOO
-     db(3),  lsearch(3),  qsort(3),
+[1mSEE ALSO[0m
+       [4mdb[24m(3), [4mlsearch[24m(3), [4mqsort[24m(3),
 
-SSTTAANNDDAARRDDSS
-     The bbsseeaarrcchh() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mbsearch[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                      BSEARCH(3)

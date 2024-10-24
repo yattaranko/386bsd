@@ -1,66 +1,24 @@
-LABS(3)                   386BSD Programmer's Manual                   LABS(3)
+LABS(3)                     Library Functions Manual                   LABS(3)
 
-NNAAMMEE
-     llaabbss - return the absolute value of a long integer
+[1mNAME[0m
+       labs — return the absolute value of a long integer
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddlliibb..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdlib.h>[0m
 
-     _l_o_n_g
-     llaabbss(_l_o_n_g _j)
+       [4mlong[0m
+       [1mlabs[22m([4mlong[24m [4mj[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The llaabbss() function returns the absolute value of the long integer _j.
+[1mDESCRIPTION[0m
+       The [1mlabs[22m() function returns the absolute value of the long integer [4mj[24m.
 
-SSEEEE AALLSSOO
-     abs(3),  floor(3),  cabs(3),  math(3)
+[1mSEE ALSO[0m
+       [4mabs[24m(3), [4mfloor[24m(3), [4mcabs[24m(3), [4mmath[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The llaabbss() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mlabs[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BBUUGGSS
-     The absolute value of the most negative integer remains negative.
+[1mBUGS[0m
+       The absolute value of the most negative integer remains negative.
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                         LABS(3)

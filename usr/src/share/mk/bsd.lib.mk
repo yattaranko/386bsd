@@ -4,7 +4,7 @@
 .include "${.CURDIR}/../Makefile.inc"
 .endif
 
-SRCHOME?=	/home/share/386bsd-2.0
+SRCHOME?=	/home/share/386bsd
 LIBDIR?=	${SRCHOME}/usr/lib
 LINTLIBDIR?=	${SRCHOME}/usr/lib/lint
 #LIBGRP?=	bin

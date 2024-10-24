@@ -1,66 +1,42 @@
-STRCPY(3)                 386BSD Programmer's Manual                 STRCPY(3)
+STRCPY(3)                   Library Functions Manual                 STRCPY(3)
 
-NNAAMMEE
-     ssttrrccppyy - copy strings
+[1mNAME[0m
+       strcpy — copy strings
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _c_h_a_r *
-     ssttrrccppyy(_c_h_a_r *_d_s_t, _c_o_n_s_t _c_h_a_r *_s_r_c)
+       [4mchar[24m [4m*[0m
+       [1mstrcpy[22m([4mchar[24m [4m*dst[24m, [4mconst[24m [4mchar[24m [4m*src[24m);
 
-     _c_h_a_r *
-     ssttrrnnccppyy(_c_h_a_r *_d_s_t, _c_o_n_s_t _c_h_a_r *_s_r_c, _s_i_z_e__t _l_e_n)
+       [4mchar[24m [4m*[0m
+       [1mstrncpy[22m([4mchar[24m [4m*dst[24m, [4mconst[24m [4mchar[24m [4m*src[24m, [4msize_t[24m [4mlen[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssttrrccppyy() and ssttrrnnccppyy() functions copy the string _s_r_c to _d_s_t
-     (including the terminating `\0' character).
+[1mDESCRIPTION[0m
+       The  [1mstrcpy[22m()  and  [1mstrncpy[22m() functions copy the string [4msrc[24m to [4mdst[24m (in‐
+       cluding the terminating ‘\0’ character).
 
-     The ssttrrnnccppyy() copies not more than _l_e_n characters into _d_s_t, appending
-     `\0' characters if _s_r_c is less than _l_e_n characters long, and _n_o_t
-     terminating _d_s_t if _s_r_c is more than _l_e_n characters long.
+       The [1mstrncpy[22m() copies not more than [4mlen[24m characters into  [4mdst[24m,  appending
+       ‘\0’ characters if [4msrc[24m is less than [4mlen[24m characters long, and [4mnot[24m termi‐
+       nating [4mdst[24m if [4msrc[24m is more than [4mlen[24m characters long.
 
-RREETTUURRNN VVAALLUUEESS
-     The ssttrrccppyy() and ssttrrnnccppyy() functions return _d_s_t.
+[1mRETURN VALUES[0m
+       The [1mstrcpy[22m() and [1mstrncpy[22m() functions return [4mdst[24m.
 
-EEXXAAMMPPLLEESS
-     The following sets ``chararray'' to ``abc\0\0\0'':
+[1mEXAMPLES[0m
+       The following sets “[1mchararray[22m” to “[1mabc\0\0\0[22m”:
 
-           (void)strncpy(chararray, "abc", 6).
+             (void)strncpy(chararray, "abc", 6).
 
-     The following sets ``chararray'' to ``abcdef'':
+       The following sets “[1mchararray[22m” to “[1mabcdef[22m”:
 
-           (void)strncpy(chararray, "abcdefgh", 6);
+             (void)strncpy(chararray, "abcdefgh", 6);
 
-SSEEEE AALLSSOO
-     bcopy(3),  memccpy(3),  memcpy(3),  memmove(3)
+[1mSEE ALSO[0m
+       [4mbcopy[24m(3), [4mmemccpy[24m(3), [4mmemcpy[24m(3), [4mmemmove[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ssttrrccppyy() and ssttrrnnccppyy() functions conform to ANSI C3.159-1989 (``ANSI
-     C'').
+[1mSTANDARDS[0m
+       The  [1mstrcpy[22m()  and  [1mstrncpy[22m()  functions  conform  to  ANSI X3.159‐1989
+       (“ANSI C89”).
 
-4th Berkeley Distribution        June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution        June 29, 1991                       STRCPY(3)

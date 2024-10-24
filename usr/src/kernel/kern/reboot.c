@@ -37,6 +37,7 @@
 #include "privilege.h"
 #include "buf.h"
 #include "proc.h"
+#include "sys/mount.h"
 #include "machine/pcb.h"
 
 dev_t	dumpdev = BLK_NODEV;
@@ -46,18 +47,25 @@ extern int	dumpsize;
 int	waittime = -1;
 struct pcb dumppcb;
 
+extern void	printf(const char *fmt, ...);
+extern void	sync(struct sigcontext*);
+extern int	splnet(void);
+extern int	splhigh(void);
+extern int	pg(char*);
+extern void	dumpsys(void);
+extern void	cpu_reset(void);
+
 /* BSD force system to boot */
 int
-reboot(p, uap, retval)
-	struct proc *p;
+reboot(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		int	opt;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	int error;
 
-	if (error = use_priv(p->p_ucred, PRV_REBOOT, p))
+	error = use_priv(p->p_ucred, PRV_REBOOT, p);
+	if (error != 0)
 		return (error);
 	boot(uap->opt);
 	return (0);

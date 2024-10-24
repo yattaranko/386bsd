@@ -1,66 +1,63 @@
-GETENV(3)                 386BSD Programmer's Manual                 GETENV(3)
+GETENV(3)                   Library Functions Manual                 GETENV(3)
 
-NNAAMMEE
-     ggeetteennvv, ppuutteennvv, sseetteennvv, uunnsseetteennvv - environment variable functions
+[1mNAME[0m
+       getenv, putenv, setenv, unsetenv — environment variable functions
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddlliibb..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdlib.h>[0m
 
-     _c_h_a_r *
-     ggeetteennvv(_c_o_n_s_t _c_h_a_r *_n_a_m_e)
+       [4mchar[24m [4m*[0m
+       [1mgetenv[22m([4mconst[24m [4mchar[24m [4m*name[24m);
 
-     _i_n_t
-     sseetteennvv(_c_o_n_s_t _c_h_a_r *_n_a_m_e, _c_o_n_s_t _c_h_a_r *_v_a_l_u_e, _i_n_t _o_v_e_r_w_r_i_t_e)
+       [4mint[0m
+       [1msetenv[22m([4mconst[24m [4mchar[24m [4m*name[24m, [4mconst[24m [4mchar[24m [4m*value[24m, [4mint[24m [4moverwrite[24m);
 
-     _i_n_t
-     ppuutteennvv(_c_o_n_s_t _c_h_a_r *_s_t_r_i_n_g)
+       [4mint[0m
+       [1mputenv[22m([4mconst[24m [4mchar[24m [4m*string[24m);
 
-     _v_o_i_d
-     uunnsseetteennvv(_c_o_n_s_t _c_h_a_r *_n_a_m_e)
+       [4mvoid[0m
+       [1munsetenv[22m([4mconst[24m [4mchar[24m [4m*name[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     These functions set, unset and fetch environment variables from the host
-     _e_n_v_i_r_o_n_m_e_n_t _l_i_s_t. For compatibility with differing environment
-     conventions, the given arguments _n_a_m_e and _v_a_l_u_e may be appended and
-     prepended, respectively, with an equal sign ``=''.
+[1mDESCRIPTION[0m
+       These  functions  set,  unset  and fetch environment variables from the
+       host [4menvironment[24m [4mlist[24m.  For compatibility  with  differing  environment
+       conventions,  the  given  arguments  [4mname[24m and [4mvalue[24m may be appended and
+       prepended, respectively, with an equal sign “[1m=[22m”.
 
-     The ggeetteennvv() function obtains the current value of the environment
-     variable, _n_a_m_e. If the variable _n_a_m_e is not in the current environment ,
-     a null pointer is returned.
+       The [1mgetenv[22m() function obtains the  current  value  of  the  environment
+       variable, [4mname[24m.  If the variable [4mname[24m is not in the current environment
+       , a null pointer is returned.
 
-     The sseetteennvv() function inserts or resets the environment variable _n_a_m_e in
-     the current environment list.  If the variable _n_a_m_e does not exist in the
-     list, it is inserted with the given _v_a_l_u_e. If the variable does exist,
-     the argument _o_v_e_r_w_r_i_t_e is tested; if _o_v_e_r_w_r_i_t_e _i_s zero, the variable is
-     not reset, otherwise it is reset to the given _v_a_l_u_e.
+       The  [1msetenv[22m()  function inserts or resets the environment variable [4mname[0m
+       in the current environment list.  If the variable [4mname[24m does  not  exist
+       in  the list, it is inserted with the given [4mvalue.[24m If the variable does
+       exist, the argument [4moverwrite[24m is tested;  if  [4moverwrite[24m  [4mis[24m  zero,  the
+       variable is not reset, otherwise it is reset to the given [4mvalue[24m.
 
-     The ppuutteennvv() function performs the equivalent of:
+       The [1mputenv[22m() function performs the equivalent of:
 
-           setenv(name, value, 1);
+             setenv(name, value, 1);
 
-     The uunnsseetteennvv() function deletes all instances of the variable name
-     pointed to by _n_a_m_e from the list.
+       The  [1munsetenv[22m()  function  deletes  all  instances of the variable name
+       pointed to by [4mname[24m from the list.
 
-RREETTUURRNN VVAALLUUEESS
-     The functions sseetteennvv() and ppuutteennvv() return zero if successful; otherwise
-     the global variable _e_r_r_n_o is set to indicate the error and a -1 is
-     returned.
+[1mRETURN VALUES[0m
+       The functions [1msetenv[22m() and [1mputenv[22m() return zero if  successful;  other‐
+       wise the global variable [4merrno[24m is set to indicate the error and a -1 is
+       returned.
 
-EERRRROORRSS
-     [ENOMEM]  The function sseetteennvv() or ppuutteennvv() failed because they were
-               unable to allocate memory for the environment.
+[1mERRORS[0m
+       [ENOMEM]  The  function  [1msetenv[22m()  or [1mputenv[22m() failed because they were
+                 unable to allocate memory for the environment.
 
-SSEEEE AALLSSOO
-     csh(1),  sh(1),  execve(2),  environ(7)
+[1mSEE ALSO[0m
+       [4mcsh[24m(1), [4msh[24m(1), [4mexecve[24m(2), [4menviron[24m(7)
 
-SSTTAANNDDAARRDDSS
-     The ggeetteennvv() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mgetenv[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-HHIISSTTOORRYY
-     The functions sseetteennvv() and uunnsseetteennvv() appeared in Version 7 AT&T UNIX.
-     The ppuutteennvv() function appeared in 4.3BSD-Reno.
+[1mHISTORY[0m
+       The functions [1msetenv[22m() and [1munsetenv[22m() appeared in Version 7 AT&T  UNIX.
+       The [1mputenv[22m() function appeared in 4.3BSD-Reno.
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
+FreeBSD 13.2                     June 29, 1991                       GETENV(3)

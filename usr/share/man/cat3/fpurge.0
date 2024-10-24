@@ -1,66 +1,46 @@
-FFLUSH(3)                 386BSD Programmer's Manual                 FFLUSH(3)
+FFLUSH(3)                   Library Functions Manual                 FFLUSH(3)
 
-NNAAMMEE
-     fffflluusshh, ffppuurrggee - flush a stream
+[1mNAME[0m
+       fflush, fpurge — flush a stream
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdio.h>[0m
 
-     _i_n_t
-     fffflluusshh(_F_I_L_E *_s_t_r_e_a_m)
+       [4mint[0m
+       [1mfflush[22m([4mFILE[24m [4m*stream[24m);
 
-     _i_n_t
-     ffppuurrggee(_F_I_L_E *_s_t_r_e_a_m)
+       [4mint[0m
+       [1mfpurge[22m([4mFILE[24m [4m*stream[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The function fffflluusshh() forces a write of all buffered data for the given
-     output or update _s_t_r_e_a_m via the stream's underlying write function.  The
-     open status of the stream is unaffected.
+[1mDESCRIPTION[0m
+       The function [1mfflush[22m() forces a write of all buffered data for the given
+       output  or  update  [4mstream[24m  via the stream’s underlying write function.
+       The open status of the stream is unaffected.
 
-     If the _s_t_r_e_a_m argument is NULL, fffflluusshh() flushes _a_l_l open output streams.
+       If the [4mstream[24m argument  is  NULL,  [1mfflush[22m()  flushes  [4mall[24m  open  output
+       streams.
 
-     The function ffppuurrggee() erases any input or output buffered in the given
-     _s_t_r_e_a_m. For output streams this discards any unwritten output.  For input
-     streams this discards any input read from the underlying object but not
-     yet obtained via getc(3);  this includes any text pushed back via ungetc.
+       The  function [1mfpurge[22m() erases any input or output buffered in the given
+       [4mstream[24m.  For output streams this discards any  unwritten  output.   For
+       input  streams  this discards any input read from the underlying object
+       but not yet obtained via [4mgetc[24m(3); this includes any  text  pushed  back
+       via [4mungetc[24m.
 
+[1mRETURN VALUES[0m
+       Upon  successful  completion 0 is returned.  Otherwise, EOF is returned
+       and the global variable [4merrno[24m is set to indicate the error.
 
-RREETTUURRNN VVAALLUUEESS
-     Upon successful completion 0 is returned.  Otherwise, EOF is returned and
-     the global variable _e_r_r_n_o is set to indicate the error.
+[1mERRORS[0m
+       [EBADF]  [4mStream[24m is not an open stream, or, in the case of [1mfflush[22m(), not
+                a stream open for writing.
 
-EERRRROORRSS
-     [EBADF]  _S_t_r_e_a_m is not an open stream, or, in the case of fffflluusshh(), not a
-              stream open for writing.
+       The function [1mfflush[22m() may also fail and set [4merrno[24m for any of the errors
+       specified for the routine [4mwrite[24m(2).
 
-     The function fffflluusshh() may also fail and set _e_r_r_n_o for any of the errors
-     specified for the routine write(2).
+[1mSEE ALSO[0m
+       [4mwrite[24m(2), [4mfopen[24m(3), [4mfclose[24m(3), [4msetbuf[24m(3)
 
-SSEEEE AALLSSOO
-     write(2),  fopen(3),  fclose(3),  setbuf(3)
+[1mSTANDARDS[0m
+       The [1mfflush[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-SSTTAANNDDAARRDDSS
-     The fffflluusshh() function conforms to ANSI C3.159-1989 (``ANSI C'').
-
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                       FFLUSH(3)

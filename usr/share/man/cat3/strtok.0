@@ -1,66 +1,43 @@
-STRTOK(3)                 386BSD Programmer's Manual                 STRTOK(3)
+STRTOK(3)                   Library Functions Manual                 STRTOK(3)
 
-NNAAMMEE
-     ssttrrttookk, ssttrrsseepp - string token operations
+[1mNAME[0m
+       strtok, strsep — string token operations
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _c_h_a_r *
-     ssttrrttookk(_c_h_a_r *_s_t_r, _c_o_n_s_t _c_h_a_r *_s_e_p)
+       [4mchar[24m [4m*[0m
+       [1mstrtok[22m([4mchar[24m [4m*str[24m, [4mconst[24m [4mchar[24m [4m*sep[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     TThhiiss iinntteerrffaaccee iiss oobbssoolleetteedd bbyy ssttrrsseepp((33))..
+[1mDESCRIPTION[0m
+       [1mThis interface is obsoleted by strsep(3).[0m
 
-     The ssttrrttookk() function is used to isolate sequential tokens in a null-
-     terminated string, _s_t_r. These tokens are separated in the string by at
-     least one of the characters in _s_e_p. The first time that ssttrrttookk() is
-     called, _s_t_r should be specified; subsequent calls, wishing to obtain
-     further tokens from the same string, should pass a null pointer instead.
-     The separator string, _s_e_p, must be supplied each time, and may change
-     between calls.
+       The  [1mstrtok[22m()  function is used to isolate sequential tokens in a null‐
+       terminated string, [4mstr[24m.  These tokens are separated in the string by at
+       least one of the characters in [4msep[24m.  The first time  that  [1mstrtok[22m()  is
+       called,  [4mstr[24m  should  be specified; subsequent calls, wishing to obtain
+       further tokens from the same string, should pass  a  null  pointer  in‐
+       stead.   The separator string, [4msep[24m, must be supplied each time, and may
+       change between calls.
 
-     The ssttrrttookk() function returns a pointer to the beginning of each
-     subsequent token in the string, after replacing the token itself with a
-     NUL character.  When no more tokens remain, a null pointer is returned.
+       The [1mstrtok[22m() function returns a pointer to the beginning of each subse‐
+       quent token in the string, after replacing the token itself with a  NUL
+       character.  When no more tokens remain, a null pointer is returned.
 
-SSEEEE AALLSSOO
-     index(3),  memchr(3),  rindex(3),  strchr(3),  strcspn(3),  strpbrk(3),
-     strrchr(3),  strsep(3),  strspn(3),  strstr(3)
+[1mSEE ALSO[0m
+       [4mindex[24m(3),  [4mmemchr[24m(3),  [4mrindex[24m(3),  [4mstrchr[24m(3),  [4mstrcspn[24m(3),  [4mstrpbrk[24m(3),
+       [4mstrrchr[24m(3), [4mstrsep[24m(3), [4mstrspn[24m(3), [4mstrstr[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ssttrrttookk() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mstrtok[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BBUUGGSS
-     There is no way to get tokens from multiple strings simultaneously.
+[1mBUGS[0m
+       There is no way to get tokens from multiple strings simultaneously.
 
-     The System V ssttrrttookk(), if handed a string containing only delimiter
-     characters, will not alter the next starting point, so that a call to
-     ssttrrttookk() with a different (or empty) delimiter string may return a non-
-     NULL value.  Since this implementation always alters the next starting
-     point, such a sequence of calls would always return NULL.
+       The System V [1mstrtok[22m(), if handed a  string  containing  only  delimiter
+       characters,  will  not alter the next starting point, so that a call to
+       [1mstrtok[22m() with a different (or empty)  delimiter  string  may  return  a
+       non‐NULL  value.   Since  this  implementation  always  alters the next
+       starting point, such a sequence of calls would always return NULL.
 
-3rd Berkeley Distribution        June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+3rd Berkeley Distribution        June 29, 1991                       STRTOK(3)

@@ -1,66 +1,33 @@
-ACOS(3)                   386BSD Programmer's Manual                   ACOS(3)
+ACOS(3)                     Library Functions Manual                   ACOS(3)
 
-NNAAMMEE
-     aaccooss - arc cosine function
+[1mNAME[0m
+       acos — arc cosine function
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<mmaatthh..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <math.h>[0m
 
-     _d_o_u_b_l_e
-     aaccooss(_d_o_u_b_l_e _x)
+       [4mdouble[0m
+       [1macos[22m([4mdouble[24m [4mx[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The aaccooss() function computes the principal value of the arc cosine of _x.
-     A domain error occurs for arguments not in the range [-1, +1].  For a
-     discussion of error due to roundoff, see math(3).
+[1mDESCRIPTION[0m
+       The  [1macos[22m()  function computes the principal value of the arc cosine of
+       [4mx[24m.  A domain error occurs for arguments not in the range [‐1, +1].  For
+       a discussion of error due to roundoff, see [4mmath[24m(3).
 
-RREETTUURRNN VVAALLUUEESS
-     The aaccooss() function returns the arc cosine in the range [0, pi] radians.
-     On the VAX and Tahoe, if:
+[1mRETURN VALUES[0m
+       The [1macos[22m() function returns the arc cosine in the range [0, π] radians.
+       On the VAX and Tahoe, if:
 
-           |_x| > 1,
+             |[4mx[24m| > 1,
 
-     aaccooss(_x) sets the global variable _e_r_r_n_o to EDOM and a reserved operand
-     fault is generated.
+       [1macos[22m([4mx[24m) sets the global variable [4merrno[24m to EDOM and a  reserved  operand
+       fault is generated.
 
-SSEEEE AALLSSOO
-     sin(3),  cos(3),  tan(3),  asin(3),  atan(3),  atan2(3),  sinh(3),
-     cosh(3),  tanh(3),  math(3),
+[1mSEE ALSO[0m
+       [4msin[24m(3),  [4mcos[24m(3),  [4mtan[24m(3), [4masin[24m(3), [4matan[24m(3), [4matan2[24m(3), [4msinh[24m(3), [4mcosh[24m(3),
+       [4mtanh[24m(3), [4mmath[24m(3),
 
-SSTTAANNDDAARRDDSS
-     The aaccooss() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1macos[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                  May 2, 1991                                1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                      May 2, 1991                          ACOS(3)

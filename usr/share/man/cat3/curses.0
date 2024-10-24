@@ -1,132 +1,117 @@
-CURSES(3)                 386BSD Programmer's Manual                 CURSES(3)
+CURSES(3)                   Library Functions Manual                 CURSES(3)
 
-NNAAMMEE
-     ccuurrsseess - screen functions with ``optimal'' cursor motion
+[1mNAME[0m
+       curses — screen functions with ‘‘optimal’’ cursor motion
 
-SSYYNNOOPPSSIISS
-     cccc [_f_l_a_g_s] _f_i_l_e_s --llccuurrsseess --lltteerrmmccaapp [_l_i_b_r_a_r_i_e_s]
+[1mSYNOPSIS[0m
+       [1mcc [22m[[4mflags[24m] [4mfiles[24m [1m-lcurses -ltermcap [22m[[4mlibraries[24m]
 
-DDEESSCCRRIIPPTTIIOONN
-     These routines give the user a method of updating screens with reasonable
-     optimization.  They keep an image of the current screen, and the user
-     sets up an image of a new one.  Then the rreeffrreesshh() tells the routines to
-     make the current screen look like the new one.  In order to initialize
-     the routines, the routine iinniittssccrr() must be called before any of the
-     other routines that deal with windows and screens are used.  The routine
-     eennddwwiinn() should be called before exiting.
+[1mDESCRIPTION[0m
+       These  routines give the user a method of updating screens with reason‐
+       able optimization.  They keep an image of the current screen,  and  the
+       user  sets up an image of a new one.  Then the [1mrefresh[22m() tells the rou‐
+       tines to make the current screen look like the new one.   In  order  to
+       initialize  the  routines,  the routine [1minitscr[22m() must be called before
+       any of the other routines that deal with windows and screens are  used.
+       The routine [1mendwin[22m() should be called before exiting.
 
-SSEEEE AALLSSOO
-     ioctl(2),  getenv(3),  tty(4),  termcap(5)
+[1mSEE ALSO[0m
+       [4mioctl[24m(2), [4mgetenv[24m(3), [4mtty[24m(4), [4mtermcap[24m(5)
 
-     Ken Arnold, _S_c_r_e_e_n _U_p_d_a_t_i_n_g _a_n_d _C_u_r_s_o_r _M_o_v_e_m_e_n_t _O_p_t_i_m_i_z_a_t_i_o_n: _A _L_i_b_r_a_r_y
-     _P_a_c_k_a_g_e.
+       Ken Arnold, [4mScreen[24m [4mUpdating[24m [4mand[24m [4mCursor[24m [4mMovement[24m [4mOptimization:[24m [4mA[24m [4mLibrary[0m
+       [4mPackage[24m.
 
-AAUUTTHHOORR
-     Ken Arnold
+[1mAUTHOR[0m
+       Ken Arnold
 
-FFUUNNCCTTIIOONNSS
-     addch(ch)                                    add a character to _s_t_d_s_c_r
-     addstr(str)                                  add a string to _s_t_d_s_c_r
-     box(win,vert,hor)                            draw a box around a window
-     cbreak()                                     set cbreak mode
-     clear()                                      clear _s_t_d_s_c_r
-     clearok(scr,boolf)                           set clear flag for _s_c_r
-     clrtobot()                                   clear to bottom on _s_t_d_s_c_r
-     clrtoeol()                                   clear to end of line on
-                                                  _s_t_d_s_c_r
-     delch()                                      delete a character
-     deleteln()                                   delete a line
-     delwin(win)                                  delete _s_t_d_s_c_r
-     echo()                                       set echo mode
-     endwin()                                     end window modes
-     erase()                                      erase _s_t_d_s_c_r
-     flusok(win,boolf)                            set flush-on-refresh flag
-                                                  for _w_i_n
-     getch()                                      get a char through _s_t_d_s_c_r
-     getcap(name)                                 get terminal capability _n_a_m_e
-     getstr(str)                                  get a string through _s_t_d_s_c_r
-     gettmode()                                   get tty modes
-     getyx(win,y,x)                               get (y,x) co-ordinates
-     inch()                                       get char at current (y,x)
-                                                  co-ordinates
-     initscr()                                    initialize screens
-     insch(c)                                     insert a char
-     insertln()                                   insert a line
-     leaveok(win,boolf)                           set leave flag for _s_t_d_s_c_r
-     longname(termbuf,name)                       get long name from _t_e_r_m_b_u_f
-     move(y,x)                                    move to (y,x) on _s_t_d_s_c_r
-     mvcur(lasty,lastx,newy,newx)                 actually move cursor
-     newwin(lines,cols,begin_y,begin_x)           create a new window
-     nl()                                         set newline mapping
-     nocbreak()                                   unset cbreak mode
-     noecho()                                     unset echo mode
-     nonl()                                       unset newline mapping
+[1mFUNCTIONS[0m
+       addch(ch)                                    add a character to [4mstdscr[0m
+       addstr(str)                                  add a string to [4mstdscr[0m
+       box(win,vert,hor)                            draw a box around a window
+       cbreak()                                     set cbreak mode
+       clear()                                      clear [4mstdscr[0m
+       clearok(scr,boolf)                           set clear flag for [4mscr[0m
+       clrtobot()                                   clear to bottom on [4mstdscr[0m
+       clrtoeol()                                   clear  to  end  of line on
+                                                    [4mstdscr[0m
+       delch()                                      delete a character
+       deleteln()                                   delete a line
+       delwin(win)                                  delete [4mstdscr[0m
+       echo()                                       set echo mode
+       endwin()                                     end window modes
+       erase()                                      erase [4mstdscr[0m
+       flusok(win,boolf)                            set flush‐on‐refresh  flag
+                                                    for [4mwin[0m
+       getch()                                      get a char through [4mstdscr[0m
+       getcap(name)                                 get   terminal  capability
+                                                    [4mname[0m
+       getstr(str)                                  get   a   string   through
+                                                    [4mstdscr[0m
+       gettmode()                                   get tty modes
+       getyx(win,y,x)                               get (y,x) co‐ordinates
+       inch()                                       get  char at current (y,x)
+                                                    co‐ordinates
+       initscr()                                    initialize screens
+       insch(c)                                     insert a char
+       insertln()                                   insert a line
+       leaveok(win,boolf)                           set leave flag for [4mstdscr[0m
+       longname(termbuf,name)                       get long name from [4mtermbuf[0m
+       move(y,x)                                    move to (y,x) on [4mstdscr[0m
+       mvcur(lasty,lastx,newy,newx)                 actually move cursor
+       newwin(lines,cols,begin_y,begin_x)           create a new window
+       nl()                                         set newline mapping
+       nocbreak()                                   unset cbreak mode
+       noecho()                                     unset echo mode
+       nonl()                                       unset newline mapping
+       noraw()                                      unset raw mode
+       overlay(win1,win2)                           overlay win1 on win2
+       overwrite(win1,win2)                         overwrite win1 on  top  of
+                                                    win2
+       printw(fmt,arg1,arg2,...)                    printf on [4mstdscr[0m
+       raw()                                        set raw mode
+       refresh()                                    make  current  screen look
+                                                    like [4mstdscr[0m
+       resetty()                                    reset tty flags to  stored
+                                                    value
+       savetty()                                    stored current tty flags
+       scanw(fmt,arg1,arg2,...)                     scanf through [4mstdscr[0m
+       scroll(win)                                  scroll [4mwin[24m one line
+       scrollok(win,boolf)                          set scroll flag
+       setterm(name)                                set   term  variables  for
+                                                    name
+       standend()                                   end standout mode
+       standout()                                   start standout mode
+       subwin(win,lines,cols,begin_y,begin_x)       create a subwindow
+       touchline(win,y,sx,ex)                       mark line [4my[24m [4msx[24m through  [4msy[0m
+                                                    as changed
+       touchoverlap(win1,win2)                      mark  overlap  of  [4mwin1[24m on
+                                                    [4mwin2[24m as changed
+       touchwin(win)                                change all of [4mwin[0m
+       unctrl(ch)                                   printable version of [4mch[0m
+       waddch(win,ch)                               add char to [4mwin[0m
+       waddstr(win,str)                             add string to [4mwin[0m
+       wclear(win)                                  clear [4mwin[0m
+       wclrtobot(win)                               clear to bottom of [4mwin[0m
+       wclrtoeol(win)                               clear to end  of  line  on
+                                                    [4mwin[0m
+       wdelch(win,c)                                delete char from [4mwin[0m
+       wdeleteln(win)                               delete line from [4mwin[0m
+       werase(win)                                  erase [4mwin[0m
+       wgetch(win)                                  get a char through [4mwin[0m
+       wgetstr(win,str)                             get a string through [4mwin[0m
+       winch(win)                                   get  char at current (y,x)
+                                                    in [4mwin[0m
+       winsch(win,c)                                insert char into [4mwin[0m
+       winsertln(win)                               insert line into [4mwin[0m
+       wmove(win,y,x)                               set     current      (y,x)
+                                                    co‐ordinates on [4mwin[0m
+       wprintw(win,fmt,arg1,arg2,...)               printf on [4mwin[0m
+       wrefresh(win)                                make screen look like [4mwin[0m
+       wscanw(win,fmt,arg1,arg2,...)                scanf through [4mwin[0m
+       wstandend(win)                               end standout mode on [4mwin[0m
+       wstandout(win)                               start standout mode on [4mwin[0m
 
+[1mHISTORY[0m
+       The [1mcurses [22mpackage appeared in 4.0BSD.
 
-     noraw()                                      unset raw mode
-     overlay(win1,win2)                           overlay win1 on win2
-     overwrite(win1,win2)                         overwrite win1 on top of
-                                                  win2
-     printw(fmt,arg1,arg2,...)                    printf on _s_t_d_s_c_r
-     raw()                                        set raw mode
-     refresh()                                    make current screen look
-                                                  like _s_t_d_s_c_r
-     resetty()                                    reset tty flags to stored
-                                                  value
-     savetty()                                    stored current tty flags
-     scanw(fmt,arg1,arg2,...)                     scanf through _s_t_d_s_c_r
-     scroll(win)                                  scroll _w_i_n one line
-     scrollok(win,boolf)                          set scroll flag
-     setterm(name)                                set term variables for name
-     standend()                                   end standout mode
-     standout()                                   start standout mode
-     subwin(win,lines,cols,begin_y,begin_x)       create a subwindow
-     touchline(win,y,sx,ex)                       mark line _y _s_x through _s_y as
-                                                  changed
-     touchoverlap(win1,win2)                      mark overlap of _w_i_n_1 on _w_i_n_2
-                                                  as changed
-     touchwin(win)                                change all of _w_i_n
-     unctrl(ch)                                   printable version of _c_h
-     waddch(win,ch)                               add char to _w_i_n
-     waddstr(win,str)                             add string to _w_i_n
-     wclear(win)                                  clear _w_i_n
-     wclrtobot(win)                               clear to bottom of _w_i_n
-     wclrtoeol(win)                               clear to end of line on _w_i_n
-     wdelch(win,c)                                delete char from _w_i_n
-     wdeleteln(win)                               delete line from _w_i_n
-     werase(win)                                  erase _w_i_n
-     wgetch(win)                                  get a char through _w_i_n
-     wgetstr(win,str)                             get a string through _w_i_n
-     winch(win)                                   get char at current (y,x) in
-                                                  _w_i_n
-     winsch(win,c)                                insert char into _w_i_n
-     winsertln(win)                               insert line into _w_i_n
-     wmove(win,y,x)                               set current (y,x) co-
-                                                  ordinates on _w_i_n
-     wprintw(win,fmt,arg1,arg2,...)               printf on _w_i_n
-     wrefresh(win)                                make screen look like _w_i_n
-     wscanw(win,fmt,arg1,arg2,...)                scanf through _w_i_n
-     wstandend(win)                               end standout mode on _w_i_n
-     wstandout(win)                               start standout mode on _w_i_n
-
-HHIISSTTOORRYY
-     The ccuurrsseess package appeared in 4.0BSD.
-
-4th Berkeley Distribution        June 4, 1993                                2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution        June 4, 1993                        CURSES(3)

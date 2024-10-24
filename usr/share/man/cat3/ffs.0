@@ -1,66 +1,23 @@
-FFS(3)                    386BSD Programmer's Manual                    FFS(3)
+FFS(3)                      Library Functions Manual                    FFS(3)
 
-NNAAMMEE
-     ffffss - find first bit set in a bit string
+[1mNAME[0m
+       ffs — find first bit set in a bit string
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _i_n_t
-     ffffss(_i_n_t _v_a_l_u_e)
+       [4mint[0m
+       [1mffs[22m([4mint[24m [4mvalue[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ffffss() fucntion finds the first bit set in _v_a_l_u_e and returns the index
-     of that bit.  Bits are numbered starting from 1, starting at the right-
-     most bit.  A return value of 0 means that the argument was zero.
+[1mDESCRIPTION[0m
+       The [1mffs[22m() fucntion finds the first bit set in [4mvalue[24m and returns the in‐
+       dex  of  that  bit.  Bits are numbered starting from 1, starting at the
+       right‐most bit.  A return value of 0 means that the argument was zero.
 
-SSEEEE AALLSSOO
-     bitstring(3)
+[1mSEE ALSO[0m
+       [4mbitstring[24m(3)
 
-HHIISSTTOORRYY
-     The ffffss() function appeared in 4.3BSD.
+[1mHISTORY[0m
+       The [1mffs[22m() function appeared in 4.3BSD.
 
-BSD Experimental                April 19, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                    April 19, 1991                          FFS(3)

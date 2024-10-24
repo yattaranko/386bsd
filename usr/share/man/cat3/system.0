@@ -1,66 +1,30 @@
-SYSTEM(3)                 386BSD Programmer's Manual                 SYSTEM(3)
+SYSTEM(3)                   Library Functions Manual                 SYSTEM(3)
 
-NNAAMMEE
-     ssyysstteemm - pass a command to the shell
+[1mNAME[0m
+       system — pass a command to the shell
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddlliibb..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdlib.h>[0m
 
-     _i_n_t
-     ssyysstteemm(_c_o_n_s_t _c_h_a_r *_s_t_r_i_n_g)
+       [4mint[0m
+       [1msystem[22m([4mconst[24m [4mchar[24m [4m*string[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssyysstteemm() function hands the argument _s_t_r_i_n_g to the command
-     interpreter sh(1).  The calling process waits for the shell to finish
-     executing the command, ignoring SIGINT and SIGQUIT, and blocking SIGCHLD.
+[1mDESCRIPTION[0m
+       The  [1msystem[22m()  function hands the argument [4mstring[24m to the command inter‐
+       preter [4msh[24m(1).  The calling process waits for the shell to  finish  exe‐
+       cuting the command, ignoring SIGINT and SIGQUIT, and blocking SIGCHLD.
 
-     If _s_t_r_i_n_g is a NULL pointer, ssyysstteemm() will return non-zero if the command
-     interpreter sh(1) is available, and zero if it is not.
+       If  [4mstring[24m is a NULL pointer, [1msystem[22m() will return non‐zero if the com‐
+       mand interpreter [4msh[24m(1) is available, and zero if it is not.
 
-     The ssyysstteemm() function returns the exit status of the shell, or -1 if the
-     wait(3) for the shell failed.  A return value of 127 means the execution
-     of the shell failed.
+       The [1msystem[22m() function returns the exit status of the shell,  or  -1  if
+       the [4mwait[24m(3) for the shell failed.  A return value of 127 means the exe‐
+       cution of the shell failed.
 
-SSEEEE AALLSSOO
-     sh(1),  execve(2),  wait(2),  popen(3)
+[1mSEE ALSO[0m
+       [4msh[24m(1), [4mexecve[24m(2), [4mwait[24m(2), [4mpopen[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ssyysstteemm() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1msystem[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                       SYSTEM(3)

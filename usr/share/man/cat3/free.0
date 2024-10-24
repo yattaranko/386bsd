@@ -1,66 +1,29 @@
-FREE(3)                   386BSD Programmer's Manual                   FREE(3)
+FREE(3)                     Library Functions Manual                   FREE(3)
 
-NNAAMMEE
-     ffrreeee - free up memory allocated with malloc, calloc or realloc
+[1mNAME[0m
+       free — free up memory allocated with malloc, calloc or realloc
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddlliibb..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdlib.h>[0m
 
-     _v_o_i_d
-     ffrreeee(_v_o_i_d *_p_t_r)
+       [4mvoid[0m
+       [1mfree[22m([4mvoid[24m [4m*ptr[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ffrreeee() function causes the space pointed to by _p_t_r to be deallocated,
-     that is, made available for further allocation.  If _p_t_r is a null
-     pointer, no action occurs.  Otherwise, if the argument does not match a
-     pointer earlier returned by the calloc,  malloc,  or realloc function, or
-     if the space has been deallocated by a call to ffrreeee() or realloc,
-     general havoc may occur.
+[1mDESCRIPTION[0m
+       The  [1mfree[22m()  function  causes the space pointed to by [4mptr[24m to be deallo‐
+       cated, that is, made available for further allocation.   If  [4mptr[24m  is  a
+       null  pointer,  no  action occurs.  Otherwise, if the argument does not
+       match a pointer earlier returned by  the  [4mcalloc[24m,  [4mmalloc[24m,  or  [4mrealloc[0m
+       function,  or  if the space has been deallocated by a call to [1mfree[22m() or
+       [4mrealloc[24m, general havoc may occur.
 
-RREETTUURRNN VVAALLUUEESS
-     The ffrreeee() function returns no value.
+[1mRETURN VALUES[0m
+       The [1mfree[22m() function returns no value.
 
-SSEEEE AALLSSOO
-     calloc(3),  malloc(3),  realloc(3)
+[1mSEE ALSO[0m
+       [4mcalloc[24m(3), [4mmalloc[24m(3), [4mrealloc[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ffrreeee() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mfree[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                         FREE(3)

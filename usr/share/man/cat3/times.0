@@ -1,66 +1,64 @@
-TIMES(3)                  386BSD Programmer's Manual                  TIMES(3)
+TIMES(3)                    Library Functions Manual                  TIMES(3)
 
-NNAAMMEE
-     ttiimmeess - process times
+[1mNAME[0m
+       times — process times
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//ttiimmeess..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <sys/times.h>[0m
 
-     _c_l_o_c_k__t
-     ttiimmeess(_s_t_r_u_c_t _t_m_s *_t_p)
+       [4mclock_t[0m
+       [1mtimes[22m([4mstruct[24m [4mtms[24m [4m*tp[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     TThhiiss iinntteerrffaaccee iiss oobbssoolleetteedd bbyy ggeettrruussaaggee((22)) aanndd ggeettttiimmeeooffddaayy((33))..
+[1mDESCRIPTION[0m
+       [1mThis interface is obsoleted by getrusage(2) and gettimeofday(3).[0m
 
-     The ttiimmeess() function returns the value of time in CLK_TCK's of a second
-     since 0 hours, 0 minutes, 0 seconds, January 1, 1970, Coordinated
-     Universal Time.
+       The [1mtimes[22m() function returns the value of time in CLK_TCK’s of a second
+       since  0 hours, 0 minutes, 0 seconds, January 1, 1970, Coordinated Uni‐
+       versal Time.
 
-     It also fills in the structure pointed to by _t_p with time-accounting
-     information.
+       It also fills in the structure pointed to by  [4mtp[24m  with  time‐accounting
+       information.
 
-     The _t_m_s structure is defined as follows:
+       The [4mtms[24m structure is defined as follows:
 
-           typedef struct {
-                   clock_t tms_utime;
-                   clock_t tms_stime;
-                   clock_t tms_cutime;
-                   clock_t tms_cstime;
-           }
+             typedef struct {
+                     clock_t tms_utime;
+                     clock_t tms_stime;
+                     clock_t tms_cutime;
+                     clock_t tms_cstime;
+             }
 
-     The elements of this structure are defined as follows:
+       The elements of this structure are defined as follows:
 
-     _t_m_s__u_t_i_m_e   The CPU time charged for the execution of user instructions.
+       [4mtms_utime[24m   The  CPU  time  charged  for the execution of user instruc‐
+                   tions.
 
-     _t_m_s__s_t_i_m_e   The CPU time charged for execution by the system on behalf of
-                 the process.
+       [4mtms_stime[24m   The CPU time charged for execution by the system on  behalf
+                   of the process.
 
-     _t_m_s__c_u_t_i_m_e  The sum of the _t_m_s__u_t_i_m_e _s and _t_m_s__c_u_t_i_m_e _s of the child
-                 processes.
+       [4mtms_cutime[24m  The  sum  of  the [4mtms_utime[24m [4ms[24m and [4mtms_cutime[24m [4ms[24m of the child
+                   processes.
 
-     _t_m_s__c_s_t_i_m_e  The sum of the _t_m_s__s_t_i_m_es and _t_m_s__c_s_t_i_m_es of the child
-                 processes.
+       [4mtms_cstime[24m  The sum of the [4mtms_stime[24ms  and  [4mtms_cstime[24ms  of  the  child
+                   processes.
 
-     All times are in CLK_TCK's of a second.
+       All times are in CLK_TCK’s of a second.
 
-     The times of a terminated child process are included in the _t_m_s__c_u_t_i_m_e
-     and _t_m_s__c_s_t_i_m_e elements of the parent when one of the wait(2) functions
-     returns the process ID of the terminated child to the parent.  If an
-     error occurs, ttiimmeess() returns the value ((clock_t)-1), and sets errno to
-     indicate the error.
+       The  times of a terminated child process are included in the [4mtms_cutime[0m
+       and [4mtms_cstime[24m elements of the parent when one of the [4mwait[24m(2) functions
+       returns the process ID of the terminated child to the  parent.   If  an
+       error  occurs,  [1mtimes[22m() returns the value ((clock_t)-1), and sets errno
+       to indicate the error.
 
-EERRRROORRSS
-     The ttiimmeess() function may fail and set the global variable _e_r_r_n_o for any
-     of the errors specified for the library routines getrusage(2) and
-     gettimeofday(2).
+[1mERRORS[0m
+       The [1mtimes[22m() function may fail and set the global variable [4merrno[24m for any
+       of the errors specified  for  the  library  routines  [4mgetrusage[24m(2)  and
+       [4mgettimeofday[24m(2).
 
-SSEEEE AALLSSOO
-     time(1),  getrusage(2),  gettimeofday(2),  wait(2)
+[1mSEE ALSO[0m
+       [4mtime[24m(1), [4mgetrusage[24m(2), [4mgettimeofday[24m(2), [4mwait[24m(2)
 
-SSTTAANNDDAARRDDSS
-     The ttiimmeess() function conforms to IEEE Std1003.1-1988 (``POSIX'').
+[1mSTANDARDS[0m
+       The [1mtimes[22m() function conforms to IEEE Std 1003.1‐1988 (“POSIX.1”).
 
-4th Berkeley Distribution       April 19, 1991                               1
-
-
-
+4th Berkeley Distribution       April 19, 1991                        TIMES(3)

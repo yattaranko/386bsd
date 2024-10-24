@@ -1,66 +1,37 @@
-INITGROUPS(3)             386BSD Programmer's Manual             INITGROUPS(3)
+INITGROUPS(3)               Library Functions Manual             INITGROUPS(3)
 
-NNAAMMEE
-     iinniittggrroouuppss - initialize group access list
+[1mNAME[0m
+       initgroups — initialize group access list
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
 
-     _i_n_t
-     iinniittggrroouuppss(_c_o_n_s_t _c_h_a_r *_n_a_m_e, _i_n_t _b_a_s_e_g_i_d)
+       [4mint[0m
+       [1minitgroups[22m([4mconst[24m [4mchar[24m [4m*name[24m, [4mint[24m [4mbasegid[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The iinniittggrroouuppss() function reads through the group file and sets up, using
-     the setgroups(2) call, the group access list for the user specified in
-     _n_a_m_e. The _b_a_s_e_g_i_d is automatically included in the groups list.
-     Typically this value is given as the group number from the password file.
+[1mDESCRIPTION[0m
+       The [1minitgroups[22m() function reads through the group file and sets up, us‐
+       ing the [4msetgroups[24m(2) call, the group access list for the user specified
+       in  [4mname[24m.   The  [4mbasegid[24m  is automatically included in the groups list.
+       Typically this value is given as the group  number  from  the  password
+       file.
 
-RREETTUURRNN VVAALLUUEESS
-     The iinniittggrroouuppss() function returns -1 if it was not invoked by the super-
-     user.
+[1mRETURN VALUES[0m
+       The  [1minitgroups[22m()  function returns -1 if it was not invoked by the su‐
+       per‐user.
 
-FFIILLEESS
-     /etc/group
+[1mFILES[0m
+       [4m/etc/group[0m
 
-SSEEEE AALLSSOO
-     setgroups(2)
+[1mSEE ALSO[0m
+       [4msetgroups[24m(2)
 
-HHIISSTTOORRYY
-     The iinniittggrroouuppss function appeared in 4.2BSD.
+[1mHISTORY[0m
+       The [1minitgroups [22mfunction appeared in 4.2BSD.
 
-BBUUGGSS
-     The iinniittggrroouuppss() function uses the routines based on getgrent(3).  If the
-     invoking program uses any of these routines, the group structure will be
-     overwritten in the call to iinniittggrroouuppss().
+[1mBUGS[0m
+       The [1minitgroups[22m() function uses the routines based on  [4mgetgrent[24m(3).   If
+       the  invoking  program  uses any of these routines, the group structure
+       will be overwritten in the call to [1minitgroups[22m().
 
-4.2 Berkeley Distribution       April 19, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4.2 Berkeley Distribution       April 19, 1991                   INITGROUPS(3)

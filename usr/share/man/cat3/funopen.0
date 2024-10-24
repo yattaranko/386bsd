@@ -1,132 +1,75 @@
-FUNOPEN(3)                386BSD Programmer's Manual                FUNOPEN(3)
-
-NNAAMMEE
-     ffuunnooppeenn, ffrrooppeenn, ffwwooppeenn - open a stream
-
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddiioo..hh>>
-
-     _F_I_L_E *
-     ffuunnooppeenn(_v_o_i_d *_c_o_o_k_i_e, _i_n_t (*_r_e_a_d_f_n)(_v_o_i_d *, _c_h_a_r *, _i_n_t),
-             _i_n_t (_w_r_i_t_e_f_n*)(_v_o_i_d *, _c_o_n_s_t _c_h_a_r *, _i_n_t),
-             _f_p_o_s__t (_s_e_e_k_f_n*)(_v_o_i_d *, _f_p_o_s__t, _i_n_t), _i_n_t (_c_l_o_s_e_f_n*)(_v_o_i_d *))
-
-     _F_I_L_E *
-     ffrrooppeenn(_v_o_i_d *_c_o_o_k_i_e, _i_n_t (*_r_e_a_d_f_n)(_v_o_i_d *, _c_h_a_r *, _i_n_t))
-
-     _F_I_L_E *
-     ffwwooppeenn(_v_o_i_d *_c_o_o_k_i_e, _i_n_t (*_w_r_i_t_e_f_n)(_v_o_i_d *, _c_h_a_r *, _i_n_t))
-
-DDEESSCCRRIIPPTTIIOONN
-     The ffuunnooppeenn() function associates a stream with up to four ``I/O
-     functions''. Either _r_e_a_d_f_n or _w_r_i_t_e_f_n must be specified; the others can
-     be given as an appropriately-typed NULL pointer.  These I/O functions
-     will be used to read, write, seek and close the new stream.
-
-     In general, omitting a function means that any attempt to perform the
-     associated operation on the resulting stream will fail.  If the close
-     function is omitted, closing the stream will flush any buffered output
-     and then succeed.
-
-     The calling conventions of _r_e_a_d_f_n, _w_r_i_t_e_f_n, _s_e_e_k_f_n and _c_l_o_s_e_f_n must match
-     those, respectively, of read(2),  write(2),  seek(2),  and close(2) with
-     the single exception that they are passed the _c_o_o_k_i_e argument specified
-     to ffuunnooppeenn() in place of the traditional file descriptor argument.
-
-     Read and write I/O functions are allowed to change the underlying buffer
-     on fully buffered or line buffered streams by calling setvbuf(3).  They
-     are also not required to completely fill or empty the buffer.  They are
-     not, however, allowed to change streams from unbuffered to buffered or to
-     change the state of the line buffering flag.  They must also be prepared
-     to have read or write calls occur on buffers other than the one most
-     recently specified.
-
-     All user I/O functions can report an error by returning -1.
-     Additionally, all of the functions should set the external variable _e_r_r_n_o
-     appropriately if an error occurs.
-
-     An error on cclloosseeffnn() does not keep the stream open.
-
-     As a convenience, the include file <_s_t_d_i_o._h> defines the macros ffrrooppeenn()
-     and ffwwooppeenn() as calls to ffuunnooppeenn() with only a read or write function
-     specified.
-
-RREETTUURRNN VVAALLUUEESS
-     Upon successful completion, ffuunnooppeenn() returns a FILE pointer.  Otherwise,
-     NULL is returned and the global variable _e_r_r_n_o is set to indicate the
-     error.
-
-EERRRROORRSS
-     [EINVAL]  The ffuunnooppeenn() function was called without either a read or
-               write function.  The ffuunnooppeenn() function may also fail and set
-               _e_r_r_n_o for any of the errors specified for the routine
-               malloc(3).
-
-SSEEEE AALLSSOO
-     fcntl(2),  open(2),  fclose(3),  fopen(3),  fseek(3),  setbuf(3)
-
-HHIISSTTOORRYY
-     These functions are currently under development.
-
-BBUUGGSS
-     The ffuunnooppeenn() function may not be portable to systems other than BSD
-     UNIX.
-
-BSD Experimental                April 19, 1991                               2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FUNOPEN(3)                  Library Functions Manual                FUNOPEN(3)
+
+[1mNAME[0m
+       funopen, fropen, fwopen — open a stream
+
+[1mSYNOPSIS[0m
+       [1m#include <stdio.h>[0m
+
+       [4mFILE[24m [4m*[0m
+       [1mfunopen[22m([4mvoid[24m   [4m*cookie[24m,   [4mint[24m   [4m(*readfn)(void[24m   [4m*,[24m   [4mchar[24m   [4m*,[24m   [4mint)[24m,
+           [4mint[24m     [4m(writefn*)(void[24m     [4m*,[24m     [4mconst[24m     [4mchar[24m     [4m*,[24m      [4mint)[24m,
+           [4mfpos_t[24m [4m(seekfn*)(void[24m [4m*,[24m [4mfpos_t,[24m [4mint)[24m, [4mint[24m [4m(closefn*)(void[24m [4m*)[24m);
+
+       [4mFILE[24m [4m*[0m
+       [1mfropen[22m([4mvoid[24m [4m*cookie[24m, [4mint[24m [4m(*readfn)(void[24m [4m*,[24m [4mchar[24m [4m*,[24m [4mint)[24m);
+
+       [4mFILE[24m [4m*[0m
+       [1mfwopen[22m([4mvoid[24m [4m*cookie[24m, [4mint[24m [4m(*writefn)(void[24m [4m*,[24m [4mchar[24m [4m*,[24m [4mint)[24m);
+
+[1mDESCRIPTION[0m
+       The  [1mfunopen[22m()  function  associates  a  stream  with  up  to four “I/O
+       functions”.  Either [4mreadfn[24m or [4mwritefn[24m must be specified; the others can
+       be given as an appropriately‐typed NULL pointer.  These  I/O  functions
+       will be used to read, write, seek and close the new stream.
+
+       In  general,  omitting a function means that any attempt to perform the
+       associated operation on the resulting stream will fail.  If  the  close
+       function  is omitted, closing the stream will flush any buffered output
+       and then succeed.
+
+       The calling conventions of [4mreadfn[24m, [4mwritefn[24m,  [4mseekfn[24m  and  [4mclosefn[24m  must
+       match  those, respectively, of [4mread[24m(2), [4mwrite[24m(2), [4mseek[24m(2), and [4mclose[24m(2)
+       with the single exception that they  are  passed  the  [4mcookie[24m  argument
+       specified  to [1mfunopen[22m() in place of the traditional file descriptor ar‐
+       gument.
+
+       Read and write I/O functions  are  allowed  to  change  the  underlying
+       buffer   on   fully  buffered  or  line  buffered  streams  by  calling
+       [4msetvbuf[24m(3).  They are also not required to completely fill or empty the
+       buffer.  They are not, however, allowed  to  change  streams  from  un‐
+       buffered to buffered or to change the state of the line buffering flag.
+       They must also be prepared to have read or write calls occur on buffers
+       other than the one most recently specified.
+
+       All  user I/O functions can report an error by returning -1.  Addition‐
+       ally, all of the functions should set the external variable  [4merrno[24m  ap‐
+       propriately if an error occurs.
+
+       An error on [1mclosefn[22m() does not keep the stream open.
+
+       As  a  convenience,  the  include  file  ⟨[4mstdio.h[24m⟩  defines  the macros
+       [1mfropen[22m() and [1mfwopen[22m() as calls to [1mfunopen[22m() with only a read  or  write
+       function specified.
+
+[1mRETURN VALUES[0m
+       Upon  successful  completion, [1mfunopen[22m() returns a FILE pointer.  Other‐
+       wise, NULL is returned and the global variable [4merrno[24m is set to indicate
+       the error.
+
+[1mERRORS[0m
+       [EINVAL]  The [1mfunopen[22m() function was called without either  a  read  or
+                 write function.  The [1mfunopen[22m() function may also fail and set
+                 [4merrno[24m  for  any  of  the  errors  specified  for  the routine
+                 [4mmalloc[24m(3).
+
+[1mSEE ALSO[0m
+       [4mfcntl[24m(2), [4mopen[24m(2), [4mfclose[24m(3), [4mfopen[24m(3), [4mfseek[24m(3), [4msetbuf[24m(3)
+
+[1mHISTORY[0m
+       These functions are currently under development.
+
+[1mBUGS[0m
+       The [1mfunopen[22m() function may not be portable to systems other than BSD.
+
+FreeBSD 13.2                    April 19, 1991                      FUNOPEN(3)

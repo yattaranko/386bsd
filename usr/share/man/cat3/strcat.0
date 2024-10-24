@@ -1,66 +1,33 @@
-STRCAT(3)                 386BSD Programmer's Manual                 STRCAT(3)
+STRCAT(3)                   Library Functions Manual                 STRCAT(3)
 
-NNAAMMEE
-     ssttrrccaatt - concatenate strings
+[1mNAME[0m
+       strcat — concatenate strings
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _c_h_a_r *
-     ssttrrccaatt(_c_h_a_r *_s, _c_o_n_s_t _c_h_a_r *_a_p_p_e_n_d)
+       [4mchar[24m [4m*[0m
+       [1mstrcat[22m([4mchar[24m [4m*s[24m, [4mconst[24m [4mchar[24m [4m*append[24m);
 
-     _c_h_a_r *
-     ssttrrnnccaatt(_c_h_a_r *_s, _c_o_n_s_t _c_h_a_r *_a_p_p_e_n_d, _s_i_z_e__t _c_o_u_n_t)
+       [4mchar[24m [4m*[0m
+       [1mstrncat[22m([4mchar[24m [4m*s[24m, [4mconst[24m [4mchar[24m [4m*append[24m, [4msize_t[24m [4mcount[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssttrrccaatt() and ssttrrnnccaatt() functions append a copy of the null-terminated
-     string _a_p_p_e_n_d to the end of the null-terminated string _s, then add a
-     terminating `\0'. The string _s must have sufficient space to hold the
-     result.
+[1mDESCRIPTION[0m
+       The  [1mstrcat[22m()  and [1mstrncat[22m() functions append a copy of the null‐termi‐
+       nated string [4mappend[24m to the end of the null‐terminated  string  [4ms[24m,  then
+       add  a  terminating  ‘\0’.   The string [4ms[24m must have sufficient space to
+       hold the result.
 
-     The ssttrrnnccaatt() function appends not more than _c_o_u_n_t characters.
+       The [1mstrncat[22m() function appends not more than [4mcount[24m characters.
 
-RREETTUURRNN VVAALLUUEESS
-     The ssttrrccaatt() and ssttrrnnccaatt() functions return the pointer _s.
+[1mRETURN VALUES[0m
+       The [1mstrcat[22m() and [1mstrncat[22m() functions return the pointer [4ms[24m.
 
-SSEEEE AALLSSOO
-     bcopy(3),  memccpy(3),  memcpy(3),  memmove(3),  strcpy(3)
+[1mSEE ALSO[0m
+       [4mbcopy[24m(3), [4mmemccpy[24m(3), [4mmemcpy[24m(3), [4mmemmove[24m(3), [4mstrcpy[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ssttrrccaatt() and ssttrrnnccaatt() functions conform to ANSI C3.159-1989 (``ANSI
-     C'').
+[1mSTANDARDS[0m
+       The [1mstrcat[22m()  and  [1mstrncat[22m()  functions  conform  to  ANSI  X3.159‐1989
+       (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                       STRCAT(3)

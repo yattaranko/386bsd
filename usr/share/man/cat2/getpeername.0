@@ -1,66 +1,41 @@
-GETPEERNAME(2)            386BSD Programmer's Manual            GETPEERNAME(2)
+GETPEERNAME(2)                System Calls Manual               GETPEERNAME(2)
 
-NNAAMMEE
-     ggeettppeeeerrnnaammee - get name of connected peer
+[1mNAME[0m
+       getpeername — get name of connected peer
 
-SSYYNNOOPPSSIISS
-     _i_n_t
-     ggeettppeeeerrnnaammee(_i_n_t _s, _s_t_r_u_c_t _s_o_c_k_a_d_d_r *_n_a_m_e, _i_n_t *_n_a_m_e_l_e_n)
+[1mSYNOPSIS[0m
+       [4mint[0m
+       [1mgetpeername[22m([4mint[24m [4ms[24m, [4mstruct[24m [4msockaddr[24m [4m*name[24m, [4mint[24m [4m*namelen[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     GGeettppeeeerrnnaammee() returns the name of the peer connected to socket _s. The
-     _n_a_m_e_l_e_n parameter should be initialized to indicate the amount of space
-     pointed to by _n_a_m_e. On return it contains the actual size of the name
-     returned (in bytes).  The name is truncated if the buffer provided is too
-     small.
+[1mDESCRIPTION[0m
+       [1mGetpeername[22m()  returns the name of the peer connected to socket [4ms[24m.  The
+       [4mnamelen[24m parameter should be initialized to indicate the amount of space
+       pointed to by [4mname[24m.  On return it contains the actual size of the  name
+       returned  (in  bytes).  The name is truncated if the buffer provided is
+       too small.
 
-DDIIAAGGNNOOSSTTIICCSS
-     A 0 is returned if the call succeeds, -1 if it fails.
+[1mDIAGNOSTICS[0m
+       A 0 is returned if the call succeeds, ‐1 if it fails.
 
-EERRRROORRSS
-     The call succeeds unless:
+[1mERRORS[0m
+       The call succeeds unless:
 
-     [EBADF]     The argument _s is not a valid descriptor.
+       [EBADF]     The argument [4ms[24m is not a valid descriptor.
 
-     [ENOTSOCK]  The argument _s is a file, not a socket.
+       [ENOTSOCK]  The argument [4ms[24m is a file, not a socket.
 
-     [ENOTCONN]  The socket is not connected.
+       [ENOTCONN]  The socket is not connected.
 
-     [ENOBUFS]   Insufficient resources were available in the system to
-                 perform the operation.
+       [ENOBUFS]   Insufficient resources were available in the system to per‐
+                   form the operation.
 
-     [EFAULT]    The _n_a_m_e parameter points to memory not in a valid part of
-                 the process address space.
+       [EFAULT]    The [4mname[24m parameter points to memory not in a valid part  of
+                   the process address space.
 
-SSEEEE AALLSSOO
-     accept(2),  bind(2),  socket(2),  getsockname(2)
+[1mSEE ALSO[0m
+       [4maccept[24m(2), [4mbind[24m(2), [4msocket[24m(2), [4mgetsockname[24m(2)
 
-HHIISSTTOORRYY
-     The ggeettppeeeerrnnaammee function call appeared in 4.2BSD.
+[1mHISTORY[0m
+       The [1mgetpeername [22mfunction call appeared in 4.2BSD.
 
-4.2 Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4.2 Berkeley Distribution       March 10, 1991                  GETPEERNAME(2)

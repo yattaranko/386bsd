@@ -44,27 +44,28 @@
  * Glue could be masks of what to echo and circular buffer
  * (low, high, timeout).
  */
+#pragma pack(1)
 struct tty {
-	int	(*t_oproc)();		/* device */
-	int	(*t_param)();		/* device */
-	int	(*t_stop)();		/* device */
-	void	*t_ldiscif;		/* ldisc */
-	pid_t	t_rsel;			/* tty */
+	int	(*t_oproc)(struct tty*);					/* device */
+	int	(*t_param)(struct tty*, struct termios*);	/* device */
+	int	(*t_stop)(struct tty*, int);				/* device */
+	void	*t_ldiscif;								/* ldisc */
+	pid_t	t_rsel;									/* tty */
 	pid_t	t_wsel;
-	caddr_t	T_LINEP; 		/* XXX */
-	caddr_t	t_addr;			/* ??? */
-	dev_t	t_dev;			/* device */
-	int	t_flags;		/* (compat) some of both */
-	int	t_state;		/* some of both */
-	struct	session *t_session;	/* tty */
-	struct	pgrp *t_pgrp;		/* foreground process group */
-	char	t_line;			/* glue */
-	short	t_col;			/* tty */
-	short	t_rocount, t_rocol;	/* tty */
-	short	t_hiwat;		/* hi water mark */
-	short	t_lowat;		/* low water mark */
-	struct	winsize t_winsize;	/* window size */
-	struct	termios t_termios;	/* termios state */
+	caddr_t	T_LINEP;				 				/* XXX */
+	caddr_t	t_addr;									/* ??? */
+	dev_t	t_dev;									/* device */
+	int	t_flags;									/* (compat) some of both */
+	int	t_state;									/* some of both */
+	struct	session *t_session;						/* tty */
+	struct	pgrp *t_pgrp;							/* foreground process group */
+	char	t_line;									/* glue */
+	short	t_col;									/* tty */
+	short	t_rocount, t_rocol;						/* tty */
+	short	t_hiwat;								/* hi water mark */
+	short	t_lowat;								/* low water mark */
+	struct	winsize t_winsize;						/* window size */
+	struct	termios t_termios;						/* termios state */
 #define	t_iflag		t_termios.c_iflag
 #define	t_oflag		t_termios.c_oflag
 #define	t_cflag		t_termios.c_cflag
@@ -74,15 +75,16 @@ struct tty {
 #define	t_cc		t_termios.c_cc
 #define t_ispeed	t_termios.c_ispeed
 #define t_ospeed	t_termios.c_ospeed
-	long	t_cancc;		/* stats */
+	long	t_cancc;								/* stats */
 	long	t_rawcc;
 	long	t_outcc;
-	short	t_gen;			/* generation number */
-	short	t_mask;			/* interrupt mask */
-	struct	ringb t_raw;		/* ring buffers */
+	short	t_gen;									/* generation number */
+	short	t_mask;									/* interrupt mask */
+	struct	ringb t_raw;							/* ring buffers */
 	struct	ringb t_can;
 	struct	ringb t_out;
-} __attribute__ ((packed));
+};
+#pragma pack()
 
 #define	TTIPRI		25		/* sleep priority for tty reads */
 #define	TTOPRI		26		/* sleep priority for tty writes */

@@ -1,132 +1,99 @@
-FOPEN(3)                  386BSD Programmer's Manual                  FOPEN(3)
+FOPEN(3)                    Library Functions Manual                  FOPEN(3)
 
-NNAAMMEE
-     ffooppeenn, ffddooppeenn, ffrreeooppeenn - stream open functions
+[1mNAME[0m
+       fopen, fdopen, freopen — stream open functions
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdio.h>[0m
 
-     _F_I_L_E *
-     ffooppeenn(_c_h_a_r *_p_a_t_h, _c_h_a_r *_m_o_d_e)
+       [4mFILE[24m [4m*[0m
+       [1mfopen[22m([4mchar[24m [4m*path[24m, [4mchar[24m [4m*mode[24m);
 
-     _F_I_L_E *
-     ffddooppeenn(_i_n_t _f_i_l_d_e_s, _c_h_a_r *_m_o_d_e)
+       [4mFILE[24m [4m*[0m
+       [1mfdopen[22m([4mint[24m [4mfildes[24m, [4mchar[24m [4m*mode[24m);
 
-     _F_I_L_E *
-     ffrreeooppeenn(_c_h_a_r *_p_a_t_h, _c_h_a_r *_m_o_d_e, _F_I_L_E *_s_t_r_e_a_m)
+       [4mFILE[24m [4m*[0m
+       [1mfreopen[22m([4mchar[24m [4m*path[24m, [4mchar[24m [4m*mode[24m, [4mFILE[24m [4m*stream[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ffooppeenn() function opens the file whose name is the string pointed to
-     by _p_a_t_h and associates a stream with it.
+[1mDESCRIPTION[0m
+       The [1mfopen[22m() function opens the file whose name is the string pointed to
+       by [4mpath[24m and associates a stream with it.
 
-     The argument _m_o_d_e points to a string beginning with one of the following
-     sequences (Additional characters may follow these sequences.):
+       The  argument [4mmode[24m points to a string beginning with one of the follow‐
+       ing sequences (Additional characters may follow these sequences.):
 
-     ``r''   Open text file for reading.  The stream is positioned at the
-             beginning of the file.
+       “[1mr[22m”     Open text file for reading.  The stream is  positioned  at  the
+               beginning of the file.
 
-     ``r+''  Open for reading and writing.  The stream is positioned at the
-             beginning of the file.
+       “[1mr+[22m”    Open  for reading and writing.  The stream is positioned at the
+               beginning of the file.
 
-     ``w''   Truncate file to zero length or create text file for writing.
-             The stream is positioned at the beginning of the file.  It ``w+''
-             Open for reading and writing.  The file is created if it does not
-             exist, otherwise it is truncated.  The stream is positioned at
-             the beginning of the file.
+       “[1mw[22m”     Truncate file to zero length or create text file  for  writing.
+               The stream is positioned at the beginning of the file.
+       Open  for  reading and writing.  The file is created if it does not ex‐
+               ist, otherwise it is truncated.  The stream  is  positioned  at
+               the beginning of the file.
 
-     ``a''   Open for writing.  The file is created if it does not exist.  The
-             stream is positioned at the end of the file.
+       “[1ma[22m”     Open  for  writing.   The file is created if it does not exist.
+               The stream is positioned at the end of the file.
 
-     ``a+''  Open for reading and writing.  The file is created if it does not
-             exist.  The stream is positioned at the end of the file.
+       “[1ma+[22m”    Open for reading and writing.  The file is created if  it  does
+               not exist.  The stream is positioned at the end of the file.
 
-     The _m_o_d_e string can also include the letter ``b'' either as a third
-     character or as a character between the characters in any of the two-
-     character strings described above.  This is strictly for compatibility
-     with ANSI C3.159-1989 (``ANSI C'') and has no effect; the ``b'' is
-     ignored.
+       The  [4mmode[24m  string  can  also include the letter ‘‘b’’ either as a third
+       character or as a character between the characters in any of  the  two‐
+       character  strings described above.  This is strictly for compatibility
+       with ANSI X3.159‐1989 (“ANSI C89”) and has no effect; the ‘‘b’’ is  ig‐
+       nored.
 
-     Any created files will have mode "S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |
-     S_IROTH | S_IWOTH" (0666), as modified by the process' umask value (see
-     umask(2)).
+       Any created files will have mode "S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP
+       |  S_IROTH  |  S_IWOTH" ([1m0666[22m), as modified by the process’ umask value
+       (see [4mumask[24m(2)).
 
-     Reads and writes may be intermixed on read/write streams in any order,
-     and do not require an intermediate seek as in previous versions of _s_t_d_i_o.
-     This is not portable to other systems, however; ANSI C requires that a
-     file positioning function intervene between output and input, unless an
-     input operation encounters end-of-file.
+       Reads and writes may be intermixed on read/write streams in any  order,
+       and  do  not  require  an  intermediate seek as in previous versions of
+       [4mstdio[24m.  This is not portable to other systems, however; ANSI C requires
+       that a file positioning function intervene between  output  and  input,
+       unless an input operation encounters end‐of‐file.
 
-     The ffddooppeenn() function associates a stream with the existing file
-     descriptor, _f_i_l_d_e_s. The _m_o_d_e of the stream must be compatible with the
-     mode of the file descriptor.
+       The  [1mfdopen[22m()  function  associates a stream with the existing file de‐
+       scriptor, [4mfildes[24m.  The [4mmode[24m of the stream must be compatible  with  the
+       mode of the file descriptor.
 
-     The ffrreeooppeenn() function opens the file whose name is the string pointed to
-     by _p_a_t_h and associates the stream pointed to by _s_t_r_e_a_m with it.  The
-     original stream (if it exists) is closed.  The _m_o_d_e argument is used just
-     as in the fopen function.  The primary use of the ffrreeooppeenn() function is
-     to change the file associated with a standard text stream (_s_t_d_e_r_r, _s_t_d_i_n,
-     or _s_t_d_o_u_t).
+       The  [1mfreopen[22m() function opens the file whose name is the string pointed
+       to by [4mpath[24m and associates the stream pointed to by [4mstream[24m with it.  The
+       original stream (if it exists) is closed.  The [4mmode[24m  argument  is  used
+       just  as in the [4mfopen[24m function.  The primary use of the [1mfreopen[22m() func‐
+       tion is to change the file  associated  with  a  standard  text  stream
+       ([4mstderr[24m, [4mstdin[24m, or [4mstdout[24m).
 
-RREETTUURRNN VVAALLUUEESS
-     Upon successful completion ffooppeenn(), ffddooppeenn() and ffrreeooppeenn() return a FILE
-     pointer.  Otherwise, NULL is returned and the global variable _e_r_r_n_o is
-     set to indicate the error.
+[1mRETURN VALUES[0m
+       Upon  successful  completion  [1mfopen[22m(),  [1mfdopen[22m() and [1mfreopen[22m() return a
+       FILE pointer.  Otherwise, NULL is  returned  and  the  global  variable
+       [4merrno[24m is set to indicate the error.
 
-EERRRROORRSS
-     [EINVAL]  The _m_o_d_e provided to ffooppeenn(), ffddooppeenn(), or ffrreeooppeenn() was
-               invalid.
+[1mERRORS[0m
+       [EINVAL]  The  [4mmode[24m provided to [1mfopen[22m(), [1mfdopen[22m(), or [1mfreopen[22m() was in‐
+                 valid.
 
-     The ffooppeenn(), ffddooppeenn() and ffrreeooppeenn() functions may also fail and set _e_r_r_n_o
-     for any of the errors specified for the routine malloc(3).
+       The [1mfopen[22m(), [1mfdopen[22m() and [1mfreopen[22m() functions may  also  fail  and  set
+       [4merrno[24m for any of the errors specified for the routine [4mmalloc[24m(3).
 
-     The ffooppeenn() function may also fail and set _e_r_r_n_o for any of the errors
-     specified for the routine open(2).
+       The  [1mfopen[22m() function may also fail and set [4merrno[24m for any of the errors
+       specified for the routine [4mopen[24m(2).
 
-     The ffddooppeenn() function may also fail and set _e_r_r_n_o for any of the errors
-     specified for the routine fcntl(2).
+       The [1mfdopen[22m() function may also fail and set [4merrno[24m for any of the errors
+       specified for the routine [4mfcntl[24m(2).
 
-     The ffrreeooppeenn() function may also fail and set _e_r_r_n_o for any of the errors
-     specified for the routines open(2),  fclose(3) and fflush(3).
+       The [1mfreopen[22m() function may also fail and set [4merrno[24m for any of  the  er‐
+       rors specified for the routines [4mopen[24m(2), [4mfclose[24m(3) and [4mfflush[24m(3).
 
-SSEEEE AALLSSOO
-     open(2),  fclose(3),  fseek(3),  funopen(3)
+[1mSEE ALSO[0m
+       [4mopen[24m(2), [4mfclose[24m(3), [4mfseek[24m(3), [4mfunopen[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ffooppeenn() and ffrreeooppeenn() functions conform to ANSI C3.159-1989 (``ANSI
-     C''). The ffddooppeenn() function conforms to IEEE Std1003.1-1988 (``POSIX'').
+[1mSTANDARDS[0m
+       The  [1mfopen[22m()  and  [1mfreopen[22m()  functions  conform  to  ANSI  X3.159‐1989
+       (“ANSI C89”).  The [1mfdopen[22m() function conforms to IEEE  Std  1003.1‐1988
+       (“POSIX.1”).
 
-BSD Experimental                 June 29, 1991                               2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                        FOPEN(3)

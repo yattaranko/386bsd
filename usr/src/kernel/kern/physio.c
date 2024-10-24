@@ -69,6 +69,9 @@
 
 #include "prototypes.h"
 
+extern int uioapply(int (*func)(dev_t, int, int, caddr_t, int*, struct proc*),
+					int arg1, struct uio *uio);
+extern int splbio(void);
 static int physio(dev_t, int, int, caddr_t, int *, struct proc *);
 
 /*

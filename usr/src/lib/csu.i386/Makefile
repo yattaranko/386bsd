@@ -1,6 +1,6 @@
 #	@(#)Makefile	5.6 (Berkeley) 5/22/91
 
-SRCHOME=/home/share/386bsd-2.0
+SRCHOME=/home/share/386bsd
 CFLAGS=	-O -DLIBC_SCCS
 OBJS=	crt0.o gcrt0.o hcrt0.o
 CLEANFILES+=	gmon.o moncrt0.o core a.out

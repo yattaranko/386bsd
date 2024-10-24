@@ -1,66 +1,48 @@
-BRK(2)                    386BSD Programmer's Manual                    BRK(2)
+BRK(2)                        System Calls Manual                       BRK(2)
 
-NNAAMMEE
-     bbrrkk, ssbbrrkk - change data segment size
+[1mNAME[0m
+       brk, sbrk — change data segment size
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <sys/types.h>[0m
 
-     _c_h_a_r
-     **bbrrkk(_c_o_n_s_t _c_h_a_r *_a_d_d_r)
+       [4mchar[0m
+       [1m*brk[22m([4mconst[24m [4mchar[24m [4m*addr[24m);
 
-     _c_h_a_r *
-     **ssbbrrkk(_i_n_t _i_n_c_r)
+       [4mchar[24m [4m*[0m
+       [1m*sbrk[22m([4mint[24m [4mincr[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     TThhee bbrrkk aanndd ssbbrrkk ffuunnccttiioonnss aarree hhiissttoorriiccaall ccuurriioossiittiieess lleefftt oovveerr ffrroomm
-     eeaarrlliieerr ddaayyss bbeeffoorree tthhee aaddvveenntt ooff vviirrttuuaall mmeemmoorryy mmaannaaggeemmeenntt..   The bbrrkk()
-     function sets the break or lowest address of a process's data segment
-     (unilitialized data) to _a_d_d_r (immediately above bss).  Data addressing is
-     restricted between _a_d_d_r and the lowest stack pointer to the stack
-     segment.  Memory is allocated by _b_r_k in page size pieces; if _a_d_d_r is not
-     evenly divisible by the system page size, it is increased to the next
-     page boundary.
+[1mDESCRIPTION[0m
+       [1mThe  brk  and  sbrk functions are historical curiosities left over from[0m
+       [1mearlier days before the advent of virtual memory management.  [22mThe [1mbrk[22m()
+       function sets the break or lowest address of a process’s  data  segment
+       (unilitialized  data) to [4maddr[24m (immediately above bss).  Data addressing
+       is restricted between [4maddr[24m and the lowest stack pointer  to  the  stack
+       segment.   Memory  is  allocated by [4mbrk[24m in page size pieces; if [4maddr[24m is
+       not evenly divisible by the system page size, it is  increased  to  the
+       next page boundary.
 
-     The current value of the program break is reliably returned by
-     ``sbrk(0)'' (see also end(3)).  The getrlimit(2) system call may be used
-     to determine the maximum permissible size of the _d_a_t_a segment; it will
-     not be possible to set the break beyond the _r_l_i_m__m_a_x value returned from
-     a call to getrlimit,  e.g.  ``qetext + rlp->rlim_max.'' (see end(3) for
-     the definition of _e_t_e_x_t).
+       The  current  value  of  the  program  break  is  reliably  returned by
+       “[1msbrk(0)[22m” (see also [4mend[24m(3)).  The [4mgetrlimit[24m(2) system call may be  used
+       to  determine the maximum permissible size of the [4mdata[24m segment; it will
+       not be possible to set the break beyond  the  [4mrlim_max[24m  value  returned
+       from  a  call  to [4mgetrlimit[24m, e.g.  “qetext + rlp→rlim_max.” (see [4mend[24m(3)
+       for the definition of [4metext[24m).
 
-RREETTUURRNN VVAALLUUEESS
-     BBrrkk returns 0 if successful; -1 if the process requests more memory than
-     than allowed by the system limit.  The ssbbrrkk function returns 0 if
-     successful, otherwise the error EOPNOTSUPP is returned.
+[1mRETURN VALUES[0m
+       [1mBrk [22mreturns 0 if successful; ‐1 if the  process  requests  more  memory
+       than  than allowed by the system limit.  The [1msbrk [22mfunction returns 0 if
+       successful, otherwise the error EOPNOTSUPP is returned.
 
-SSEEEE AALLSSOO
-     execve(2),  getrlimit(2),  malloc(3),  end(3)
+[1mSEE ALSO[0m
+       [4mexecve[24m(2), [4mgetrlimit[24m(2), [4mmalloc[24m(3), [4mend[24m(3)
 
-BBUUGGSS
-     Setting the break may fail due to a temporary lack of swap space.  It is
-     not possible to distinguish this from a failure caused by exceeding the
-     maximum size of the data segment without consulting getrlimit.
+[1mBUGS[0m
+       Setting the break may fail due to a temporary lack of swap  space.   It
+       is  not possible to distinguish this from a failure caused by exceeding
+       the maximum size of the data segment without consulting [4mgetrlimit[24m.
 
-HHIISSTTOORRYY
-     A bbrrkk function call appeared in Version 7 AT&T UNIX.
+[1mHISTORY[0m
+       A [1mbrk [22mfunction call appeared in Version 7 AT&T UNIX.
 
-4th Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       March 10, 1991                          BRK(2)

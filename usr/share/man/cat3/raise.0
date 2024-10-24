@@ -1,66 +1,30 @@
-RAISE(3)                  386BSD Programmer's Manual                  RAISE(3)
+RAISE(3)                    Library Functions Manual                  RAISE(3)
 
-NNAAMMEE
-     rraaiissee - send a signal to the current process
+[1mNAME[0m
+       raise — send a signal to the current process
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssiiggnnaall..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <signal.h>[0m
 
-     _i_n_t
-     rraaiissee(_i_n_t _s_i_g)
+       [4mint[0m
+       [1mraise[22m([4mint[24m [4msig[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The rraaiissee() function sends the signal _s_i_g to the current process.
+[1mDESCRIPTION[0m
+       The [1mraise[22m() function sends the signal [4msig[24m to the current process.
 
-RREETTUURRNN VVAALLUUEESS
-     Upon successful completion, a value of 0 is returned.  Otherwise, a value
-     of -1 is returned and the global variable _e_r_r_n_o is set to indicate the
-     error.
+[1mRETURN VALUES[0m
+       Upon  successful  completion,  a  value of 0 is returned.  Otherwise, a
+       value of -1 is returned and the global variable [4merrno[24m is set  to  indi‐
+       cate the error.
 
-EERRRROORRSS
-     The rraaiissee() function may fail and set _e_r_r_n_o for any of the errors
-     specified for the library functions getpid(2) and kill(2).
+[1mERRORS[0m
+       The [1mraise[22m() function may fail and set [4merrno[24m for any of the errors spec‐
+       ified for the library functions [4mgetpid[24m(2) and [4mkill[24m(2).
 
-SSEEEE AALLSSOO
-     kill(2)
+[1mSEE ALSO[0m
+       [4mkill[24m(2)
 
-SSTTAANNDDAARRDDSS
-     The rraaiissee() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mraise[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                        RAISE(3)

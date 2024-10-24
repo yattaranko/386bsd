@@ -1,132 +1,88 @@
-MKDIR(2)                  386BSD Programmer's Manual                  MKDIR(2)
+MKDIR(2)                      System Calls Manual                     MKDIR(2)
 
-NNAAMMEE
-     mmkkddiirr - make a directory file
+[1mNAME[0m
+       mkdir — make a directory file
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//ssttaatt..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <sys/stat.h>[0m
 
-     _i_n_t
-     mmkkddiirr(_c_o_n_s_t _c_h_a_r *_p_a_t_h, _m_o_d_e__t _m_o_d_e)
+       [4mint[0m
+       [1mmkdir[22m([4mconst[24m [4mchar[24m [4m*path[24m, [4mmode_t[24m [4mmode[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The directory _p_a_t_h is created with the access permissions specified by
-     _m_o_d_e and restricted by the the umask(2) of the calling process.
+[1mDESCRIPTION[0m
+       The  directory [4mpath[24m is created with the access permissions specified by
+       [4mmode[24m and restricted by the the [4mumask[24m(2) of the calling process.
 
-     The directory's owner ID is set to the process's effective user ID.  The
-     directory's group ID is set to that of the parent directory in which it
-     is created.
+       The directory’s owner ID is set to the  process’s  effective  user  ID.
+       The  directory’s  group  ID  is  set to that of the parent directory in
+       which it is created.
 
-RREETTUURRNN VVAALLUUEESS
-     A 0 return value indicates success.  A -1 return value indicates an
-     error, and an error code is stored in _e_r_r_n_o.
+[1mRETURN VALUES[0m
+       A 0 return value indicates success.  A ‐1 return value indicates an er‐
+       ror, and an error code is stored in [4merrno[24m.
 
-EERRRROORRSS
-     MMkkddiirr() will fail and no directory will be created if:
+[1mERRORS[0m
+       [1mMkdir[22m() will fail and no directory will be created if:
 
-     [ENOTDIR]   A component of the path prefix is not a directory.
+       [ENOTDIR]   A component of the path prefix is not a directory.
 
-     [EINVAL]    The pathname contains a character with the high-order bit
-                 set.
+       [EINVAL]    The pathname contains a character with the  high‐order  bit
+                   set.
 
-     [ENAMETOOLONG]
-                 A component of a pathname exceeded 255 characters, or an
-                 entire path name exceeded 1023 characters.
+       [ENAMETOOLONG]
+                   A  component  of  a pathname exceeded 255 characters, or an
+                   entire path name exceeded 1023 characters.
 
-     [ENOENT]    A component of the path prefix does not exist.
+       [ENOENT]    A component of the path prefix does not exist.
 
-     [EACCES]    Search permission is denied for a component of the path
-                 prefix.
+       [EACCES]    Search permission is denied for a  component  of  the  path
+                   prefix.
 
-     [ELOOP]     Too many symbolic links were encountered in translating the
-                 pathname.
+       [ELOOP]     Too many symbolic links were encountered in translating the
+                   pathname.
 
-     [EPERM]     The _p_a_t_h argument contains a byte with the high-order bit
-                 set.
+       [EPERM]     The  [4mpath[24m  argument contains a byte with the high‐order bit
+                   set.
 
-     [EROFS]     The named file resides on a read-only file system.
+       [EROFS]     The named file resides on a read‐only file system.
 
-     [EEXIST]    The named file exists.
+       [EEXIST]    The named file exists.
 
-     [ENOSPC]    The directory in which the entry for the new directory is
-                 being placed cannot be extended because there is no space
-                 left on the file system containing the directory.
+       [ENOSPC]    The directory in which the entry for the new  directory  is
+                   being  placed  cannot be extended because there is no space
+                   left on the file system containing the directory.
 
-     [ENOSPC]    The new directory cannot be created because there there is no
-                 space left on the file system that will contain the
-                 directory.
+       [ENOSPC]    The new directory cannot be created because there there  is
+                   no  space left on the file system that will contain the di‐
+                   rectory.
 
-     [ENOSPC]    There are no free inodes on the file system on which the
-                 directory is being created.
+       [ENOSPC]    There are no free inodes on the file system  on  which  the
+                   directory is being created.
 
-     [EDQUOT]    The directory in which the entry for the new directory is
-                 being placed cannot be extended because the user's quota of
-                 disk blocks on the file system containing the directory has
+       [EDQUOT]    The  directory  in which the entry for the new directory is
+                   being placed cannot be extended because the user’s quota of
+                   disk blocks on the file system containing the directory has
+                   been exhausted.
 
-                 been exhausted.
+       [EDQUOT]    The new directory cannot  be  created  because  the  user’s
+                   quota  of  disk blocks on the file system that will contain
+                   the directory has been exhausted.
 
-     [EDQUOT]    The new directory cannot be created because the user's quota
-                 of disk blocks on the file system that will contain the
-                 directory has been exhausted.
+       [EDQUOT]    The user’s quota of inodes on the file system on which  the
+                   directory is being created has been exhausted.
 
-     [EDQUOT]    The user's quota of inodes on the file system on which the
-                 directory is being created has been exhausted.
+       [EIO]       An  I/O  error occurred while making the directory entry or
+                   allocating the inode.
 
-     [EIO]       An I/O error occurred while making the directory entry or
-                 allocating the inode.
+       [EIO]       An I/O error occurred while reading from or writing to  the
+                   file system.
 
-     [EIO]       An I/O error occurred while reading from or writing to the
-                 file system.
+       [EFAULT]    [4mPath[24m points outside the process’s allocated address space.
 
-     [EFAULT]    _P_a_t_h points outside the process's allocated address space.
+[1mSEE ALSO[0m
+       [4mchmod[24m(2), [4mstat[24m(2), [4mumask[24m(2)
 
-SSEEEE AALLSSOO
-     chmod(2),  stat(2),  umask(2)
+[1mSTANDARDS[0m
+       [1mMkdir[22m() conforms to IEEE Std 1003.1‐1988 (“POSIX”).
 
-SSTTAANNDDAARRDDSS
-     MMkkddiirr() conforms to IEEE Std 1003.1-1988 (``POSIX'').
-
-4.2 Berkeley Distribution       March 10, 1991                               2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4.2 Berkeley Distribution       March 10, 1991                        MKDIR(2)

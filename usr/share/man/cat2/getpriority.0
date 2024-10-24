@@ -1,66 +1,63 @@
-GETPRIORITY(2)            386BSD Programmer's Manual            GETPRIORITY(2)
+GETPRIORITY(2)                System Calls Manual               GETPRIORITY(2)
 
-NNAAMMEE
-     ggeettpprriioorriittyy, sseettpprriioorriittyy - get/set program scheduling priority
+[1mNAME[0m
+       getpriority, setpriority — get/set program scheduling priority
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//ttiimmee..hh>>
-     ##iinncclluuddee <<ssyyss//rreessoouurrccee..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <sys/time.h>[0m
+       [1m#include <sys/resource.h>[0m
 
-     _i_n_t
-     ggeettpprriioorriittyy(_i_n_t _w_h_i_c_h, _i_n_t _w_h_o)
+       [4mint[0m
+       [1mgetpriority[22m([4mint[24m [4mwhich[24m, [4mint[24m [4mwho[24m);
 
-     _i_n_t
-     sseettpprriioorriittyy(_i_n_t _w_h_i_c_h, _i_n_t _w_h_o, _i_n_t _p_r_i_o)
+       [4mint[0m
+       [1msetpriority[22m([4mint[24m [4mwhich[24m, [4mint[24m [4mwho[24m, [4mint[24m [4mprio[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The scheduling priority of the process, process group, or user, as
-     indicated by _w_h_i_c_h and _w_h_o is obtained with the ggeettpprriioorriittyy() call and
-     set with the sseettpprriioorriittyy() call.  _W_h_i_c_h is one of PRIO_PROCESS,
-     PRIO_PGRP, or PRIO_USER, and _w_h_o is interpreted relative to _w_h_i_c_h (a
-     process identifier for PRIO_PROCESS, process group identifier for
-     PRIO_PGRP, and a user ID for PRIO_USER). A zero value of _w_h_o denotes the
-     current process, process group, or user.  _P_r_i_o is a value in the range
-     -20 to 20.  The default priority is 0; lower priorities cause more
-     favorable scheduling.
+[1mDESCRIPTION[0m
+       The  scheduling priority of the process, process group, or user, as in‐
+       dicated by [4mwhich[24m and [4mwho[24m is obtained with the  [1mgetpriority[22m()  call  and
+       set  with  the  [1msetpriority[22m()  call.   [4mWhich[24m  is  one  of PRIO_PROCESS,
+       PRIO_PGRP, or PRIO_USER, and [4mwho[24m is interpreted relative  to  [4mwhich[24m  (a
+       process  identifier  for  PRIO_PROCESS,  process  group  identifier for
+       PRIO_PGRP, and a user ID for PRIO_USER).  A zero value of  [4mwho[24m  denotes
+       the  current  process,  process group, or user.  [4mPrio[24m is a value in the
+       range ‐20 to 20.  The default priority is  0;  lower  priorities  cause
+       more favorable scheduling.
 
-     The ggeettpprriioorriittyy() call returns the highest priority (lowest numerical
-     value) enjoyed by any of the specified processes.  The sseettpprriioorriittyy() call
-     sets the priorities of all of the specified processes to the specified
-     value.  Only the super-user may lower priorities.
+       The  [1mgetpriority[22m()  call returns the highest priority (lowest numerical
+       value) enjoyed by any of the specified  processes.   The  [1msetpriority[22m()
+       call sets the priorities of all of the specified processes to the spec‐
+       ified value.  Only the super‐user may lower priorities.
 
-RREETTUURRNN VVAALLUUEESS
-     Since ggeettpprriioorriittyy() can legitimately return the value -1, it is necessary
-     to clear the external variable _e_r_r_n_o prior to the call, then check it
-     afterward to determine if a -1 is an error or a legitimate value.  The
-     sseettpprriioorriittyy() call returns 0 if there is no error, or -1 if there is.
+[1mRETURN VALUES[0m
+       Since  [1mgetpriority[22m() can legitimately return the value ‐1, it is neces‐
+       sary to clear the external variable [4merrno[24m prior to the call, then check
+       it afterward to determine if a ‐1 is an error or  a  legitimate  value.
+       The  [1msetpriority[22m()  call returns 0 if there is no error, or ‐1 if there
+       is.
 
-EERRRROORRSS
-     GGeettpprriioorriittyy() and sseettpprriioorriittyy() will fail if:
+[1mERRORS[0m
+       [1mGetpriority[22m() and [1msetpriority[22m() will fail if:
 
-     [ESRCH]       No process was located using the _w_h_i_c_h and _w_h_o values
-                   specified.
+       [ESRCH]            No process was located using the [4mwhich[24m and [4mwho[24m  val‐
+                          ues specified.
 
-     [EINVAL]      _W_h_i_c_h was not one of PRIO_PROCESS, PRIO_PGRP, or PRIO_USER.
+       [EINVAL]           [4mWhich[24m  was  not  one  of PRIO_PROCESS, PRIO_PGRP, or
+                          PRIO_USER.
 
-     In addition to the errors indicated above, sseettpprriioorriittyy() will fail if:
+       In addition to the errors indicated above, [1msetpriority[22m() will fail if:
 
-     [EPERM]       A process was located, but neither its effective nor real
-                   user ID matched the effective user ID of the caller.
+       [EPERM]            A process was located, but neither its effective nor
+                          real user ID matched the effective user  ID  of  the
+                          caller.
 
-     [EACCES]      A non super-user attempted to lower a process priority.
+       [EACCES]           A non super‐user attempted to lower a process prior‐
+                          ity.
 
-SSEEEE AALLSSOO
-     nice(1),  fork(2),  renice(8)
+[1mSEE ALSO[0m
+       [4mnice[24m(1), [4mfork[24m(2), [4mrenice[24m(8)
 
-HHIISSTTOORRYY
-     The ggeettpprriioorriittyy function call appeared in 4.2BSD.
+[1mHISTORY[0m
+       The [1mgetpriority [22mfunction call appeared in 4.2BSD.
 
-4th Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
+4th Berkeley Distribution       March 10, 1991                  GETPRIORITY(2)

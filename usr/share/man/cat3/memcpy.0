@@ -1,66 +1,30 @@
-MEMCPY(3)                 386BSD Programmer's Manual                 MEMCPY(3)
+MEMCPY(3)                   Library Functions Manual                 MEMCPY(3)
 
-NNAAMMEE
-     mmeemmccppyy - copy byte string
+[1mNAME[0m
+       memcpy — copy byte string
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _v_o_i_d *
-     mmeemmccppyy(_v_o_i_d *_d_s_t, _c_o_n_s_t _v_o_i_d *_s_r_c, _s_i_z_e__t _l_e_n)
+       [4mvoid[24m [4m*[0m
+       [1mmemcpy[22m([4mvoid[24m [4m*dst[24m, [4mconst[24m [4mvoid[24m [4m*src[24m, [4msize_t[24m [4mlen[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The mmeemmccppyy() function copies _l_e_n bytes from string _s_r_c to string _d_s_t.
+[1mDESCRIPTION[0m
+       The [1mmemcpy[22m() function copies [4mlen[24m bytes from string [4msrc[24m to string [4mdst[24m.
 
-RREETTUURRNN VVAALLUUEESS
-     The mmeemmccppyy() function returns the original value of _d_s_t.
+[1mRETURN VALUES[0m
+       The [1mmemcpy[22m() function returns the original value of [4mdst[24m.
 
-SSEEEE AALLSSOO
-     bcopy(3),  memccpy(3),  memmove(3),  strcpy(3)
+[1mSEE ALSO[0m
+       [4mbcopy[24m(3), [4mmemccpy[24m(3), [4mmemmove[24m(3), [4mstrcpy[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The mmeemmccppyy() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mmemcpy[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BBUUGGSS
-     In this implementation mmeemmccppyy() is implemented using bcopy(3),  and
-     therefore the strings may overlap.  On other systems, copying overlapping
-     strings may produce surprises.  A simpler solution is to not use
-     mmeemmccppyy().
+[1mBUGS[0m
+       In  this  implementation  [1mmemcpy[22m()  is  implemented using [4mbcopy[24m(3), and
+       therefore the strings may overlap.  On other systems, copying  overlap‐
+       ping  strings  may produce surprises.  A simpler solution is to not use
+       [1mmemcpy[22m().
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                       MEMCPY(3)

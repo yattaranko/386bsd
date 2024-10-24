@@ -1,66 +1,34 @@
-STRCMP(3)                 386BSD Programmer's Manual                 STRCMP(3)
+STRCMP(3)                   Library Functions Manual                 STRCMP(3)
 
-NNAAMMEE
-     ssttrrccmmpp - compare strings
+[1mNAME[0m
+       strcmp — compare strings
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _i_n_t
-     ssttrrccmmpp(_c_o_n_s_t _c_h_a_r *_s_1, _c_o_n_s_t _c_h_a_r *_s_2)
+       [4mint[0m
+       [1mstrcmp[22m([4mconst[24m [4mchar[24m [4m*s1[24m, [4mconst[24m [4mchar[24m [4m*s2[24m);
 
-     _i_n_t
-     ssttrrnnccmmpp(_c_o_n_s_t _c_h_a_r *_s_1, _c_o_n_s_t _c_h_a_r *_s_2, _s_i_z_e__t _l_e_n)
+       [4mint[0m
+       [1mstrncmp[22m([4mconst[24m [4mchar[24m [4m*s1[24m, [4mconst[24m [4mchar[24m [4m*s2[24m, [4msize_t[24m [4mlen[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssttrrccmmpp() and ssttrrnnccmmpp() functions lexicographically compare the null-
-     terminated strings _s_1 and _s_2.
+[1mDESCRIPTION[0m
+       The  [1mstrcmp[22m()  and  [1mstrncmp[22m()  functions  lexicographically compare the
+       null‐terminated strings [4ms1[24m and [4ms2[24m.
 
-RREETTUURRNN VVAALLUUEESS
-     The ssttrrccmmpp() and ssttrrnnccmmpp() return an integer greater than, equal to, or
-     less than 0, according as the string _s_1 is greater than, equal to, or
-     less than the string _s_2. The comparison is done using unsigned
-     characters, so that `\200' is greater than `\0'.
+[1mRETURN VALUES[0m
+       The [1mstrcmp[22m() and [1mstrncmp[22m() return an integer greater than, equal to, or
+       less than 0, according as the string [4ms1[24m is greater than, equal  to,  or
+       less than the string [4ms2[24m.  The comparison is done using unsigned charac‐
+       ters, so that ‘\200’ is greater than ‘\0’.
 
-     The ssttrrnnccmmpp() compares not more than _l_e_n characters.
+       The [1mstrncmp[22m() compares not more than [4mlen[24m characters.
 
-SSEEEE AALLSSOO
-     bcmp(3),  memcmp(3),  strcasecmp(3),  strcoll(3),  strxfrm(3)
+[1mSEE ALSO[0m
+       [4mbcmp[24m(3), [4mmemcmp[24m(3), [4mstrcasecmp[24m(3), [4mstrcoll[24m(3), [4mstrxfrm[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ssttrrccmmpp() and ssttrrnnccmmpp() functions conform to ANSI C3.159-1989 (``ANSI
-     C'').
+[1mSTANDARDS[0m
+       The  [1mstrcmp[22m()  and  [1mstrncmp[22m()  functions  conform  to  ANSI X3.159‐1989
+       (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                       STRCMP(3)

@@ -11,7 +11,7 @@
 
 LDONLY=ldonly
 
-SRCHOME?=		/home/share/386bsd-2.0
+SRCHOME?=		/home/share/386bsd
 CFLAGS+=		${COPTS} ${NONSTDINC}
 CFLAGS+=		-Os -nostdinc -nostdlib -nodefaultlibs
 CFLAGS+=		-I${SRCHOME}/usr/src/include -I${SRCHOME}/usr/src/kernel/include

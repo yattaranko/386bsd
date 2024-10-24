@@ -1,66 +1,57 @@
-CTYPE(3)                  386BSD Programmer's Manual                  CTYPE(3)
+CTYPE(3)                    Library Functions Manual                  CTYPE(3)
 
-NNAAMMEE
-     iissaallpphhaa, iissuuppppeerr, iisslloowweerr, iissddiiggiitt, iissxxddiiggiitt, iissaallnnuumm, iissssppaaccee, iissppuunncctt,
-     iisspprriinntt, iissggrraapphh, iissccnnttrrll, iissaasscciiii, ttoouuppppeerr, ttoolloowweerr, ttooaasscciiii - character
-     classification macros
+[1mNAME[0m
+       isalpha,   isupper,   islower,  isdigit,  isxdigit,  isalnum,  isspace,
+       ispunct, isprint, isgraph, iscntrl, isascii, toupper, tolower,  toascii
+       — character classification macros
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ccttyyppee..hh>>
-     _i_n_t _c
+[1mSYNOPSIS[0m
+       [1m#include <ctype.h>[0m
+       [4mint[24m [4mc[0m
 
-     iissaallpphhaa(_c)
+       [1misalpha[22m([4mc[24m);
 
-     iissuuppppeerr(_c)
+       [1misupper[22m([4mc[24m);
 
-     iisslloowweerr(_c)
+       [1mislower[22m([4mc[24m);
 
-     iissddiiggiitt(_c)
+       [1misdigit[22m([4mc[24m);
 
-     iissxxddiiggiitt(_c)
+       [1misxdigit[22m([4mc[24m);
 
-     iissaallnnuumm(_c)
+       [1misalnum[22m([4mc[24m);
 
-     iissssppaaccee(_c)
+       [1misspace[22m([4mc[24m);
 
-     iissppuunncctt(_c)
+       [1mispunct[22m([4mc[24m);
 
-     iisspprriinntt(_c)
+       [1misprint[22m([4mc[24m);
 
-     iissggrraapphh(_c)
+       [1misgraph[22m([4mc[24m);
 
-     iissccnnttrrll(_c)
+       [1miscntrl[22m([4mc[24m);
 
-     iissaasscciiii(_c)
+       [1misascii[22m([4mc[24m);
 
-     ttoouuppppeerr(_c)
+       [1mtoupper[22m([4mc[24m);
 
-     ttoolloowweerr(_c)
+       [1mtolower[22m([4mc[24m);
 
-     ttooaasscciiii(_c)
+       [1mtoascii[22m([4mc[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The above macros perform character tests and conversions on the integer
-     _c.
+[1mDESCRIPTION[0m
+       The above macros perform character tests and conversions on the integer
+       [4mc[24m.
 
-     See the specific manual pages for more information.
+       See the specific manual pages for more information.
 
-SSEEEE AALLSSOO
-     isalpha(3),  isupper(3),  islower(3),  isdigit(3),  isxdigit(3),
-     isalnum(3),  isspace(3),  ispunct(3),  isprint(3),  isgraph(3),
-     iscntrl(3),  isascii(3),  toupper(3),  tolower(3),  toascii(3),  ascii(7)
+[1mSEE ALSO[0m
+       [4misalpha[24m(3),    [4misupper[24m(3),    [4mislower[24m(3),    [4misdigit[24m(3),   [4misxdigit[24m(3),
+       [4misalnum[24m(3), [4misspace[24m(3), [4mispunct[24m(3), [4misprint[24m(3), [4misgraph[24m(3), [4miscntrl[24m(3),
+       [4misascii[24m(3), [4mtoupper[24m(3), [4mtolower[24m(3), [4mtoascii[24m(3), [4mascii[24m(7)
 
-SSTTAANNDDAARRDDSS
-     These functions, except for ttoouuppppeerr(), ttoolloowweerr() and ttooaasscciiii(), conform
-     to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       These functions, except for [1mtoupper[22m(), [1mtolower[22m() and [1mtoascii[22m(), conform
+       to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                April 19, 1991                               1
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                    April 19, 1991                        CTYPE(3)

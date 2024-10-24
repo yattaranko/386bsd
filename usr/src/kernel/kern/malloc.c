@@ -176,7 +176,8 @@ free(void *addr, int type)
 
 	if (addr < (void *)&end ||
 	   (vm_offset_t)addr < vm_map_min(kmem_map) ||
-	   (vm_offset_t)addr > vm_map_max(kmem_map)) {
+	   (vm_offset_t)addr > vm_map_max(kmem_map))
+	{
 		panic("free: outside arena");
 	}
 
@@ -184,15 +185,22 @@ free(void *addr, int type)
 	size = 1 << kup->ku_indx;
 #ifdef DIAGNOSTIC
 	if (size > NBPG * CLSIZE)
+	{
 		alloc = addrmask[BUCKETINDX(NBPG * CLSIZE)];
+	}
 	else
+	{
 		alloc = addrmask[kup->ku_indx];
+	}
 	if (((u_long)addr & alloc) != 0)
+	{
 		panic("free: unaligned addr");
+	}
 #endif /* DIAGNOSTIC */
 	kbp = &bucket[kup->ku_indx];
 	s = splimp();
-	if (size >= MAXALLOCSAVE) {
+	if (size >= MAXALLOCSAVE)
+	{
 		kmem_free(kmem_map, (vm_offset_t)addr, ctob(kup->ku_pagecnt));
 #ifdef KMEMSTATS
 		size = kup->ku_pagecnt << PGSHIFT;
@@ -201,7 +209,9 @@ free(void *addr, int type)
 		kup->ku_pagecnt = 0;
 		if (ksp->ks_memuse + size >= ksp->ks_limit &&
 		    ksp->ks_memuse < ksp->ks_limit)
+		{
 			wakeup((caddr_t)ksp);
+		}
 		ksp->ks_inuse--;
 		kbp->kb_total -= 1;
 #endif /* KMEMSTATS */
@@ -212,52 +222,77 @@ free(void *addr, int type)
 	kbp->kb_totalfree++;
 	kup->ku_freecnt++;
 	if (kup->ku_freecnt >= kbp->kb_elmpercl)
+	{
 		if (kup->ku_freecnt > kbp->kb_elmpercl)
+		{
 			panic("free: multiple frees");
-		else if (kbp->kb_totalfree > kbp->kb_highwat && type != M_MBUF) {
-			caddr_t freepage = kuptob(kup);
-			register caddr_t *cpp, *nxt;
-			int freesize = kup->ku_freecnt * size;
-
-			ksp->ks_memuse -= size;
-			kup->ku_indx = 0;
-			if (ksp->ks_memuse + size >= ksp->ks_limit &&
-				ksp->ks_memuse < ksp->ks_limit)
-				wakeup((caddr_t)ksp);
-			ksp->ks_inuse--;
-			kbp->kb_total -= kbp->kb_elmpercl;
-			kbp->kb_totalfree -= kbp->kb_elmpercl;
-
-			if (--kup->ku_freecnt != 0) {
-
-			/* walk bucket list deleting entries in page freed */
-			for (cpp = &kbp->kb_next; *cpp != NULL ; ) {
-				nxt = *(caddr_t **)cpp;
-				if ((caddr_t)nxt >= freepage
-				    && (caddr_t)nxt < freepage + freesize) {
-					while (*nxt >= freepage
-					    && *nxt < freepage + freesize) {
-						nxt = *(caddr_t **)nxt;
-						kup->ku_freecnt--;
-					}
-					*cpp = *(caddr_t *) nxt;
-					kup->ku_freecnt--;
-				} else if (nxt == NULL)
-					break;
-				else
-					cpp = nxt;
-			}
-			if (kup->ku_freecnt != 0)
-				panic("free: missing a bucket");
-			}
-			kmem_free(kmem_map, (vm_offset_t)freepage, freesize);
-			splx(s);
-			return;
 		}
+		else
+		{
+			if ((kbp->kb_totalfree > kbp->kb_highwat) && (type != M_MBUF))
+			{
+				caddr_t freepage = kuptob(kup);
+				register caddr_t *cpp, *nxt;
+				int freesize = kup->ku_freecnt * size;
+
+				ksp->ks_memuse -= size;
+				kup->ku_indx = 0;
+				if (ksp->ks_memuse + size >= ksp->ks_limit &&
+					ksp->ks_memuse < ksp->ks_limit)
+				{
+					wakeup((caddr_t)ksp);
+				}
+				ksp->ks_inuse--;
+				kbp->kb_total -= kbp->kb_elmpercl;
+				kbp->kb_totalfree -= kbp->kb_elmpercl;
+
+				if (--kup->ku_freecnt != 0)
+				{
+					/* walk bucket list deleting entries in page freed */
+					for (cpp = &kbp->kb_next; *cpp != NULL ; )
+					{
+						nxt = *(caddr_t **)cpp;
+						if ((caddr_t)nxt >= freepage
+							&& (caddr_t)nxt < freepage + freesize)
+						{
+							while (*nxt >= freepage
+								&& *nxt < freepage + freesize)
+							{
+								nxt = *(caddr_t **)nxt;
+								kup->ku_freecnt--;
+							}
+							*cpp = *(caddr_t *) nxt;
+							kup->ku_freecnt--;
+						}
+						else
+						{
+							if (nxt == NULL)
+							{
+								break;
+							}
+							else
+							{
+								cpp = nxt;
+							}
+						}
+					}
+					if (kup->ku_freecnt != 0)
+					{
+						panic("free: missing a bucket");
+					}
+				}
+				kmem_free(kmem_map, (vm_offset_t)freepage, freesize);
+				splx(s);
+				return;
+			}
+		}
+	}
 	ksp->ks_memuse -= size;
 	if (ksp->ks_memuse + size >= ksp->ks_limit &&
 	    ksp->ks_memuse < ksp->ks_limit)
+	{
 		wakeup((caddr_t)ksp);
+	}
 	ksp->ks_inuse--;
 #endif	/* KMEMSTATS */
 	*(caddr_t *)addr = kbp->kb_next;

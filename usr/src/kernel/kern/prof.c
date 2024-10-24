@@ -68,11 +68,7 @@
 /*
  * Request process profiling system call handler.
  */
-int
-profil(p, args, retval)
-	struct proc *p;
-	struct uprof *args;
-	int *retval;
+int profil(struct proc* p, struct uprof* args, int* retval)
 {
 	caddr_t base;
 	int sz;

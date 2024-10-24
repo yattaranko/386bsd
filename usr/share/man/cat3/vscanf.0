@@ -1,198 +1,201 @@
-SCANF(3)                  386BSD Programmer's Manual                  SCANF(3)
+SCANF(3)                    Library Functions Manual                  SCANF(3)
 
-NNAAMMEE
-     ssccaannff, ffssccaannff, ssssccaannff, vvssccaannff, vvssssccaannff, vvffssccaannff - input format conversion
+[1mNAME[0m
+       scanf,  fscanf, sscanf, vscanf, vsscanf, vfscanf — input format conver‐
+       sion
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdio.h>[0m
 
-     _i_n_t
-     ssccaannff(_c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t, ...)
+       [4mint[0m
+       [1mscanf[22m([4mconst[24m [4mchar[24m [4m*format[24m, [4m...[24m);
 
-     _i_n_t
-     ffssccaannff(_F_I_L_E *_s_t_r_e_a_m, _c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t, ...)
+       [4mint[0m
+       [1mfscanf[22m([4mFILE[24m [4m*stream[24m, [4mconst[24m [4mchar[24m [4m*format[24m, [4m...[24m);
 
-     _i_n_t
-     ssssccaannff(_c_o_n_s_t _c_h_a_r *_s_t_r, _c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t, ...)
+       [4mint[0m
+       [1msscanf[22m([4mconst[24m [4mchar[24m [4m*str[24m, [4mconst[24m [4mchar[24m [4m*format[24m, [4m...[24m);
 
-     ##iinncclluuddee <<ssttddaarrgg..hh>>
+       [1m#include <stdarg.h>[0m
 
-     _i_n_t
-     vvssccaannff(_c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t, _v_a__l_i_s_t _a_p)
+       [4mint[0m
+       [1mvscanf[22m([4mconst[24m [4mchar[24m [4m*format[24m, [4mva_list[24m [4map[24m);
 
-     _i_n_t
-     vvssssccaannff(_c_o_n_s_t _c_h_a_r *_s_t_r, _c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t, _v_a__l_i_s_t _a_p)
+       [4mint[0m
+       [1mvsscanf[22m([4mconst[24m [4mchar[24m [4m*str[24m, [4mconst[24m [4mchar[24m [4m*format[24m, [4mva_list[24m [4map[24m);
 
-     _i_n_t
-     vvffssccaannff(_F_I_L_E *_s_t_r_e_a_m, _c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t, _v_a__l_i_s_t _a_p)
+       [4mint[0m
+       [1mvfscanf[22m([4mFILE[24m [4m*stream[24m, [4mconst[24m [4mchar[24m [4m*format[24m, [4mva_list[24m [4map[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssccaannff() family of functions scans input according to a _f_o_r_m_a_t as
-     described below.  This format may contain _c_o_n_v_e_r_s_i_o_n _s_p_e_c_i_f_i_e_r_s; the
-     results from such conversions, if any, are stored through the _p_o_i_n_t_e_r
-     arguments.  The ssccaannff() function reads input from the standard input
-     stream _s_t_d_i_n, ffssccaannff() reads input from the stream pointer _s_t_r_e_a_m, and
-     ssssccaannff() reads its input from the character string pointed to by _s_t_r. The
-     vvffssccaannff() function is analogous to vfprintf(3) and reads input from the
-     stream pointer _s_t_r_e_a_m using a variable argument list of pointers (see
-     stdarg(3)).  The vvssccaannff() function scans a variable argument list from
-     the standard input and the vvssssccaannff() function scans it from a string;
-     these are analogous to the vvpprriinnttff() and vvsspprriinnttff() functions
-     respectively.  Each successive _p_o_i_n_t_e_r argument must correspond properly
-     with each successive conversion specifier (but see `suppression' below).
-     All conversions are introduced by the %% (percent sign) character.  The
-     _f_o_r_m_a_t string may also contain other characters.  White space (such as
-     blanks, tabs, or newlines) in the _f_o_r_m_a_t string match any amount of white
-     space, including none, in the input.  Everything else matches only
-     itself.  Scanning stops when an input character does not match such a
-     format character.  Scanning also stops when an input conversion cannot be
-     made (see below).
+[1mDESCRIPTION[0m
+       The [1mscanf[22m() family of functions scans input according to  a  [4mformat[24m  as
+       described  below.   This  format may contain [4mconversion[24m [4mspecifiers[24m; the
+       results from such conversions, if any, are stored through  the  [4mpointer[0m
+       arguments.   The  [1mscanf[22m()  function reads input from the standard input
+       stream [4mstdin[24m, [1mfscanf[22m() reads input from the stream pointer [4mstream[24m,  and
+       [1msscanf[22m()  reads  its input from the character string pointed to by [4mstr[24m.
+       The [1mvfscanf[22m() function is analogous to [4mvfprintf[24m(3) and reads input from
+       the stream pointer [4mstream[24m using a variable argument  list  of  pointers
+       (see  [4mstdarg[24m(3)).  The [1mvscanf[22m() function scans a variable argument list
+       from the standard input and the [1mvsscanf[22m()  function  scans  it  from  a
+       string;  these  are analogous to the [1mvprintf[22m() and [1mvsprintf[22m() functions
+       respectively.  Each successive [4mpointer[24m argument must  correspond  prop‐
+       erly  with  each successive conversion specifier (but see ‘suppression’
+       below).  All conversions are introduced by the [1m% [22m(percent sign) charac‐
+       ter.  The [4mformat[24m string may also contain other characters.  White space
+       (such as blanks, tabs, or newlines) in  the  [4mformat[24m  string  match  any
+       amount  of  white space, including none, in the input.  Everything else
+       matches only itself.  Scanning stops when an input character  does  not
+       match  such a format character.  Scanning also stops when an input con‐
+       version cannot be made (see below).
 
-CCOONNVVEERRSSIIOONNSS
-     Following the %% character introducing a conversion there may be a number
-     of _f_l_a_g characters, as follows:
+[1mCONVERSIONS[0m
+       Following the [1m% [22mcharacter introducing a conversion there may be a  num‐
+       ber of [4mflag[24m characters, as follows:
 
-     **       Suppresses assignment.  The conversion that follows occurs as
-             usual, but no pointer is used; the result of the conversion is
-             simply discarded.
+       [1m*       [22mSuppresses  assignment.   The conversion that follows occurs as
+               usual, but no pointer is used; the result of the conversion  is
+               simply discarded.
 
-     hh       Indicates that the conversion will be one of ddiioouuxx or nn and the
-             next pointer is a pointer to a _s_h_o_r_t _i_n_t (rather than _i_n_t).
+       [1mh       [22mIndicates that the conversion will be one of [1mdioux [22mor [1mn [22mand the
+               next pointer is a pointer to a [4mshort[24m [4mint[24m (rather than [4mint[24m).
 
-     ll       Indicates either that the conversion will be one of ddiioouuxx or nn
-             and the next pointer is a pointer to a _l_o_n_g _i_n_t (rather than
-             _i_n_t), or that the conversion will be one of eeffgg and the next
+       [1ml       [22mIndicates  either that the conversion will be one of [1mdioux [22mor [1mn[0m
+               and the next pointer is a pointer to a [4mlong[24m  [4mint[24m  (rather  than
+               [4mint[24m),  or  that  the conversion will be one of [1mefg [22mand the next
+               pointer is a pointer to [4mdouble[24m (rather than [4mfloat[24m).
 
-             pointer is a pointer to _d_o_u_b_l_e (rather than _f_l_o_a_t).
+       [1mL       [22mIndicates that the conversion will be [1mefg [22mand the next  pointer
+               is  a  pointer  to [4mlong[24m [4mdouble[24m.  (This type is not implemented;
+               the [1mL [22mflag is currently ignored.)
 
-     LL       Indicates that the conversion will be eeffgg and the next pointer is
-             a pointer to _l_o_n_g _d_o_u_b_l_e. (This type is not implemented; the LL
-             flag is currently ignored.)
+       In addition to these flags, there may  be  an  optional  maximum  field
+       width,  expressed  as  a decimal integer, between the [1m% [22mand the conver‐
+       sion.  If no width is given, a default of ‘infinity’ is used (with  one
+       exception,  below);  otherwise at most this many characters are scanned
+       in processing the conversion.  Before conversion begins,  most  conver‐
+       sions  skip  white  space;  this white space is not counted against the
+       field width.
 
-     In addition to these flags, there may be an optional maximum field width,
-     expressed as a decimal integer, between the %% and the conversion.  If no
-     width is given, a default of `infinity' is used (with one exception,
-     below); otherwise at most this many characters are scanned in processing
-     the conversion.  Before conversion begins, most conversions skip white
-     space; this white space is not counted against the field width.
+       The following conversions are available:
 
-     The following conversions are available:
+       [1m%     [22mMatches a literal ‘%’.   That  is,  ‘%%’  in  the  format  string
+             matches a single input ‘%’ character.  No conversion is done, and
+             assignment does not occur.
 
-     %%     Matches a literal `%'.  That is, `%%' in the format string matches
-           a single input `%' character.  No conversion is done, and
-           assignment does not occur.
+       [1md     [22mMatches  an  optionally  signed decimal integer; the next pointer
+             must be a pointer to [4mint[24m.
 
-     dd     Matches an optionally signed decimal integer; the next pointer must
-           be a pointer to _i_n_t.
+       [1mD     [22mEquivalent to [4mld[24m; this exists only for backwards compatibility.
 
-     DD     Equivalent to ld;  this exists only for backwards compatibility.
+       [1mi     [22mMatches an optionally signed integer; the next pointer must be  a
+             pointer to [4mint[24m.  The integer is read in base 16 if it begins with
+             ‘0x’  or  ‘0X’,  in  base 8 if it begins with ‘0’, and in base 10
+             otherwise.  Only characters that correspond to the base are used.
 
-     ii     Matches an optionally signed integer; the next pointer must be a
-           pointer to _i_n_t. The integer is read in base 16 if it begins with
-           `0x' or `0X', in base 8 if it begins with `0', and in base 10
-           otherwise.  Only characters that correspond to the base are used.
+       [1mo     [22mMatches an octal integer; the next pointer must be a  pointer  to
+             [4munsigned[24m [4mint[24m.
 
-     oo     Matches an octal integer; the next pointer must be a pointer to
-           _u_n_s_i_g_n_e_d _i_n_t.
+       [1mO     [22mEquivalent to [4mlo[24m; this exists for backwards compatibility.
 
-     OO     Equivalent to lo;  this exists for backwards compatibility.
+       [1mu     [22mMatches  an  optionally  signed decimal integer; the next pointer
+             must be a pointer to [4munsigned[24m [4mint[24m.
 
-     uu     Matches an optionally signed decimal integer; the next pointer must
-           be a pointer to _u_n_s_i_g_n_e_d _i_n_t.
+       [1mx     [22mMatches an optionally a  signed  hexadecimal  integer;  the  next
+             pointer must be a pointer to [4munsigned[24m [4mint[24m.
 
-     xx     Matches an optionally a signed hexadecimal integer; the next
-           pointer must be a pointer to _u_n_s_i_g_n_e_d _i_n_t.
+       [1mX     [22mEquivalent   to   [1mlx[22m;   this   violates   the   ANSI  X3.159‐1989
+             (“ANSI C89”), but is backwards compatible with previous Unix sys‐
+             tems.
 
-     XX     Equivalent to llxx; this violates the ANSI C3.159-1989 (``ANSI C''),
-           but is backwards compatible with previous UNIX systems.
+       [1mf     [22mMatches an optionally  signed  floating‐point  number;  the  next
+             pointer must be a pointer to [4mfloat[24m.
 
-     ff     Matches an optionally signed floating-point number; the next
-           pointer must be a pointer to _f_l_o_a_t.
+       [1me     [22mEquivalent to [1mf[22m.
 
-     ee     Equivalent to ff.
+       [1mg     [22mEquivalent to [1mf[22m.
 
-     gg     Equivalent to ff.
+       [1mE     [22mEquivalent   to   [1mlf[22m;   this   violates   the   ANSI  X3.159‐1989
+             (“ANSI C89”), but is backwards compatible with previous Unix sys‐
+             tems.
 
-     EE     Equivalent to llff; this violates the ANSI C3.159-1989 (``ANSI C''),
-           but is backwards compatible with previous UNIX systems.
+       [1mF     [22mEquivalent to [1mlf[22m; this exists only for backwards compatibility.
 
-     FF     Equivalent to llff; this exists only for backwards compatibility.
+       [1ms     [22mMatches  a  sequence  of  non‐white‐space  characters;  the  next
+             pointer  must  be  a pointer to [4mchar[24m, and the array must be large
+             enough to accept all the sequence and the terminating NUL charac‐
+             ter.  The input string stops at white space  or  at  the  maximum
+             field width, whichever occurs first.
 
-     ss     Matches a sequence of non-white-space characters; the next pointer
-           must be a pointer to _c_h_a_r, and the array must be large enough to
-           accept all the sequence and the terminating NUL character.  The
-           input string stops at white space or at the maximum field width,
-           whichever occurs first.
+       [1mc     [22mMatches  a  sequence  of  [4mwidth[24m count characters (default 1); the
+             next pointer must be a pointer to [4mchar[24m, and there must be  enough
+             room  for  all the characters (no terminating NUL is added).  The
+             usual skip of leading white space is suppressed.  To  skip  white
+             space first, use an explicit space in the format.
 
-     cc     Matches a sequence of _w_i_d_t_h count characters (default 1); the next
-           pointer must be a pointer to _c_h_a_r, and there must be enough room
-           for all the characters (no terminating NUL is added).  The usual
-           skip of leading white space is suppressed.  To skip white space
+       [1m[     [22mMatches  a nonempty sequence of characters from the specified set
+             of accepted characters; the next pointer must  be  a  pointer  to
+             [4mchar[24m, and there must be enough room for all the characters in the
+             string,  plus  a  terminating  NUL  character.  The usual skip of
+             leading white space is suppressed.  The string is to be  made  up
+             of characters in (or not in) a particular set; the set is defined
+             by  the  characters  between  the  open bracket [ character and a
+             close bracket ] character.  The set [4mexcludes[24m those characters  if
+             the first character after the open bracket is a circumflex [1mˆ[22m.  To
+             include  a  close bracket in the set, make it the first character
+             after the open bracket or the circumflex; any other position will
+             end the set.  The hyphen character [1m‐ [22mis also special; when placed
+             between two other characters, it adds all intervening  characters
+             to  the set.  To include a hyphen, make it the last character be‐
+             fore the final close bracket.  For instance, ‘[ˆ]0‐9‐]’ means the
+             set ‘everything except close bracket, zero through nine, and  hy‐
+             phen’.  The string ends with the appearance of a character not in
+             the  (or, with a circumflex, in) set or when the field width runs
+             out.
 
-           first, use an explicit space in the format.
+       [1mp     [22mMatches a pointer value (as printed by ‘%p’  in  [4mprintf[24m(3));  the
+             next pointer must be a pointer to [4mvoid[24m.
 
-     [[     Matches a nonempty sequence of characters from the specified set of
-           accepted characters; the next pointer must be a pointer to _c_h_a_r,
-           and there must be enough room for all the characters in the string,
-           plus a terminating NUL character.  The usual skip of leading white
-           space is suppressed.  The string is to be made up of characters in
-           (or not in) a particular set; the set is defined by the characters
-           between the open bracket [ character and a close bracket ]
-           character.  The set _e_x_c_l_u_d_e_s those characters if the first
-           character after the open bracket is a circumflex ^^. To include a
-           close bracket in the set, make it the first character after the
-           open bracket or the circumflex; any other position will end the
-           set.  The hyphen character -- is also special; when placed between
-           two other characters, it adds all intervening characters to the
-           set.  To include a hyphen, make it the last character before the
-           final close bracket.  For instance, `[^]0-9-]' means the set
-           `everything except close bracket, zero through nine, and hyphen'.
-           The string ends with the appearance of a character not in the (or,
-           with a circumflex, in) set or when the field width runs out.
+       [1mn     [22mNothing  is  expected; instead, the number of characters consumed
+             thus far from the input is stored through the next pointer, which
+             must be a pointer to [4mint[24m.  This is [4mnot[24m a conversion, although  it
+             can be suppressed with the [1m* [22mflag.
 
-     pp     Matches a pointer value (as printed by `%p' in printf(3));  the
-           next pointer must be a pointer to _v_o_i_d.
+       For  backwards compatibility, other conversion characters (except ‘\0’)
+       are taken as if they were ‘%d’ or, if uppercase, ‘%ld’, and a  ‘conver‐
+       sion’  of ‘%\0’ causes an immediate return of EOF.  The [1mF [22mand [1mX [22mconver‐
+       sions will be changed in the future to conform to the ANSI C  standard,
+       after which they will act like [1mf [22mand [1mx [22mrespectively.
 
-     nn     Nothing is expected; instead, the number of characters consumed
-           thus far from the input is stored through the next pointer, which
-           must be a pointer to _i_n_t. This is _n_o_t a conversion, although it can
-           be suppressed with the ** flag.
+[1mRETURN VALUES[0m
+       These functions return the number of input items assigned, which can be
+       fewer than provided for, or even zero, in the event of a matching fail‐
+       ure.   Zero indicates that, while there was input available, no conver‐
+       sions were assigned; typically this is due to an invalid input  charac‐
+       ter,  such as an alphabetic character for a ‘%d’ conversion.  The value
+       EOF is returned if an input failure occurs before any  conversion  such
+       as  an end‐of‐file occurs. If an error or end‐of‐file occurs after con‐
+       version has begun, the number of conversions  which  were  successfully
+       completed is returned.
 
-     For backwards compatibility, other conversion characters (except `\0')
-     are taken as if they were `%d' or, if uppercase, `%ld', and a
-     `conversion' of `%\0' causes an immediate return of EOF. The FF and XX
-     conversions will be changed in the future to conform to the ANSI C
-     standard, after which they will act like ff and xx respectively.
+[1mSEE ALSO[0m
+       [4mstrtol[24m(3), [4mstrtoul[24m(3), [4mstrtod[24m(3), [4mgetc[24m(3), [4mprintf[24m(3)
 
-RREETTUURRNN VVAALLUUEESS
-     These functions return the number of input items assigned, which can be
-     fewer than provided for, or even zero, in the event of a matching
-     failure.  Zero indicates that, while there was input available, no
-     conversions were assigned; typically this is due to an invalid input
-     character, such as an alphabetic character for a `%d' conversion.  The
-     value EOF is returned if an input failure occurs before any conversion
-     such as an end-of-file occurs. If an error or end-of-file occurs after
-     conversion has begun, the number of conversions which were successfully
-     completed is returned.
+[1mSTANDARDS[0m
+       The   functions   [1mfscanf[22m(),  [1mscanf[22m(),  and  [1msscanf[22m()  conform  to  ANSI
+       X3.159‐1989 (“ANSI C89”).
 
-SSEEEE AALLSSOO
-     strtol(3),  strtoul(3),  strtod(3),  getc(3),  printf(3)
+[1mHISTORY[0m
+       The functions [1mvscanf[22m(), [1mvsscanf[22m() and [1mvfscanf[22m() are  new  to  this  re‐
+       lease.
 
-SSTTAANNDDAARRDDSS
-     The functions ffssccaannff(), ssccaannff(), and ssssccaannff() conform to ANSI C3.159-1989
-     (``ANSI C'').
+[1mBUGS[0m
+       The current situation with [1m%F [22mand [1m%X [22mconversions is unfortunate.
 
-HHIISSTTOORRYY
-     The functions vvssccaannff(), vvssssccaannff() and vvffssccaannff() are new to this release.
+       All  of  the backwards compatibility formats will be removed in the fu‐
+       ture.
 
-BBUUGGSS
-     The current situation with %%FF and %%XX conversions is unfortunate.
+       Numerical strings are truncated to 512 characters; for example, [1m%f  [22mand
+       [1m%d [22mare implicitly [1m%512f [22mand [1m%512d[22m.
 
-     All of the backwards compatibility formats will be removed in the future.
-
-     Numerical strings are truncated to 512 characters; for example, %%ff and %%dd
-     are implicitly %%551122ff and %%551122dd.
-
-BSD Experimental                January 8, 1993                              3
-
-
+FreeBSD 13.2                    January 8, 1993                       SCANF(3)

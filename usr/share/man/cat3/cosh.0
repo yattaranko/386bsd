@@ -1,66 +1,27 @@
-COSH(3)                   386BSD Programmer's Manual                   COSH(3)
+COSH(3)                     Library Functions Manual                   COSH(3)
 
-NNAAMMEE
-     ccoosshh - hyperbolic cosine function
+[1mNAME[0m
+       cosh — hyperbolic cosine function
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<mmaatthh..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <math.h>[0m
 
-     _d_o_u_b_l_e
-     ccoosshh(_d_o_u_b_l_e _x)
+       [4mdouble[0m
+       [1mcosh[22m([4mdouble[24m [4mx[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ccoosshh() function computes the hyperbolic cosine of _x.
+[1mDESCRIPTION[0m
+       The [1mcosh[22m() function computes the hyperbolic cosine of [4mx[24m.
 
-RREETTUURRNN VVAALLUUEESS
-     The ccoosshh() function returns the hyperbolic cosine unless the magnitude of
-     _x is too large; in this event, the global variable _e_r_r_n_o is set to
-     ERANGE.
+[1mRETURN VALUES[0m
+       The  [1mcosh[22m() function returns the hyperbolic cosine unless the magnitude
+       of [4mx[24m is too large; in this event, the global variable [4merrno[24m is  set  to
+       ERANGE.
 
-SSEEEE AALLSSOO
-     acos(3),  asin(3),  atan(3),  atan2(3),  cos(3),  sin(3),  sinh(3),
-     tan(3),  tanh(3),  math(3),
+[1mSEE ALSO[0m
+       [4macos[24m(3),  [4masin[24m(3),  [4matan[24m(3), [4matan2[24m(3), [4mcos[24m(3), [4msin[24m(3), [4msinh[24m(3), [4mtan[24m(3),
+       [4mtanh[24m(3), [4mmath[24m(3),
 
-SSTTAANNDDAARRDDSS
-     The ccoosshh() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mcosh[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                  May 2, 1991                                1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                      May 2, 1991                          COSH(3)

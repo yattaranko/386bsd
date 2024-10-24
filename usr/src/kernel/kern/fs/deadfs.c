@@ -229,10 +229,7 @@ struct vnodeops dead_vnodeops = {
  * Trivial lookup routine that always fails.
  */
 /* ARGSUSED */
-dead_lookup(vp, ndp, p)
-	struct vnode *vp;
-	struct nameidata *ndp;
-	struct proc *p;
+int dead_lookup(struct vnode* vp, struct nameidata* ndp, struct proc* p)
 {
 
 	ndp->ni_dvp = vp;
@@ -244,11 +241,7 @@ dead_lookup(vp, ndp, p)
  * Open always fails as if device did not exist.
  */
 /* ARGSUSED */
-dead_open(vp, mode, cred, p)
-	struct vnode *vp;
-	int mode;
-	struct ucred *cred;
-	struct proc *p;
+int dead_open(struct vnode* vp, int mode, struct ucred* cred, struct proc* p)
 {
 
 	return (ENXIO);
@@ -258,11 +251,7 @@ dead_open(vp, mode, cred, p)
  * Vnode op for read
  */
 /* ARGSUSED */
-dead_read(vp, uio, ioflag, cred)
-	struct vnode *vp;
-	struct uio *uio;
-	int ioflag;
-	struct ucred *cred;
+int dead_read(struct vnode* vp, struct uio* uio, int ioflag, struct ucred* cred)
 {
 
 	if (chkvnlock(vp))
@@ -279,11 +268,7 @@ dead_read(vp, uio, ioflag, cred)
  * Vnode op for write
  */
 /* ARGSUSED */
-dead_write(vp, uio, ioflag, cred)
-	register struct vnode *vp;
-	struct uio *uio;
-	int ioflag;
-	struct ucred *cred;
+int dead_write(register struct vnode* vp, struct uio* uio, int ioflag, struct ucred* cred)
 {
 
 	if (chkvnlock(vp))
@@ -295,13 +280,8 @@ dead_write(vp, uio, ioflag, cred)
  * Device ioctl operation.
  */
 /* ARGSUSED */
-dead_ioctl(vp, com, data, fflag, cred, p)
-	struct vnode *vp;
-	register int com;
-	caddr_t data;
-	int fflag;
-	struct ucred *cred;
-	struct proc *p;
+int dead_ioctl(struct vnode* vp, register int com, caddr_t data, int fflag,
+				struct ucred* cred, struct proc*p)
 {
 
 	if (!chkvnlock(vp))
@@ -310,11 +290,8 @@ dead_ioctl(vp, com, data, fflag, cred, p)
 }
 
 /* ARGSUSED */
-dead_select(vp, which, fflags, cred, p)
-	struct vnode *vp;
-	int which, fflags;
-	struct ucred *cred;
-	struct proc *p;
+int dead_select(struct vnode* vp, int which, int fflags,
+				struct ucred* cred, struct proc* p)
 {
 
 	/*
@@ -326,8 +303,7 @@ dead_select(vp, which, fflags, cred, p)
 /*
  * Just call the device strategy routine
  */
-dead_strategy(bp)
-	register struct buf *bp;
+int dead_strategy(register struct buf* bp)
 {
 
 	if (bp->b_vp == NULL || !chkvnlock(bp->b_vp)) {
@@ -341,8 +317,7 @@ dead_strategy(bp)
 /*
  * Wait until the vnode has finished changing state.
  */
-dead_lock(vp)
-	struct vnode *vp;
+int dead_lock(struct vnode* vp)
 {
 
 	if (!chkvnlock(vp))
@@ -353,11 +328,7 @@ dead_lock(vp)
 /*
  * Wait until the vnode has finished changing state.
  */
-dead_bmap(vp, bn, vpp, bnp)
-	struct vnode *vp;
-	daddr_t bn;
-	struct vnode **vpp;
-	daddr_t *bnp;
+int dead_bmap(struct vnode* vp, daddr_t bn, struct vnode** vpp, daddr_t* bnp)
 {
 
 	if (!chkvnlock(vp))
@@ -369,17 +340,17 @@ dead_bmap(vp, bn, vpp, bnp)
  * Print out the contents of a dead vnode.
  */
 /* ARGSUSED */
-dead_print(vp)
-	struct vnode *vp;
+int dead_print(struct vnode* vp)
 {
 
 	printf("tag VT_NON, dead vnode\n");
+	return (0);
 }
 
 /*
  * Empty vnode failed operation
  */
-dead_ebadf()
+int dead_ebadf()
 {
 
 	return (EBADF);
@@ -388,17 +359,19 @@ dead_ebadf()
 /*
  * Empty vnode bad operation
  */
-dead_badop()
+int dead_badop()
 {
 
 	panic("dead_badop called");
 	/* NOTREACHED */
+
+	return (0);
 }
 
 /*
  * Empty vnode null operation
  */
-dead_nullop()
+int dead_nullop()
 {
 
 	return (0);

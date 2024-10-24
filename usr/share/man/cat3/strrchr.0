@@ -1,66 +1,28 @@
-STRRCHR(3)                386BSD Programmer's Manual                STRRCHR(3)
+STRRCHR(3)                  Library Functions Manual                STRRCHR(3)
 
-NNAAMMEE
-     ssttrrrrcchhrr - locate character in string
+[1mNAME[0m
+       strrchr — locate character in string
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _c_h_a_r *
-     ssttrrrrcchhrr(_c_o_n_s_t _c_h_a_r *_s, _i_n_t _c)
+       [4mchar[24m [4m*[0m
+       [1mstrrchr[22m([4mconst[24m [4mchar[24m [4m*s[24m, [4mint[24m [4mc[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssttrrrrcchhrr() function locates the last occurrence of _c (converted to a
-     char) in the string _s. If _c is `\0', ssttrrrrcchhrr() locates the terminating
-     `\0'.
+[1mDESCRIPTION[0m
+       The [1mstrrchr[22m() function locates the last occurrence of [4mc[24m (converted to a
+       char) in the string [4ms[24m.  If [4mc[24m is ‘\0’, [1mstrrchr[22m() locates the terminating
+       ‘\0’.
 
-RREETTUURRNN VVAALLUUEESS
-     The ssttrrrrcchhrr() function returns a pointer to the character, or a null
-     pointer if _c does not occur anywhere in _s.
+[1mRETURN VALUES[0m
+       The  [1mstrrchr[22m()  function  returns a pointer to the character, or a null
+       pointer if [4mc[24m does not occur anywhere in [4ms[24m.
 
-SSEEEE AALLSSOO
-     index(3),  memchr(3),  rindex(3),  strchr(3),  strcspn(3),  strpbrk(3),
-     strsep(3),  strspn(3),  strstr(3),  strtok(3)
+[1mSEE ALSO[0m
+       [4mindex[24m(3),  [4mmemchr[24m(3),  [4mrindex[24m(3),  [4mstrchr[24m(3),  [4mstrcspn[24m(3),  [4mstrpbrk[24m(3),
+       [4mstrsep[24m(3), [4mstrspn[24m(3), [4mstrstr[24m(3), [4mstrtok[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ssttrrrrcchhrr() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mstrrchr[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                      STRRCHR(3)

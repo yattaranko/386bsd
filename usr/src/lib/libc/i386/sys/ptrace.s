@@ -42,7 +42,7 @@
 
 ENTRY(ptrace)
 	xorl	%eax,%eax
-	movl	%eax,_errno
+	movl	%eax,errno
 	lea	SYS_ptrace,%eax
 	LCALL(7,0)
 	jb	err

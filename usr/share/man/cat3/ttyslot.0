@@ -1,66 +1,58 @@
-TTYNAME(3)                386BSD Programmer's Manual                TTYNAME(3)
+TTYNAME(3)                  Library Functions Manual                TTYNAME(3)
 
-NNAAMMEE
-     ttttyynnaammee, iissaattttyy, ttttyysslloott - get name of associated terminal (tty) from
-     file descriptor
+[1mNAME[0m
+       ttyname,  isatty,  ttyslot — get name of associated terminal (tty) from
+       file descriptor
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
 
-     _c_h_a_r *
-     ttttyynnaammee(_i_n_t _f_d)
+       [4mchar[24m [4m*[0m
+       [1mttyname[22m([4mint[24m [4mfd[24m);
 
-     _i_n_t
-     iissaattttyy(_i_n_t _f_d)
+       [4mint[0m
+       [1misatty[22m([4mint[24m [4mfd[24m);
 
-     _i_n_t
-     ttttyysslloott()
+       [4mint[0m
+       [1mttyslot[22m();
 
-DDEESSCCRRIIPPTTIIOONN
-     These functions operate on the system file descriptors for terminal type
-     devices. These descriptors are not related to the standard I/O FILE
-     typedef, but refer to the special device files found in /_d_e_v and named
-     /_d_e_v/_t_t_y_x_x and for which an entry exists in the initialization file
-     /_e_t_c/_t_t_y_s. (See ttys(5).)
+[1mDESCRIPTION[0m
+       These functions operate on the system  file  descriptors  for  terminal
+       type  devices.  These  descriptors  are not related to the standard I/O
+       FILE typedef, but refer to the special device files found in  [4m/dev[24m  and
+       named  [4m/dev/ttyxx[24m  and  for which an entry exists in the initialization
+       file [4m/etc/ttys.[24m (See [4mttys[24m(5).)
 
-     The iissaattttyy() function determines if the file descriptor _f_d refers to a
-     valid terminal type device.
+       The [1misatty[22m() function determines if the file descriptor [4mfd[24m refers to  a
+       valid terminal type device.
 
-     The ttttyynnaammee() function gets the related device name of a file descriptor
-     for which iissaattttyy() is true
+       The  [1mttyname[22m() function gets the related device name of a file descrip‐
+       tor for which [1misatty[22m() is true
 
-     The ttttyysslloott() function fetches the current process' control terminal
-     number from the ttys(5) file entry.
+       The [1mttyslot[22m() function fetches the current  process’  control  terminal
+       number from the [4mttys[24m(5) file entry.
 
-RREETTUURRNN VVAALLUUEESS
-     The ttttyynnaammee() function returns the null terminated name if the device is
-     found and iissaattttyy() is true; otherwise a NULL pointer is returned.
+[1mRETURN VALUES[0m
+       The  [1mttyname[22m()  function returns the null terminated name if the device
+       is found and [1misatty[22m() is true; otherwise a NULL pointer is returned.
 
-     The ttttyysslloott() function returns the unit number of the device file if
-     found; otherwise the value zero is returned.
+       The [1mttyslot[22m() function returns the unit number of the  device  file  if
+       found; otherwise the value zero is returned.
 
-FFIILLEESS
-     /dev/*
-     /etc/ttys
+[1mFILES[0m
+       [4m/dev/∗[0m
+       [4m/etc/ttys[0m
 
-SSEEEE AALLSSOO
-     ioctl(2),  ttys(5)
+[1mSEE ALSO[0m
+       [4mioctl[24m(2), [4mttys[24m(5)
 
-HHIISSTTOORRYY
-     A iissaattttyy(), ttttyynnaammee(), and ttttyysslloott() function appeared in Version 7 AT&T
-     UNIX.
+[1mHISTORY[0m
+       A  [1misatty[22m(),  [1mttyname[22m(),  and  [1mttyslot[22m() function appeared in Version 7
+       AT&T UNIX.
 
-BBUUGGSS
-     The ttttyynnaammee() function leaves its result in an internal static object and
-     returns a pointer to that object. Subsequent calls to ttttyynnaammee() will
-     modify the same object.
+[1mBUGS[0m
+       The [1mttyname[22m() function leaves its result in an internal  static  object
+       and  returns  a  pointer  to that object. Subsequent calls to [1mttyname[22m()
+       will modify the same object.
 
-BSD Experimental                April 19, 1991                               1
-
-
-
-
-
-
-
-
+FreeBSD 13.2                    April 19, 1991                      TTYNAME(3)

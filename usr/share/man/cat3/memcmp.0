@@ -1,66 +1,28 @@
-MEMCMP(3)                 386BSD Programmer's Manual                 MEMCMP(3)
+MEMCMP(3)                   Library Functions Manual                 MEMCMP(3)
 
-NNAAMMEE
-     mmeemmccmmpp - compare byte string
+[1mNAME[0m
+       memcmp — compare byte string
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _i_n_t
-     mmeemmccmmpp(_c_o_n_s_t _v_o_i_d *_b_1, _c_o_n_s_t _v_o_i_d *_b_2, _s_i_z_e__t _l_e_n)
+       [4mint[0m
+       [1mmemcmp[22m([4mconst[24m [4mvoid[24m [4m*b1[24m, [4mconst[24m [4mvoid[24m [4m*b2[24m, [4msize_t[24m [4mlen[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The mmeemmccmmpp() function compares byte string _b_1 against byte string _b_2.
-     Both strings are assumed to be _l_e_n bytes long.
+[1mDESCRIPTION[0m
+       The  [1mmemcmp[22m()  function compares byte string [4mb1[24m against byte string [4mb2[24m.
+       Both strings are assumed to be [4mlen[24m bytes long.
 
-RREETTUURRNN VVAALLUUEESS
-     The mmeemmccmmpp() function returns zero if the the two strings are identical,
-     otherwise returns the difference between the first two differing bytes
-     (treated as unsigned char values, so that `\200' is greater than `\0',
-     for example).  Zero-length strings are always identical.
+[1mRETURN VALUES[0m
+       The [1mmemcmp[22m() function returns zero if the the two strings  are  identi‐
+       cal,  otherwise  returns the difference between the first two differing
+       bytes (treated as unsigned char values, so that ‘[1m\200[22m’ is greater  than
+       ‘[1m\0[22m’, for example).  Zero‐length strings are always identical.
 
-SSEEEE AALLSSOO
-     bcmp(3),  strcasecmp(3),  strcmp(3),  strcoll(3),  strxfrm(3)
+[1mSEE ALSO[0m
+       [4mbcmp[24m(3), [4mstrcasecmp[24m(3), [4mstrcmp[24m(3), [4mstrcoll[24m(3), [4mstrxfrm[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The mmeemmccmmpp() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mmemcmp[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                       MEMCMP(3)

@@ -1,66 +1,31 @@
-INSQUE(3)                 386BSD Programmer's Manual                 INSQUE(3)
 
-NNAAMMEE
-     iinnssqquuee, rreemmqquuee - insert/remove element from a circular queue
+[1mNAME[0m
+       insque, remque — insert/remove element from a circular queue
 
-SSYYNNOOPPSSIISS
-     _s_t_r_u_c_t _q_e_l_e_m {
-          _s_t_r_u_c_t _q_e_l_e_m *_q__f_o_r_w;
-          _s_t_r_u_c_t _q_e_l_e_m *_q__b_a_c_k;
-          _c_h_a_r _q__d_a_t_a[];
-     };
-     _s_t_r_u_c_t _q_e_l_e_m *
-     iinnssqquuee(_s_t_r_u_c_t _q_e_l_e_m *_e_n_t_r_y, _s_t_r_u_c_t _q_e_l_e_m *_p_r_e_d)
+[1mSYNOPSIS[0m
+       [4mstruct[24m [4mqelem[24m [4m{[0m
+            [4mstruct[24m [4mqelem[24m [4m*q_forw;[0m
+            [4mstruct[24m [4mqelem[24m [4m*q_back;[0m
+            [4mchar[24m [4mq_data[];[0m
+       [4m};[0m
+       [4mstruct[24m [4mqelem[24m [4m*[0m
+       [1minsque[22m([4mstruct[24m [4mqelem[24m [4m*entry[24m, [4mstruct[24m [4mqelem[24m [4m*pred[24m);
 
-     _s_t_r_u_c_t _q_e_l_e_m *
-     rreemmqquuee(_s_t_r_u_c_t _q_e_l_e_m *_e_n_t_r_y)
+       [4mstruct[24m [4mqelem[24m [4m*[0m
+       [1mremque[22m([4mstruct[24m [4mqelem[24m [4m*entry[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     iinnssqquuee() and rreemmqquuee() manipulate queues built from circular, doubly
-     linked lists. Each element in the queue must begin with a "struct qelem".
-     iinnssqquuee() inserts _e_n_t_r_y in the queue immediately after _p_r_e_d. rreemmqquuee()
-     removes _e_n_t_r_y from the queue.
+[1mDESCRIPTION[0m
+       [1minsque[22m()  and  [1mremque[22m()  manipulate  queues built from circular, doubly
+       linked lists. Each element in the  queue  must  begin  with  a  "struct
+       qelem".   [1minsque[22m()  inserts  [4mentry[24m in the queue immediately after [4mpred[24m.
+       [1mremque[22m() removes [4mentry[24m from the queue.
 
-DDIIAAGGNNOOSSTTIICCSS
-     These functions are not atomic unless that machine architecture allows
-     it.
+[1mDIAGNOSTICS[0m
+       These functions are not atomic unless that machine architecture  allows
+       it.
 
-HHIISSTTOORRYY
-     These are derived from the insque and remque instructions on a VAX.
-
-
-                                August 12, 1993                              1
+[1mHISTORY[0m
+       These are derived from the insque and remque instructions on a VAX.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                August 12, 1993                      INSQUE(3)

@@ -1,66 +1,22 @@
-MEMSET(3)                 386BSD Programmer's Manual                 MEMSET(3)
+MEMSET(3)                   Library Functions Manual                 MEMSET(3)
 
-NNAAMMEE
-     mmeemmsseett - write a byte to byte string
+[1mNAME[0m
+       memset — write a byte to byte string
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _v_o_i_d *
-     mmeemmsseett(_v_o_i_d *_b, _i_n_t _c, _s_i_z_e__t _l_e_n)
+       [4mvoid[24m [4m*[0m
+       [1mmemset[22m([4mvoid[24m [4m*b[24m, [4mint[24m [4mc[24m, [4msize_t[24m [4mlen[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The mmeemmsseett() function writes _l_e_n bytes of value _c (converted to an
-     unsigned char) to the string _b.
+[1mDESCRIPTION[0m
+       The  [1mmemset[22m() function writes [4mlen[24m bytes of value [4mc[24m (converted to an un‐
+       signed char) to the string [4mb[24m.
 
-SSEEEE AALLSSOO
-     bzero(3),  swab(3)
+[1mSEE ALSO[0m
+       [4mbzero[24m(3), [4mswab[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The mmeemmsseett() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mmemset[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                       MEMSET(3)

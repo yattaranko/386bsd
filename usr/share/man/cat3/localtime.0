@@ -1,198 +1,133 @@
-CTIME(3)                  386BSD Programmer's Manual                  CTIME(3)
-
-NNAAMMEE
-     aassccttiimmee, ccttiimmee, ddiiffffttiimmee, ggmmttiimmee, llooccaallttiimmee, mmkkttiimmee - transform binary
-     date and time value to ASCII
-
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+CTIME(3)                    Library Functions Manual                  CTIME(3)
+
+[1mNAME[0m
+       asctime,  ctime, difftime, gmtime, localtime, mktime — transform binary
+       date and time value to ASCII
+
+[1mSYNOPSIS[0m
+       [1m#include <sys/types.h>[0m
+
+       [4mextern[24m [4mchar[24m [4m*tzname[2];[0m
+
+       [4mchar[24m [4m*[0m
+       [1mctime[22m([4mconst[24m [4mtime_t[24m [4m*clock[24m);
+
+       [4mdouble[0m
+       [1mdifftime[22m([4mtime_t[24m [4mtime1[24m, [4mtime_t[24m [4mtime0[24m);
+
+       [1m#include <time.h>[0m
+
+       [4mchar[24m [4m*[0m
+       [1masctime[22m([4mconst[24m [4mstruct[24m [4mtm[24m [4m*tm[24m);
+
+       [4mstruct[24m [4mtm[24m [4m*[0m
+       [1mlocaltime[22m([4mconst[24m [4mtime_t[24m [4m*clock[24m);
+
+       [4mstruct[24m [4mtm[24m [4m*[0m
+       [1mgmtime[22m([4mconst[24m [4mtime_t[24m [4m*clock[24m);
+
+       [4mtime_t[0m
+       [1mmktime[22m([4mstruct[24m [4mtm[24m [4m*tm[24m);
+
+[1mDESCRIPTION[0m
+       The functions [1mctime[22m(), [1mgmtime[22m() and [1mlocaltime[22m() all take as an argument
+       a time value representing the time in seconds since the Epoch (00:00:00
+       UTC, January 1, 1970; see [4mtime[24m(3)).
+
+       The function [1mlocaltime[22m() converts the time value pointed at  by  [4mclock[24m,
+       and returns a pointer to a “[4mstruct[24m [4mtm[24m” (described below) which contains
+       the  broken‐out  time information for the value after adjusting for the
+       current time zone (and any other factors such as Daylight Saving Time).
+       Time zone adjustments are performed as specified by the TZ  environmen‐
+       tal  variable  (see  [4mtzset[24m(3)).  The function [1mlocaltime[22m() uses [4mtzset[24m to
+       initialize time conversion information if [4mtzset[24m has  not  already  been
+       called by the process.
+
+       After filling in the tm structure, [1mlocaltime[22m() sets the [4mtm_isdst[24m’th el‐
+       ement  of  [4mtzname[24m  to a pointer to an ASCII string that’s the time zone
+       abbreviation to be used with [1mlocaltime[22m()’s return value.
+
+       The function [1mgmtime[22m() similarly converts the time  value,  but  without
+       any  time zone adjustment, and returns a pointer to a tm structure (de‐
+       scribed below).
+
+       The [1mctime[22m() function adjusts the time value for the current  time  zone
+       in  the same manner as [1mlocaltime[22m(), and returns a pointer to a 26‐char‐
+       acter string of the form:
+
+             Thu Nov 24 18:22:48 1986\n\0
+
+       All the fields have constant width.
+
+       The [1masctime[22m() function converts the broken down time in  the  structure
+       [4mtm[24m pointed at by [4m*tm[24m to the form shown in the example above.
+
+       The function [1mmktime[22m() converts the broken‐down time, expressed as local
+       time, in the structure pointed to by tm into a time value with the same
+       encoding  as  that of the values returned by the [4mtime[24m(3) function, that
+       is, seconds from the Epoch, UTC.
+
+       The original values of the [4mtm_wday[24m and [4mtm_yday[24m components of the struc‐
+       ture are ignored, and the original values of the other  components  are
+       not  restricted  to their normal ranges.  (A positive or zero value for
+       [4mtm_isdst[24m causes [1mmktime[22m() to presume initially that summer time (for ex‐
+       ample, Daylight Saving Time) is or is not in effect for  the  specified
+       time,  respectively.  A negative value for [4mtm_isdst[24m causes the [1mmktime[22m()
+       function to attempt to divine whether summer time is in effect for  the
+       specified time.)
+
+       On  successful completion, the values of the [4mtm_wday[24m and [4mtm_yday[24m compo‐
+       nents of the structure are set appropriately, and the other  components
+       are set to represent the specified calendar time, but with their values
+       forced  to  their  normal ranges; the final value of [4mtm_mday[24m is not set
+       until [4mtm_mon[24m and [4mtm_year[24m are determined.  [1mMktime[22m() returns  the  speci‐
+       fied  calendar time; if the calendar time cannot be represented, it re‐
+       turns -1;
+
+       The [1mdifftime[22m() function returns the  difference  between  two  calendar
+       times, ([4mtime1[24m ‐ [4mtime0[24m), expressed in seconds.
+
+       External declarations as well as the tm structure definition are in the
+       ⟨[4mtime.h[24m⟩  include file.  The tm structure includes at least the follow‐
+       ing fields:
+
+             int tm_sec;     /∗ seconds (0 ‐ 60) ∗/
+             int tm_min;     /∗ minutes (0 ‐ 59) ∗/
+             int tm_hour;    /∗ hours (0 ‐ 23) ∗/
+             int tm_mday;    /∗ day of month (1 ‐ 31) ∗/
+             int tm_mon;     /∗ month of year (0 ‐ 11) ∗/
+             int tm_year;    /∗ year - 1900 ∗/
+             int tm_wday;    /∗ day of week (Sunday = 0) ∗/
+             int tm_yday;    /∗ day of year (0 ‐ 365) ∗/
+             int tm_isdst;   /∗ is summer time in effect? ∗/
+             char ∗tm_zone;  /∗ abbreviation of timezone name ∗/
+             long tm_gmtoff; /∗ offset from UTC in seconds ∗/
 
-     _e_x_t_e_r_n _c_h_a_r *_t_z_n_a_m_e[_2];
-
-     _c_h_a_r *
-     ccttiimmee(_c_o_n_s_t _t_i_m_e__t *_c_l_o_c_k)
-
-     _d_o_u_b_l_e
-     ddiiffffttiimmee(_t_i_m_e__t _t_i_m_e_1, _t_i_m_e__t _t_i_m_e_0)
+       The field [4mtm_isdst[24m is non‐zero if summer time is in effect.
 
-     ##iinncclluuddee <<ttiimmee..hh>>
+       The field [4mtm_gmtoff[24m is the offset (in seconds) of the time  represented
+       from UTC, with positive values indicating east of the Prime Meridian.
 
-     _c_h_a_r *
-     aassccttiimmee(_c_o_n_s_t _s_t_r_u_c_t _t_m *_t_m)
-
-     _s_t_r_u_c_t _t_m *
-     llooccaallttiimmee(_c_o_n_s_t _t_i_m_e__t *_c_l_o_c_k)
+[1mSEE ALSO[0m
+       [4mdate[24m(1), [4mgettimeofday[24m(2), [4mgetenv[24m(3), [4mtime[24m(3), [4mtzset[24m(3), [4mtzfile[24m(5)
 
-     _s_t_r_u_c_t _t_m *
-     ggmmttiimmee(_c_o_n_s_t _t_i_m_e__t *_c_l_o_c_k)
+[1mHISTORY[0m
+       This manual page is derived from the time package contributed to Berke‐
+       ley by Arthur Olsen and which appeared in 4.3BSD.
 
-     _t_i_m_e__t
-     mmkkttiimmee(_s_t_r_u_c_t _t_m *_t_m)
+[1mBUGS[0m
+       Except for [1mdifftime[22m() and [1mmktime[22m(), these functions leaves their result
+       in  an internal static object and return a pointer to that object. Sub‐
+       sequent calls to these function will modify the same object.
 
-DDEESSCCRRIIPPTTIIOONN
-     The functions ccttiimmee(), ggmmttiimmee() and llooccaallttiimmee() all take as an argument a
-     time value representing the time in seconds since the Epoch (00:00:00
-     UTC, January 1, 1970; see time(3)).
+       The [4mtm_zone[24m field of a returned tm structure points to a  static  array
+       of  characters,  which will also be overwritten by any subsequent calls
+       (as well as by subsequent calls to [4mtzset[24m(3) and [4mtzsetwall[24m(3)).
 
-     The function llooccaallttiimmee() converts the time value pointed at by _c_l_o_c_k, and
-     returns a pointer to a ``_s_t_r_u_c_t _t_m'' (described below) which contains the
-     broken-out time information for the value after adjusting for the current
-     time zone (and any other factors such as Daylight Saving Time).  Time
-     zone adjustments are performed as specified by the TZ environmental
-     variable (see tzset(3)).  The function llooccaallttiimmee() uses tzset to
-     initialize time conversion information if tzset has not already been
-     called by the process.
+       Use of the external variable [4mtzname[24m is discouraged; the  [4mtm_zone[24m  entry
+       in the tm structure is preferred.
 
-     After filling in the tm structure, llooccaallttiimmee() sets the _t_m__i_s_d_s_t'th
-     element of _t_z_n_a_m_e to a pointer to an ASCII string that's the time zone
-     abbreviation to be used with llooccaallttiimmee()'s return value.
+       Avoid  using  out‐of‐range  values  with [1mmktime[22m() when setting up lunch
+       with promptness sticklers in Riyadh.
 
-     The function ggmmttiimmee() similarly converts the time value, but without any
-     time zone adjustment, and returns a pointer to a tm structure (described
-     below).
-
-     The ccttiimmee() function adjusts the time value for the current time zone in
-     the same manner as llooccaallttiimmee(), and returns a pointer to a 26-character
-     string of the form:
-
-           Thu Nov 24 18:22:48 1986\n\0
-
-     All the fields have constant width.
-
-     The aassccttiimmee() function converts the broken down time in the structure _t_m
-     pointed at by *_t_m to the form shown in the example above.
-
-
-     The function mmkkttiimmee() converts the broken-down time, expressed as local
-     time, in the structure pointed to by tm into a time value with the same
-     encoding as that of the values returned by the time(3) function, that is,
-     seconds from the Epoch, UTC.
-
-     The original values of the _t_m__w_d_a_y and _t_m__y_d_a_y components of the
-     structure are ignored, and the original values of the other components
-     are not restricted to their normal ranges.  (A positive or zero value for
-     _t_m__i_s_d_s_t causes mmkkttiimmee() to presume initially that summer time (for
-     example, Daylight Saving Time) is or is not in effect for the specified
-     time, respectively.  A negative value for _t_m__i_s_d_s_t causes the mmkkttiimmee()
-     function to attempt to divine whether summer time is in effect for the
-     specified time.)
-
-     On successful completion, the values of the _t_m__w_d_a_y and _t_m__y_d_a_y
-     components of the structure are set appropriately, and the other
-     components are set to represent the specified calendar time, but with
-     their values forced to their normal ranges; the final value of _t_m__m_d_a_y is
-     not set until _t_m__m_o_n and _t_m__y_e_a_r are determined.  MMkkttiimmee() returns the
-     specified calendar time; if the calendar time cannot be represented, it
-     returns -1;
-
-     The ddiiffffttiimmee() function returns the difference between two calendar
-     times, (_t_i_m_e_1 - _t_i_m_e_0), expressed in seconds.
-
-     External declarations as well as the tm structure definition are in the
-     <_t_i_m_e._h> include file.  The tm structure includes at least the following
-     fields:
-
-           int tm_sec;     /* seconds (0 - 60) */
-           int tm_min;     /* minutes (0 - 59) */
-           int tm_hour;    /* hours (0 - 23) */
-           int tm_mday;    /* day of month (1 - 31) */
-           int tm_mon;     /* month of year (0 - 11) */
-           int tm_year;    /* year - 1900 */
-           int tm_wday;    /* day of week (Sunday = 0) */
-           int tm_yday;    /* day of year (0 - 365) */
-           int tm_isdst;   /* is summer time in effect? */
-           char *tm_zone;  /* abbreviation of timezone name */
-           long tm_gmtoff; /* offset from UTC in seconds */
-
-     The field _t_m__i_s_d_s_t is non-zero if summer time is in effect.
-
-     The field _t_m__g_m_t_o_f_f is the offset (in seconds) of the time represented
-     from UTC, with positive values indicating east of the Prime Meridian.
-
-SSEEEE AALLSSOO
-     date(1),  gettimeofday(2),  getenv(3),  time(3),  tzset(3),  tzfile(5)
-
-HHIISSTTOORRYY
-     This manual page is derived from the time package contributed to Berkeley
-     by Arthur Olsen and which appeared in 4.3BSD.
-
-BBUUGGSS
-     Except for ddiiffffttiimmee() and mmkkttiimmee(), these functions leaves their result
-     in an internal static object and return a pointer to that object.
-     Subsequent calls to these function will modify the same object.
-
-     The _t_m__z_o_n_e field of a returned tm structure points to a static array of
-     characters, which will also be overwritten by any subsequent calls (as
-     well as by subsequent calls to tzset(3) and tzsetwall(3)).
-
-     Use of the external variable _t_z_n_a_m_e is discouraged; the _t_m__z_o_n_e entry in
-     the tm structure is preferred.
-
-
-     Avoid using out-of-range values with mmkkttiimmee() when setting up lunch with
-     promptness sticklers in Riyadh.
-
-4.3 Berkeley Distribution       April 19, 1991                               3
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4.3 Berkeley Distribution       April 19, 1991                        CTIME(3)

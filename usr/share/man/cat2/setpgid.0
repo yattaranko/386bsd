@@ -1,66 +1,50 @@
-SETPGRP(2)                386BSD Programmer's Manual                SETPGRP(2)
+SETPGRP(2)                    System Calls Manual                   SETPGRP(2)
 
-NNAAMMEE
-     sseettppggiidd, sseettppggrrpp - set process group
+[1mNAME[0m
+       setpgid, setpgrp — set process group
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
 
-     _i_n_t
-     sseettppggiidd(_p_i_d__t_p_i_d, _p_i_d__t_p_g_r_p)
+       [4mint[0m
+       [1msetpgid[22m([4mpid_tpid[24m, [4mpid_tpgrp[24m);
 
-     _i_n_t
-     sseettppggrrpp(_p_i_d__t_p_i_d, _p_i_d__t_p_g_r_p)
+       [4mint[0m
+       [1msetpgrp[22m([4mpid_tpid[24m, [4mpid_tpgrp[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     SSeettppggiidd() sets the process group of the specified process _p_i_d to the
-     specified _p_g_r_p. If _p_i_d is zero, then the call applies to the current
-     process.
+[1mDESCRIPTION[0m
+       [1mSetpgid[22m()  sets  the  process group of the specified process [4mpid[24m to the
+       specified [4mpgrp[24m.  If [4mpid[24m is zero, then the call applies to  the  current
+       process.
 
-     If the invoker is not the super-user, then the affected process must have
-     the same effective user-id as the invoker or be a descendant of the
-     invoking process.
+       If  the  invoker  is not the super‐user, then the affected process must
+       have the same effective user‐id as the invoker or be  a  descendant  of
+       the invoking process.
 
-RREETTUURRNN VVAALLUUEESS
-     SSeettppggiidd() returns 0 when the operation was successful.  If the request
-     failed, -1 is returned and the global variable _e_r_r_n_o indicates the
-     reason.
+[1mRETURN VALUES[0m
+       [1mSetpgid[22m()  returns 0 when the operation was successful.  If the request
+       failed, ‐1 is returned and the global variable [4merrno[24m indicates the rea‐
+       son.
 
-EERRRROORRSS
-     SSeettppggiidd() will fail and the process group will not be altered if:
+[1mERRORS[0m
+       [1mSetpgid[22m() will fail and the process group will not be altered if:
 
-     [ESRCH]
-             The requested process does not exist.
+       [ESRCH]
+               The requested process does not exist.
 
-     [EPERM]
-             The effective user ID of the requested process is different from
-             that of the caller and the process is not a descendent of the
-             calling process.
+       [EPERM]
+               The effective user ID of the  requested  process  is  different
+               from  that of the caller and the process is not a descendent of
+               the calling process.
 
-SSEEEE AALLSSOO
-     getpgrp(2)
+[1mSEE ALSO[0m
+       [4mgetpgrp[24m(2)
 
-SSTTAANNDDAARRDDSS
-     SSeettppggiidd() conforms to IEEE Std 1003.1-1988 (``POSIX'').
+[1mSTANDARDS[0m
+       [1mSetpgid[22m() conforms to IEEE Std 1003.1‐1988 (“POSIX”).
 
-CCOOMMPPAATTIIBBIILLIITTYY
-     SSeettppggrrpp() is identical to sseettppggiidd(), and is retained for calling
-     convention compatibility with historical versions of BSD UNIX.
+[1mCOMPATIBILITY[0m
+       [1mSetpgrp[22m() is identical to [1msetpgid[22m(), and is retained for  calling  con‐
+       vention compatibility with historical versions of BSD.
 
-4th Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       March 10, 1991                      SETPGRP(2)

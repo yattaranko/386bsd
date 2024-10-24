@@ -1,66 +1,36 @@
-SHUTDOWN(2)               386BSD Programmer's Manual               SHUTDOWN(2)
+SHUTDOWN(2)                   System Calls Manual                  SHUTDOWN(2)
 
-NNAAMMEE
-     sshhuuttddoowwnn - shut down part of a full-duplex connection
+[1mNAME[0m
+       shutdown — shut down part of a full‐duplex connection
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//ssoocckkeett..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <sys/socket.h>[0m
 
-     _i_n_t
-     sshhuuttddoowwnn(_i_n_t _s, _i_n_t _h_o_w)
+       [4mint[0m
+       [1mshutdown[22m([4mint[24m [4ms[24m, [4mint[24m [4mhow[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The sshhuuttddoowwnn() call causes all or part of a full-duplex connection on the
-     socket associated with _s to be shut down.  If _h_o_w is 0, further receives
-     will be disallowed.  If _h_o_w is 1, further sends will be disallowed.  If
-     _h_o_w is 2, further sends and receives will be disallowed.
+[1mDESCRIPTION[0m
+       The  [1mshutdown[22m()  call causes all or part of a full‐duplex connection on
+       the socket associated with [4ms[24m to be shut down.  If [4mhow[24m is 0, further re‐
+       ceives will be disallowed.  If [4mhow[24m is 1, further sends will  be  disal‐
+       lowed.  If [4mhow[24m is 2, further sends and receives will be disallowed.
 
-DDIIAAGGNNOOSSTTIICCSS
-     A 0 is returned if the call succeeds, -1 if it fails.
+[1mDIAGNOSTICS[0m
+       A 0 is returned if the call succeeds, ‐1 if it fails.
 
-EERRRROORRSS
-     The call succeeds unless:
+[1mERRORS[0m
+       The call succeeds unless:
 
-     [EBADF]     _S is not a valid descriptor.
+       [EBADF]     [4mS[24m is not a valid descriptor.
 
-     [ENOTSOCK]  _S is a file, not a socket.
+       [ENOTSOCK]  [4mS[24m is a file, not a socket.
 
-     [ENOTCONN]  The specified socket is not connected.
+       [ENOTCONN]  The specified socket is not connected.
 
-SSEEEE AALLSSOO
-     connect(2),  socket(2)
+[1mSEE ALSO[0m
+       [4mconnect[24m(2), [4msocket[24m(2)
 
-HHIISSTTOORRYY
-     The sshhuuttddoowwnn function call appeared in 4.2BSD.
+[1mHISTORY[0m
+       The [1mshutdown [22mfunction call appeared in 4.2BSD.
 
-4.2 Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4.2 Berkeley Distribution       March 10, 1991                     SHUTDOWN(2)

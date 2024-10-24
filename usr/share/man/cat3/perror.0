@@ -1,66 +1,43 @@
-STRERROR(3)               386BSD Programmer's Manual               STRERROR(3)
+STRERROR(3)                 Library Functions Manual               STRERROR(3)
 
-NNAAMMEE
-     ppeerrrroorr, ssttrreerrrroorr, ssyyss__eerrrrlliisstt, ssyyss__nneerrrr - system error messages
+[1mNAME[0m
+       perror, strerror, sys_errlist, sys_nerr — system error messages
 
-SSYYNNOOPPSSIISS
-     _e_x_t_e_r_n _i_n_t _e_r_r_n_o;
-     _e_x_t_e_r_n _c_h_a_r *_s_y_s__e_r_r_l_i_s_t[];
+[1mSYNOPSIS[0m
+       [4mextern[24m [4mint[24m [4merrno;[0m
+       [4mextern[24m [4mchar[24m [4m*sys_errlist[];[0m
 
-     ##iinncclluuddee <<ssttddiioo..hh>>
+       [1m#include <stdio.h>[0m
 
-     _v_o_i_d
-     ppeerrrroorr(_c_o_n_s_t _c_h_a_r *_s_t_r_i_n_g)
+       [4mvoid[0m
+       [1mperror[22m([4mconst[24m [4mchar[24m [4m*string[24m);
 
-     _c_h_a_r *
-     ssttrreerrrroorr(_i_n_t _e_r_r_n_u_m)
+       [4mchar[24m [4m*[0m
+       [1mstrerror[22m([4mint[24m [4merrnum[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssttrreerrrroorr() and ppeerrrroorr() functions lookup the error message string
-     affiliated with an error number.
+[1mDESCRIPTION[0m
+       The  [1mstrerror[22m()  and [1mperror[22m() functions lookup the error message string
+       affiliated with an error number.
 
-     The sstteerrrroorr() function accepts an error number argument _e_r_r_n_u_m and
-     returns a pointer to the corresponding message string.
+       The [1msterror[22m() function accepts an error number argument [4merrnum[24m and  re‐
+       turns a pointer to the corresponding message string.
 
-     The ppeerrrroorr() function finds the error message corresponding to the
-     current value of the global variable _e_r_r_n_o and writes it, followed by a
-     new-line, to the _s_t_d_e_r_r. If the argument _s_t_r_i_n_g is non-NULL it is pre-
-     appended to the message string and separated from it by a colon and space
-     (`: '). If _s_t_r_i_n_g is NULL only the error message string is printed.
+       The [1mperror[22m() function finds the error message corresponding to the cur‐
+       rent  value  of  the global variable [4merrno[24m and writes it, followed by a
+       new‐line, to the [4mstderr[24m.  If the argument [4mstring[24m is non‐NULL it is pre‐
+       appended to the message string and separated from it  by  a  colon  and
+       space  (‘: ’).   If  [4mstring[24m  is  NULL  only the error message string is
+       printed.
 
-     The message strings can be accessed directly using the external character
-     array _s_y_s__e_r_r_l_i_s_t. The external value _s_y_s__n_e_r_r contains a count of the
-     messages in _s_y_s__e_r_r_l_i_s_t. The use of these variables is deprecated;
-     ssttrreerrrroorr() should be used instead.
+       The message strings can be accessed directly using the external charac‐
+       ter array [4msys_errlist[24m.  The external value [4msys_nerr[24m contains a count of
+       the messages in [4msys_errlist[24m.  The use of these variables is deprecated;
+       [1mstrerror[22m() should be used instead.
 
-SSEEEE AALLSSOO
-     intro(2),  psignal(3)
+[1mSEE ALSO[0m
+       [4mintro[24m(2), [4mpsignal[24m(3)
 
-HHIISSTTOORRYY
-     The ssttrreerrrroorr() and ppeerrrroorr() functions are currently under development.
+[1mHISTORY[0m
+       The [1mstrerror[22m() and [1mperror[22m() functions are currently under development.
 
-4th Berkeley Distribution        June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution        June 29, 1991                     STRERROR(3)

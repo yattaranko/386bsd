@@ -1,66 +1,26 @@
-CLOCK(3)                  386BSD Programmer's Manual                  CLOCK(3)
+CLOCK(3)                    Library Functions Manual                  CLOCK(3)
 
-NNAAMMEE
-     cclloocckk - determine processor time used
+[1mNAME[0m
+       clock — determine processor time used
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <sys/types.h>[0m
 
-     _c_l_o_c_k__t
-     cclloocckk(_v_o_i_d)
+       [4mclock_t[0m
+       [1mclock[22m([4mvoid[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The cclloocckk() function determines the amount of processor time used since
-     the invocation of the calling process, measured in CLK_TCKs.
+[1mDESCRIPTION[0m
+       The [1mclock[22m() function determines the amount of processor time used since
+       the invocation of the calling process, measured in CLK_TCKs.
 
-RREETTUURRNN VVAALLUUEESS
-     The cclloocckk() function returns the amount of time used unless an error
-     occurs, in which case the return value is -1.
+[1mRETURN VALUES[0m
+       The  [1mclock[22m()  function  returns the amount of time used unless an error
+       occurs, in which case the return value is -1.
 
-SSEEEE AALLSSOO
-     getrusage(2)
+[1mSEE ALSO[0m
+       [4mgetrusage[24m(2)
 
-SSTTAANNDDAARRDDSS
-     The cclloocckk() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mclock[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                        CLOCK(3)

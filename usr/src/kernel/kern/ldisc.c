@@ -52,10 +52,15 @@
 #include "vm.h"
 #include "vmspace.h"
 #include "modconfig.h"
+#include "signalvar.h"
 
 #include "vnode.h"
 
 #include "prototypes.h"
+
+extern int spltty(void);
+extern int splclock(void);
+extern int ttcompat(register struct tty*, int, caddr_t, int, struct proc*);
 
 static int proc_compare (struct proc *p1, struct proc *p2);
 static int ttnread(struct tty *tp);
@@ -193,8 +198,8 @@ ttywait(register struct tty *tp)
 	    tp->t_oproc) {
 		(*tp->t_oproc)(tp);
 		tp->t_state |= TS_ASLEEP;
-		if (error = ttysleep(tp, (caddr_t)&tp->t_out, 
-		    TTOPRI | PCATCH, ttyout, 0))
+		error = ttysleep(tp, (caddr_t)&tp->t_out, TTOPRI | PCATCH, ttyout, 0);
+		if (error != 0)
 			break;
 	}
 	splx(s);
@@ -260,7 +265,7 @@ ttstart(struct tty *tp)
 int
 ttioctl(struct tty *tp, int com, caddr_t data, int flag, struct proc *p)
 {
-	/* struct proc *p = curproc;		/* XXX */
+	/* struct proc *p = curproc; */		/* XXX */
 	int s, error;
 
 	/*
@@ -281,8 +286,8 @@ ttioctl(struct tty *tp, int com, caddr_t data, int flag, struct proc *p)
 		   (p->p_sigignore & sigmask(SIGTTOU)) == 0 &&
 		   (p->p_sigmask & sigmask(SIGTTOU)) == 0) {
 			pgsignal(p->p_pgrp, SIGTTOU, 1);
-			if (error = ttysleep(tp, (caddr_t)&lbolt, 
-			    TTOPRI | PCATCH, ttybg, 0)) 
+			error = ttysleep(tp, (caddr_t)&lbolt, TTOPRI | PCATCH, ttybg, 0);
+			if (error != 0) 
 				return (error);
 		}
 		break;
@@ -407,7 +412,8 @@ ttioctl(struct tty *tp, int com, caddr_t data, int flag, struct proc *p)
 
 		s = spltty();
 		if (com == TIOCSETAW || com == TIOCSETAF) {
-			if (error = ttywait(tp)) {
+			error = ttywait(tp);
+			if (error != 0) {
 				splx(s);
 				return (error);
 			}
@@ -436,8 +442,8 @@ ttioctl(struct tty *tp, int com, caddr_t data, int flag, struct proc *p)
 			ttsetwater(tp);
 		}
 		if (com != TIOCSETAF) {
-			if ((t->c_lflag&ICANON) != (tp->t_lflag&ICANON))
-				if (t->c_lflag&ICANON) {	
+			if ((t->c_lflag&ICANON) != (tp->t_lflag&ICANON)) {
+				if (t->c_lflag & ICANON) {	
 					tp->t_lflag |= PENDIN;
 					ttwakeup(tp);
 				}
@@ -445,6 +451,7 @@ ttioctl(struct tty *tp, int com, caddr_t data, int flag, struct proc *p)
 					catb(&tp->t_raw, &tp->t_can);
 					catb(&tp->t_can, &tp->t_raw);
 				}
+			}
 		}
 		tp->t_iflag = t->c_iflag;
 		tp->t_oflag = t->c_oflag;
@@ -514,7 +521,8 @@ ttioctl(struct tty *tp, int com, caddr_t data, int flag, struct proc *p)
 			    (constty->t_state & (TS_CARR_ON|TS_ISOPEN)) ==
 			    (TS_CARR_ON|TS_ISOPEN))
 				return (EBUSY);
-			if (error = use_priv(p->p_ucred, PRV_TIOCCONS1, p))
+			error = use_priv(p->p_ucred, PRV_TIOCCONS1, p);
+			if (error != 0)
 				return (error);
 			constty = tp;
 		} else if (tp == constty)
@@ -522,7 +530,8 @@ ttioctl(struct tty *tp, int com, caddr_t data, int flag, struct proc *p)
 		break;
 
 	case TIOCDRAIN:
-		if (error = ttywait(tp))
+		error = ttywait(tp);
+		if (error != 0)
 			return (error);
 		break;
 
@@ -720,8 +729,8 @@ ttspeedtab(int speed, register struct speedtab *table)
 int
 ttsetwater(struct tty *tp)
 {
-	register cps = tp->t_ospeed / 10;
-	register x;
+	register int cps = tp->t_ospeed / 10;
+	register int x;
 
 #define clamp(x, h, l) ((x)>h ? h : ((x)<l) ? l : (x))
 	tp->t_lowat = x = clamp(cps/2, TTMAXLOWAT, TTMINLOWAT);
@@ -729,6 +738,8 @@ ttsetwater(struct tty *tp)
 	x = clamp(x, TTMAXHIWAT, TTMINHIWAT);
 	tp->t_hiwat = roundup(x, 1 /*CBSIZE*/);
 #undef clamp
+
+	return (0);
 }
 
 /*
@@ -785,7 +796,7 @@ ttyinfo(register struct tty *tp)
 
 #define	pgtok(a)	(((a) * NBPG) / 1024)
 		/* Print percentage cpu, resident set size. */
-		tmp = pick->p_pctcpu * 10000 + FSCALE / 2 >> FSHIFT;
+		tmp = (pick->p_pctcpu * 10000 + FSCALE / 2) >> FSHIFT;
 		ttyprintf(tp, "%d%% %dk\n",
 		   tmp / 100, pgtok(pick->p_vmspace->vm_rssize));
 	}
@@ -873,7 +884,7 @@ proc_compare(register struct proc *p1, register struct proc *p2)
 int
 tputchar(int c, struct tty *tp)
 {
-	register s = spltty();
+	register int s = spltty();
 
 	if ((tp->t_state & (TS_CARR_ON|TS_ISOPEN)) == (TS_CARR_ON|TS_ISOPEN)) {
 		if (c == '\n')
@@ -902,7 +913,8 @@ ttysleep(struct tty *tp, caddr_t chan, int pri, char *wmesg, int timo)
 	int error;
 	short gen = tp->t_gen;
 
-	if (error = tsleep(chan, pri, wmesg, timo))
+	error = tsleep(chan, pri, wmesg, timo);
+	if (error != 0)
 		return (error);
 	if (tp->t_gen != gen)
 		return (ERESTART);

@@ -44,6 +44,7 @@
 #include "resourcevar.h"
 #include "vm.h"
 #include "vm_page.h"
+#include "vm_fault.h"
 
 #include "machine/reg.h"
 #include "machine/psl.h"
@@ -96,19 +97,19 @@ struct {
 	int	buflen;			/* 	"	*/
 } ipc;
 
+extern int splclock(void);
+
 /*
  * Process debugging system call.
  */
-ptrace(curp, uap, retval)
-	struct proc *curp;
+int ptrace(struct proc* curp, void* vap, int* retval)
+{
 	register struct args {
 		int	req;
 		int	pid;
 		int	*addr;
 		int	data;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct proc *p;
 	int s, error = 0;
 
@@ -229,7 +230,8 @@ ptrace(curp, uap, retval)
 	}
 
 	*retval = ipc.data;
-	if (error = ipc.error)
+	error = ipc.error;
+	if (error != 0)
 		goto out;
 
 #ifdef PT_GETREGS
@@ -256,8 +258,7 @@ out:
 	return error;
 }
 
-procxmt(p)
-	register struct proc *p;
+int procxmt(register struct proc* p)
 {
 	int i, rv = 0;
 
@@ -291,7 +292,8 @@ procxmt(p)
                 vm_prot_t prot;         /* current protection of region */
                 int cow;                /* ensure copy-on-write happens */
   
-                if (cow = (vmspace_access(p->p_vmspace, (caddr_t)ipc.addr, sizeof(ipc.data), PROT_WRITE) == 0)) {
+                cow = (vmspace_access(p->p_vmspace, (caddr_t)ipc.addr, sizeof(ipc.data), PROT_WRITE) == 0);
+				if (cow != 0) {
                         vm_offset_t     addr = (vm_offset_t)ipc.addr;
                         vm_size_t       size;
                         vm_prot_t       max_prot;

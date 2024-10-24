@@ -1,66 +1,27 @@
-INDEX(3)                  386BSD Programmer's Manual                  INDEX(3)
+INDEX(3)                    Library Functions Manual                  INDEX(3)
 
-NNAAMMEE
-     iinnddeexx - locate character in string
+[1mNAME[0m
+       index — locate character in string
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _c_h_a_r *
-     iinnddeexx(_c_o_n_s_t _c_h_a_r *_s, _i_n_t _c)
+       [4mchar[24m [4m*[0m
+       [1mindex[22m([4mconst[24m [4mchar[24m [4m*s[24m, [4mint[24m [4mc[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The iinnddeexx() function locates the first character matching _c (converted to
-     a _c_h_a_r) in the null-terminated string _s.
+[1mDESCRIPTION[0m
+       The  [1mindex[22m() function locates the first character matching [4mc[24m (converted
+       to a [4mchar[24m) in the null‐terminated string [4ms[24m.
 
-RREETTUURRNN VVAALLUUEESS
-     The character _c is returned if it is found; otherwise NULL is returned.
-     If _c is '\0', iinnddeexx() locates the terminating '\0'.
+[1mRETURN VALUES[0m
+       The character [4mc[24m is returned if it is found; otherwise NULL is returned.
+       If [4mc[24m is ’\0’, [1mindex[22m() locates the terminating ’\0’.
 
-SSEEEE AALLSSOO
-     memchr(3),  rindex(3),  strchr(3),  strcspn(3),  strpbrk(3),  strrchr(3),
-      strsep(3),  strspn(3),  strstr(3),  strtok(3)
+[1mSEE ALSO[0m
+       [4mmemchr[24m(3), [4mrindex[24m(3), [4mstrchr[24m(3),  [4mstrcspn[24m(3),  [4mstrpbrk[24m(3),  [4mstrrchr[24m(3),
+       [4mstrsep[24m(3), [4mstrspn[24m(3), [4mstrstr[24m(3), [4mstrtok[24m(3)
 
-HHIISSTTOORRYY
-     A iinnddeexx() function appeared in Version 6 AT&T UNIX.
+[1mHISTORY[0m
+       A [1mindex[22m() function appeared in Version 6 AT&T UNIX.
 
-BSD Experimental                April 19, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                    April 19, 1991                        INDEX(3)

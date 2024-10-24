@@ -1,66 +1,53 @@
-SIGSETOPS(3)              386BSD Programmer's Manual              SIGSETOPS(3)
+SIGSETOPS(3)                Library Functions Manual              SIGSETOPS(3)
 
-NNAAMMEE
-     ssiiggsseettooppss, ssiiggeemmppttyysseett, ssiiggffiillllsseett, ssiiggaaddddsseett, ssiiggddeellsseett, ssiiggiissmmeemmbbeerr -
-     manipulate signal masks
+[1mNAME[0m
+       sigsetops, sigemptyset, sigfillset, sigaddset, sigdelset, sigismember —
+       manipulate signal masks
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssiiggnnaall..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <signal.h>[0m
 
-     ssiiggeemmppttyysseett(_s_i_g_s_e_t__t *_s_e_t)
+       [1msigemptyset[22m([4msigset_t[24m [4m*set[24m);
 
-     ssiiggffiillllsseett(_s_i_g_s_e_t__t *_s_e_t)
+       [1msigfillset[22m([4msigset_t[24m [4m*set[24m);
 
-     ssiiggaaddddsseett(_s_i_g_s_e_t__t *_s_e_t, _i_n_t _s_i_g_n_o)
+       [1msigaddset[22m([4msigset_t[24m [4m*set[24m, [4mint[24m [4msigno[24m);
 
-     ssiiggddeellsseett(_s_i_g_s_e_t__t *_s_e_t, _i_n_t _s_i_g_n_o)
+       [1msigdelset[22m([4msigset_t[24m [4m*set[24m, [4mint[24m [4msigno[24m);
 
-     ssiiggiissmmeemmbbeerr(_s_i_g_s_e_t__t *_s_e_t, _i_n_t _s_i_g_n_o)
+       [1msigismember[22m([4msigset_t[24m [4m*set[24m, [4mint[24m [4msigno[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     These functions manipulate signal mask stored in a _s_i_g_s_e_t__t.
+[1mDESCRIPTION[0m
+       These functions manipulate signal mask stored in a [4msigset_t[24m.
 
-     The ssiiggeemmppttyysseett() function initializes a signal set to be empty.  The
-     ssiiggffiillllsseett() function initializes a signal set to contain all of the
-     known signals.  One of these routines must be used to initialize a signal
-     set before its use by the other functions.
+       The  [1msigemptyset[22m()  function initializes a signal set to be empty.  The
+       [1msigfillset[22m() function initializes a signal set to contain  all  of  the
+       known signals.  One of these routines must be used to initialize a sig‐
+       nal set before its use by the other functions.
 
-     The ssiiggaaddddsseett() function adds a specified signal _s_i_g_n_o to a signal set.
-     The ssiiggddeellsseett() function deletes a specified signal _s_i_g_n_o from a signal
-     set.
+       The [1msigaddset[22m() function adds a specified signal [4msigno[24m to a signal set.
+       The [1msigdelset[22m() function deletes a specified signal [4msigno[24m from a signal
+       set.
 
-     The ssiiggiissmmeemmbbeerr() function tests whether a specified signal _s_i_g_n_o is
-     contained in a signal set.
+       The  [1msigismember[22m()  function  tests whether a specified signal [4msigno[24m is
+       contained in a signal set.
 
-RREETTUURRNN VVAALLUUEESS
-     The ssiiggiissmmeemmbbeerr() function returns 1 if the signal is a member of the
-     set, a 0 otherwise.  The other functions return 0 upon success.  A -1
-     return value indicates an error occurred and the global variable _e_r_r_n_o is
-     set to indicated the reason.  The current implementation does not detect
-     any errors.
+[1mRETURN VALUES[0m
+       The [1msigismember[22m() function returns 1 if the signal is a member  of  the
+       set,  a  0 otherwise.  The other functions return 0 upon success.  A -1
+       return value indicates an error occurred and the global variable  [4merrno[0m
+       is  set  to  indicated the reason.  The current implementation does not
+       detect any errors.
 
-EERRRROORRSS
-     These functions could fail if one of the following occurs:
+[1mERRORS[0m
+       These functions could fail if one of the following occurs:
 
-     [EINVAL]  _s_i_g_n_o has an invalid value.
+       [EINVAL]  [4msigno[24m has an invalid value.
 
-SSEEEE AALLSSOO
-     kill(2),  sigaction(2),  sigsetops(2),  sigsuspend(2)
+[1mSEE ALSO[0m
+       [4mkill[24m(2), [4msigaction[24m(2), [4msigsetops[24m(2), [4msigsuspend[24m(2)
 
-SSTTAANNDDAARRDDSS
-     These functions are defined by IEEE Std1003.1-1988 (``POSIX'').
+[1mSTANDARDS[0m
+       These functions are defined by IEEE Std 1003.1‐1988 (“POSIX.1”).
 
-BSD Experimental                April 19, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                    April 19, 1991                    SIGSETOPS(3)

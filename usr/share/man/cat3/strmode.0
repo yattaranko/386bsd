@@ -1,132 +1,91 @@
-STRMODE(3)                386BSD Programmer's Manual                STRMODE(3)
+STRMODE(3)                  Library Functions Manual                STRMODE(3)
 
-NNAAMMEE
-     ssttrrmmooddee - convert inode status information into a symbolic string
+[1mNAME[0m
+       strmode — convert inode status information into a symbolic string
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _v_o_i_d
-     ssttrrmmooddee(_m_o_d_e__t _m_o_d_e, _c_h_a_r *_b_p)
+       [4mvoid[0m
+       [1mstrmode[22m([4mmode_t[24m [4mmode[24m, [4mchar[24m [4m*bp[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssttrrmmooddee() function converts a file _m_o_d_e (the type and permission
-     information associated with an inode, see stat(2))  into a symbolic
-     string which is stored in the location referenced by _b_p. This stored
-     string is eleven characters in length plus a trailing NULL.
+[1mDESCRIPTION[0m
+       The  [1mstrmode[22m()  function  converts a file [4mmode[24m (the type and permission
+       information associated with an inode,  see  [4mstat[24m(2))  into  a  symbolic
+       string  which  is stored in the location referenced by [4mbp[24m.  This stored
+       string is eleven characters in length plus a trailing NULL.
 
-     The first character is the inode type, and will be one of the following:
+       The first character is the inode type, and will be one of  the  follow‐
+       ing:
 
-           -     regular file
-           b     block special
-           c     character special
-           d     directory
-           l     symbolic link
-           p     fifo
-           s     socket
-           ?     unknown inode type
+             -     regular file
+             b     block special
+             c     character special
+             d     directory
+             l     symbolic link
+             p     fifo
+             s     socket
+             ?     unknown inode type
 
-     The next nine characters encode three sets of permissions, in three
-     characters each.  The first three characters are the permissions for the
-     owner of the file, the second three for the group the file belongs to,
-     and the third for the ``other'', or default, set of users.
+       The  next  nine  characters  encode three sets of permissions, in three
+       characters each.  The first three characters are  the  permissions  for
+       the  owner of the file, the second three for the group the file belongs
+       to, and the third for the ‘‘other’’, or default, set of users.
 
-     Permission checking is done as specifically as possible.  If read
-     permission is denied to the owner of a file in the first set of
-     permssions, the owner of the file will not be able to read the file.
-     This is true even if the owner is in the file's group and the group
-     permissions allow reading or the ``other'' permissions allow reading.
+       Permission checking is done as specifically as possible.  If read  per‐
+       mission  is  denied  to  the owner of a file in the first set of perms‐
+       sions, the owner of the file will not be able to read the  file.   This
+       is  true even if the owner is in the file’s group and the group permis‐
+       sions allow reading or the ‘‘other’’ permissions allow reading.
 
-     If the first character of the three character set is an ``r'', the file
-     is readable for that set of users; if a dash ``-'', it is not readable.
+       If the first character of the three character set is an ‘‘r’’, the file
+       is readable for that set of users; if a dash ‘‘-’’, it is not readable.
 
-     If the second character of the three character set is a ``w'', the file
-     is writable for that set of users; if a dash ``-'', it is not writable.
+       If the second character of the three character set is a ‘‘w’’, the file
+       is writable for that set of users; if a dash ‘‘-’’, it is not writable.
 
-     The third character is the first of the following characters that apply:
+       The third character is the first of the following characters  that  ap‐
+       ply:
 
-     S     If the character is part of the owner permissions and the file is
-           not executable or the directory is not searchable, by the owner,
-           and the set-user-id bit is set.
+       S     If the character is part of the owner permissions and the file is
+             not  executable or the directory is not searchable, by the owner,
+             and the set‐user‐id bit is set.
 
-     S     If the character is part of the group permissions and the file is
-           not executable or the directory is not searchable, by the group,
-           and the set-group-id bit is set.
+       S     If the character is part of the group permissions and the file is
+             not executable or the directory is not searchable, by the  group,
+             and the set‐group‐id bit is set.
 
-     T     If the character is part of the other permissions and the file is
-           not executable or the directory is not searchable, by others, and
-           the ``sticky'' (S_ISVTX) bit is set.
+       T     If the character is part of the other permissions and the file is
+             not executable or the directory is not searchable, by others, and
+             the ‘‘sticky’’ (S_ISVTX) bit is set.
 
-     s     If the character is part of the owner permissions and the file is
-           executable or the directory searchable, by the owner, and the set-
-           user-id bit is set.
+       s     If the character is part of the owner permissions and the file is
+             executable  or  the  directory  searchable, by the owner, and the
+             set‐user‐id bit is set.
 
-     s     If the character is part of the group permissions and the file is
-           executable or the directory searchable, by the group, and the set-
+       s     If the character is part of the group permissions and the file is
+             executable or the directory searchable, by  the  group,  and  the
+             set‐group‐id bit is set.
 
-           group-id bit is set.
+       t     If the character is part of the other permissions and the file is
+             executable  or  the  directory  searchable,  by  others,  and the
+             ‘‘sticky’’ (S_ISVTX) bit is set.
 
-     t     If the character is part of the other permissions and the file is
-           executable or the directory searchable, by others, and the
-           ``sticky'' (S_ISVTX) bit is set.
+       x     The file is executable or the directory is searchable.
 
-     x     The file is executable or the directory is searchable.
+       -     None of the above apply.
 
-     -     None of the above apply.
+       The last character is a plus sign ‘‘+’’ if any there are any  alternate
+       or  additional access control methods associated with the inode, other‐
+       wise it will be a space.
 
-     The last character is a plus sign ``+'' if any there are any alternate or
-     additional access control methods associated with the inode, otherwise it
-     will be a space.
+[1mRETURN VALUES[0m
+       The [1mstrmode[22m() function always returns 0.
 
-RREETTUURRNN VVAALLUUEESS
-     The ssttrrmmooddee() function always returns 0.
+[1mSEE ALSO[0m
+       [4mchmod[24m(1), [4mfind[24m(1), [4mstat[24m(2), [4mgetmode[24m(3), [4msetmode[24m(3)
 
-SSEEEE AALLSSOO
-     chmod(1),  find(1),  stat(2),  getmode(3),  setmode(3)
+[1mHISTORY[0m
+       The [1mstrmode[22m() function currently under development.
 
-HHIISSTTOORRYY
-     The ssttrrmmooddee() function currently under development.
-
-BSD Experimental                 July 31, 1991                               2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     July 31, 1991                      STRMODE(3)

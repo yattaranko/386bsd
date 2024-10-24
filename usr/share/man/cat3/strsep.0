@@ -1,66 +1,36 @@
-STRSEP(3)                 386BSD Programmer's Manual                 STRSEP(3)
+STRSEP(3)                   Library Functions Manual                 STRSEP(3)
 
-NNAAMMEE
-     ssttrrsseepp - separate strings
+[1mNAME[0m
+       strsep — separate strings
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _c_h_a_r *
-     ssttrrsseepp(_c_h_a_r **_s_t_r_i_n_g_p, _c_h_a_r *_d_e_l_i_m)
+       [4mchar[24m [4m*[0m
+       [1mstrsep[22m([4mchar[24m [4m**stringp[24m, [4mchar[24m [4m*delim[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssttrrsseepp() locates in the null-terminated string at *_s_t_r_i_n_g_p the first
-     occurence of any character in _d_e_l_i_m and replaces this with a `\0',
-     records the location of the immediate following character in *_s_t_r_i_n_g_p,
-     then returns the original value of *_s_t_r_i_n_g_p. If no delimiter characters
-     are found, ssttrrsseepp() sets *_s_t_r_i_n_g_p to NULL; if *_s_t_r_i_n_g_p is initially NULL,
-     ssttrrsseepp() returns NULL.
+[1mDESCRIPTION[0m
+       The  [1mstrsep[22m()  locates  in  the  null‐terminated string at [4m*stringp[24m the
+       first occurence of any character in [4mdelim[24m  and  replaces  this  with  a
+       ‘\0’,  records  the  location  of  the immediate following character in
+       [4m*stringp[24m, then returns the original value of [4m*stringp[24m.  If no delimiter
+       characters are found, [1mstrsep[22m() sets [4m*stringp[24m to NULL;  if  [4m*stringp[24m  is
+       initially NULL, [1mstrsep[22m() returns NULL.
 
-EEXXAAMMPPLLEESS
-     The following uses ssttrrsseepp() to parse strings containing runs of white
-     space, making up an argument vector:
+[1mEXAMPLES[0m
+       The  following  uses [1mstrsep[22m() to parse strings containing runs of white
+       space, making up an argument vector:
 
-           char inputstring[100];
-           char **argv[51], **ap = argv, *p, *val;
-           /* set up inputstring */
-           for (p = inputstring; p != NULL; ) {
-                   while ((val = strsep(&p, " \t")) != NULL && *val == '\0');
-                   *ap++ = val;
-           }
-           *ap = 0;
+             char inputstring[100];
+             char **argv[51], **ap = argv, *p, *val;
+             /* set up inputstring */
+             for (p = inputstring; p != NULL; ) {
+                     while ((val = strsep(&p, " \t")) != NULL && *val == ’\0’);
+                     *ap++ = val;
+             }
+             *ap = 0;
 
-HHIISSTTOORRYY
-     The ssttrrsseepp() function is currently under development.
+[1mHISTORY[0m
+       The [1mstrsep[22m() function is currently under development.
 
-BSD Experimental                April 19, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                    April 19, 1991                       STRSEP(3)

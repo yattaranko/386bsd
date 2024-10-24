@@ -43,18 +43,19 @@
 #include "vmspace.h"
 #include "prototypes.h"
 
+extern int splclock(void);
+static int donice(register struct proc* curp, register struct proc* chgp, int n);
+
 /*
  * Resource controls and accounting.
  */
 
-getpriority(curp, uap, retval)
-	struct proc *curp;
+int getpriority(struct proc* curp, void* vap, int* retval)
+{
 	register struct args {
 		int	which;
 		int	who;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	register struct proc *p;
 	register int low = PRIO_MAX + 1;
 
@@ -104,15 +105,13 @@ getpriority(curp, uap, retval)
 }
 
 /* ARGSUSED */
-setpriority(curp, uap, retval)
-	struct proc *curp;
+int setpriority(struct proc* curp, void* vap, int* retval)
+{
 	register struct args {
 		int	which;
 		int	who;
 		int	prio;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	register struct proc *p;
 	int found = 0, error = 0;
 
@@ -161,9 +160,7 @@ setpriority(curp, uap, retval)
 	return (0);
 }
 
-donice(curp, chgp, n)
-	register struct proc *curp, *chgp;
-	register int n;
+static int donice(register struct proc* curp, register struct proc* chgp, int n)
 {
 	register struct pcred *pcred = curp->p_cred;
 
@@ -194,14 +191,12 @@ PRV_RLIMIT_OFILE,
 };
 
 /* ARGSUSED */
-setrlimit(p, uap, retval)
-	struct proc *p;
+int setrlimit(struct proc* p, void* vap, int* retval)
+{
 	register struct args {
 		u_int	which;
 		struct	rlimit *lim;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct rlimit alim;
 	register struct rlimit *alimp;
 	int error;
@@ -212,15 +207,17 @@ setrlimit(p, uap, retval)
 
 	/* fetch new limit entry into temp buffer to examine it */
 	alimp = &p->p_rlimit[uap->which];
-	if (error =
-	    copyin(p, (caddr_t)uap->lim, (caddr_t)&alim, sizeof (struct rlimit)))
+	error = copyin(p, (caddr_t)uap->lim, (caddr_t)&alim, sizeof (struct rlimit));
+	if (error != 0)
 		return (error);
 
 	/* if exceeding maxium limit, check for priviledge to do so */
 	if (alim.rlim_cur > alimp->rlim_max || alim.rlim_max > alimp->rlim_max)
-		if (error =
-		    use_priv(p->p_ucred, limit_priv[uap->which], p))
+	{
+		error = use_priv(p->p_ucred, limit_priv[uap->which], p);
+		if (error != 0)
 			return (error);
+	}
 
 	/* need to unshare limits ? */
 	if (p->p_limit->p_refcnt > 1 &&
@@ -282,14 +279,12 @@ setrlimit(p, uap, retval)
 }
 
 /* ARGSUSED */
-getrlimit(p, uap, retval)
-	struct proc *p;
-	register struct args {
+int getrlimit(struct proc* p, void* vap, int* retval)
+{
+	struct args {
 		u_int	which;
 		struct	rlimit *rlp;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 
 	if (uap->which >= RLIM_NLIMITS)
 		return (EINVAL);
@@ -298,14 +293,12 @@ getrlimit(p, uap, retval)
 }
 
 /* ARGSUSED */
-getrusage(p, uap, retval)
-	register struct proc *p;
+int getrusage(struct proc* p, void* vap, int* retval)
+{
 	register struct args {
 		int	who;
 		struct	rusage *rusage;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	register struct rusage *rup;
 
 	switch (uap->who) {
@@ -353,8 +346,7 @@ ruadd(struct rusage *ru, struct rusage *ru2)
  * and copy when a limit is changed.
  */
 struct plimit *
-limcopy(lim)
-	struct plimit *lim;
+limcopy(struct plimit* lim)
 {
 	register struct plimit *copy;
 

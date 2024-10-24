@@ -1,132 +1,77 @@
-QSORT(3)                  386BSD Programmer's Manual                  QSORT(3)
+QSORT(3)                    Library Functions Manual                  QSORT(3)
 
-NNAAMMEE
-     qqssoorrtt,, hheeaappssoorrtt - sort functions
+[1mNAME[0m
+       qsort, heapsort — sort functions
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddlliibb..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdlib.h>[0m
 
-     _v_o_i_d
-     qqssoorrtt(_v_o_i_d *_b_a_s_e, _s_i_z_e__t _n_m_e_m_b, _s_i_z_e__t _s_i_z_e,
-             _i_n_t (*_c_o_m_p_a_r)(_c_o_n_s_t _v_o_i_d *, _c_o_n_s_t _v_o_i_d *))
+       [4mvoid[0m
+       [1mqsort[22m([4mvoid[24m       [4m*base[24m,       [4msize_t[24m      [4mnmemb[24m,      [4msize_t[24m      [4msize[24m,
+           [4mint[24m [4m(*compar)(const[24m [4mvoid[24m [4m*,[24m [4mconst[24m [4mvoid[24m [4m*)[24m);
 
-     _i_n_t
-     hheeaappssoorrtt(_v_o_i_d *_b_a_s_e, _s_i_z_e__t _n_m_e_m_b, _s_i_z_e__t _s_i_z_e,
-             _i_n_t (*_c_o_m_p_a_r)(_c_o_n_s_t _v_o_i_d *, _c_o_n_s_t _v_o_i_d *))
+       [4mint[0m
+       [1mheapsort[22m([4mvoid[24m     [4m*base[24m,      [4msize_t[24m      [4mnmemb[24m,      [4msize_t[24m      [4msize[24m,
+           [4mint[24m [4m(*compar)(const[24m [4mvoid[24m [4m*,[24m [4mconst[24m [4mvoid[24m [4m*)[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The qqssoorrtt() function is a modified partition-exchange sort, or quicksort.
-     The hheeaappssoorrtt() function is a modified selection sort.
+[1mDESCRIPTION[0m
+       The  [1mqsort[22m()  function is a modified partition‐exchange sort, or quick‐
+       sort.  The [1mheapsort[22m() function is a modified selection sort.
 
-     The qqssoorrtt() and hheeaappssoorrtt() functions sort an array of _n_m_e_m_b objects, the
-     initial member of which is pointed to by _b_a_s_e. The size of each object is
-     specified by _s_i_z_e.
+       The [1mqsort[22m() and [1mheapsort[22m() functions sort an array  of  [4mnmemb[24m  objects,
+       the  initial  member  of which is pointed to by [4mbase[24m.  The size of each
+       object is specified by [4msize[24m.
 
-     The contents of the array are sorted in ascending order according to a
-     comparison function pointed to by _c_o_m_p_a_r, which is called with two
-     arguments that point to the objects being compared.
+       The contents of the array are sorted in ascending order according to  a
+       comparison  function pointed to by [4mcompar[24m, which is called with two ar‐
+       guments that point to the objects being compared.
 
-     The comparison function must return an integer less than, equal to, or
-     greater than zero if the first argument is considered to be respectively
-     less than, equal to, or greater than the second.
+       The comparison function must return an integer less than, equal to,  or
+       greater  than  zero  if  the first argument is considered to be respec‐
+       tively less than, equal to, or greater than the second.
 
-     The functions qqssoorrtt() and hheeaappssoorrtt() are _n_o_t stable, that is, if two
-     members compare as equal, their order in the sorted array is undefined.
+       The functions [1mqsort[22m() and [1mheapsort[22m() are [4mnot[24m stable, that  is,  if  two
+       members compare as equal, their order in the sorted array is undefined.
 
-     The qqssoorrtt() function is an implementation of C.A.R. Hoare's ``quicksort''
-     algorithm, a variant of partition-exchange sorting; in particular, see
-     D.E. Knuth's Algorithm Q.  QQssoorrtt() takes O N lg N average time.  This
-     implementation uses median selection to avoid the traditional O N**2
-     worst-case behavior.
+       The  [1mqsort[22m()  function  is an implementation of C.A.R. Hoare’s ‘‘quick‐
+       sort’’ algorithm, a variant of partition‐exchange sorting; in  particu‐
+       lar,  see  D.E.  Knuth’s  Algorithm  Q.  [1mQsort[22m() takes O N lg N average
+       time.  This implementation uses median selection to  avoid  the  tradi‐
+       tional O N**2 worst‐case behavior.
 
-     The hheeaappssoorrtt() function is an implementation of J.W.J. William's
-     ``heapsort'' algorithm, a variant of selection sorting; in particular,
-     see D.E. Knuth's Algorithm H.  HHeeaappssoorrtt() takes O N lg N worst-case time.
-     Its _o_n_l_y advantage over qqssoorrtt() is that it uses no additional memory.
+       The  [1mheapsort[22m()  function  is  an  implementation  of  J.W.J. William’s
+       ‘‘heapsort’’ algorithm, a variant of selection sorting; in  particular,
+       see  D.E.  Knuth’s  Algorithm  H.  [1mHeapsort[22m() takes O N lg N worst‐case
+       time.  Its [4monly[24m advantage over [1mqsort[22m() is that it  uses  no  additional
+       memory.
 
-RREETTUURRNN VVAALLUUEESS
-     The qqssoorrtt() function returns no value.
+[1mRETURN VALUES[0m
+       The [1mqsort[22m() function returns no value.
 
-     Upon successful completion, hheeaappssoorrtt() returns 0.  Otherwise, it returns
-     -1 and the global variable _e_r_r_n_o is set to indicate the error.
+       Upon  successful  completion,  [1mheapsort[22m() returns 0.  Otherwise, it re‐
+       turns -1 and the global variable [4merrno[24m is set to indicate the error.
 
-EERRRROORRSS
-     The hheeaappssoorrtt() function succeeds unless:
+[1mERRORS[0m
+       The [1mheapsort[22m() function succeeds unless:
 
-     [EINVAL]      The _s_i_z_e argument is zero.
+       [EINVAL]           The [4msize[24m argument is zero.
 
-CCOOMMPPAATTIIBBIILLIITTYY
-     Previous versions of qqssoorrtt() did not permit the comparison routine to
-     itself call qqssoorrtt(_3).  This is no longer true.
+[1mCOMPATIBILITY[0m
+       Previous versions of [1mqsort[22m() did not permit the comparison  routine  to
+       itself call [1mqsort[22m([4m3[24m).  This is no longer true.
 
-SSEEEE AALLSSOO
-     sort(1),  radixsort(3)
+[1mSEE ALSO[0m
+       [4msort[24m(1), [4mradixsort[24m(3)
 
+       Hoare, C.A.R., “Quicksort”, [4mThe[24m [4mComputer[24m [4mJournal[24m, 5:1, pp. 10‐15, 1962.
 
-     Hoare, C.A.R., "Quicksort", _T_h_e _C_o_m_p_u_t_e_r _J_o_u_r_n_a_l, 5:1, pp. 10-15, 1962.
+       Williams,  J.W.J,  “Heapsort”,  [4mCommunications[24m  [4mof[24m  [4mthe[24m  [4mACM[24m,  7:1, pp.
+       347‐348, 1964.
 
-     Williams, J.W.J, "Heapsort", _C_o_m_m_u_n_i_c_a_t_i_o_n_s _o_f _t_h_e _A_C_M, 7:1, pp. 347-348,
-     1964.
+       Knuth, D.E., “Sorting and Searching”, [4mThe[24m [4mArt[24m [4mof[24m [4mComputer[24m  [4mProgramming[24m,
+       Vol. 3, pp. 114‐123, 145‐149, 1968.
 
-     Knuth, D.E., "Sorting and Searching", _T_h_e _A_r_t _o_f _C_o_m_p_u_t_e_r _P_r_o_g_r_a_m_m_i_n_g,
-     Vol. 3, pp. 114-123, 145-149, 1968.
+[1mSTANDARDS[0m
+       The [1mqsort[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-SSTTAANNDDAARRDDSS
-     The qqssoorrtt() function conforms to ANSI C3.159-1989 (``ANSI C'').
-
-BSD Experimental                 June 29, 1991                               2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                        QSORT(3)

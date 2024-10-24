@@ -62,7 +62,7 @@
  * a uio.
  */
 int
-uioapply(int (*func)(), int arg1, struct uio *uio)
+uioapply(int (*func)(dev_t, int, int, caddr_t, int*, struct proc*), int arg1, struct uio *uio)
 {
 	register struct iovec *iov;
 	u_int cnt, cnt1;
@@ -78,7 +78,7 @@ uioapply(int (*func)(), int arg1, struct uio *uio)
 		cnt = iov->iov_len;
 		cnt1 = cnt;
 		error = (*func)(arg1, uio->uio_offset, uio->uio_rw,
-			iov->iov_base, &cnt1, uio->uio_procp);
+						iov->iov_base, (int*)&cnt1, uio->uio_procp);
 		cnt -= cnt1;
 		iov = uio_advance(uio, iov, cnt);
 		if (error || cnt1)

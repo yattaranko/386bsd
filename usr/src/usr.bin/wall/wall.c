@@ -62,10 +62,11 @@ int nobanner;
 int mbufsize;
 char *mbuf;
 
+static void makemsg(char* fname);
+int _mkstemp(char* path);
+
 /* ARGSUSED */
-main(argc, argv)
-	int argc;
-	char **argv;
+int main(int argc, char** argv)
 {
 	extern int optind;
 	int ch;
@@ -74,8 +75,11 @@ main(argc, argv)
 	FILE *fp;
 	char *p, *ttymsg();
 
+fprintf(stderr, "main1\n");
 	while ((ch = getopt(argc, argv, "n")) != EOF)
-		switch (ch) {
+	{
+		switch (ch)
+		{
 		case 'n':
 			/* undoc option for shutdown: suppress banner */
 			if (geteuid() == 0)
@@ -87,6 +91,8 @@ usage:
 			(void)fprintf(stderr, "usage: wall [file]\n");
 			exit(1);
 		}
+	}
+fprintf(stderr, "main2\n");
 	argc -= optind;
 	argv += optind;
 	if (argc > 1)
@@ -94,10 +100,12 @@ usage:
 
 	makemsg(*argv);
 
+fprintf(stderr, "main3\n");
 	if (!(fp = fopen(_PATH_UTMP, "r"))) {
 		(void)fprintf(stderr, "wall: cannot read %s.\n", _PATH_UTMP);
 		exit(1);
 	}
+fprintf(stderr, "main4\n");
 	iov.iov_base = mbuf;
 	iov.iov_len = mbufsize;
 	/* NOSTRICT */
@@ -111,8 +119,7 @@ usage:
 	exit(0);
 }
 
-makemsg(fname)
-	char *fname;
+static void makemsg(char* fname)
 {
 	register int ch, cnt;
 	struct tm *lt;
@@ -121,13 +128,12 @@ makemsg(fname)
 	time_t now, time();
 	FILE *fp;
 	int fd;
-	char *p, *whom, hostname[MAXHOSTNAMELEN], lbuf[100], tmpname[15];
+	char *p, *whom, hostname[MAXHOSTNAMELEN], lbuf[100], tmpname[17];
 	char *getlogin(), *strcpy(), *ttyname();
 
 	(void)strcpy(tmpname, _PATH_TMP);
 	(void)strcat(tmpname, "wall.XXXXXX");
-	if (!(fd = mkstemp(tmpname)) || !(fp = fdopen(fd, "r+"))) {
-		fprintf(stderr, "fd = %x, fp = %x", fd, fp);
+	if (!(fd = _mkstemp(tmpname)) || !(fp = fdopen(fd, "r+"))) {
 		(void)fprintf(stderr, "wall: can't open temporary file.\n");
 		exit(1);
 	}
@@ -136,6 +142,7 @@ makemsg(fname)
 	if (!nobanner) {
 		if (!(whom = getlogin()))
 			whom = (pw = getpwuid(getuid())) ? pw->pw_name : "???";
+fprintf("whom = %s\n", whom);
 		(void)gethostname(hostname, sizeof(hostname));
 		(void)time(&now);
 		lt = localtime(&now);
@@ -189,4 +196,93 @@ makemsg(fname)
 		exit(1);
 	}
 	(void)close(fd);
+}
+
+
+#include <sys/fcntl.h>
+#include "sys/errno.h"
+static int _gettemp(char *path, register int *doopen);
+
+int _mkstemp(char* path)
+{
+	int fd;
+
+	return (_gettemp(path, &fd) ? fd : -1);
+}
+
+static int _gettemp(char *path, register int *doopen)
+{
+	extern int errno;
+	register char *start, *trv;
+	struct stat sbuf;
+	u_int pid;
+
+	pid = getpid();
+fprintf(stderr, "path = %s, pid = %d, ", path, pid);
+	for (trv = path; *trv; ++trv);		/* extra X's get set to 0's */
+	while (*--trv == 'X') {
+		*trv = (pid % 10) + '0';
+		pid /= 10;
+	}
+fprintf(stderr, "path = %s, trv = %s\n", path, trv);
+
+	/*
+	 * check the target directory; if you have six X's and it
+	 * doesn't exist this runs for a *very* long time.
+	 */
+	for (start = trv + 1;; --trv) {
+		if (trv <= path)
+			break;
+		if (*trv == '/') {
+			*trv = '\0';
+			if (stat(path, &sbuf))
+				return(0);
+			if (!S_ISDIR(sbuf.st_mode)) {
+				errno = ENOTDIR;
+				return(0);
+			}
+			*trv = '/';
+			break;
+		}
+	}
+
+	for (;;)
+	{
+		if (doopen) {
+fprintf(stderr, "path = %s\n", path);
+			if ((*doopen = open(path, O_CREAT|O_EXCL|O_RDWR, 0600)) >= 0)
+			{
+fprintf(stderr, "*doopen = %x\n", *doopen);
+				return(1);
+			}
+fprintf(stderr, "*doopen = %x\n", *doopen);
+			if (errno != EEXIST)
+			{
+				return(0);
+			}
+		}
+		else
+		{
+fprintf(stderr, "stat\n");
+			if (stat(path, &sbuf))
+			{
+				return(errno == ENOENT ? 1 : 0);
+			}
+		}
+		/* tricky little algorithm for backward compatibility */
+		for (trv = start;;) {
+			if (!*trv)
+				return(0);
+			if (*trv == 'z')
+				*trv++ = 'a';
+			else {
+				if (isdigit(*trv))
+					*trv = 'a';
+				else
+					++*trv;
+				break;
+			}
+		}
+	}
+	/*NOTREACHED*/
 }

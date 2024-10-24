@@ -1,66 +1,26 @@
-NICE(3)                   386BSD Programmer's Manual                   NICE(3)
+NICE(3)                     Library Functions Manual                   NICE(3)
 
-NNAAMMEE
-     nniiccee - set program scheduling priority
+[1mNAME[0m
+       nice — set program scheduling priority
 
-SSYYNNOOPPSSIISS
-     nniiccee(_i_n_t _i_n_c_r)
+[1mSYNOPSIS[0m
+       [1mnice[22m([4mint[24m [4mincr[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     TThhiiss iinntteerrffaaccee iiss oobbssoolleetteedd bbyy sseettpprriioorriittyy((22))..
+[1mDESCRIPTION[0m
+       [1mThis interface is obsoleted by setpriority(2).[0m
 
-     The nniiccee() function obtains the scheduling priority of the process from
-     the system and sets it to the priority value specified in _i_n_c_r. The
-     priority is a value in the range -20 to 20.  The default priority is 0;
-     lower priorities cause more favorable scheduling.  Only the super-user
-     may lower priorities.
+       The [1mnice[22m() function obtains the scheduling priority of the process from
+       the  system  and  sets it to the priority value specified in [4mincr[24m.  The
+       priority is a value in the range ‐20 to 20.  The default priority is 0;
+       lower priorities cause more favorable scheduling.  Only the  super‐user
+       may lower priorities.
 
-     Children inherit the priority of their parent processes via fork(2).
+       Children inherit the priority of their parent processes via [4mfork[24m(2).
 
-SSEEEE AALLSSOO
-     nice(1),  setpriority(2),  fork(2),  renice(8)
+[1mSEE ALSO[0m
+       [4mnice[24m(1), [4msetpriority[24m(2), [4mfork[24m(2), [4mrenice[24m(8)
 
-HHIISSTTOORRYY
-     A nniiccee() syscall appeared in Version 6 AT&T UNIX.
+[1mHISTORY[0m
+       A [1mnice[22m() syscall appeared in Version 6 AT&T UNIX.
 
-4th Berkeley Distribution       April 19, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       April 19, 1991                         NICE(3)

@@ -1,66 +1,52 @@
-PUTC(3)                   386BSD Programmer's Manual                   PUTC(3)
+PUTC(3)                     Library Functions Manual                   PUTC(3)
 
-NNAAMMEE
-     ffppuuttcc, ppuuttcc, ppuuttcchhaarr, ppuuttww - output a character or word to a stream
+[1mNAME[0m
+       fputc, putc, putchar, putw — output a character or word to a stream
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdio.h>[0m
 
-     _i_n_t
-     ffppuuttcc(_i_n_t _c, _F_I_L_E *_s_t_r_e_a_m)
+       [4mint[0m
+       [1mfputc[22m([4mint[24m [4mc[24m, [4mFILE[24m [4m*stream[24m);
 
-     _i_n_t
-     ppuuttcc(_i_n_t _c, _F_I_L_E *_s_t_r_e_a_m)
+       [4mint[0m
+       [1mputc[22m([4mint[24m [4mc[24m, [4mFILE[24m [4m*stream[24m);
 
-     _i_n_t
-     ppuuttcchhaarr(_i_n_t _c)
+       [4mint[0m
+       [1mputchar[22m([4mint[24m [4mc[24m);
 
-     _i_n_t
-     ppuuttww(_i_n_t _w, _F_I_L_E *_s_t_r_e_a_m)
+       [4mint[0m
+       [1mputw[22m([4mint[24m [4mw[24m, [4mFILE[24m [4m*stream[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ffppuuttcc() function writes the character _c (converted to an ``unsigned
-     char'') to the output stream pointed to by _s_t_r_e_a_m.
+[1mDESCRIPTION[0m
+       The [1mfputc[22m() function writes the character [4mc[24m (converted to an ‘‘unsigned
+       char’’) to the output stream pointed to by [4mstream[24m.
 
-     PPuuttcc() acts essentially identically to ffppuuttcc(), but is a macro that
-     expands in-line. It may evaluate _s_t_r_e_a_m more than once, so arguments
-     given to ppuuttcc() should not be expressions with potential side effects.
+       [1mPutc[22m() acts essentially identically to [1mfputc[22m(), but is a macro that ex‐
+       pands  in‐line.  It  may  evaluate  [4mstream[24m more than once, so arguments
+       given to [1mputc[22m() should not be expressions with potential side effects.
 
-     PPuuttcchhaarr() is identical to ppuuttcc() with an output stream of _s_t_d_o_u_t.
+       [1mPutchar[22m() is identical to [1mputc[22m() with an output stream of [4mstdout[24m.
 
-     The ppuuttww() function writes the specified _i_n_t to the named output _s_t_r_e_a_m.
+       The [1mputw[22m() function writes  the  specified  [4mint[24m  to  the  named  output
+       [4mstream[24m.
 
-RREETTUURRNN VVAALLUUEESS
-     The functions, ffppuuttcc(), ppuuttcc() and ppuuttcchhaarr() return the character
-     written.  If an error occurs, the value EOF is returned.  The ppuuttww()
-     function returns 0 on success; EOF is returned if a write error occurs,
-     or if an attempt is made to write a read-only stream.
+[1mRETURN VALUES[0m
+       The functions, [1mfputc[22m(), [1mputc[22m() and [1mputchar[22m() return the character writ‐
+       ten.   If an error occurs, the value EOF is returned.  The [1mputw[22m() func‐
+       tion returns 0 on success; EOF is returned if a write error occurs,  or
+       if an attempt is made to write a read‐only stream.
 
-SSEEEE AALLSSOO
-     ferror(3),  fopen(3),  getc(3),  stdio(3)
+[1mSEE ALSO[0m
+       [4mferror[24m(3), [4mfopen[24m(3), [4mgetc[24m(3), [4mstdio[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The functions ffppuuttcc(), ppuuttcc(), and ppuuttcchhaarr(), conform to ANSI C3.159-1989
-     (``ANSI C''). A function ppuuttww() function appeared in Version 6 AT&T UNIX.
+[1mSTANDARDS[0m
+       The   functions   [1mfputc[22m(),  [1mputc[22m(),  and  [1mputchar[22m(),  conform  to  ANSI
+       X3.159‐1989 (“ANSI C89”).   A  function  [1mputw[22m()  function  appeared  in
+       Version 6 AT&T UNIX.
 
-BBUUGGSS
-     The size and byte order of an _i_n_t varies from one machine to another, and
-     ppuuttww() is not recommended for portable applications.
+[1mBUGS[0m
+       The  size  and byte order of an [4mint[24m varies from one machine to another,
+       and [1mputw[22m() is not recommended for portable applications.
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                         PUTC(3)

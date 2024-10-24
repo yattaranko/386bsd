@@ -1,264 +1,207 @@
-MOUNT(2)                  386BSD Programmer's Manual                  MOUNT(2)
-
-NNAAMMEE
-     mmoouunntt, uunnmmoouunntt - mount or dismount a filesystem
-
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//mmoouunntt..hh>>
-
-     _i_n_t
-     mmoouunntt(_i_n_t _t_y_p_e, _c_o_n_s_t _c_h_a_r *_d_i_r, _i_n_t _f_l_a_g_s, _c_a_d_d_r__t _d_a_t_a)
-
-     _i_n_t
-     uunnmmoouunntt(_c_o_n_s_t _c_h_a_r *_d_i_r, _i_n_t _f_l_a_g_s)
-
-DDEESSCCRRIIPPTTIIOONN
-     The mmoouunntt() function grafts a filesystem object onto the system file tree
-     at the point _d_i_r. The argument _d_a_t_a describes the filesystem object to be
-     mounted.  The argument _t_y_p_e tells the kernel how to interpret _d_a_t_a (See
-     _t_y_p_e below).  The contents of the filesystem become available through the
-     new mount point _d_i_r. Any files in _d_i_r at the time of a successful mount
-     are swept under the carpet so to speak, and are unavailable until the
-     filesystem is unmounted.
+MOUNT(2)                      System Calls Manual                     MOUNT(2)
+
+[1mNAME[0m
+       mount, unmount — mount or dismount a filesystem
+
+[1mSYNOPSIS[0m
+       [1m#include <sys/mount.h>[0m
+
+       [4mint[0m
+       [1mmount[22m([4mint[24m [4mtype[24m, [4mconst[24m [4mchar[24m [4m*dir[24m, [4mint[24m [4mflags[24m, [4mcaddr_t[24m [4mdata[24m);
+
+       [4mint[0m
+       [1munmount[22m([4mconst[24m [4mchar[24m [4m*dir[24m, [4mint[24m [4mflags[24m);
+
+[1mDESCRIPTION[0m
+       The  [1mmount[22m()  function  grafts a filesystem object onto the system file
+       tree at the point [4mdir[24m.  The argument [4mdata[24m describes the filesystem  ob‐
+       ject  to  be mounted.  The argument [4mtype[24m tells the kernel how to inter‐
+       pret [4mdata[24m (See [4mtype[24m below).  The  contents  of  the  filesystem  become
+       available  through  the  new  mount point [4mdir[24m.  Any files in [4mdir[24m at the
+       time of a successful mount are swept under the carpet so to speak,  and
+       are unavailable until the filesystem is unmounted.
 
-     The following _f_l_a_g_s may be specified to suppress default semantics which
-     affect filesystem access.
+       The  following  [4mflags[24m  may  be  specified to suppress default semantics
+       which affect filesystem access.
 
-     M_RDONLY       The file system should be treated as read-only; Even the
-                    super-user may not write on it.
+       M_RDONLY       The file system should be treated as read‐only; Even the
+                      super‐user may not write on it.
 
-     M_NOEXEC       Do not allow files to be executed from the file system.
+       M_NOEXEC       Do not allow files to be executed from the file system.
 
-     M_NOSUID       Do not honor setuid or setgid bits on files when executing
-                    them.
+       M_NOSUID       Do not honor setuid or setgid bits on files when execut‐
+                      ing them.
 
-     M_NODEV        Do not interpret special files on the file system.
+       M_NODEV        Do not interpret special files on the file system.
 
-     M_SYNCHRONOUS  All I/O to the file system should be done synchronously.
+       M_SYNCHRONOUS  All I/O to the file system should be done synchronously.
 
-     The flag M_UPDATE indicates that the mount command is being applied to an
-     already mounted file system.  This allows the mount flags to be changed
-     without requiring that the file system be unmounted and remounted.  Some
-     file systems may not allow all flags to be changed.  For example, most
-     file systems will not allow a change from read-write to read-only.
+       The flag M_UPDATE indicates that the mount command is being applied  to
+       an  already  mounted  file  system.   This allows the mount flags to be
+       changed without requiring that the file system  be  unmounted  and  re‐
+       mounted.  Some file systems may not allow all flags to be changed.  For
+       example,  most  file systems will not allow a change from read‐write to
+       read‐only.
 
-     The _t_y_p_e argument defines the type of the file system.  The types of file
-     systems known to the system are defined in <_s_y_s/_m_o_u_n_t._h>. _D_a_t_a is a
-     pointer to a structure that contains the type specific arguments to
-     mount.  The currently supported types of file systems and their type
-     specific data are:
+       The [4mtype[24m argument defines the type of the file system.   The  types  of
+       file systems known to the system are defined in ⟨[4msys/mount.h[24m⟩.  [4mData[24m is
+       a  pointer  to a structure that contains the type specific arguments to
+       mount.  The currently supported types of file systems  and  their  type
+       specific data are:
 
-     MOUNT_UFS
-           struct ufs_args {
-                 char      *fspec;  /* Block special file to mount */
-                 int       exflags; /* export related flags */
-                 uid_t     exroot;  /* mapping for root uid */
-           };
+       MOUNT_UFS
+             struct ufs_args {
+                   char      *fspec;  /* Block special file to mount */
+                   int       exflags; /* export related flags */
+                   uid_t     exroot;  /* mapping for root uid */
+             };
 
-     MOUNT_NFS
-           struct nfs_args {
-                 struct sockaddr_in *addr; /* file server address */
-                 nfsv2fh_t *fh;       /* File handle to be mounted */
-                 int       flags;     /* flags */
-                 int       wsize;     /* write size in bytes */
-                 int       rsize;     /* read size in bytes */
-                 int       timeo;     /* initial timeout 0.1 secs */
-                 int       retrans;   /* times to retry send */
-                 char      *hostname; /* server's name */
-           };
+       MOUNT_NFS
+             struct nfs_args {
+                   struct sockaddr_in *addr; /* file server address */
+                   nfsv2fh_t *fh;       /* File handle to be mounted */
+                   int       flags;     /* flags */
+                   int       wsize;     /* write size in bytes */
+                   int       rsize;     /* read size in bytes */
+                   int       timeo;     /* initial timeout 0.1 secs */
+                   int       retrans;   /* times to retry send */
+                   char      *hostname; /* server’s name */
+             };
 
-     MOUNT_MFS
-           struct mfs_args {
-                 char      *name;  /* name of backing process */
-                 caddr_t   base;   /* base address of the file system */
-                 u_long    size;   /* size of the file system */
-           };
+       MOUNT_MFS
+             struct mfs_args {
+                   char      *name;  /* name of backing process */
+                   caddr_t   base;   /* base address of the file system */
+                   u_long    size;   /* size of the file system */
+             };
 
-     The uummoouunntt() function call disassociates the filesystem from the
-     specified mount point _d_i_r.
+       The [1mumount[22m() function call disassociates the filesystem from the speci‐
+       fied mount point [4mdir[24m.
 
-     The _f_l_a_g_s argument may have one of the following values:
+       The [4mflags[24m argument may have one of the following values:
 
-     MNT_NOFORCE    The unmount should fail if any files are active on the
-                    file system.
+       MNT_NOFORCE    The  unmount  should fail if any files are active on the
+                      file system.
 
-     MNT_FORCE      The file system should be forcibly unmounted even if files
-                    are still active.  Active special devices continue to
-                    work, but any further accesses to any other active files
-                    result in errors even if the file system is later
-                    remounted.
+       MNT_FORCE      The file system should be  forcibly  unmounted  even  if
+                      files are still active.  Active special devices continue
+                      to  work,  but  any further accesses to any other active
+                      files result in errors even if the file system is  later
+                      remounted.
 
-RREETTUURRNN VVAALLUUEESS
-     The mmoouunntt() returns the value 0 if the mount was successful, otherwise -1
-     is returned and the variable _e_r_r_n_o is set to indicate the error.
+[1mRETURN VALUES[0m
+       The  [1mmount[22m() returns the value 0 if the mount was successful, otherwise
+       ‐1 is returned and the variable [4merrno[24m is set to indicate the error.
 
-     UUmmoouunntt returns the value 0 if the umount succeeded; otherwise -1 is
-     returned and the variable _e_r_r_n_o is set to indicate the error.
+       [1mUmount [22mreturns the value 0 if the umount succeeded; otherwise ‐1 is re‐
+       turned and the variable [4merrno[24m is set to indicate the error.
 
-EERRRROORRSS
-     MMoouunntt() will fail when one of the following occurs:
+[1mERRORS[0m
+       [1mMount[22m() will fail when one of the following occurs:
 
-     [EPERM]    The caller is not the super-user.
+       [EPERM]    The caller is not the super‐user.
 
-     [ENAMETOOLONG]
-                A component of a pathname exceeded 255 characters, or the
-                entire length of a path name exceeded 1023 characters.
+       [ENAMETOOLONG]
+                  A component of a pathname exceeded 255  characters,  or  the
+                  entire length of a path name exceeded 1023 characters.
 
-     [ELOOP]    Too many symbolic links were encountered in translating a
-                pathname.
+       [ELOOP]    Too  many  symbolic  links were encountered in translating a
+                  pathname.
 
-     [ENOENT]   A component of _d_i_r does not exist.
+       [ENOENT]   A component of [4mdir[24m does not exist.
 
-     [ENOTDIR]  A component of _n_a_m_e is not a directory, or a path prefix of
-                _s_p_e_c_i_a_l is not a directory.
+       [ENOTDIR]  A component of [4mname[24m is not a directory, or a path prefix  of
+                  [4mspecial[24m is not a directory.
 
-     [EINVAL]   A pathname contains a character with the high-order bit set.
+       [EINVAL]   A pathname contains a character with the high‐order bit set.
 
-     [EBUSY]    Another process currently holds a reference to _d_i_r.
+       [EBUSY]    Another process currently holds a reference to [4mdir[24m.
 
-     [EFAULT]   _D_i_r points outside the process's allocated address space.
+       [EFAULT]   [4mDir[24m points outside the process’s allocated address space.
 
-     The following errors can occur for a _u_f_s file system mount:
+       The following errors can occur for a [4mufs[24m file system mount:
 
-     [ENODEV]   A component of ufs_args _f_s_p_e_c does not exist.
+       [ENODEV]   A component of ufs_args [4mfspec[24m does not exist.
 
-     [ENOTBLK]  _F_s_p_e_c is not a block device.
+       [ENOTBLK]  [4mFspec[24m is not a block device.
 
-     [ENXIO]    The major device number of _f_s_p_e_c is out of range (this
-                indicates no device driver exists for the associated
-                hardware).
+       [ENXIO]    The major device number of [4mfspec[24m is out of range (this indi‐
+                  cates no device driver exists for the associated hardware).
 
+       [EBUSY]    [4mFspec[24m is already mounted.
 
-     [EBUSY]    _F_s_p_e_c is already mounted.
+       [EMFILE]   No space remains in the mount table.
 
-     [EMFILE]   No space remains in the mount table.
+       [EINVAL]   The  super  block for the file system had a bad magic number
+                  or an out of range block size.
 
-     [EINVAL]   The super block for the file system had a bad magic number or
-                an out of range block size.
+       [ENOMEM]   Not enough memory was available to read the  cylinder  group
+                  information for the file system.
 
-     [ENOMEM]   Not enough memory was available to read the cylinder group
-                information for the file system.
+       [EIO]      An  I/O  error  occurred  while  reading  the super block or
+                  cylinder group information.
 
-     [EIO]      An I/O error occurred while reading the super block or
-                cylinder group information.
+       [EFAULT]   [4mFspec[24m points outside the process’s allocated address space.
 
-     [EFAULT]   _F_s_p_e_c points outside the process's allocated address space.
+       The following errors can occur for a [4mnfs[24m file system mount:
 
-     The following errors can occur for a _n_f_s file system mount:
+       [ETIMEDOUT]
+                  [4mNfs[24m timed out trying to contact the server.
 
-     [ETIMEDOUT]
-                _N_f_s timed out trying to contact the server.
+       [EFAULT]   Some part of the information described  by  nfs_args  points
+                  outside the process’s allocated address space.
 
-     [EFAULT]   Some part of the information described by nfs_args points
-                outside the process's allocated address space.
+       The following errors can occur for a [4mmfs[24m file system mount:
 
-     The following errors can occur for a _m_f_s file system mount:
+       [EMFILE]   No space remains in the mount table.
 
-     [EMFILE]   No space remains in the mount table.
+       [EINVAL]   The  super  block for the file system had a bad magic number
+                  or an out of range block size.
 
-     [EINVAL]   The super block for the file system had a bad magic number or
-                an out of range block size.
+       [ENOMEM]   Not enough memory was available to read the  cylinder  group
+                  information for the file system.
 
-     [ENOMEM]   Not enough memory was available to read the cylinder group
-                information for the file system.
+       [EIO]      An  paging  error  occurred while reading the super block or
+                  cylinder group information.
 
-     [EIO]      An paging error occurred while reading the super block or
-                cylinder group information.
+       [EFAULT]   [4mName[24m points outside the process’s allocated address space.
 
-     [EFAULT]   _N_a_m_e points outside the process's allocated address space.
+       [1mUmount [22mmay fail with one of the following errors:
 
-     UUmmoouunntt may fail with one of the following errors:
+       [EPERM]    The caller is not the super‐user.
 
-     [EPERM]    The caller is not the super-user.
+       [ENOTDIR]  A component of the path is not a directory.
 
-     [ENOTDIR]  A component of the path is not a directory.
+       [EINVAL]   The pathname contains a character with  the  high‐order  bit
+                  set.
 
-     [EINVAL]   The pathname contains a character with the high-order bit set.
+       [ENAMETOOLONG]
+                  A component of a pathname exceeded 255 characters, or an en‐
+                  tire path name exceeded 1023 characters.
 
-     [ENAMETOOLONG]
-                A component of a pathname exceeded 255 characters, or an
-                entire path name exceeded 1023 characters.
+       [ELOOP]    Too  many symbolic links were encountered in translating the
+                  pathname.
 
-     [ELOOP]    Too many symbolic links were encountered in translating the
-                pathname.
+       [EINVAL]   The requested directory is not in the mount table.
 
-     [EINVAL]   The requested directory is not in the mount table.
+       [EBUSY]    A process is holding a reference to a file  located  on  the
+                  file system.
 
-     [EBUSY]    A process is holding a reference to a file located on the file
-                system.
+       [EIO]      An  I/O  error occurred while writing cached file system in‐
+                  formation.
 
-     [EIO]      An I/O error occurred while writing cached file system
-                information.
+       [EFAULT]   [4mDir[24m points outside the process’s allocated address space.
 
-     [EFAULT]   _D_i_r points outside the process's allocated address space.
+       A [4mufs[24m or [4mmfs[24m mount can also fail if the maximum number  of  filesystems
+       are currently mounted.
 
-     A _u_f_s or _m_f_s mount can also fail if the maximum number of filesystems are
-     currently mounted.
+[1mSEE ALSO[0m
+       [4mmount[24m(8), [4mumount[24m(8), [4mmfs[24m(8)
 
-SSEEEE AALLSSOO
-     mount(8),  umount(8),  mfs(8)
+[1mBUGS[0m
+       Some of the error codes need translation to more obvious messages.
 
-BBUUGGSS
-     Some of the error codes need translation to more obvious messages.
+[1mHISTORY[0m
+       [1mMount[22m() and [1mumount[22m() function calls appeared in Version 6 AT&T UNIX.
 
-HHIISSTTOORRYY
-     MMoouunntt() and uummoouunntt() function calls appeared in Version 6 AT&T UNIX.
-
-4th Berkeley Distribution       March 15, 1991                               4
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       March 15, 1991                        MOUNT(2)

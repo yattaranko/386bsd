@@ -1,528 +1,498 @@
-INTRO(2)                  386BSD Programmer's Manual                  INTRO(2)
+INTRO(2)                      System Calls Manual                     INTRO(2)
+
+[1mNAME[0m
+       intro — introduction to system calls and error numbers
 
-NNAAMMEE
-     iinnttrroo - introduction to system calls and error numbers
+[1mSYNOPSIS[0m
+       [1m#include <sys/errno.h>[0m
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//eerrrrnnoo..hh>>
+[1mDESCRIPTION[0m
+       This  section provides an overview of the system calls, their error re‐
+       turns, and other common definitions and concepts.
 
-DDEESSCCRRIIPPTTIIOONN
-     This section provides an overview of the system calls, their error
-     returns, and other common definitions and concepts.
+[1mDIAGNOSTICS[0m
+       Nearly all of the system calls provide an error number in the  external
+       variable [4merrno[24m, which is defined as:
 
-DDIIAAGGNNOOSSTTIICCSS
-     Nearly all of the system calls provide an error number in the external
-     variable _e_r_r_n_o, which is defined as:
+             [1mextern int errno[0m
 
-           extern int errno
+       When  a system call detects an error, it returns an integer value indi‐
+       cating failure (usually ‐1) and sets the  variable  [4merrno[24m  accordingly.
+       <This  allows  interpretation  of  the failure on receiving a ‐1 and to
+       take action accordingly.> Successful calls never set [4merrno[24m;  once  set,
+       it  remains until another error occurs.  It should only be examined af‐
+       ter an error.  Note that a number of system calls overload the meanings
+       of these error numbers, and that the meanings must be  interpreted  ac‐
+       cording to the type and circumstances of the call.
 
-     When a system call detects an error, it returns an integer value
-     indicating failure (usually -1) and sets the variable _e_r_r_n_o accordingly.
-     <This allows interpretation of the failure on receiving a -1 and to take
-     action accordingly.> Successful calls never set _e_r_r_n_o; once set, it
-     remains until another error occurs.  It should only be examined after an
-     error.  Note that a number of system calls overload the meanings of these
-     error numbers, and that the meanings must be interpreted according to the
-     type and circumstances of the call.
+       The following is a complete list of the errors and their names as given
+       in ⟨[4msys/errno.h[24m⟩.
 
-     The following is a complete list of the errors and their names as given
-     in <_s_y_s/_e_r_r_n_o._h>.
+       0 [4mError[24m [4m0[24m.  Not used.
 
-     0 _E_r_r_o_r _0. Not used.
+       1 EPERM [4mOperation[24m [4mnot[24m [4mpermitted[24m [4m.[24m An attempt was made to perform an op‐
+               eration  limited to processes with appropriate privileges or to
+               the owner of a file or other resources.
 
-     1 EPERM _O_p_e_r_a_t_i_o_n _n_o_t _p_e_r_m_i_t_t_e_d . An attempt was made to perform an
-             operation limited to processes with appropriate privileges or to
-             the owner of a file or other resources.
+       2 ENOENT [4mNo[24m [4msuch[24m [4mfile[24m [4mor[24m [4mdirectory[24m.  A component of a  specified  path‐
+               name did not exist, or the pathname was an empty string.
 
-     2 ENOENT _N_o _s_u_c_h _f_i_l_e _o_r _d_i_r_e_c_t_o_r_y. A component of a specified pathname
-             did not exist, or the pathname was an empty string.
+       3  ESRCH  [4mNo[24m  [4msuch[24m [4mprocess[24m.  No process could be found corresponding to
+               that specified by the given process ID.
 
-     3 ESRCH _N_o _s_u_c_h _p_r_o_c_e_s_s. No process could be found corresponding to that
-             specified by the given process ID.
+       4 EINTR [4mInterrupted[24m [4mfunction[24m [4mcall[24m.  An  asynchronous  signal  (such  as
+               SIGINT  or SIGQUIT) was caught by the process during the execu‐
+               tion of an interruptible function. If the signal  handler  per‐
+               forms  a  normal return, the interupted function call will seem
+               to have returned the error condition.
+
+       5 EIO [4mInput/output[24m [4merror[24m.  Some physical  input  or  output  error  oc‐
+               curred.   This  error not be reported until a subsequent opera‐
+               tion on the same file descriptor and may be lost (over written)
+               by any subsequent errors.
 
-     4 EINTR _I_n_t_e_r_r_u_p_t_e_d _f_u_n_c_t_i_o_n _c_a_l_l. An asynchronous signal (such as SIGINT
-             or SIGQUIT) was caught by the process during the execution of an
-             interruptible function. If the signal handler performs a normal
-             return, the interupted function call will seem to have returned
-             the error condition.
+       6 ENXIO [4mNo[24m [4msuch[24m [4mdevice[24m [4mor[24m [4maddress[24m.  Input or output on a  special  file
+               referred  to a device that did not exist, or made a request be‐
+               yond the limits of the device.  This error may also occur when,
+               for example, a tape drive is not online or no disk pack  is  is
+               loaded on a drive.
 
-     5 EIO _I_n_p_u_t/_o_u_t_p_u_t _e_r_r_o_r. Some physical input or output error occurred.
-             This error not be reported until a subsequent operation on the
-             same file descriptor and may be lost (over written) by any
-             subsequent errors.
+       7  E2BIG  [4mArg[24m [4mlist[24m [4mtoo[24m [4mlong[24m.  The number of bytes used for the argument
+               and environment list of the new process  exceeded  the  current
+               limit of 20480 bytes (NCARGS in ⟨[4msys/param.h[24m⟩).
 
-     6 ENXIO _N_o _s_u_c_h _d_e_v_i_c_e _o_r _a_d_d_r_e_s_s. Input or output on a special file
-             referred to a device that did not exist, or made a request beyond
-             the limits of the device.  This error may also occur when, for
-             example, a tape drive is not online or no disk pack is is loaded
-             on a drive.
+       8  ENOEXEC  [4mExec[24m  [4mformat[24m  [4merror[24m.   A request was made to execute a file
+               that, although it has the appropriate permissions, was  not  in
+               the format required for an executable file.
 
-     7 E2BIG _A_r_g _l_i_s_t _t_o_o _l_o_n_g. The number of bytes used for the argument and
-             environment list of the new process exceeded the current limit of
-             20480 bytes (NCARGS in <_s_y_s/_p_a_r_a_m._h>).
+       9  EBADF  [4mBad[24m  [4mfile[24m  [4mdescriptor[24m.  A file descriptor argument was out of
+               range, referred to no open file, or a read (write) request  was
+               made to a file that was only open for writing (reading).
 
-     8 ENOEXEC _E_x_e_c _f_o_r_m_a_t _e_r_r_o_r. A request was made to execute a file that,
-             although it has the appropriate permissions, was not in the
+       10  ECHILD [4mNo[24m [4mchild[24m [4mprocesses[24m.  A [4mwait[24m or [4mwaitpid[24m function was executed
+               by a  process  that  had  no  existing  or  unwaited‐for  child
+               processes.
 
-             format required for an executable file.
+       11  EDEADLK  [4mResource[24m  [4mdeadlock[24m [4mavoided[24m.  An attempt was made to lock a
+               system resource that would have resulted in a  deadlock  situa‐
+               tion.
 
-     9 EBADF _B_a_d _f_i_l_e _d_e_s_c_r_i_p_t_o_r. A file descriptor argument was out of range,
-             referred to no open file, or a read (write) request was made to a
-             file that was only open for writing (reading).
+       12 ENOMEM [4mCannnot[24m [4mallocate[24m [4mmemory[24m.  The new process image required more
+               memory  than  was  allowed by the hardware or by system‐imposed
+               memory management constraints.  A lack of swap  space  is  nor‐
+               mally  temporary;  however, a lack of core is not.  Soft limits
+               may be increased to their corresponding hard limits.
 
-     10 ECHILD _N_o _c_h_i_l_d _p_r_o_c_e_s_s_e_s. A wait or waitpid function was executed by
-             a process that had no existing or unwaited-for child processes.
+       13 EACCES [4mPermission[24m [4mdenied[24m.  An attempt was made to access a file in a
+               way forbidden by its file access permissions.
 
-     11 EDEADLK _R_e_s_o_u_r_c_e _d_e_a_d_l_o_c_k _a_v_o_i_d_e_d. An attempt was made to lock a
-             system resource that would have resulted in a deadlock situation.
+       14 EFAULT [4mBad[24m [4maddress[24m.  The system detected an invalid address  in  at‐
+               tempting to use an argument of a call.
 
-     12 ENOMEM _C_a_n_n_n_o_t _a_l_l_o_c_a_t_e _m_e_m_o_r_y. The new process image required more
-             memory than was allowed by the hardware or by system-imposed
-             memory management constraints.  A lack of swap space is normally
-             temporary; however, a lack of core is not.  Soft limits may be
-             increased to their corresponding hard limits.
+       15  ENOTBLK [4mNot[24m [4ma[24m [4mblock[24m [4mdevice[24m.  A block device operation was attempted
+               on a non‐block device or file.
 
-     13 EACCES _P_e_r_m_i_s_s_i_o_n _d_e_n_i_e_d. An attempt was made to access a file in a
-             way forbidden by its file access permissions.
+       16 EBUSY [4mResource[24m [4mbusy[24m.  An attempt to use a system resource which  was
+               in use at the time in a manner which would have conflicted with
+               the request.
 
-     14 EFAULT _B_a_d _a_d_d_r_e_s_s. The system detected an invalid address in
-             attempting to use an argument of a call.
+       17  EEXIST  [4mFile[24m [4mexists[24m.  An existing file was mentioned in an inappro‐
+               priate context, for instance, as the new link name  in  a  [4mlink[0m
+               function.
 
-     15 ENOTBLK _N_o_t _a _b_l_o_c_k _d_e_v_i_c_e. A block device operation was attempted on
-             a non-block device or file.
+       18  EXDEV  [4mImproper[24m [4mlink[24m.  A hard link to a file on another file system
+               was attempted.
 
-     16 EBUSY _R_e_s_o_u_r_c_e _b_u_s_y. An attempt to use a system resource which was in
-             use at the time in a manner which would have conflicted with the
-             request.
+       19 ENODEV [4mOperation[24m [4mnot[24m [4msupported[24m [4mby[24m [4mdevice[24m.  An attempt  was  made  to
+               apply  an inappropriate function to a device, for example, try‐
+               ing to read a write‐only device such as a printer.
 
-     17 EEXIST _F_i_l_e _e_x_i_s_t_s. An existing file was mentioned in an inappropriate
-             context, for instance, as the new link name in a link function.
+       20 ENOTDIR [4mNot[24m [4ma[24m [4mdirectory[24m.  A component of the specified pathname  ex‐
+               isted,  but  it  was  not a directory, when a directory was ex‐
+               pected.
 
-     18 EXDEV _I_m_p_r_o_p_e_r _l_i_n_k. A hard link to a file on another file system was
-             attempted.
+       21 EISDIR [4mIs[24m [4ma[24m [4mdirectory[24m.  An attempt was made to open a directory with
+               write mode specified.
 
-     19 ENODEV _O_p_e_r_a_t_i_o_n _n_o_t _s_u_p_p_o_r_t_e_d _b_y _d_e_v_i_c_e. An attempt was made to apply
-             an inappropriate function to a device, for example, trying to
-             read a write-only device such as a printer.
+       22 EINVAL [4mInvalid[24m [4margument[24m.  Some invalid argument was  supplied.  (For
+               example,  specifying  an  undefined  signal to a [4msignal[24m or [4mkill[0m
+               function).
 
-     20 ENOTDIR _N_o_t _a _d_i_r_e_c_t_o_r_y. A component of the specified pathname
-             existed, but it was not a directory, when a directory was
-             expected.
+       23 ENFILE [4mToo[24m [4mmany[24m [4mopen[24m [4mfiles[24m [4min[24m [4msystem[24m.  Maximum number  of  file  de‐
+               scriptors  allowable  on  the system has been reached and a re‐
+               quests for an open cannot be satisfied until at least  one  has
+               been closed.
 
-     21 EISDIR _I_s _a _d_i_r_e_c_t_o_r_y. An attempt was made to open a directory with
-             write mode specified.
+       24  EMFILE  [4mToo[24m [4mmany[24m [4mopen[24m [4mfiles[24m.  <As released, the limit on the number
+               of open files per process is 64.> [4mGetdtablesize[24m(2) will  obtain
+               the current limit.
 
-     22 EINVAL _I_n_v_a_l_i_d _a_r_g_u_m_e_n_t. Some invalid argument was supplied. (For
-             example, specifying an undefined signal to a signal or kill
-             function).
+       25  ENOTTY  [4mInappropriate[24m  [4mioctl[24m  [4mfor[24m  [4mdevice[24m.  A control function (see
+               [4mioctl[24m(2)) was attempted for a file or special device for  which
+               the operation was inappropriate.
 
-     23 ENFILE _T_o_o _m_a_n_y _o_p_e_n _f_i_l_e_s _i_n _s_y_s_t_e_m. Maximum number of file
-             descriptors allowable on the system has been reached and a
-             requests for an open cannot be satisfied until at least one has
-             been closed.
+       26  ETXTBSY  [4mText[24m  [4mfile[24m  [4mbusy[24m.   The  new  process was a pure procedure
+               (shared text) file  which  was  open  for  writing  by  another
+               process,  or the pure procedure file was being executed an [4mopen[0m
+               call requested write access.
 
-     24 EMFILE _T_o_o _m_a_n_y _o_p_e_n _f_i_l_e_s. <As released, the limit on the number of
-             open files per process is 64.> Getdtablesize(2) will obtain the
-             current limit.
+       27 EFBIG [4mFile[24m [4mtoo[24m [4mlarge[24m.  The size  of  a  file  exceeded  the  maximum
+               (about 2.1E9 bytes).
 
-     25 ENOTTY _I_n_a_p_p_r_o_p_r_i_a_t_e _i_o_c_t_l _f_o_r _d_e_v_i_c_e. A control function (see
-             ioctl(2))  was attempted for a file or special device for which
+       28  ENOSPC  [4mDevice[24m [4mout[24m [4mof[24m [4mspace[24m.  A [4mwrite[24m to an ordinary file, the cre‐
+               ation of a directory or symbolic link, or the creation of a di‐
+               rectory entry failed because no more disk blocks are  available
+               on  the  file system, or the allocation of an inode for a newly
+               created file failed because no more inodes are available on the
+               file system.
 
+       29 ESPIPE [4mIllegal[24m [4mseek[24m.  An [4mlseek[24m function was issued on a socket, pipe
+               or FIFO.
 
-             the operation was inappropriate.
+       30 EROFS [4mRead‐only[24m [4mfile[24m [4msystem[24m.  An attempt was made to modify  a  file
+               or  directory  was  made on a file system that was read‐only at
+               the time.
 
-     26 ETXTBSY _T_e_x_t _f_i_l_e _b_u_s_y. The new process was a pure procedure (shared
-             text) file which was open for writing by another process, or the
-             pure procedure file was being executed an open call requested
-             write access.
+       31 EMLINK [4mToo[24m [4mmany[24m [4mlinks[24m.  Maximum allowable hard  links  to  a  single
+               file has been exceeded (limit of 32767 hard links per file).
 
-     27 EFBIG _F_i_l_e _t_o_o _l_a_r_g_e. The size of a file exceeded the maximum (about
-             2.1E9 bytes).
+       32  EPIPE  [4mBroken[24m  [4mpipe[24m.   A  write on a pipe, socket or FIFO for which
+               there is no process to read the data.
 
-     28 ENOSPC _D_e_v_i_c_e _o_u_t _o_f _s_p_a_c_e. A write to an ordinary file, the creation
-             of a directory or symbolic link, or the creation of a directory
-             entry failed because no more disk blocks are available on the
-             file system, or the allocation of an inode for a newly created
-             file failed because no more inodes are available on the file
-             system.
+       33 EDOM [4mNumerical[24m [4margument[24m [4mout[24m [4mof[24m [4mdomain[24m.  A numerical  input  argument
+               was outside the defined domain of the mathematical function.
 
-     29 ESPIPE _I_l_l_e_g_a_l _s_e_e_k. An lseek function was issued on a socket, pipe or
-             FIFO.
+       34  ERANGE  [4mNumerical[24m  [4mresult[24m  [4mout[24m [4mof[24m [4mrange[24m.  A numerical result of the
+               function was to large to fit in the  available  space  (perhaps
+               exceeded precision).
 
-     30 EROFS _R_e_a_d-_o_n_l_y _f_i_l_e _s_y_s_t_e_m. An attempt was made to modify a file or
-             directory was made on a file system that was read-only at the
-             time.
+       35 EAGAIN [4mResource[24m [4mtemporarily[24m [4munavailable[24m.  This is a temporary condi‐
+               tion and later calls to the same routine may complete normally.
 
-     31 EMLINK _T_o_o _m_a_n_y _l_i_n_k_s. Maximum allowable hard links to a single file
-             has been exceeded (limit of 32767 hard links per file).
+       36  EINPROGRESS  [4mOperation[24m  [4mnow[24m [4min[24m [4mprogress[24m.  An operation that takes a
+               long time to complete (such as a [4mconnect[24m(2)) was attempted on a
+               non‐blocking object (see [4mfcntl[24m(2)).
 
-     32 EPIPE _B_r_o_k_e_n _p_i_p_e. A write on a pipe, socket or FIFO for which there
-             is no process to read the data.
+       37 EALREADY [4mOperation[24m [4malready[24m [4min[24m [4mprogress[24m.  An operation was  attempted
+               on  a  non‐blocking  object  that  already  had an operation in
+               progress.
 
-     33 EDOM _N_u_m_e_r_i_c_a_l _a_r_g_u_m_e_n_t _o_u_t _o_f _d_o_m_a_i_n. A numerical input argument was
-             outside the defined domain of the mathematical function.
+       38 ENOTSOCK [4mSocket[24m [4moperation[24m [4mon[24m [4mnon‐socket[24m.  Self‐explanatory.
 
-     34 ERANGE _N_u_m_e_r_i_c_a_l _r_e_s_u_l_t _o_u_t _o_f _r_a_n_g_e. A numerical result of the
-             function was to large to fit in the available space (perhaps
-             exceeded precision).
+       39 EDESTADDRREQ [4mDestination[24m [4maddress[24m [4mrequired[24m.  A required  address  was
+               omitted from an operation on a socket.
 
-     35 EAGAIN _R_e_s_o_u_r_c_e _t_e_m_p_o_r_a_r_i_l_y _u_n_a_v_a_i_l_a_b_l_e. This is a temporary condition
-             and later calls to the same routine may complete normally.
+       40  EMSGSIZE  [4mMessage[24m  [4mtoo[24m [4mlong[24m.  A message sent on a socket was larger
+               than the internal message buffer or some other network limit.
 
-     36 EINPROGRESS _O_p_e_r_a_t_i_o_n _n_o_w _i_n _p_r_o_g_r_e_s_s. An operation that takes a long
-             time to complete (such as a connect(2))  was attempted on a non-
-             blocking object (see fcntl(2)).
+       41 EPROTOTYPE [4mProtocol[24m [4mwrong[24m [4mtype[24m [4mfor[24m [4msocket[24m.  A protocol was specified
+               that does not support the semantics  of  the  socket  type  re‐
+               quested. For example, you cannot use the ARPA Internet UDP pro‐
+               tocol with type SOCK_STREAM.
 
-     37 EALREADY _O_p_e_r_a_t_i_o_n _a_l_r_e_a_d_y _i_n _p_r_o_g_r_e_s_s. An operation was attempted on
-             a non-blocking object that already had an operation in progress.
+       42 ENOPROTOOPT [4mProtocol[24m [4mnot[24m [4mavailable[24m.  A bad option or level was spec‐
+               ified in a [4mgetsockopt[24m(2) or [4msetsockopt[24m(2) call.
 
-     38 ENOTSOCK _S_o_c_k_e_t _o_p_e_r_a_t_i_o_n _o_n _n_o_n-_s_o_c_k_e_t. Self-explanatory.
+       43  EPROTONOSUPPORT  [4mProtocol[24m [4mnot[24m [4msupported[24m.  The protocol has not been
+               configured into the system or no implementation for it exists.
 
-     39 EDESTADDRREQ _D_e_s_t_i_n_a_t_i_o_n _a_d_d_r_e_s_s _r_e_q_u_i_r_e_d. A required address was
-             omitted from an operation on a socket.
+       44 ESOCKTNOSUPPORT [4mSocket[24m [4mtype[24m [4mnot[24m  [4msupported[24m.   The  support  for  the
+               socket  type  has not been configured into the system or no im‐
+               plementation for it exists.
 
-     40 EMSGSIZE _M_e_s_s_a_g_e _t_o_o _l_o_n_g. A message sent on a socket was larger than
-             the internal message buffer or some other network limit.
+       45 EOPNOTSUPP [4mOperation[24m [4mnot[24m [4msupported[24m.  The attempted operation is  not
+               supported  for the type of object referenced.  Usually this oc‐
+               curs when a file descriptor refers to a  file  or  socket  that
+               cannot  support this operation, for example, trying to [4maccept[24m a
+               connection on a datagram socket.
 
-     41 EPROTOTYPE _P_r_o_t_o_c_o_l _w_r_o_n_g _t_y_p_e _f_o_r _s_o_c_k_e_t. A protocol was specified
-             that does not support the semantics of the socket type requested.
-             For example, you cannot use the ARPA Internet UDP protocol with
-             type SOCK_STREAM.
+       46 EPFNOSUPPORT [4mProtocol[24m [4mfamily[24m [4mnot[24m [4msupported[24m.  The protocol family has
+               not been configured into the system or no implementation for it
+               exists.
 
-     42 ENOPROTOOPT _P_r_o_t_o_c_o_l _n_o_t _a_v_a_i_l_a_b_l_e. A bad option or level was
-             specified in a getsockopt(2) or setsockopt(2) call.
+       47 EAFNOSUPPORT [4mAddress[24m [4mfamily[24m [4mnot[24m [4msupported[24m [4mby[24m  [4mprotocol[24m  [4mfamily[24m.   An
+               address incompatible with the requested protocol was used.  For
+               example,  you shouldn’t necessarily expect to be able to use NS
+               addresses with ARPA Internet protocols.
 
-     43 EPROTONOSUPPORT _P_r_o_t_o_c_o_l _n_o_t _s_u_p_p_o_r_t_e_d. The protocol has not been
+       48 EADDRINUSE [4mAddress[24m [4malready[24m [4min[24m [4muse[24m.  Only one usage of  each  address
+               is normally permitted.
 
+       49  EADDRNOTAVAIL  [4mCannot[24m  [4massign[24m  [4mrequested[24m [4maddress[24m.  Normally results
+               from an attempt to create a socket with an address not on  this
+               machine.
 
-             configured into the system or no implementation for it exists.
+       50  ENETDOWN  [4mNetwork[24m  [4mis[24m  [4mdown[24m.  A socket operation encountered a dead
+               network.
 
-     44 ESOCKTNOSUPPORT _S_o_c_k_e_t _t_y_p_e _n_o_t _s_u_p_p_o_r_t_e_d. The support for the socket
-             type has not been configured into the system or no implementation
-             for it exists.
+       51 ENETUNREACH [4mNetwork[24m [4mis[24m [4munreachable[24m.   A  socket  operation  was  at‐
+               tempted to an unreachable network.
 
-     45 EOPNOTSUPP _O_p_e_r_a_t_i_o_n _n_o_t _s_u_p_p_o_r_t_e_d. The attempted operation is not
-             supported for the type of object referenced.  Usually this occurs
-             when a file descriptor refers to a file or socket that cannot
-             support this operation, for example, trying to _a_c_c_e_p_t a
-             connection on a datagram socket.
+       52  ENETRESET  [4mNetwork[24m  [4mdropped[24m [4mconnection[24m [4mon[24m [4mreset[24m.  The host you were
+               connected to crashed and rebooted.
 
-     46 EPFNOSUPPORT _P_r_o_t_o_c_o_l _f_a_m_i_l_y _n_o_t _s_u_p_p_o_r_t_e_d. The protocol family has
-             not been configured into the system or no implementation for it
-             exists.
+       53 ECONNABORTED [4mSoftware[24m [4mcaused[24m [4mconnection[24m [4mabort[24m.  A  connection  abort
+               was caused internal to your host machine.
 
-     47 EAFNOSUPPORT _A_d_d_r_e_s_s _f_a_m_i_l_y _n_o_t _s_u_p_p_o_r_t_e_d _b_y _p_r_o_t_o_c_o_l _f_a_m_i_l_y. An
-             address incompatible with the requested protocol was used.  For
-             example, you shouldn't necessarily expect to be able to use NS
-             addresses with ARPA Internet protocols.
+       54  ECONNRESET  [4mConnection[24m  [4mreset[24m  [4mby[24m  [4mpeer[24m.  A connection was forcibly
+               closed by a peer.  This normally results from  a  loss  of  the
+               connection on the remote socket due to a timeout or a reboot.
 
-     48 EADDRINUSE _A_d_d_r_e_s_s _a_l_r_e_a_d_y _i_n _u_s_e. Only one usage of each address is
-             normally permitted.
+       55 ENOBUFS [4mNo[24m [4mbuffer[24m [4mspace[24m [4mavailable[24m.  An operation on a socket or pipe
+               was  not  performed because the system lacked sufficient buffer
+               space or because a queue was full.
 
-     49 EADDRNOTAVAIL _C_a_n_n_o_t _a_s_s_i_g_n _r_e_q_u_e_s_t_e_d _a_d_d_r_e_s_s. Normally results from
-             an attempt to create a socket with an address not on this
-             machine.
+       56 EISCONN [4mSocket[24m [4mis[24m [4malready[24m [4mconnected[24m.  A [4mconnect[24m request was made  on
+               an already connected socket; or, a [4msendto[24m or [4msendmsg[24m request on
+               a  connected  socket  specified a destination when already con‐
+               nected.
 
-     50 ENETDOWN _N_e_t_w_o_r_k _i_s _d_o_w_n. A socket operation encountered a dead
-             network.
+       57 ENOTCONN [4mSocket[24m [4mis[24m [4mnot[24m [4mconnected[24m.  An request  to  send  or  receive
+               data  was  disallowed  because  the socket is not connected and
+               (when sending on a  datagram socket) no address was supplied.
 
-     51 ENETUNREACH _N_e_t_w_o_r_k _i_s _u_n_r_e_a_c_h_a_b_l_e. A socket operation was attempted
-             to an unreachable network.
+       58 ESHUTDOWN [4mCannot[24m [4msend[24m [4mafter[24m [4msocket[24m [4mshutdown[24m.  A request to send data
+               was disallowed because the socket had already  been  shut  down
+               with a previous [4mshutdown[24m(2) call.
 
-     52 ENETRESET _N_e_t_w_o_r_k _d_r_o_p_p_e_d _c_o_n_n_e_c_t_i_o_n _o_n _r_e_s_e_t. The host you were
-             connected to crashed and rebooted.
+       60  ETIMEDOUT  [4mConnection[24m  [4mtimed[24m [4mout[24m.  A [4mconnect[24m or [4msend[24m request failed
+               because the connected party did not properly  respond  after  a
+               period of time.  (The timeout period is dependent on the commu‐
+               nication protocol.)
 
-     53 ECONNABORTED _S_o_f_t_w_a_r_e _c_a_u_s_e_d _c_o_n_n_e_c_t_i_o_n _a_b_o_r_t. A connection abort was
-             caused internal to your host machine.
+       61  ECONNREFUSED  [4mConnection[24m  [4mrefused[24m.  No connection could be made be‐
+               cause the target machine actively refused it.  This usually re‐
+               sults from trying to connect to a service that is  inactive  on
+               the foreign host.
 
-     54 ECONNRESET _C_o_n_n_e_c_t_i_o_n _r_e_s_e_t _b_y _p_e_e_r. A connection was forcibly closed
-             by a peer.  This normally results from a loss of the connection
-             on the remote socket due to a timeout or a reboot.
+       62  ELOOP  [4mToo[24m  [4mmany[24m  [4mlevels[24m [4mof[24m [4msymbolic[24m [4mlinks[24m.  A path name lookup in‐
+               volved more than 8 symbolic links.
 
-     55 ENOBUFS _N_o _b_u_f_f_e_r _s_p_a_c_e _a_v_a_i_l_a_b_l_e. An operation on a socket or pipe
-             was not performed because the system lacked sufficient buffer
-             space or because a queue was full.
+       63 ENAMETOOLONG [4mFile[24m [4mname[24m [4mtoo[24m [4mlong[24m.  A component of  a  path  name  ex‐
+               ceeded  255 (MAXNAMELEN) characters, or an entire path name ex‐
+               ceeded 1023 (MAXPATHLEN‐1) characters.
 
-     56 EISCONN _S_o_c_k_e_t _i_s _a_l_r_e_a_d_y _c_o_n_n_e_c_t_e_d. A connect request was made on an
-             already connected socket; or, a sendto or sendmsg request on a
-             connected socket specified a destination when already connected.
+       64 EHOSTDOWN [4mHost[24m [4mis[24m [4mdown[24m.  A socket operation failed because the  des‐
+               tination host was down.
 
-     57 ENOTCONN _S_o_c_k_e_t _i_s _n_o_t _c_o_n_n_e_c_t_e_d. An request to send or receive data
-             was disallowed because the socket is not connected and (when
-             sending on a  datagram socket) no address was supplied.
+       65  EHOSTUNREACH [4mNo[24m [4mroute[24m [4mto[24m [4mhost[24m.  A socket operation was attempted to
+               an unreachable host.
 
-     58 ESHUTDOWN _C_a_n_n_o_t _s_e_n_d _a_f_t_e_r _s_o_c_k_e_t _s_h_u_t_d_o_w_n. A request to send data
-             was disallowed because the socket had already been shut down with
-             a previous shutdown(2) call.
+       66 ENOTEMPTY [4mDirectory[24m [4mnot[24m [4mempty[24m.  A directory with entries other  than
+               ‘.’ and ‘..’ was supplied to a remove directory or rename call.
 
-     60 ETIMEDOUT _C_o_n_n_e_c_t_i_o_n _t_i_m_e_d _o_u_t. A connect or send request failed
-             because the connected party did not properly respond after a
-             period of time.  (The timeout period is dependent on the
-             communication protocol.)
+       67 EPROCLIM [4mToo[24m [4mmany[24m [4mprocesses[24m.
 
-     61 ECONNREFUSED _C_o_n_n_e_c_t_i_o_n _r_e_f_u_s_e_d. No connection could be made because
-             the target machine actively refused it.  This usually results
-             from trying to connect to a service that is inactive on the
-             foreign host.
+       68 EUSERS [4mToo[24m [4mmany[24m [4musers[24m.  The quota system ran out of table entries.
 
-     62 ELOOP _T_o_o _m_a_n_y _l_e_v_e_l_s _o_f _s_y_m_b_o_l_i_c _l_i_n_k_s. A path name lookup involved
-             more than 8 symbolic links.
+       69  EDQUOT  [4mDisc[24m [4mquota[24m [4mexceeded[24m.  A [4mwrite[24m to an ordinary file, the cre‐
+               ation of a directory or symbolic link, or the creation of a di‐
+               rectory entry failed because the user’s quota  of  disk  blocks
+               was  exhausted,  or the allocation of an inode for a newly cre‐
+               ated file failed because the user’s quota  of  inodes  was  ex‐
+               hausted.
+
+       70 ESTALE [4mStale[24m [4mNFS[24m [4mfile[24m [4mhandle[24m.  An attempt was made to access an open
+               file  (on an NFS filesystem) which is now unavailable as refer‐
+               enced by the file descriptor.  This may indicate the  file  was
+               deleted  on the NFS server or some other catastrophic event oc‐
+               cured.
 
-     63 ENAMETOOLONG _F_i_l_e _n_a_m_e _t_o_o _l_o_n_g. A component of a path name exceeded
-             255 (MAXNAMELEN) characters, or an entire path name exceeded 1023
-             (MAXPATHLEN-1) characters.
+       72 EBADRPC [4mRPC[24m [4mstruct[24m [4mis[24m [4mbad[24m.  Exchange of RPC information  was  unsuc‐
+               cessful.
 
-     64 EHOSTDOWN _H_o_s_t _i_s _d_o_w_n. A socket operation failed because the
-             destination host was down.
-
-     65 EHOSTUNREACH _N_o _r_o_u_t_e _t_o _h_o_s_t. A socket operation was attempted to an
-             unreachable host.
-
-     66 ENOTEMPTY _D_i_r_e_c_t_o_r_y _n_o_t _e_m_p_t_y. A directory with entries other than `.'
-             and `..' was supplied to a remove directory or rename call.
-
-     67 EPROCLIM _T_o_o _m_a_n_y _p_r_o_c_e_s_s_e_s.
-
-     68 EUSERS _T_o_o _m_a_n_y _u_s_e_r_s. The quota system ran out of table entries.
-
-     69 EDQUOT _D_i_s_c _q_u_o_t_a _e_x_c_e_e_d_e_d. A write to an ordinary file, the creation
-             of a directory or symbolic link, or the creation of a directory
-             entry failed because the user's quota of disk blocks was
-             exhausted, or the allocation of an inode for a newly created file
-             failed because the user's quota of inodes was exhausted.
-
-     70 ESTALE _S_t_a_l_e _N_F_S _f_i_l_e _h_a_n_d_l_e. An attempt was made to access an open
-             file (on an NFS filesystem) which is now unavailable as
-             referenced by the file descriptor.  This may indicate the file
-             was deleted on the NFS server or some other catastrophic event
-             occured.
-
-     72 EBADRPC _R_P_C _s_t_r_u_c_t _i_s _b_a_d. Exchange of RPC information was
-             unsuccessful.
-
-     73 ERPCMISMATCH _R_P_C _v_e_r_s_i_o_n _w_r_o_n_g. The version of RPC on the remote peer
-             is not compatible with the local version.
-
-     74 EPROGUNAVAIL _R_P_C _p_r_o_g. _n_o_t _a_v_a_i_l. The requested program is not
-             registered on the remote host.
-
-     75 EPROGMISMATCH _P_r_o_g_r_a_m _v_e_r_s_i_o_n _w_r_o_n_g. The requested version of the
-             program is not available on the remote host (RPC).
-
-     76 EPROCUNAVAIL _B_a_d _p_r_o_c_e_d_u_r_e _f_o_r _p_r_o_g_r_a_m. An RPC call was attempted for
-             a procedure which doesn't exist in the remote program.
-
-     77 ENOLCK _N_o _l_o_c_k_s _a_v_a_i_l_a_b_l_e. A system-imposed limit on the number of
-             simultaneous file locks was reached.
-
-     78 ENOSYS _F_u_n_c_t_i_o_n _n_o_t _i_m_p_l_e_m_e_n_t_e_d. Attempted a system call that is not
-             available on this system.
-
-DDEEFFIINNIITTIIOONNSS
-     Process ID.
-             Each active process in the system is uniquely identified by a
-             non-negative integer called a process ID.  The range of this ID
-             is from 0 to 30000.
-
-     Parent process ID
-             A new process is created by a currently active process; (see
-             fork(2)).  The parent process ID of a process is the process ID
-
-             of its creator.
-
-     Process Group ID
-             Each active process is a member of a process group that is
-             identified by a non-negative integer called the process group ID.
-             This is the process ID of the group leader.  This grouping
-             permits the signaling of related processes (see killpg(2))  and
-             the job control mechanisms of csh(1).
-
-     Tty Group ID
-             Each active process can be a member of a terminal group that is
-             identified by a non-negative integer called the tty group ID.
-             This grouping is used to arbitrate between multiple jobs
-             contending for the same terminal; (see csh(1) and tty(4)).
-
-     Real User ID and Real Group ID
-             Each user on the system is identified by a positive integer
-             termed the real user ID.
-
-             Each user is also a member of one or more groups.  One of these
-             groups is distinguished from others and used in implementing
-             accounting facilities.  The positive integer corresponding to
-             this distinguished group is termed the real group ID.
-
-             All processes have a real user ID and real group ID.  These are
-             initialized from the equivalent attributes of the process that
-             created it.
-
-     Effective User Id, Effective Group Id, and Access Groups
-             Access to system resources is governed by three values: the
-             effective user ID, the effective group ID, and the group access
-             list.
-
-             The effective user ID and effective group ID are initially the
-             process's real user ID and real group ID respectively.  Either
-             may be modified through execution of a set-user-ID or set-group-
-             ID file (possibly by one its ancestors) (see execve(2)).
-
-             The group access list is an additional set of group ID's used
-             only in determining resource accessibility.  Access checks are
-             performed as described below in ``File Access Permissions''.
-
-     Super-user
-             A process is recognized as a _s_u_p_e_r-_u_s_e_r process and is granted
-             special privileges if its effective user ID is 0.
-
-     Special Processes
-             The processes with a process ID's of 0, 1, and 2 are special.
-             Process 0 is the scheduler.  Process 1 is the initialization
-             process init,  and is the ancestor of every other process in the
-             system.  It is used to control the process structure.  Process 2
-             is the paging daemon.
-
-     Descriptor
-             An integer assigned by the system when a file is referenced by
-             open(2) or dup(2),  or when a socket is created by pipe(2),
-             socket(2) or socketpair(2),  which uniquely identifies an access
-             path to that file or socket from a given process or any of its
-             children.
-
-     File Name
-             Names consisting of up to 255 (MAXNAMELEN) characters may be used
-             to name an ordinary file, special file, or directory.
-
-
-             These characters may be selected from the set of all ASCII
-             character excluding 0 (NUL) and the ASCII code for `/' (slash).
-             (The parity bit, bit 7, must be 0.)
-
-             Note that it is generally unwise to use `*', `?', `[' or `]' as
-             part of file names because of the special meaning attached to
-             these characters by the shell.
-
-     Path Name
-             A path name is a NUL-terminated character string starting with an
-             optional slash `/', followed by zero or more directory names
-             separated by slashes, optionally followed by a file name.  The
-             total length of a path name must be less than 1024 (MAXPATHLEN)
-             characters.
-
-             If a path name begins with a slash, the path search begins at the
-             _r_o_o_t directory.  Otherwise, the search begins from the current
-             working directory.  A slash by itself names the root directory.
-             An empty pathname refers to the current directory.
-
-     Directory
-             A directory is a special type of file that contains entries that
-             are references to other files.  Directory entries are called
-             links.  By convention, a directory contains at least two links,
-             `.' and `..', referred to as _d_o_t and _d_o_t-_d_o_t respectively.  Dot
-             refers to the directory itself and dot-dot refers to its parent
-             directory.
-
-     Root Directory and Current Working Directory
-             Each process has associated with it a concept of a root directory
-             and a current working directory for the purpose of resolving path
-             name searches.  A process's root directory need not be the root
-             directory of the root file system.
-
-     File Access Permissions
-             Every file in the file system has a set of access permissions.
-             These permissions are used in determining whether a process may
-             perform a requested operation on the file (such as opening a file
-             for writing).  Access permissions are established at the time a
-             file is created.  They may be changed at some later time through
-             the chmod(2) call.
-
-             File access is broken down according to whether a file may be:
-             read, written, or executed.  Directory files use the execute
-             permission to control if the directory may be searched.
-
-             File access permissions are interpreted by the system as they
-             apply to three different classes of users: the owner of the file,
-             those users in the file's group, anyone else.  Every file has an
-             independent set of access permissions for each of these classes.
-             When an access check is made, the system decides if permission
-             should be granted by checking the access information applicable
-             to the caller.
-
-             Read, write, and execute/search permissions on a file are granted
-             to a process if:
-
-             The process's effective user ID is that of the super-user. (Note:
-             even the super-user cannot execute a non-executable file.)
-
-             The process's effective user ID matches the user ID of the owner
-             of the file and the owner permissions allow the access.
-
-             The process's effective user ID does not match the user ID of the
-             owner of the file, and either the process's effective group ID
-             matches the group ID of the file, or the group ID of the file is
-             in the process's group access list, and the group permissions
-             allow the access.
-
-             Neither the effective user ID nor effective group ID and group
-             access list of the process match the corresponding user ID and
-             group ID of the file, but the permissions for ``other users''
-             allow access.
-
-             Otherwise, permission is denied.
-
-     Sockets and Address Families
-
-             A socket is an endpoint for communication between processes.
-             Each socket has queues for sending and receiving data.
-
-             Sockets are typed according to their communications properties.
-             These properties include whether messages sent and received at a
-             socket require the name of the partner, whether communication is
-             reliable, the format used in naming message recipients, etc.
-
-             Each instance of the system supports some collection of socket
-             types; consult socket(2) for more information about the types
-             available and their properties.
-
-             Each instance of the system supports some number of sets of
-             communications protocols.  Each protocol set supports addresses
-             of a certain format.  An Address Family is the set of addresses
-             for a specific group of protocols.  Each socket has an address
-             chosen from the address family in which the socket was created.
-
-SSEEEE AALLSSOO
-     intro(3), perror(3)
-
-HHIISSTTOORRYY
-     An iinnttrroo appeared in Version 6 AT&T UNIX.
-
-4th Berkeley Distribution        July 23, 1991                               8
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+       73  ERPCMISMATCH  [4mRPC[24m  [4mversion[24m [4mwrong[24m.  The version of RPC on the remote
+               peer is not compatible with the local version.
+
+       74 EPROGUNAVAIL [4mRPC[24m [4mprog.[24m [4mnot[24m [4mavail[24m.  The requested program is not reg‐
+               istered on the remote host.
+
+       75 EPROGMISMATCH [4mProgram[24m [4mversion[24m [4mwrong[24m.  The requested version  of  the
+               program is not available on the remote host (RPC).
+
+       76  EPROCUNAVAIL  [4mBad[24m [4mprocedure[24m [4mfor[24m [4mprogram[24m.  An RPC call was attempted
+               for a procedure which doesn’t exist in the remote program.
+
+       77 ENOLCK [4mNo[24m [4mlocks[24m [4mavailable[24m.  A system‐imposed limit on the number  of
+               simultaneous file locks was reached.
+
+       78  ENOSYS  [4mFunction[24m  [4mnot[24m [4mimplemented[24m.  Attempted a system call that is
+               not available on this system.
+
+[1mDEFINITIONS[0m
+       Process ID.
+               Each active process in the system is uniquely identified  by  a
+               non‐negative integer called a process ID.  The range of this ID
+               is from 0 to 30000.
+
+       Parent process ID
+               A  new  process  is created by a currently active process; (see
+               [4mfork[24m(2)).  The parent process ID of a process is the process ID
+               of its creator.
+
+       Process Group ID
+               Each active process is a member of  a  process  group  that  is
+               identified  by  a non‐negative integer called the process group
+               ID.  This is the process ID of the group leader.  This grouping
+               permits the signaling of related processes (see [4mkillpg[24m(2))  and
+               the job control mechanisms of [4mcsh[24m(1).
+
+       Tty Group ID
+               Each active process can be a member of a terminal group that is
+               identified  by  a non‐negative integer called the tty group ID.
+               This grouping is used to arbitrate between multiple  jobs  con‐
+               tending for the same terminal; (see [4mcsh[24m(1) and [4mtty[24m(4)).
+
+       Real User ID and Real Group ID
+               Each  user  on  the  system is identified by a positive integer
+               termed the real user ID.
+
+               Each user is also a member of one or more groups.  One of these
+               groups is distinguished from others and  used  in  implementing
+               accounting  facilities.   The positive integer corresponding to
+               this distinguished group is termed the real group ID.
+
+               All processes have a real user ID and real group ID.  These are
+               initialized from the equivalent attributes of the process  that
+               created it.
+
+       Effective User Id, Effective Group Id, and Access Groups
+               Access to system resources is governed by three values: the ef‐
+               fective  user  ID, the effective group ID, and the group access
+               list.
+
+               The effective user ID and effective group ID are initially  the
+               process’s  real user ID and real group ID respectively.  Either
+               may be modified through execution  of  a  set‐user‐ID  or  set‐
+               group‐ID file (possibly by one its ancestors) (see [4mexecve[24m(2)).
+
+               The  group  access list is an additional set of group ID’s used
+               only in determining resource accessibility.  Access checks  are
+               performed as described below in ‘‘File Access Permissions’’.
+
+       Super‐user
+               A  process is recognized as a [4msuper‐user[24m process and is granted
+               special privileges if its effective user ID is 0.
+
+       Special Processes
+               The processes with a process ID’s of 0, 1, and 2  are  special.
+               Process  0  is  the scheduler.  Process 1 is the initialization
+               process [4minit[24m, and is the ancestor of every other process in the
+               system.  It is used to control the process structure.   Process
+               2 is the paging daemon.
+
+       Descriptor
+               An  integer assigned by the system when a file is referenced by
+               [4mopen[24m(2) or [4mdup[24m(2), or when a  socket  is  created  by  [4mpipe[24m(2),
+               [4msocket[24m(2) or [4msocketpair[24m(2), which uniquely identifies an access
+               path  to that file or socket from a given process or any of its
+               children.
+
+       File Name
+               Names consisting of up to 255 (MAXNAMELEN)  characters  may  be
+               used to name an ordinary file, special file, or directory.
+
+               These  characters  may  be  selected  from the set of all ASCII
+               character excluding 0 (NUL) and the ASCII code for ‘/’ (slash).
+               (The parity bit, bit 7, must be 0.)
+
+               Note that it is generally unwise to use ‘*’, ‘?’, ‘[’ or ‘]’ as
+               part of file names because of the special meaning  attached  to
+               these characters by the shell.
+
+       Path Name
+               A  path name is a NUL‐terminated character string starting with
+               an optional slash ‘/’, followed by zero or more directory names
+               separated by slashes, optionally followed by a file name.   The
+               total length of a path name must be less than 1024 (MAXPATHLEN)
+               characters.
+
+               If  a  path name begins with a slash, the path search begins at
+               the [4mroot[24m directory.  Otherwise, the search begins from the cur‐
+               rent working directory.  A slash by itself names the  root  di‐
+               rectory.  An empty pathname refers to the current directory.
+
+       Directory
+               A  directory  is  a  special type of file that contains entries
+               that are references to  other  files.   Directory  entries  are
+               called links.  By convention, a directory contains at least two
+               links,  ‘.’  and  ‘..’,  referred to as [4mdot[24m and [4mdot‐dot[24m respec‐
+               tively.  Dot refers to the directory itself and dot‐dot  refers
+               to its parent directory.
+
+       Root Directory and Current Working Directory
+               Each  process has associated with it a concept of a root direc‐
+               tory and a current working directory for the purpose of resolv‐
+               ing path name searches.  A process’s root directory need not be
+               the root directory of the root file system.
+
+       File Access Permissions
+               Every file in the file system has a set of access  permissions.
+               These permissions are used in determining whether a process may
+               perform  a  requested  operation on the file (such as opening a
+               file for writing).  Access permissions are established  at  the
+               time a file is created.  They may be changed at some later time
+               through the [4mchmod[24m(2) call.
+
+               File  access is broken down according to whether a file may be:
+               read, written, or executed.  Directory files  use  the  execute
+               permission to control if the directory may be searched.
+
+               File  access  permissions are interpreted by the system as they
+               apply to three different classes of users:  the  owner  of  the
+               file, those users in the file’s group, anyone else.  Every file
+               has  an independent set of access permissions for each of these
+               classes.  When an access check is made, the system  decides  if
+               permission should be granted by checking the access information
+               applicable to the caller.
+
+               Read,  write,  and  execute/search  permissions  on  a file are
+               granted to a process if:
+
+               The process’s effective user ID  is  that  of  the  super‐user.
+               (Note:  even  the  super‐user  cannot  execute a non‐executable
+               file.)
+
+               The process’s effective user ID matches  the  user  ID  of  the
+               owner of the file and the owner permissions allow the access.
+
+               The  process’s  effective user ID does not match the user ID of
+               the owner of the file, and either the process’s effective group
+               ID matches the group ID of the file, or the  group  ID  of  the
+               file  is in the process’s group access list, and the group per‐
+               missions allow the access.
+
+               Neither the effective user ID nor effective group ID and  group
+               access  list of the process match the corresponding user ID and
+               group ID of the file, but the permissions for  ‘‘other  users’’
+               allow access.
+
+               Otherwise, permission is denied.
+
+       Sockets and Address Families
+
+               A  socket  is  an endpoint for communication between processes.
+               Each socket has queues for sending and receiving data.
+
+               Sockets are typed according to their communications properties.
+               These properties include whether messages sent and received  at
+               a socket require the name of the partner, whether communication
+               is reliable, the format used in naming message recipients, etc.
+
+               Each  instance of the system supports some collection of socket
+               types; consult [4msocket[24m(2) for more information about  the  types
+               available and their properties.
+
+               Each  instance  of  the  system supports some number of sets of
+               communications protocols.  Each protocol set supports addresses
+               of a certain format.  An Address Family is the set of addresses
+               for a specific group of protocols.  Each socket has an  address
+               chosen from the address family in which the socket was created.
+
+[1mSEE ALSO[0m
+       intro(3), perror(3)
+
+[1mHISTORY[0m
+       An [1mintro [22mappeared in Version 6 AT&T UNIX.
+
+4th Berkeley Distribution        July 23, 1991                        INTRO(2)

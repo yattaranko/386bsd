@@ -1,132 +1,94 @@
-STRING(3)                 386BSD Programmer's Manual                 STRING(3)
+STRING(3)                   Library Functions Manual                 STRING(3)
 
-NNAAMMEE
-     ssttrrccaatt, ssttrrnnccaatt, ssttrrcchhrr, ssttrrrrcchhrr, ssttrrccmmpp, ssttrrnnccmmpp, ssttrrccaasseeccmmpp,,
-     ssttrrnnccaasseeccmmpp, ssttrrccppyy, ssttrrnnccppyy, ssttrreerrrroorr, ssttrrlleenn, ssttrrppbbrrkk, ssttrrsseepp,, ssttrrssppnn,
-     ssttrrccssppnn, ssttrrssttrr, ssttrrttookk, iinnddeexx, rriinnddeexx - string specific functions
+[1mNAME[0m
+       strcat,   strncat,   strchr,   strrchr,  strcmp,  strncmp,  strcasecmp,
+       strncasecmp,  strcpy,  strncpy,  strerror,  strlen,  strpbrk,   strsep,
+       strspn,  strcspn, strstr, strtok, index, rindex — string specific func‐
+       tions
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _c_h_a_r *
-     ssttrrccaatt(_c_h_a_r *_s, _c_o_n_s_t _c_h_a_r * _a_p_p_e_n_d)
+       [4mchar[24m [4m*[0m
+       [1mstrcat[22m([4mchar[24m [4m*s[24m, [4mconst[24m [4mchar[24m [4m*[24m [4mappend[24m);
 
-     _c_h_a_r *
-     ssttrrnnccaatt(_c_h_a_r *_s, _c_o_n_s_t _c_h_a_r *_a_p_p_e_n_d, _s_i_z_e__t _c_o_u_n_t)
+       [4mchar[24m [4m*[0m
+       [1mstrncat[22m([4mchar[24m [4m*s[24m, [4mconst[24m [4mchar[24m [4m*append[24m, [4msize_t[24m [4mcount[24m);
 
-     _c_h_a_r *
-     ssttrrcchhrr(_c_o_n_s_t _c_h_a_r *_s, _i_n_t _c)
+       [4mchar[24m [4m*[0m
+       [1mstrchr[22m([4mconst[24m [4mchar[24m [4m*s[24m, [4mint[24m [4mc[24m);
 
-     _c_h_a_r *
-     ssttrrrrcchhrr(_c_o_n_s_t _c_h_a_r *_s, _i_n_t _c)
+       [4mchar[24m [4m*[0m
+       [1mstrrchr[22m([4mconst[24m [4mchar[24m [4m*s[24m, [4mint[24m [4mc[24m);
 
-     _i_n_t
-     ssttrrccmmpp(_c_o_n_s_t _c_h_a_r *_s_1, _c_o_n_s_t _c_h_a_r *_s_2)
+       [4mint[0m
+       [1mstrcmp[22m([4mconst[24m [4mchar[24m [4m*s1[24m, [4mconst[24m [4mchar[24m [4m*s2[24m);
 
-     _i_n_t
-     ssttrrnnccmmpp(_c_o_n_s_t _c_h_a_r *_s_1, _c_o_n_s_t _c_h_a_r *_s_2, _s_i_z_e__t _c_o_u_n_t)
+       [4mint[0m
+       [1mstrncmp[22m([4mconst[24m [4mchar[24m [4m*s1[24m, [4mconst[24m [4mchar[24m [4m*s2[24m, [4msize_t[24m [4mcount[24m);
 
-     _i_n_t
-     ssttrrccaasseeccmmpp(_c_o_n_s_t _c_h_a_r *_s_1, _c_o_n_s_t _c_h_a_r *_s_2)
+       [4mint[0m
+       [1mstrcasecmp[22m([4mconst[24m [4mchar[24m [4m*s1[24m, [4mconst[24m [4mchar[24m [4m*s2[24m);
 
-     _i_n_t
-     ssttrrnnccaasseeccmmpp(_c_o_n_s_t _c_h_a_r *_s_1, _c_o_n_s_t _c_h_a_r *_s_2, _s_i_z_e__t _c_o_u_n_t)
+       [4mint[0m
+       [1mstrncasecmp[22m([4mconst[24m [4mchar[24m [4m*s1[24m, [4mconst[24m [4mchar[24m [4m*s2[24m, [4msize_t[24m [4mcount[24m);
 
-     _c_h_a_r *
-     ssttrrccppyy(_c_h_a_r *_d_s_t, _c_o_n_s_t _c_h_a_r *_s_r_c)
+       [4mchar[24m [4m*[0m
+       [1mstrcpy[22m([4mchar[24m [4m*dst[24m, [4mconst[24m [4mchar[24m [4m*src[24m);
 
-     _c_h_a_r *
-     ssttrrnnccppyy(_c_h_a_r *_d_s_t, _c_o_n_s_t _c_h_a_r *_s_r_c, _s_i_z_e__t _c_o_u_n_t)
+       [4mchar[24m [4m*[0m
+       [1mstrncpy[22m([4mchar[24m [4m*dst[24m, [4mconst[24m [4mchar[24m [4m*src[24m, [4msize_t[24m [4mcount[24m);
 
-     _c_h_a_r *
-     ssttrreerrrroorr(_i_n_t _e_r_r_n_o)
+       [4mchar[24m [4m*[0m
+       [1mstrerror[22m([4mint[24m [4merrno[24m);
 
-     _s_i_z_e__t
-     ssttrrlleenn(_c_o_n_s_t _c_h_a_r *_s)
+       [4msize_t[0m
+       [1mstrlen[22m([4mconst[24m [4mchar[24m [4m*s[24m);
 
-     _c_h_a_r *
-     ssttrrppbbrrkk(_c_o_n_s_t _c_h_a_r *_s, _c_o_n_s_t _c_h_a_r *_c_h_a_r_s_e_t)
+       [4mchar[24m [4m*[0m
+       [1mstrpbrk[22m([4mconst[24m [4mchar[24m [4m*s[24m, [4mconst[24m [4mchar[24m [4m*charset[24m);
 
-     _c_h_a_r *
-     ssttrrsseepp(_c_h_a_r **_s_t_r_i_n_g_p, _c_o_n_s_t _c_h_a_r *_d_e_l_i_m)
+       [4mchar[24m [4m*[0m
+       [1mstrsep[22m([4mchar[24m [4m**stringp[24m, [4mconst[24m [4mchar[24m [4m*delim[24m);
 
-     _s_i_z_e__t
-     ssttrrssppnn(_c_o_n_s_t _c_h_a_r *_s, _c_o_n_s_t _c_h_a_r *_c_h_a_r_s_e_t)
+       [4msize_t[0m
+       [1mstrspn[22m([4mconst[24m [4mchar[24m [4m*s[24m, [4mconst[24m [4mchar[24m [4m*charset[24m);
 
-     _s_i_z_e__t
-     ssttrrccssppnn(_c_o_n_s_t _c_h_a_r *_s, _c_o_n_s_t _c_h_a_r *_c_h_a_r_s_e_t)
+       [4msize_t[0m
+       [1mstrcspn[22m([4mconst[24m [4mchar[24m [4m*s[24m, [4mconst[24m [4mchar[24m [4m*charset[24m);
 
-     _c_h_a_r *
-     ssttrrssttrr(_c_o_n_s_t _c_h_a_r *_b_i_g, _c_o_n_s_t _c_h_a_r *_l_i_t_t_l_e)
+       [4mchar[24m [4m*[0m
+       [1mstrstr[22m([4mconst[24m [4mchar[24m [4m*big[24m, [4mconst[24m [4mchar[24m [4m*little[24m);
 
-     _c_h_a_r *
-     ssttrrttookk(_c_h_a_r *_s, _c_o_n_s_t _c_h_a_r *_d_e_l_i_m)
+       [4mchar[24m [4m*[0m
+       [1mstrtok[22m([4mchar[24m [4m*s[24m, [4mconst[24m [4mchar[24m [4m*delim[24m);
 
+       [4mchar[24m [4m*[0m
+       [1mindex[22m([4mconst[24m [4mchar[24m [4m*s[24m, [4mint[24m [4mc[24m);
 
-     _c_h_a_r *
-     iinnddeexx(_c_o_n_s_t _c_h_a_r *_s, _i_n_t _c)
+       [4mchar[24m [4m*[0m
+       [1mrindex[22m([4mconst[24m [4mchar[24m [4m*s[24m, [4mint[24m [4mc[24m);
 
-     _c_h_a_r *
-     rriinnddeexx(_c_o_n_s_t _c_h_a_r *_s, _i_n_t _c)
+[1mDESCRIPTION[0m
+       The string functions functions manipulate strings terminated by a  null
+       byte.
 
-DDEESSCCRRIIPPTTIIOONN
-     The string functions functions manipulate strings terminated by a null
-     byte.
+       See  the  specific manual pages for more information.  For manipulating
+       variable length generic objects as byte strings (without the null  byte
+       check), see [4mbstring[24m(3).
 
-     See the specific manual pages for more information.  For manipulating
-     variable length generic objects as byte strings (without the null byte
-     check), see bstring(3).
+       Except as noted in their specific manual pages, the string functions do
+       not test the destination for size limitations.
 
-     Except as noted in their specific manual pages, the string functions do
-     not test the destination for size limitations.
+[1mSEE ALSO[0m
+       [4mindex[24m(3),  [4mstrcat[24m(3),  [4mstrchr[24m(3), [4mstrrchr[24m(3), [4mstrcmp[24m(3), [4mstrcasecmp[24m(3),
+       [4mstrcpy[24m(3), [4mstrerror[24m(3), [4mstrlen[24m(3),  [4mstrpbrk[24m(3),  [4mstrsep[24m(3),  [4mstrspn[24m(3),
+       [4mstrcspn[24m(3), [4mstrstr[24m(3), [4mstrtok[24m(3), [4mrindex[24m(3) [4mbstring[24m(3)
 
-SSEEEE AALLSSOO
-     index(3),  strcat(3),  strchr(3),  strrchr(3),  strcmp(3),
-     strcasecmp(3),  strcpy(3),  strerror(3),  strlen(3),  strpbrk(3),
-     strsep(3),  strspn(3),  strcspn(3),  strstr(3),  strtok(3),  rindex(3)
-     bstring(3)
+[1mSTANDARDS[0m
+       The  [1mstrcat[22m(),  [1mstrncat[22m(),  [1mstrchr[22m(),  [1mstrrchr[22m(),  [1mstrcmp[22m(), [1mstrncmp[22m(),
+       [1mstrcpy[22m(),  [1mstrncpy[22m(),  [1mstrerror[22m(),   [1mstrlen[22m(),   [1mstrpbrk[22m(),   [1mstrsep[22m(),
+       [1mstrspn[22m(),  [1mstrcspn[22m(),  [1mstrstr[22m(), and [1mstrtok[22m() functions conform to ANSI
+       X3.159‐1989 (“ANSI C89”).
 
-SSTTAANNDDAARRDDSS
-     The ssttrrccaatt(), ssttrrnnccaatt(), ssttrrcchhrr(), ssttrrrrcchhrr(), ssttrrccmmpp(), ssttrrnnccmmpp(),
-     ssttrrccppyy(), ssttrrnnccppyy(), ssttrreerrrroorr(), ssttrrlleenn(), ssttrrppbbrrkk(), ssttrrsseepp(), ssttrrssppnn(),
-     ssttrrccssppnn(), ssttrrssttrr(), and ssttrrttookk() functions conform to ANSI C3.159-1989
-     (``ANSI C'').
-
-4th Berkeley Distribution       April 19, 1991                               2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       April 19, 1991                       STRING(3)

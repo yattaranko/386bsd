@@ -40,8 +40,8 @@
 
 #include "SYS.h"
 
-	.globl	_errno
+	.globl	errno
 cerror:
-	movl	%eax,_errno
+	movl	%eax,errno
 	movl	$-1,%eax
 	ret

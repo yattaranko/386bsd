@@ -1,66 +1,35 @@
-RAND(3)                   386BSD Programmer's Manual                   RAND(3)
+RAND(3)                     Library Functions Manual                   RAND(3)
 
-NNAAMMEE
-     rraanndd, ssrraanndd - bad random number generator
+[1mNAME[0m
+       rand, srand — bad random number generator
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddlliibb..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdlib.h>[0m
 
-     _v_o_i_d
-     ssrraanndd(_u_n_s_i_g_n_e_d _s_e_e_d)
+       [4mvoid[0m
+       [1msrand[22m([4munsigned[24m [4mseed[24m);
 
-     _i_n_t
-     rraanndd(_v_o_i_d)
+       [4mint[0m
+       [1mrand[22m([4mvoid[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     TThheessee iinntteerrffaacceess aarree oobbssoolleetteedd bbyy rraannddoomm((33))..
+[1mDESCRIPTION[0m
+       [1mThese interfaces are obsoleted by random(3).[0m
 
-     The rraanndd() function computes a sequence of pseudo-random integers in the
-     range of 0 to RAND_MAX (as defined by the header file <_s_t_d_l_i_b._h>).
+       The  [1mrand[22m()  function  computes a sequence of pseudo‐random integers in
+       the range of 0 to RAND_MAX (as defined by the header file ⟨[4mstdlib.h[24m⟩).
 
-     The ssrraanndd() function sets its argument as the seed for a new sequence of
-     pseudo-random numbers to be returned by rraanndd().  These sequences are
-     repeatable by calling ssrraanndd() with the same seed value.
+       The [1msrand[22m() function sets its argument as the seed for a  new  sequence
+       of pseudo‐random numbers to be returned by [1mrand[22m().  These sequences are
+       repeatable by calling [1msrand[22m() with the same seed value.
 
-     If no seed value is provided, the functions are automatically seeded with
-     a value of 1.
+       If  no  seed  value is provided, the functions are automatically seeded
+       with a value of 1.
 
-SSEEEE AALLSSOO
-     random(3)
+[1mSEE ALSO[0m
+       [4mrandom[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The rraanndd() and ssrraanndd() functions conform to ANSI C3.159-1989 (``ANSI
-     C'').
+[1mSTANDARDS[0m
+       The  [1mrand[22m()  and  [1msrand[22m()  functions  conform   to   ANSI   X3.159‐1989
+       (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                         RAND(3)

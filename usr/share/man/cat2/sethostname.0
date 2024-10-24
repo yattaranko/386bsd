@@ -1,66 +1,49 @@
-GETHOSTNAME(2)            386BSD Programmer's Manual            GETHOSTNAME(2)
+GETHOSTNAME(2)                System Calls Manual               GETHOSTNAME(2)
 
-NNAAMMEE
-     ggeetthhoossttnnaammee, sseetthhoossttnnaammee - get/set name of current host
+[1mNAME[0m
+       gethostname, sethostname — get/set name of current host
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
 
-     _i_n_t
-     ggeetthhoossttnnaammee(_c_h_a_r *_n_a_m_e, _i_n_t _n_a_m_e_l_e_n)
+       [4mint[0m
+       [1mgethostname[22m([4mchar[24m [4m*name[24m, [4mint[24m [4mnamelen[24m);
 
-     _i_n_t
-     sseetthhoossttnnaammee(_c_o_n_s_t _c_h_a_r *_n_a_m_e, _i_n_t _n_a_m_e_l_e_n)
+       [4mint[0m
+       [1msethostname[22m([4mconst[24m [4mchar[24m [4m*name[24m, [4mint[24m [4mnamelen[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     GGeetthhoossttnnaammee() returns the standard host name for the current processor,
-     as previously set by sseetthhoossttnnaammee().  The parameter _n_a_m_e_l_e_n specifies the
-     size of the _n_a_m_e array.  The returned name is null-terminated unless
-     insufficient space is provided.
+[1mDESCRIPTION[0m
+       [1mGethostname[22m() returns the standard host name for the current processor,
+       as  previously  set  by [1msethostname[22m().  The parameter [4mnamelen[24m specifies
+       the size of the [4mname[24m array.  The returned name is  null‐terminated  un‐
+       less insufficient space is provided.
 
-     SSeetthhoossttnnaammee() sets the name of the host machine to be _n_a_m_e, which has
-     length _n_a_m_e_l_e_n. This call is restricted to the super-user and is normally
-     used only when the system is bootstrapped.
+       [1mSethostname[22m()  sets  the name of the host machine to be [4mname[24m, which has
+       length [4mnamelen[24m.  This call is restricted to the super‐user and is  nor‐
+       mally used only when the system is bootstrapped.
 
-RREETTUURRNN VVAALLUUEESS
-     If the call succeeds a value of 0 is returned.  If the call fails, a
-     value of -1 is returned and an error code is placed in the global
-     location _e_r_r_n_o.
+[1mRETURN VALUES[0m
+       If  the  call  succeeds a value of 0 is returned.  If the call fails, a
+       value of ‐1 is returned and an error code is placed in the global loca‐
+       tion [4merrno[24m.
 
-EERRRROORRSS
-     The following errors may be returned by these calls:
+[1mERRORS[0m
+       The following errors may be returned by these calls:
 
-     [EFAULT]      The _n_a_m_e or _n_a_m_e_l_e_n parameter gave an invalid address.
+       [EFAULT]           The [4mname[24m or [4mnamelen[24m parameter gave  an  invalid  ad‐
+                          dress.
 
-     [EPERM]       The caller tried to set the hostname and was not the super-
-                   user.
+       [EPERM]            The caller tried to set the hostname and was not the
+                          super‐user.
 
-SSEEEE AALLSSOO
-     gethostid(2)
+[1mSEE ALSO[0m
+       [4mgethostid[24m(2)
 
-BBUUGGSS
-     Host names are limited to MAXHOSTNAMELEN (from <_s_y_s/_p_a_r_a_m._h>) characters,
-     currently 64.
+[1mBUGS[0m
+       Host  names  are limited to MAXHOSTNAMELEN (from ⟨[4msys/param.h[24m⟩) charac‐
+       ters, currently 64.
 
-HHIISSTTOORRYY
-     The ggeetthhoossttnnaammee function call appeared in 4.2BSD.
+[1mHISTORY[0m
+       The [1mgethostname [22mfunction call appeared in 4.2BSD.
 
-4.2 Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4.2 Berkeley Distribution       March 10, 1991                  GETHOSTNAME(2)

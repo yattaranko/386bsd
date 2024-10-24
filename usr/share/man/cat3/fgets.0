@@ -1,66 +1,57 @@
-FGETS(3)                  386BSD Programmer's Manual                  FGETS(3)
+FGETS(3)                    Library Functions Manual                  FGETS(3)
 
-NNAAMMEE
-     ffggeettss, ggeettss - get a line from a stream
+[1mNAME[0m
+       fgets, gets — get a line from a stream
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdio.h>[0m
 
-     _c_h_a_r *
-     ffggeettss(_c_h_a_r *_s_t_r, _s_i_z_e__t _s_i_z_e, _F_I_L_E *_s_t_r_e_a_m)
+       [4mchar[24m [4m*[0m
+       [1mfgets[22m([4mchar[24m [4m*str[24m, [4msize_t[24m [4msize[24m, [4mFILE[24m [4m*stream[24m);
 
-     _c_h_a_r *
-     ggeettss(_c_h_a_r *_s_t_r)
+       [4mchar[24m [4m*[0m
+       [1mgets[22m([4mchar[24m [4m*str[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ffggeettss() function reads at most one less than the number of characters
-     specified by size from the given _s_t_r_e_a_m and stores them in the string
-     _s_t_r. Reading stops when a newline character is found, at end-of-file or
-     error.  The newline, if any, is retained.  In any case a `\0' character
-     is appended to end the string.
+[1mDESCRIPTION[0m
+       The  [1mfgets[22m() function reads at most one less than the number of charac‐
+       ters specified by [4msize[24m from the given [4mstream[24m and  stores  them  in  the
+       string  [4mstr[24m.   Reading stops when a newline character is found, at end‐
+       of‐file or error.  The newline, if any, is retained.   In  any  case  a
+       ‘\0’ character is appended to end the string.
 
-     The ggeettss() function is equivalent to ffggeettss() with an infinite size and a
-     _s_t_r_e_a_m of _s_t_d_i_n, except that the newline character (if any) is not stored
-     in the string.  It is the caller's responsibility to ensure that the
-     input line, if any, is sufficiently short to fit in the string.
+       The  [1mgets[22m() function is equivalent to [1mfgets[22m() with an infinite [4msize[24m and
+       a [4mstream[24m of [4mstdin[24m, except that the newline character (if  any)  is  not
+       stored in the string.  It is the caller’s responsibility to ensure that
+       the input line, if any, is sufficiently short to fit in the string.
 
-RREETTUURRNN VVAALLUUEESS
-     Upon successful completion, ffggeettss() and ggeettss() return a pointer to the
-     string.  If end-of-file or an error occurs before any characters are
-     read, they return NULL. The ffggeettss() and functions ggeettss() do not
-     distinguish between end-of-file and error, and callers must use feof(3)
-     and ferror(3) to determine which occurred.
+[1mRETURN VALUES[0m
+       Upon  successful completion, [1mfgets[22m() and [1mgets[22m() return a pointer to the
+       string.  If end‐of‐file or an error occurs before  any  characters  are
+       read, they return NULL. The [1mfgets[22m() and functions [1mgets[22m() do not distin‐
+       guish  between  end‐of‐file and error, and callers must use [4mfeof[24m(3) and
+       [4mferror[24m(3) to determine which occurred.
 
-EERRRROORRSS
-     [EBADF]  The given _s_t_r_e_a_m is not a readable stream.
+[1mERRORS[0m
+       [EBADF]  The given [4mstream[24m is not a readable stream.
 
-     The function ffggeettss() may also fail and set _e_r_r_n_o for any of the errors
-     specified for the routines fflush(3),  fstat(2),  read(2),  or malloc(3).
+       The function [1mfgets[22m() may also fail and set [4merrno[24m for any of the  errors
+       specified for the routines [4mfflush[24m(3), [4mfstat[24m(2), [4mread[24m(2), or [4mmalloc[24m(3).
 
+       The  function  [1mgets[22m() may also fail and set [4merrno[24m for any of the errors
+       specified for the routine [4mgetchar[24m(3).
 
-     The function ggeettss() may also fail and set _e_r_r_n_o for any of the errors
-     specified for the routine getchar(3).
+[1mSEE ALSO[0m
+       [4mfeof[24m(3), [4mferror[24m(3), [4mfgetline[24m(3)
 
-SSEEEE AALLSSOO
-     feof(3),  ferror(3),  fgetline(3)
+[1mSTANDARDS[0m
+       The  functions  [1mfgets[22m()  and  [1mgets[22m()  conform   to   ANSI   X3.159‐1989
+       (“ANSI C89”).
 
-SSTTAANNDDAARRDDSS
-     The functions ffggeettss() and ggeettss() conform to ANSI C3.159-1989 (``ANSI
-     C'').
+[1mBUGS[0m
+       Since  it  is  usually impossible to ensure that the next input line is
+       less than some arbitrary length,  and  because  overflowing  the  input
+       buffer is almost invariably a security violation, programs should [4mNEVER[0m
+       use  [1mgets[22m().   The  [1mgets[22m()  function  exists  purely to conform to ANSI
+       X3.159‐1989 (“ANSI C89”).
 
-BBUUGGSS
-     Since it is usually impossible to ensure that the next input line is less
-     than some arbitrary length, and because overflowing the input buffer is
-     almost invariably a security violation, programs should _N_E_V_E_R use ggeettss().
-     The ggeettss() function exists purely to conform to ANSI C3.159-1989 (``ANSI
-     C'').
-
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                        FGETS(3)

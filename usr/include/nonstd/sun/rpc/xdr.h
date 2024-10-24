@@ -225,15 +225,18 @@ extern bool_t	xdr_void();
 extern bool_t	xdr_int();
 extern bool_t	xdr_u_int();
 extern bool_t	xdr_long();
-extern bool_t	xdr_u_long();
+//extern bool_t	xdr_u_long();
+extern bool_t	xdr_u_long(register XDR *xdrs, u_long *ulp);
 extern bool_t	xdr_short();
 extern bool_t	xdr_u_short();
 extern bool_t	xdr_bool();
 extern bool_t	xdr_enum();
 extern bool_t	xdr_array();
 extern bool_t	xdr_bytes();
-extern bool_t	xdr_opaque();
-extern bool_t	xdr_string();
+//extern bool_t	xdr_opaque();
+extern bool_t	xdr_opaque(register XDR *xdrs, caddr_t cp, register u_int cnt);
+//extern bool_t	xdr_string();
+extern bool_t	xdr_string(register XDR *xdrs, char **cpp, u_int maxsize);
 extern bool_t	xdr_union();
 extern bool_t	xdr_char();
 extern bool_t	xdr_u_char();
@@ -267,4 +270,4 @@ extern bool_t xdrrec_endofrecord();	/* make end of xdr record */
 extern bool_t xdrrec_skiprecord();	/* move to beginning of next record */
 extern bool_t xdrrec_eof();		/* true if no more input */
 
-#endif !__XDR_HEADER__
+#endif /* !__XDR_HEADER__ */

@@ -1,66 +1,58 @@
-GETC(3)                   386BSD Programmer's Manual                   GETC(3)
+GETC(3)                     Library Functions Manual                   GETC(3)
 
-NNAAMMEE
-     ffggeettcc, ggeettcc, ggeettcchhaarr, ggeettww - get next character or word from input stream
+[1mNAME[0m
+       fgetc,  getc,  getchar,  getw  —  get next character or word from input
+       stream
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdio.h>[0m
 
-     _i_n_t
-     ffggeettcc(_F_I_L_E *_s_t_r_e_a_m)
+       [4mint[0m
+       [1mfgetc[22m([4mFILE[24m [4m*stream[24m);
 
-     _i_n_t
-     ggeettcc(_F_I_L_E *_s_t_r_e_a_m)
+       [4mint[0m
+       [1mgetc[22m([4mFILE[24m [4m*stream[24m);
 
-     _i_n_t
-     ggeettcchhaarr()
+       [4mint[0m
+       [1mgetchar[22m();
 
-     _i_n_t
-     ggeettww(_F_I_L_E *_s_t_r_e_a_m)
+       [4mint[0m
+       [1mgetw[22m([4mFILE[24m [4m*stream[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ffggeettcc() function obtains the next input character (if present) from
-     the stream pointed at by _s_t_r_e_a_m, or the next character pushed back on the
-     stream via ungetc.
+[1mDESCRIPTION[0m
+       The [1mfgetc[22m() function obtains the next input character (if present) from
+       the stream pointed at by [4mstream[24m, or the next character pushed  back  on
+       the stream via [4mungetc[24m.
 
-     The ggeettcc() function acts essentially identically to ffggeettcc(), but is a
-     macro that expands in-line.
+       The  [1mgetc[22m()  function acts essentially identically to [1mfgetc[22m(), but is a
+       macro that expands in‐line.
 
-     The ggeettcchhaarr() function is equivalent to: getc with the argument stdin.
+       The [1mgetchar[22m() function is equivalent to: getc with the argument stdin.
 
-     The ggeettww() function obtains the next _i_n_t (if present) from the stream
-     pointed at by _s_t_r_e_a_m.
+       The [1mgetw[22m() function obtains the next [4mint[24m (if present) from  the  stream
+       pointed at by [4mstream[24m.
 
-RREETTUURRNN VVAALLUUEESS
-     If successful, these routines return the next requested object from the
-     _s_t_r_e_a_m. If the stream is at end-of-file or a read error occurs, the
-     routines return EOF. The routines feof(3) and ferror(3) must be used to
-     distinguish between end-of-file and error.  If an error occurs, the
-     global variable _e_r_r_n_o is set to indicate the error.  The end-of-file
-     condition is remembered, even on a terminal, and all subsequent attempts
-     to read will return EOF until the condition is cleared with clearerr.
+[1mRETURN VALUES[0m
+       If successful, these routines return the next requested object from the
+       [4mstream[24m.   If  the  stream is at end‐of‐file or a read error occurs, the
+       routines return EOF.  The routines [4mfeof[24m(3) and [4mferror[24m(3) must  be  used
+       to  distinguish between end‐of‐file and error.  If an error occurs, the
+       global variable [4merrno[24m is set to indicate the  error.   The  end‐of‐file
+       condition  is  remembered,  even  on a terminal, and all subsequent at‐
+       tempts to read will return EOF until  the  condition  is  cleared  with
+       [4mclearerr[24m.
 
-SSEEEE AALLSSOO
-     ferror(3),  fread(3),  fopen(3),  putc(3),  ungetc(3)
+[1mSEE ALSO[0m
+       [4mferror[24m(3), [4mfread[24m(3), [4mfopen[24m(3), [4mputc[24m(3), [4mungetc[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ffggeettcc(), ggeettcc() and ggeettcchhaarr() functions conform to ANSI C3.159-1989
-     (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mfgetc[22m(), [1mgetc[22m() and [1mgetchar[22m() functions conform to ANSI X3.159‐1989
+       (“ANSI C89”).
 
-BBUUGGSS
-     Since EOF is a valid integer value, feof and ferror must be used to check
-     for failure after calling ggeettww().  The size and byte order of an _i_n_t
-     varies from one machine to another, and ggeettww() is not recommended for
-     portable applications.
+[1mBUGS[0m
+       Since  EOF  is  a  valid integer value, [4mfeof[24m and [4mferror[24m must be used to
+       check for failure after calling [1mgetw[22m().  The size and byte order of  an
+       [4mint[24m  varies  from one machine to another, and [1mgetw[22m() is not recommended
+       for portable applications.
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                         GETC(3)

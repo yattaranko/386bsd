@@ -1,132 +1,81 @@
-GETNETENT(3)              386BSD Programmer's Manual              GETNETENT(3)
+GETNETENT(3)                Library Functions Manual              GETNETENT(3)
 
-NNAAMMEE
-     ggeettnneetteenntt, ggeettnneettbbyyaaddddrr, ggeettnneettbbyynnaammee, sseettnneetteenntt, eennddnneetteenntt - get network
-     entry
+[1mNAME[0m
+       getnetent,  getnetbyaddr, getnetbyname, setnetent, endnetent — get net‐
+       work entry
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<nneettddbb..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <netdb.h>[0m
 
-     _s_t_r_u_c_t _n_e_t_e_n_t *
-     ggeettnneetteenntt()
+       [4mstruct[24m [4mnetent[24m [4m*[0m
+       [1mgetnetent[22m();
 
-     _s_t_r_u_c_t _n_e_t_e_n_t *
-     ggeettnneettbbyynnaammee(_c_h_a_r *_n_a_m_e)
+       [4mstruct[24m [4mnetent[24m [4m*[0m
+       [1mgetnetbyname[22m([4mchar[24m [4m*name[24m);
 
-     _s_t_r_u_c_t _n_e_t_e_n_t *
-     ggeettnneettbbyyaaddddrr(_l_o_n_g _n_e_t, _i_n_t _t_y_p_e)
+       [4mstruct[24m [4mnetent[24m [4m*[0m
+       [1mgetnetbyaddr[22m([4mlong[24m [4mnet[24m, [4mint[24m [4mtype[24m);
 
-     sseettnneetteenntt(_i_n_t _s_t_a_y_o_p_e_n)
+       [1msetnetent[22m([4mint[24m [4mstayopen[24m);
 
-     eennddnneetteenntt()
+       [1mendnetent[22m();
 
-DDEESSCCRRIIPPTTIIOONN
-     The ggeettnneetteenntt(), ggeettnneettbbyynnaammee(), and ggeettnneettbbyyaaddddrr() functions each return
-     a pointer to an object with the following structure containing the
-     broken-out fields of a line in the network data base, /_e_t_c/_n_e_t_w_o_r_k_s.
+[1mDESCRIPTION[0m
+       The [1mgetnetent[22m(), [1mgetnetbyname[22m(), and [1mgetnetbyaddr[22m() functions each  re‐
+       turn a pointer to an object with the following structure containing the
+       broken‐out fields of a line in the network data base, [4m/etc/networks[24m.
 
-           struct  netent {
-                   char            *n_name;        /* official name of net */
-                   char            **n_aliases;    /* alias list */
-                   int             n_addrtype;     /* net number type */
-                   unsigned long   n_net;          /* net number */
-           };
+             struct  netent {
+                     char            *n_name;        /* official name of net */
+                     char            **n_aliases;    /* alias list */
+                     int             n_addrtype;     /* net number type */
+                     unsigned long   n_net;          /* net number */
+             };
 
-     The members of this structure are:
+       The members of this structure are:
 
-     _n__n_a_m_e      The official name of the network.
+       [4mn_name[24m      The official name of the network.
 
-     _n__a_l_i_a_s_e_s   A zero terminated list of alternate names for the network.
+       [4mn_aliases[24m   A zero terminated list of alternate names for the network.
 
-     _n__a_d_d_r_t_y_p_e  The type of the network number returned; currently only
-                 AF_INET.
+       [4mn_addrtype[24m  The  type  of  the  network number returned; currently only
+                   AF_INET.
 
-     _n__n_e_t       The network number.  Network numbers are returned in machine
-                 byte order.
+       [4mn_net[24m       The network number.  Network numbers are  returned  in  ma‐
+                   chine byte order.
 
-     The ggeettnneetteenntt() function reads the next line of the file, opening the
-     file if necessary.
+       The  [1mgetnetent[22m()  function reads the next line of the file, opening the
+       file if necessary.
 
-     The sseettnneetteenntt() function opens and rewinds the file.  If the _s_t_a_y_o_p_e_n
-     flag is non-zero, the net data base will not be closed after each call to
-     ggeettnneettbbyynnaammee() or ggeettnneettbbyyaaddddrr().
+       The [1msetnetent[22m() function opens and rewinds the file.  If  the  [4mstayopen[0m
+       flag  is non‐zero, the net data base will not be closed after each call
+       to [1mgetnetbyname[22m() or [1mgetnetbyaddr[22m().
 
-     The eennddnneetteenntt() function closes the file.
+       The [1mendnetent[22m() function closes the file.
 
-     The ggeettnneettbbyynnaammee() function and ggeettnneettbbyyaaddddrr() sequentially search from
-     the beginning of the file until a matching net name or net address and
-     type is found, or until EOF is encountered.  Network numbers are supplied
-     in host order.
+       The [1mgetnetbyname[22m() function and [1mgetnetbyaddr[22m() sequentially search from
+       the beginning of the file until a matching net name or net address  and
+       type  is  found, or until EOF is encountered.  Network numbers are sup‐
+       plied in host order.
 
-FFIILLEESS
-     /etc/networks
+[1mFILES[0m
+       [4m/etc/networks[0m
 
-DDIIAAGGNNOOSSTTIICCSS
-     Null pointer (0) returned on EOF or error.
+[1mDIAGNOSTICS[0m
+       Null pointer (0) returned on EOF or error.
 
-SSEEEE AALLSSOO
-     networks(5)
+[1mSEE ALSO[0m
+       [4mnetworks[24m(5)
 
-HHIISSTTOORRYY
-     The ggeettnneetteenntt(), ggeettnneettbbyyaaddddrr(), ggeettnneettbbyynnaammee(), sseettnneetteenntt(), and
-     eennddnneetteenntt() functions appeared in 4.2BSD.
+[1mHISTORY[0m
+       The  [1mgetnetent[22m(),  [1mgetnetbyaddr[22m(),  [1mgetnetbyname[22m(),  [1msetnetent[22m(),   and
+       [1mendnetent[22m() functions appeared in 4.2BSD.
 
-BBUUGGSS
-     The data space used by these functions is static; if future use requires
-     the data, it should be copied before any subsequent calls to these
-     functions overwrite it.  Only Internet network numbers are currently
-     understood.  Expecting network numbers to fit in no more than 32 bits is
-     probably naive.
+[1mBUGS[0m
+       The  data  space  used  by these functions is static; if future use re‐
+       quires the data, it should be copied before  any  subsequent  calls  to
+       these  functions  overwrite it.  Only Internet network numbers are cur‐
+       rently understood.  Expecting network numbers to fit in no more than 32
+       bits is probably naive.
 
-4.2 Berkeley Distribution       April 19, 1991                               2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4.2 Berkeley Distribution       April 19, 1991                    GETNETENT(3)

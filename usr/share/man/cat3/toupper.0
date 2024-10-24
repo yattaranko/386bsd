@@ -1,66 +1,26 @@
-TOUPPER(3)                386BSD Programmer's Manual                TOUPPER(3)
+TOUPPER(3)                  Library Functions Manual                TOUPPER(3)
 
-NNAAMMEE
-     ttoouuppppeerr - lower case to upper case letter conversion
+[1mNAME[0m
+       toupper — lower case to upper case letter conversion
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ccttyyppee..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <ctype.h>[0m
 
-     _i_n_t
-     ttoouuppppeerr(_i_n_t _c)
+       [4mint[0m
+       [1mtoupper[22m([4mint[24m [4mc[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ttoouuppppeerr() function converts a lower-case letter to the corresponding
-     upper-case letter.  If the argument is a lower-case letter, the ttoouuppppeerr()
-     function returns the corresponding upper-case letter if there is one;
-     otherwise the argument is returned unchanged.
+[1mDESCRIPTION[0m
+       The  [1mtoupper[22m() function converts a lower‐case letter to the correspond‐
+       ing upper‐case letter.  If the argument is  a  lower‐case  letter,  the
+       [1mtoupper[22m() function returns the corresponding upper‐case letter if there
+       is one; otherwise the argument is returned unchanged.
 
-SSEEEE AALLSSOO
-     isascii(3),  isalnum(3),  isalpha(3),  iscntrl(3),  isdigit(3),
-     isgraph(3),  islower(3),  isprint(3),  ispunct(3),  isspace(3),
-     isupper(3),  isxdigit(3),  toascii(3),  toupper(3),  stdio(3) ascii(7)
+[1mSEE ALSO[0m
+       [4misascii[24m(3), [4misalnum[24m(3), [4misalpha[24m(3), [4miscntrl[24m(3), [4misdigit[24m(3), [4misgraph[24m(3),
+       [4mislower[24m(3),    [4misprint[24m(3),    [4mispunct[24m(3),    [4misspace[24m(3),    [4misupper[24m(3),
+       [4misxdigit[24m(3), [4mtoascii[24m(3), [4mtoupper[24m(3), [4mstdio[24m(3) [4mascii[24m(7)
 
-SSTTAANNDDAARRDDSS
-     The ttoolloowweerr() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mtolower[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                      TOUPPER(3)

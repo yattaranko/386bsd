@@ -1,66 +1,43 @@
-CTERMID(3)                386BSD Programmer's Manual                CTERMID(3)
+CTERMID(3)                  Library Functions Manual                CTERMID(3)
 
-NNAAMMEE
-     cctteerrmmiidd - generate terminal pathname
+[1mNAME[0m
+       ctermid — generate terminal pathname
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdio.h>[0m
 
-     _c_h_a_r *
-     cctteerrmmiidd(_c_h_a_r *_b_u_f)
+       [4mchar[24m [4m*[0m
+       [1mctermid[22m([4mchar[24m [4m*buf[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The cctteerrmmiidd() function generates a string, that, when used as a pathname,
-     refers to the current controlling terminal of the calling process.
+[1mDESCRIPTION[0m
+       The  [1mctermid[22m()  function generates a string, that, when used as a path‐
+       name, refers  to  the  current  controlling  terminal  of  the  calling
+       process.
 
-     If _b_u_f is the NULL pointer, a pointer to a static area is returned.
-     Otherwise, the pathname is copied into the memory referenced by _b_u_f. The
-     argument _b_u_f is assumed to be at least L_ctermid (as defined in the
-     include file <_s_t_d_i_o._h>) bytes long.
+       If  [4mbuf[24m  is  the  NULL pointer, a pointer to a static area is returned.
+       Otherwise, the pathname is copied into the memory  referenced  by  [4mbuf[24m.
+       The argument [4mbuf[24m is assumed to be at least L_ctermid (as defined in the
+       include file ⟨[4mstdio.h[24m⟩) bytes long.
 
-     The current implementation simply returns `/dev/tty'.
+       The current implementation simply returns ‘/dev/tty’.
 
-RREETTUURRNN VVAALLUUEESS
-     Upon successful completion, a non-NULL pointer is returned.  Otherwise, a
-     NULL pointer is returned and the global variable _e_r_r_n_o is set to indicate
-     the error.
+[1mRETURN VALUES[0m
+       Upon successful completion, a non‐NULL pointer is returned.  Otherwise,
+       a  NULL pointer is returned and the global variable [4merrno[24m is set to in‐
+       dicate the error.
 
-EERRRROORRSS
-     The current implementation detects no error conditions.
+[1mERRORS[0m
+       The current implementation detects no error conditions.
 
-SSEEEE AALLSSOO
-     ttyname(3)
+[1mSEE ALSO[0m
+       [4mttyname[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ctermid function conforms to IEEE Std1003.1-1988 (``POSIX'').
+[1mSTANDARDS[0m
+       The [4mctermid[24m function conforms to IEEE Std 1003.1‐1988 (“POSIX.1”).
 
-BBUUGGSS
-     By default the cctteerrmmiidd() function writes all information to an internal
-     static object.  Subsequent calls to cctteerrmmiidd() will modify the same
-     object.
+[1mBUGS[0m
+       By default the [1mctermid[22m() function writes all information to an internal
+       static object.  Subsequent calls to [1mctermid[22m() will modify the same  ob‐
+       ject.
 
-BSD Experimental                April 19, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                    April 19, 1991                      CTERMID(3)

@@ -1,66 +1,39 @@
-SETMODE(3)                386BSD Programmer's Manual                SETMODE(3)
+SETMODE(3)                  Library Functions Manual                SETMODE(3)
 
-NNAAMMEE
-     ggeettmmooddee, sseettmmooddee - modify mode bits
+[1mNAME[0m
+       getmode, setmode — modify mode bits
 
-SSYYNNOOPPSSIISS
-     _m_o_d_e__t
-     ggeettmmooddee(_c_o_n_s_t _v_o_i_d *_s_e_t, _m_o_d_e__t _m_o_d_e)
+[1mSYNOPSIS[0m
+       [4mmode_t[0m
+       [1mgetmode[22m([4mconst[24m [4mvoid[24m [4m*set[24m, [4mmode_t[24m [4mmode[24m);
 
-     _v_o_i_d
-     sseettmmooddee(_c_o_n_s_t _c_h_a_r *_m_o_d_e__s_t_r)
+       [4mvoid[0m
+       [1msetmode[22m([4mconst[24m [4mchar[24m [4m*mode_str[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ggeettmmooddee() function returns a copy of the file permission bits _m_o_d_e as
-     altered by the values pointed to by _s_e_t. While only the mode bits are
-     altered, other parts of the file mode may be examined.
+[1mDESCRIPTION[0m
+       The  [1mgetmode[22m() function returns a copy of the file permission bits [4mmode[0m
+       as altered by the values pointed to by [4mset[24m.  While only the  mode  bits
+       are altered, other parts of the file mode may be examined.
 
-     The sseettmmooddee() function takes an absolute (octal) or symbolic value, as
-     described in chmod(1),  as an argument and returns a pointer to mode
-     values to be supplied to ggeettmmooddee().  Because some of the symbolic values
-     are relative to the file creation mask, sseettmmooddee() may call umask(2).  If
-     this occurs, the file creation mask will be restored before sseettmmooddee()
-     returns.  If the calling program changes the value of its file creation
-     mask after calling sseettmmooddee(), sseettmmooddee() must be called again if ggeettmmooddee()
-     is to modify future file modes correctly.
+       The  [1msetmode[22m() function takes an absolute (octal) or symbolic value, as
+       described in [4mchmod[24m(1), as an argument and returns  a  pointer  to  mode
+       values  to be supplied to [1mgetmode[22m().  Because some of the symbolic val‐
+       ues are  relative  to  the  file  creation  mask,  [1msetmode[22m()  may  call
+       [4mumask[24m(2).   If this occurs, the file creation mask will be restored be‐
+       fore [1msetmode[22m() returns.  If the calling program changes  the  value  of
+       its  file  creation  mask  after  calling  [1msetmode[22m(), [1msetmode[22m() must be
+       called again if [1mgetmode[22m() is to modify future file modes correctly.
 
-     If the mode passed to sseettmmooddee() is invalid, sseettmmooddee() returns NULL.
+       If the mode passed to [1msetmode[22m() is invalid, [1msetmode[22m() returns NULL.
 
-EERRRROORRSS
-     The sseettmmooddee() function may fail and set errno for any of the errors
-     specified for the library routine malloc(3).
+[1mERRORS[0m
+       The [1msetmode[22m() function may fail and set errno for  any  of  the  errors
+       specified for the library routine [4mmalloc[24m(3).
 
-SSEEEE AALLSSOO
-     chmod(1),  stat(2),  umask(2),  malloc(3)
+[1mSEE ALSO[0m
+       [4mchmod[24m(1), [4mstat[24m(2), [4mumask[24m(2), [4mmalloc[24m(3)
 
-HHIISSTTOORRYY
-     The ggeettmmooddee() and sseettmmooddee() functions are currently under development.
+[1mHISTORY[0m
+       The [1mgetmode[22m() and [1msetmode[22m() functions are currently under development.
 
-BSD Experimental                April 19, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                    April 19, 1991                      SETMODE(3)

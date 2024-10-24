@@ -1,66 +1,29 @@
-ASYNC_DAEMON(2)           386BSD Programmer's Manual           ASYNC_DAEMON(2)
+ASYNC_DAEMON(2)               System Calls Manual              ASYNC_DAEMON(2)
 
-NNAAMMEE
-     aassyynncc__ddaaeemmoonn - create a local NFS asynchronous I/O server
+[1mNAME[0m
+       async_daemon — create a local NFS asynchronous I/O server
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
 
-     _i_n_t
-     aassyynncc__ddaaeemmoonn(_v_o_i_d)
+       [4mint[0m
+       [1masync_daemon[22m([4mvoid[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     AAssyynncc__ddaaeemmoonn() starts an NFS asynchronous I/O server.  Normally this
-     system calls does not return unless the server is terminated by a signal
-     at which time a value of 0 is returned.  Otherwise, -1 is returned and
-     the global variable _e_r_r_n_o is set to indicate the error.
+[1mDESCRIPTION[0m
+       [1mAsync_daemon[22m()  starts  an  NFS asynchronous I/O server.  Normally this
+       system calls does not return unless the server is terminated by a  sig‐
+       nal  at which time a value of 0 is returned.  Otherwise, ‐1 is returned
+       and the global variable [4merrno[24m is set to indicate the error.
 
-EERRRROORRSS
-     The _n_f_s_s_v_c fails if the following is true:
+[1mERRORS[0m
+       The [4mnfssvc[24m fails if the following is true:
 
-     [EPERM]  The caller is not the super-user.
+       [EPERM]  The caller is not the super‐user.
 
-SSEEEE AALLSSOO
-     nfsiod(8)
+[1mSEE ALSO[0m
+       [4mnfsiod[24m(8)
 
-HHIISSTTOORRYY
-     The aassyynncc__ddaaeemmoonn function call is currently under development.
+[1mHISTORY[0m
+       The [1masync_daemon [22mfunction call is currently under development.
 
-BSD Experimental                 July 23, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     July 23, 1991                 ASYNC_DAEMON(2)

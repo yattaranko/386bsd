@@ -1,132 +1,88 @@
-GETSUBOPT(3)              386BSD Programmer's Manual              GETSUBOPT(3)
+GETSUBOPT(3)                Library Functions Manual              GETSUBOPT(3)
 
-NNAAMMEE
-     ggeettssuubboopptt - get sub options from an argument
+[1mNAME[0m
+       getsubopt — get sub options from an argument
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdio.h>[0m
 
-     _i_n_t
-     ggeettssuubboopptt(_c_h_a_r **_o_p_t_i_o_n_p, _c_h_a_r * _c_o_n_s_t *_t_o_k_e_n_s, _c_h_a_r **_v_a_l_u_e_p)
+       [4mint[0m
+       [1mgetsubopt[22m([4mchar[24m [4m**optionp[24m, [4mchar[24m [4m*[24m [4mconst[24m [4m*tokens[24m, [4mchar[24m [4m**valuep[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ggeettssuubboopptt() parses a string containing tokens delimited by one or
-     more tab, space or comma (`,') characters.  It is intended for use in
-     parsing groups of option arguments provided as part of a utility command
-     line.
+[1mDESCRIPTION[0m
+       The  [1mgetsubopt[22m()  parses a string containing tokens delimited by one or
+       more tab, space or comma (‘,’) characters.  It is intended for  use  in
+       parsing  groups  of option arguments provided as part of a utility com‐
+       mand line.
 
-     The argument _o_p_t_i_o_n_p is a pointer to a pointer to the string.  The
-     argument _t_o_k_e_n_s is a pointer to a NULL-terminated array of pointers to
-     strings.
+       The argument [4moptionp[24m is a pointer to a pointer to the string.  The  ar‐
+       gument  [4mtokens[24m  is  a pointer to a NULL‐terminated array of pointers to
+       strings.
 
-     The ggeettssuubboopptt() function returns the zero-based offset of the pointer in
-     the _t_o_k_e_n_s array referencing a string which matches the first token in
-     the string, or, -1 if the string contains no tokens or _t_o_k_e_n_s does not
-     contain a matching string.
+       The [1mgetsubopt[22m() function returns the zero‐based offset of  the  pointer
+       in  the [4mtokens[24m array referencing a string which matches the first token
+       in the string, or, -1 if the string contains no tokens or  [4mtokens[24m  does
+       not contain a matching string.
 
-     If the token is of the form ``name=value'', the location referenced by
-     _v_a_l_u_e_p will be set to point to the start of the ``value'' portion of the
-     token.
+       If  the token is of the form ‘‘name=value’’, the location referenced by
+       [4mvaluep[24m will be set to point to the start of the  ‘‘value’’  portion  of
+       the token.
 
-     On return from ggeettssuubboopptt(), _o_p_t_i_o_n_p will be set to point to the start of
-     the next token in the string, or the null at the end of the string if no
-     more tokens are present.  The external variable _s_u_b_o_p_t_a_r_g will be set to
-     point to the start of the current token, or NULL if no tokens were
-     present.  The argument _v_a_l_u_e_p will be set to point to the ``value''
-     portion of the token, or NULL if no ``value'' portion was present.
+       On  return  from [1mgetsubopt[22m(), [4moptionp[24m will be set to point to the start
+       of the next token in the string, or the null at the end of  the  string
+       if no more tokens are present.  The external variable [4msuboptarg[24m will be
+       set  to  point  to the start of the current token, or NULL if no tokens
+       were present.  The  argument  [4mvaluep[24m  will  be  set  to  point  to  the
+       ‘‘value’’  portion  of  the  token, or NULL if no ‘‘value’’ portion was
+       present.
 
-EEXXAAMMPPLLEE
-     char *tokens[] = {
-             #define ONE     0
-                     "one",
-             #define TWO     1
-                     "two",
-             NULL
-     };
+[1mEXAMPLE[0m
+       char *tokens[] = {
+               #define ONE     0
+                       "one",
+               #define TWO     1
+                       "two",
+               NULL
+       };
 
-     ...
+       ...
 
-     extern char *optarg, *suboptarg;
-     char *options, *value;
+       extern char *optarg, *suboptarg;
+       char *options, *value;
 
-     while ((ch = getopt(argc, argv, "ab:")) != -1) {
-             switch(ch) {
-             case 'a':
-                     /* process ``a'' option */
-                     break;
-             case 'b':
-                     options = optarg;
-                     while (*options) {
-                             switch(getsubopt(&options, tokens, &value)) {
-                             case ONE:
-                                     /* process ``one'' sub option */
-                                     break;
-                             case TWO:
-                                     /* process ``two'' sub option */
-                                     if (!value)
-                                             error("no value for two");
-                                     i = atoi(value);
-                                     break;
-                             case -1:
-                                     if (suboptarg)
-                                             error("illegal sub option %s",
-                                               suboptarg);
-                                     else
-                                             error("missing sub option");
-                                     break;
-                     }
-                     break;
-             }
+       while ((ch = getopt(argc, argv, "ab:")) != -1) {
+               switch(ch) {
+               case ’a’:
+                       /* process ‘‘a’’ option */
+                       break;
+               case ’b’:
+                       options = optarg;
+                       while (*options) {
+                               switch(getsubopt(&options, tokens, &value)) {
+                               case ONE:
+                                       /* process ‘‘one’’ sub option */
+                                       break;
+                               case TWO:
+                                       /* process ‘‘two’’ sub option */
+                                       if (!value)
+                                               error("no value for two");
+                                       i = atoi(value);
+                                       break;
+                               case -1:
+                                       if (suboptarg)
+                                               error("illegal sub option %s",
+                                                 suboptarg);
+                                       else
+                                               error("missing sub option");
+                                       break;
+                       }
+                       break;
+               }
 
-SSEEEE AALLSSOO
-     getopt(3),  strsep(3)
+[1mSEE ALSO[0m
+       [4mgetopt[24m(3), [4mstrsep[24m(3)
 
-HHIISSTTOORRYY
-     The ggeettssuubboopptt() function is currently under development.
+[1mHISTORY[0m
+       The [1mgetsubopt[22m() function is currently under development.
 
-BSD Experimental                 July 31, 1991                               2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     July 31, 1991                    GETSUBOPT(3)

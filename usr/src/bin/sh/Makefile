@@ -7,7 +7,7 @@ SRCS=	builtins.c cd.c dirent.c echo.c error.c eval.c exec.c expand.c \
 	syntax.c trap.c output.c var.c
 OBJS+=	init.o
 #LDONLY=ldonly
-#SRCHOME=/home/share/386bsd-2.0
+#SRCHOME=/home/share/386bsd
 CFLAGS+=-DSHELL -I. -I${.CURDIR} #-nostdinc -nostdlib -nodefaultlibs -L${SRCHOME}/usr/lib -lc
 #CFLAGS+=-I${SRCHOME}/usr/src/include -I${SRCHOME}/usr/src/kernel/include
 #LDFLAGS+=--image-base 0x00000000 -e start

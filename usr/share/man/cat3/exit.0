@@ -1,66 +1,36 @@
-EXIT(3)                   386BSD Programmer's Manual                   EXIT(3)
+EXIT(3)                     Library Functions Manual                   EXIT(3)
 
-NNAAMMEE
-     eexxiitt - perform normal program termination
+[1mNAME[0m
+       exit — perform normal program termination
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddlliibb..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdlib.h>[0m
 
-     _v_o_i_d
-     eexxiitt(_i_n_t _s_t_a_t_u_s)
+       [4mvoid[0m
+       [1mexit[22m([4mint[24m [4mstatus[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     EExxiitt() terminates a process.
+[1mDESCRIPTION[0m
+       [1mExit[22m() terminates a process.
 
-     Before termination it performs the following functions in the order
-     listed:
+       Before  termination  it  performs  the following functions in the order
+       listed:
 
-           1.   Call the functions registered with the atexit(3) function, in
-                the reverse order of their registration.
+             1.   Call the functions registered with the  [4matexit[24m(3)  function,
+                  in the reverse order of their registration.
 
-           2.   Flush all open output streams.
+             2.   Flush all open output streams.
 
-           3.   Close all open streams.
+             3.   Close all open streams.
 
-           4.   Unlink all files created with the tmpfile(3) function.
+             4.   Unlink all files created with the [4mtmpfile[24m(3) function.
 
-RREETTUURRNN VVAALLUUEESS
-     The eexxiitt() function never returns.
+[1mRETURN VALUES[0m
+       The [1mexit[22m() function never returns.
 
-SSEEEE AALLSSOO
-     _exit(2),  atexit(3),  intro(3),  tmpfile(3)
+[1mSEE ALSO[0m
+       [4m_exit[24m(2), [4matexit[24m(3), [4mintro[24m(3), [4mtmpfile[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The eexxiitt() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mexit[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                         EXIT(3)

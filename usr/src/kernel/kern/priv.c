@@ -66,7 +66,7 @@ use_priv(const struct ucred *cr, cr_priv_t prv, struct proc *p)
 	int rv = 1;
 
 	/* evaluate privilege in terms of role */
-	switch(prv) {
+	switch((int)prv) {
 
 		/* used by int, login and daemons (rlogind, telnetd, ...) */
 	case PRV_SETLOGIN:

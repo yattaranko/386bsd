@@ -1,66 +1,31 @@
-SIGPENDING(2)             386BSD Programmer's Manual             SIGPENDING(2)
+SIGPENDING(2)                 System Calls Manual                SIGPENDING(2)
 
-NNAAMMEE
-     ssiiggppeennddiinngg - return the set of pending signals
+[1mNAME[0m
+       sigpending — return the set of pending signals
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssiiggnnaall..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <signal.h>[0m
 
-     _i_n_t
-     ssiiggppeennddiinngg(_c_o_n_s_t _s_i_g_s_e_t__t *_s_e_t)
+       [4mint[0m
+       [1msigpending[22m([4mconst[24m [4msigset_t[24m [4m*set[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssiiggppeennddiinngg() function returns the current set of blocked signals to
-     the location descibed by the single argument.
+[1mDESCRIPTION[0m
+       The [1msigpending[22m() function returns the current set of blocked signals to
+       the location descibed by the single argument.
 
-RREETTUURRNN VVAALLUUEESS
-     A 0 value indicated that the call succeeded.  A -1 return value indicates
-     an error occurred and _e_r_r_n_o is set to indicated the reason.
+[1mRETURN VALUES[0m
+       A  0  value indicated that the call succeeded.  A ‐1 return value indi‐
+       cates an error occurred and [4merrno[24m is set to indicated the reason.
 
-EERRRROORRSS
-     The ssiiggppeennddiinngg() currently only returns zero. In subsequent
-     implementations that allow more than 32 signals, this may change.
+[1mERRORS[0m
+       The [1msigpending[22m() currently only returns zero. In subsequent implementa‐
+       tions that allow more than 32 signals, this may change.
 
-SSEEEE AALLSSOO
-     kill(2),  sigaction(2),  sigsetops(3),  sigsuspend(2)
+[1mSEE ALSO[0m
+       [4mkill[24m(2), [4msigaction[24m(2), [4msigsetops[24m(3), [4msigsuspend[24m(2)
 
-SSTTAANNDDAARRDDSS
-     The ssiiggppeennddiinngg function call is expected to conform to IEEE
-     Std1003.1-1988 (``POSIX'').
+[1mSTANDARDS[0m
+       The [1msigpending [22mfunction  call  is  expected  to  conform  to  IEEE  Std
+       1003.1‐1988 (“POSIX.1”).
 
-BSD Experimental               January 10, 1993                              1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                   January 10, 1993                  SIGPENDING(2)

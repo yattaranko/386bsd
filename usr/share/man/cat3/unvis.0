@@ -1,132 +1,92 @@
-UNVIS(3)                  386BSD Programmer's Manual                  UNVIS(3)
+UNVIS(3)                    Library Functions Manual                  UNVIS(3)
 
-NNAAMMEE
-     uunnvviiss, ssttrruunnvviiss - decode a visual representation of characters
+[1mNAME[0m
+       unvis, strunvis — decode a visual representation of characters
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<vviiss..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <vis.h>[0m
 
-     _i_n_t
-     uunnvviiss(_u__c_h_a_r *_c_p, _u__c_h_a_r _c, _i_n_t *_a_s_t_a_t_e, _i_n_t _f_l_a_g)
+       [4mint[0m
+       [1munvis[22m([4mu_char[24m [4m*cp[24m, [4mu_char[24m [4mc[24m, [4mint[24m [4m*astate[24m, [4mint[24m [4mflag[24m);
 
-     _i_n_t
-     ssttrruunnvviiss(_c_h_a_r *_d_s_t, _c_h_a_r *_s_r_c)
+       [4mint[0m
+       [1mstrunvis[22m([4mchar[24m [4m*dst[24m, [4mchar[24m [4m*src[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The uunnvviiss() and ssttrruunnvviiss() functions are used to decode a visual
-     representation of characters, as produced by the vis(3) function, back
-     into the original form.  Unvis is called with successive characters in _c
-     until a valid sequence is recognized, at which time the decoded character
-     is available at the character pointed to by _c_p. Strunvis decodes the
-     characters pointed to by _s_r_c into the buffer pointed to by _d_s_t.
+[1mDESCRIPTION[0m
+       The [1munvis[22m() and [1mstrunvis[22m() functions are used to decode a visual repre‐
+       sentation  of characters, as produced by the [4mvis[24m(3) function, back into
+       the original form.  Unvis is called with successive characters in [4mc[24m un‐
+       til a valid sequence is recognized, at which time the decoded character
+       is available at the character pointed to by [4mcp[24m.  Strunvis  decodes  the
+       characters pointed to by [4msrc[24m into the buffer pointed to by [4mdst[24m.
 
-     The ssttrruunnvviiss() function simply copies _s_r_c to _d_s_t, decoding any escape
-     sequences along the way, and returns the number of characters placed into
-     _d_s_t, or -1 if an invalid escape sequence was detected.  The size of _d_s_t
-     should be equal to the size of _s_r_c (that is, no expansion takes place
-     during decoding).
+       The  [1mstrunvis[22m()  function simply copies [4msrc[24m to [4mdst[24m, decoding any escape
+       sequences along the way, and returns the number  of  characters  placed
+       into  [4mdst[24m,  or -1 if an invalid escape sequence was detected.  The size
+       of [4mdst[24m should be equal to the size of [4msrc[24m (that is, no expansion  takes
+       place during decoding).
 
-     The uunnvviiss() function implements a state machine that can be used to
-     decode an arbitrary stream of bytes.  All state associated with the bytes
-     being decoded is stored outside the uunnvviiss() function (that is, a pointer
-     to the state is passed in), so calls decoding different streams can be
-     freely intermixed.  To start decoding a stream of bytes, first initialize
-     an integer to zero.  Call uunnvviiss() with each successive byte, along with a
-     pointer to this integer, and a pointer to an destination character.  The
-     unvis function has several return codes that must be handled properly.
-     They are:
+       The [1munvis[22m() function implements a state machine that can be used to de‐
+       code an arbitrary stream of bytes.  All state associated with the bytes
+       being  decoded  is  stored  outside  the  [1munvis[22m()  function (that is, a
+       pointer to the state is passed in), so calls decoding different streams
+       can be freely intermixed.  To start decoding a stream of  bytes,  first
+       initialize an integer to zero.  Call [1munvis[22m() with each successive byte,
+       along  with  a pointer to this integer, and a pointer to an destination
+       character.  The [4munvis[24m function has several return codes  that  must  be
+       handled properly.  They are:
 
-     0 (zero)         Another character is necessary; nothing has been
-                      recognized yet.
+       [1m0 (zero)         [22mAnother  character is necessary; nothing has been rec‐
+                        ognized yet.
 
-     UNVIS_VALID      A valid character has been recognized and is available
-                      at the location pointed to by cp.
+       UNVIS_VALID      A valid character has been recognized and is available
+                        at the location pointed to by cp.
 
-     UNVIS_VALIDPUSH  A valid character has been recognized and is available
-                      at the location pointed to by cp; however, the character
-                      currently passed in should be passed in again.
+       UNVIS_VALIDPUSH  A valid character has been recognized and is available
+                        at the location pointed to by cp; however, the charac‐
+                        ter currently passed in should be passed in again.
 
-     UNVIS_NOCHAR     A valid sequence was detected, but no character was
-                      produced.  This return code is necessary to indicate a
-                      logical break between characters.
+       UNVIS_NOCHAR     A valid sequence was detected, but  no  character  was
+                        produced.  This return code is necessary to indicate a
+                        logical break between characters.
 
-     UNVIS_SYNBAD     An invalid esacpe sequence was detected, or the decoder
-                      is in an unknown state.  The decoder is placed into the
-                      starting state.
+       UNVIS_SYNBAD     An  invalid  esacpe  sequence was detected, or the de‐
+                        coder is in an unknown state.  The decoder  is  placed
+                        into the starting state.
 
-     When all bytes in the stream have been processed, call uunnvviiss() one more
-     time with flag set to UNVIS_END to extract any remaining character (the
-     character passed in is ignored).
+       When all bytes in the stream have been processed, call [1munvis[22m() one more
+       time with flag set to UNVIS_END to extract any remaining character (the
+       character passed in is ignored).
 
-     The following code fragment illustrates a proper use of uunnvviiss().
+       The following code fragment illustrates a proper use of [1munvis[22m().
 
-           int state = 0;
-           char out;
+             int state = 0;
+             char out;
 
-           while ((ch = getchar()) != EOF) {
-           again:
-                   switch(unvis(&out, ch, &state, 0)) {
-                   case 0:
-                   case UNVIS_NOCHAR:
-                           break;
-                   case UNVIS_VALID:
-                           (void) putchar(out);
-                           break;
-                   case UNVIS_VALIDPUSH:
-                           (void) putchar(out);
-                           goto again;
-                   case UNVIS_SYNBAD:
-                           (void)fprintf(stderr, "bad sequence!0);
-                   exit(1);
-                   }
-           }
-           if (unvis(&out, (char)0, &state, UNVIS_END) == UNVIS_VALID)
-                   (void) putchar(out);
+             while ((ch = getchar()) != EOF) {
+             again:
+                     switch(unvis(&out, ch, &state, 0)) {
+                     case 0:
+                     case UNVIS_NOCHAR:
+                             break;
+                     case UNVIS_VALID:
+                             (void) putchar(out);
+                             break;
+                     case UNVIS_VALIDPUSH:
+                             (void) putchar(out);
+                             goto again;
+                     case UNVIS_SYNBAD:
+                             (void)fprintf(stderr, "bad sequence!0);
+                     exit(1);
+                     }
+             }
+             if (unvis(&out, (char)0, &state, UNVIS_END) == UNVIS_VALID)
+                     (void) putchar(out);
 
-SSEEEE AALLSSOO
-     vis(1)
+[1mSEE ALSO[0m
+       [4mvis[24m(1)
 
-HHIISSTTOORRYY
-     The uunnvviiss() function is currently under development.
+[1mHISTORY[0m
+       The [1munvis[22m() function is currently under development.
 
-BSD Experimental                April 19, 1991                               2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                    April 19, 1991                        UNVIS(3)

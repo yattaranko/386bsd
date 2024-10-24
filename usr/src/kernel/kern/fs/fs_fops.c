@@ -44,6 +44,7 @@
 #include "resourcevar.h"
 #include "tty.h"
 #include "uio.h"
+#include "signalvar.h"
 
 #include "namei.h"
 #include "vnode.h"
@@ -59,6 +60,7 @@ static int
 	vn_select(struct file *fp, int which, struct proc *p),
 	vn_closefile(struct file *fp, struct proc *p),
 	vn_statfile(struct file *fp, struct stat *s, struct proc *p);
+extern int vn_stat(struct vnode*, struct stat*, struct proc*);
 
 struct 	fileops vnops =
 	{ vn_read, vn_write, vn_ioctl, vn_select, vn_closefile, vn_statfile };
@@ -79,13 +81,15 @@ vn_open(struct nameidata *ndp, struct proc *p, int fmode, int cmode)
 		ndp->ni_nameiop = CREATE | LOCKPARENT | LOCKLEAF;
 		if ((fmode & O_EXCL) == 0)
 			ndp->ni_nameiop |= FOLLOW;
-		if (error = namei(ndp, p))
+		error = namei(ndp, p);
+		if (error != 0)
 			return (error);
 		if (ndp->ni_vp == NULL) {
 			VATTR_NULL(vap);
 			vap->va_type = VREG;
 			vap->va_mode = cmode;
-			if (error = VOP_CREATE(ndp, vap, p))
+			error = VOP_CREATE(ndp, vap, p);
+			if (error != 0)
 				return (error);
 			fmode &= ~O_TRUNC;
 			vp = ndp->ni_vp;
@@ -105,7 +109,8 @@ vn_open(struct nameidata *ndp, struct proc *p, int fmode, int cmode)
 		}
 	} else {
 		ndp->ni_nameiop = LOOKUP | FOLLOW | LOCKLEAF;
-		if (error = namei(ndp, p))
+		error = namei(ndp, p);
+		if (error != 0)
 			return (error);
 		vp = ndp->ni_vp;
 	}
@@ -115,7 +120,8 @@ vn_open(struct nameidata *ndp, struct proc *p, int fmode, int cmode)
 	}
 	if ((fmode & O_CREAT) == 0) {
 		if (fmode & FREAD) {
-			if (error = VOP_ACCESS(vp, VREAD, cred, p))
+			error = VOP_ACCESS(vp, VREAD, cred, p);
+			if (error != 0)
 				goto bad;
 		}
 		if (fmode & (FWRITE | O_TRUNC)) {
@@ -131,10 +137,12 @@ vn_open(struct nameidata *ndp, struct proc *p, int fmode, int cmode)
 	if (fmode & O_TRUNC) {
 		VATTR_NULL(vap);
 		vap->va_size = 0;
-		if (error = VOP_SETATTR(vp, vap, cred, p))
+		error = VOP_SETATTR(vp, vap, cred, p);
+		if (error != 0)
 			goto bad;
 	}
-	if (error = VOP_OPEN(vp, fmode, cred, p))
+	error = VOP_OPEN(vp, fmode, cred, p);
+	if (error != 0)
 		goto bad;
 	if (fmode & FWRITE)
 		vp->v_writecount++;
@@ -159,7 +167,7 @@ vn_writechk(struct vnode *vp)
 	 * device resident on the file system.
 	 */
 	if (vp->v_mount->mnt_flag & MNT_RDONLY) {
-		switch (vp->v_type) {
+		switch ((int)vp->v_type) {
 		case VREG: case VDIR: case VLNK:
 			return (EROFS);
 		}
@@ -177,11 +185,7 @@ vn_writechk(struct vnode *vp)
 /*
  * Vnode close call
  */
-vn_close(vp, flags, cred, p)
-	register struct vnode *vp;
-	int flags;
-	struct ucred *cred;
-	struct proc *p;
+int vn_close(register struct vnode* vp, int flags, struct ucred* cred, struct proc* p)
 {
 	int error;
 
@@ -369,7 +373,8 @@ vn_ioctl(struct file *fp, int com, caddr_t data, struct proc *p)
 	case VREG:
 	case VDIR:
 		if (com == FIONREAD) {
-			if (error = VOP_GETATTR(vp, &vattr, p->p_ucred, p))
+			error = VOP_GETATTR(vp, &vattr, p->p_ucred, p);
+			if (error != 0)
 				return (error);
 			*(off_t *)data = vattr.va_size - fp->f_offset;
 			return (0);

@@ -1,66 +1,27 @@
-FMOD(3)                   386BSD Programmer's Manual                   FMOD(3)
+FMOD(3)                     Library Functions Manual                   FMOD(3)
 
-NNAAMMEE
-     ffmmoodd - floating-point remainder function
+[1mNAME[0m
+       fmod — floating‐point remainder function
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<mmaatthh..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <math.h>[0m
 
-     _d_o_u_b_l_e
-     ffmmoodd(_d_o_u_b_l_e _x, _d_o_u_b_l_e _y)
+       [4mdouble[0m
+       [1mfmod[22m([4mdouble[24m [4mx[24m, [4mdouble[24m [4my[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ffmmoodd() function computes the floating-point remainder of _x/ _y.
+[1mDESCRIPTION[0m
+       The [1mfmod[22m() function computes the floating‐point remainder of [4mx[24m/ [4my[24m.
 
-RREETTUURRNN VVAALLUUEESS
-     The ffmmoodd() function returns the value _x-_i*_y, for some integer _i such
-     that, if _y is non-zero, the result has the same sign as _x and magnitude
-     less than the magnitude of _y. If _y is zero, whether a domain error occurs
-     or the ffmmoodd() function returns zero is implementation-defined.
+[1mRETURN VALUES[0m
+       The  [1mfmod[22m()  function  returns the value [4mx‐i*y[24m, for some integer [4mi[24m such
+       that, if [4my[24m is non‐zero, the result has the same sign as [4mx[24m and magnitude
+       less than the magnitude of [4my[24m.  If [4my[24m is zero, whether a domain error oc‐
+       curs or the [1mfmod[22m() function returns zero is implementation‐defined.
 
-SSEEEE AALLSSOO
-     math(3)
+[1mSEE ALSO[0m
+       [4mmath[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ffmmoodd() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mfmod[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                  May 2, 1991                                1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                      May 2, 1991                          FMOD(3)

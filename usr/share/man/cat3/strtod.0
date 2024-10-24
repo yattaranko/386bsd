@@ -1,66 +1,53 @@
-STRTOD(3)                 386BSD Programmer's Manual                 STRTOD(3)
+STRTOD(3)                   Library Functions Manual                 STRTOD(3)
 
-NNAAMMEE
-     ssttrrttoodd - convert ASCII string to double
+[1mNAME[0m
+       strtod — convert ASCII string to double
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddlliibb..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdlib.h>[0m
 
-     _d_o_u_b_l_e
-     ssttrrttoodd(_c_o_n_s_t _c_h_a_r *_n_p_t_r, _c_h_a_r **_e_n_d_p_t_r)
+       [4mdouble[0m
+       [1mstrtod[22m([4mconst[24m [4mchar[24m [4m*nptr[24m, [4mchar[24m [4m**endptr[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssttrrttoodd() function converts the initial portion of the string pointed
-     to by _n_p_t_r to _d_o_u_b_l_e representation.
+[1mDESCRIPTION[0m
+       The  [1mstrtod[22m()  function  converts  the  initial  portion  of the string
+       pointed to by [4mnptr[24m to [4mdouble[24m representation.
 
-     The expected form of the string is an optional plus (``+'') or minus sign
-     (``-'') followed by a sequence of digits optionally containing a decimal-
-     point character, optionally followed by an exponent.  An exponent
-     consists of an ``E'' or ``e'', followed by an optional plus or minus
-     sign, followed by a sequence of digits.
+       The expected form of the string is an optional plus  (‘‘+’’)  or  minus
+       sign  (‘‘‐’’)  followed by a sequence of digits optionally containing a
+       decimal‐point character, optionally followed by an exponent.  An  expo‐
+       nent consists of an ‘‘E’’ or ‘‘e’’, followed by an optional plus or mi‐
+       nus sign, followed by a sequence of digits.
 
-     Leading white-space characters in the string (as defined by the
-     isspace(3) function) are skipped.
+       Leading  white‐space  characters  in  the  string  (as  defined  by the
+       [4misspace[24m(3) function) are skipped.
 
-RREETTUURRNN VVAALLUUEESS
-     The ssttrrttoodd() function returns the converted value, if any.
+[1mRETURN VALUES[0m
+       The [1mstrtod[22m() function returns the converted value, if any.
 
-     If _e_n_d_p_t_r is not NULL, a pointer to the character after the last
-     character used in the conversion is stored in the location referenced by
-     _e_n_d_p_t_r.
+       If [4mendptr[24m is not NULL, a pointer to the character after the last  char‐
+       acter  used  in  the conversion is stored in the location referenced by
+       [4mendptr[24m.
 
-     If no conversion is performed, zero is returned and the value of _n_p_t_r is
-     stored in the location referenced by _e_n_d_p_t_r.
+       If no conversion is performed, zero is returned and the value  of  [4mnptr[0m
+       is stored in the location referenced by [4mendptr[24m.
 
-     If the correct value would cause overflow, plus or minus HUGE_VAL is
-     returned (according to the sign of the value), and ERANGE is stored in
-     _e_r_r_n_o. If the correct value would cause underflow, zero is returned and
-     ERANGE is stored in _e_r_r_n_o.
+       If  the  correct  value would cause overflow, plus or minus HUGE_VAL is
+       returned (according to the sign of the value), and ERANGE is stored  in
+       [4merrno[24m.   If  the  correct value would cause underflow, zero is returned
+       and ERANGE is stored in [4merrno[24m.
 
-EERRRROORRSS
-     [ERANGE]  Overflow or underflow occurred.
+[1mERRORS[0m
+       [ERANGE]  Overflow or underflow occurred.
 
-SSEEEE AALLSSOO
-     atof(3),  atoi(3),  atol(3),  strtol(3),  strtoul(3)
+[1mSEE ALSO[0m
+       [4matof[24m(3), [4matoi[24m(3), [4matol[24m(3), [4mstrtol[24m(3), [4mstrtoul[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ssttrrttoodd() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mstrtod[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BBUUGGSS
-     This manual page represents intent instead of actual practice.  The
-     ssttrrttoodd() function is not currently available.
+[1mBUGS[0m
+       This manual page represents intent instead  of  actual  practice.   The
+       [1mstrtod[22m() function is not currently available.
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                       STRTOD(3)

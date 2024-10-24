@@ -98,6 +98,8 @@ logclose(dev_t dev, int flags, int mode, struct proc *p)
 	log_open = 0;
 	logsoftc.sc_state = 0;
 	logsoftc.sc_selp = 0;
+
+	return 0;
 }
 
 int
@@ -115,8 +117,8 @@ logread(dev_t dev, struct uio *uio, int flag)
 			return (EWOULDBLOCK);
 		}
 		logsoftc.sc_state |= LOG_RDWAIT;
-		if (error = tsleep((caddr_t)mbp, LOG_RDPRI | PCATCH,
-		    "klog", 0)) {
+		error = tsleep((caddr_t)mbp, LOG_RDPRI | PCATCH, "klog", 0);
+		if (error != 0) {
 			splx(s);
 			return (error);
 		}

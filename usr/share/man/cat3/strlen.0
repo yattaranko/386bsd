@@ -1,66 +1,25 @@
-STRLEN(3)                 386BSD Programmer's Manual                 STRLEN(3)
+STRLEN(3)                   Library Functions Manual                 STRLEN(3)
 
-NNAAMMEE
-     ssttrrlleenn - find length of string
+[1mNAME[0m
+       strlen — find length of string
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _s_i_z_e__t
-     ssttrrlleenn(_c_o_n_s_t _c_h_a_r *_s)
+       [4msize_t[0m
+       [1mstrlen[22m([4mconst[24m [4mchar[24m [4m*s[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssttrrlleenn() function computes the length of the string _s.
+[1mDESCRIPTION[0m
+       The [1mstrlen[22m() function computes the length of the string [4ms[24m.
 
-RREETTUURRNN VVAALLUUEESS
-     The ssttrrlleenn() function returns the number of characters that precede the
-     terminating NUL character.
+[1mRETURN VALUES[0m
+       The [1mstrlen[22m() function returns the number of characters that precede the
+       terminating NUL character.
 
-SSEEEE AALLSSOO
-     string(3)
+[1mSEE ALSO[0m
+       [4mstring[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ssttrrlleenn() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mstrlen[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                       STRLEN(3)

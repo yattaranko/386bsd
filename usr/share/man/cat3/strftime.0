@@ -1,132 +1,122 @@
-STRFTIME(3)               386BSD Programmer's Manual               STRFTIME(3)
+STRFTIME(3)                 Library Functions Manual               STRFTIME(3)
 
-NNAAMMEE
-     ssttrrffttiimmee - format date and time
+[1mNAME[0m
+       strftime — format date and time
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
-     ##iinncclluuddee <<ttiimmee..hh>>
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <sys/types.h>[0m
+       [1m#include <time.h>[0m
+       [1m#include <string.h>[0m
 
-     _s_i_z_e__t
-     ssttrrffttiimmee(_c_h_a_r *_b_u_f, _s_i_z_e__t _m_a_x_s_i_z_e, _c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t,
-             _c_o_n_s_t _s_t_r_u_c_t _t_m *_t_i_m_e_p_t_r)
+       [4msize_t[0m
+       [1mstrftime[22m([4mchar[24m    [4m*buf[24m,    [4msize_t[24m    [4mmaxsize[24m,    [4mconst[24m   [4mchar[24m   [4m*format[24m,
+           [4mconst[24m [4mstruct[24m [4mtm[24m [4m*timeptr[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssttrrffttiimmee() function formats the information from _t_i_m_e_p_t_r into the
-     buffer _b_u_f according to the string pointed to by _f_o_r_m_a_t.
+[1mDESCRIPTION[0m
+       The [1mstrftime[22m() function formats the information from [4mtimeptr[24m  into  the
+       buffer [4mbuf[24m according to the string pointed to by [4mformat[24m.
 
-     The _f_o_r_m_a_t string consists of zero or more conversion specifications and
-     ordinary characters.  All ordinary characters are copied directly into
-     the buffer.  A conversion specification consists of a percent sign
-     ```%''' and one other character.
+       The  [4mformat[24m  string  consists of zero or more conversion specifications
+       and ordinary characters.  All ordinary characters are  copied  directly
+       into the buffer.  A conversion specification consists of a percent sign
+       “‘%’” and one other character.
 
-     No more than _m_a_x_s_i_z_e characters will be placed into the array.  If the
-     total number of resulting characters, including the terminating null
-     character, is not more than _m_a_x_s_i_z_e, ssttrrffttiimmee() returns the number of
-     characters in the array, not counting the terminating null.  Otherwise,
-     zero is returned.
+       No  more than [4mmaxsize[24m characters will be placed into the array.  If the
+       total number of resulting characters, including  the  terminating  null
+       character,  is  not more than [4mmaxsize[24m, [1mstrftime[22m() returns the number of
+       characters in the array, not counting the terminating null.  Otherwise,
+       zero is returned.
 
-     Each conversion specification is replaced by the characters as follows
-     which are then copied into the buffer.
+       Each conversion specification is replaced by the characters as  follows
+       which are then copied into the buffer.
 
-     %%AA    is replaced by the full weekday name.
+       [1m%A    [22mis replaced by the full weekday name.
 
-     %%aa    is replaced by the abbreviated weekday name, where the abbreviation
-           is the first three characters.
+       [1m%a    [22mis  replaced by the abbreviated weekday name, where the abbrevia‐
+             tion is the first three characters.
 
-     %%BB    is replaced by the full month name.
+       [1m%B    [22mis replaced by the full month name.
 
-     %%bb oorr %%hh
-           is replaced by the abbreviated month name, where the abbreviation
-           is the first three characters.
+       [1m%b or %h[0m
+             is replaced by the abbreviated month name, where the abbreviation
+             is the first three characters.
 
-     %%CC    is equivalent to ``%a %b %e %H:%M:%S %Y'' (the format produced by
-           asctime(3).
+       [1m%C    [22mis equivalent to “[1m%a %b %e %H:%M:%S %Y[22m” (the format  produced  by
+             [4masctime[24m(3).
 
-     %%cc    is equivalent to ``%m/%d/%y''.
+       [1m%c    [22mis equivalent to “[1m%m/%d/%y[22m”.
 
-     %%DD    is replaced by the date in the format ```mm/dd/yy'''.
+       [1m%D    [22mis replaced by the date in the format “‘mm/dd/yy’”.
 
-     %%dd    is replaced by the day of the month as a decimal number (01-31).
+       [1m%d    [22mis replaced by the day of the month as a decimal number (01‐31).
 
-     %%ee    is replaced by the day of month as a decimal number (1-31); single
-           digits are preceded by a blank.
+       [1m%e    [22mis  replaced by the day of month as a decimal number (1‐31); sin‐
+             gle digits are preceded by a blank.
 
-     %%HH    is replaced by the hour (24-hour clock) as a decimal number
-           (00-23).
+       [1m%H    [22mis replaced by the hour  (24‐hour  clock)  as  a  decimal  number
+             (00‐23).
 
-     %%II    is replaced by the hour (12-hour clock) as a decimal number
-           (01-12).
+       [1m%I    [22mis  replaced  by  the  hour  (12‐hour  clock) as a decimal number
+             (01‐12).
 
-     %%jj    is replaced by the day of the year as a decimal number (001-366).
+       [1m%j    [22mis replaced by the day of the year as a decimal number (001‐366).
 
-     %%kk    is replaced by the hour (24-hour clock) as a decimal number (0-23);
+       [1m%k    [22mis replaced by the hour  (24‐hour  clock)  as  a  decimal  number
+             (0‐23); single digits are preceded by a blank.
 
-           single digits are preceded by a blank.
+       [1m%l    [22mis  replaced  by  the  hour  (12‐hour  clock) as a decimal number
+             (1‐12); single digits are preceded by a blank.
 
-     %%ll    is replaced by the hour (12-hour clock) as a decimal number (1-12);
-           single digits are preceded by a blank.
+       [1m%M    [22mis replaced by the minute as a decimal number (00‐59).
 
-     %%MM    is replaced by the minute as a decimal number (00-59).
+       [1m%m    [22mis replaced by the month as a decimal number (01‐12).
 
-     %%mm    is replaced by the month as a decimal number (01-12).
+       [1m%n    [22mis replaced by a newline.
 
-     %%nn    is replaced by a newline.
+       [1m%p    [22mis replaced by either “AM” or “PM” as appropriate.
 
-     %%pp    is replaced by either ``AM'' or ``PM'' as appropriate.
+       [1m%R    [22mis equivalent to “[1m%H:%M[22m”
 
-     %%RR    is equivalent to ``%H:%M''
+       [1m%r    [22mis equivalent to “[1m%I:%M:%S %p[22m”.
 
-     %%rr    is equivalent to ``%I:%M:%S %p''.
+       [1m%t    [22mis replaced by a tab.
 
-     %%tt    is replaced by a tab.
+       [1m%S    [22mis replaced by the second as a decimal number (00‐60).
 
-     %%SS    is replaced by the second as a decimal number (00-60).
+       [1m%s    [22mis replaced by the number of seconds since the  Epoch,  UCT  (see
+             [4mmktime[24m(3)).
 
-     %%ss    is replaced by the number of seconds since the Epoch, UCT (see
-           mktime(3)).
+       [1m%T [22mor [1m%X[0m
+             is equivalent to “[1m%H:%M:%S[22m”.
 
-     %%TT or %%XX
-           is equivalent to ``%H:%M:%S''.
+       [1m%U    [22mis  replaced  by the week number of the year (Sunday as the first
+             day of the week) as a decimal number (00‐53).
 
-     %%UU    is replaced by the week number of the year (Sunday as the first day
-           of the week) as a decimal number (00-53).
+       [1m%W    [22mis replaced by the week number of the year (Monday as  the  first
+             day of the week) as a decimal number (00‐53).
 
-     %%WW    is replaced by the week number of the year (Monday as the first day
-           of the week) as a decimal number (00-53).
+       [1m%w    [22mis  replaced by the weekday (Sunday as the first day of the week)
+             as a decimal number (0‐6).
 
-     %%ww    is replaced by the weekday (Sunday as the first day of the week) as
-           a decimal number (0-6).
+       [1m%x    [22mis equivalent to “[1m%m/%d/%y %H:%M:%S[22m”.
 
-     %%xx    is equivalent to ``%m/%d/%y %H:%M:%S''.
+       [1m%Y    [22mis replaced by the year with century as a decimal number.
 
-     %%YY    is replaced by the year with century as a decimal number.
+       [1m%y    [22mis replaced by the year  without  century  as  a  decimal  number
+             (00‐99).
 
-     %%yy    is replaced by the year without century as a decimal number
-           (00-99).
+       [1m%Z    [22mis replaced by the time zone name.
 
-     %%ZZ    is replaced by the time zone name.
+       [1m%%    [22mis replaced by ‘%’.
 
-     %%%%    is replaced by `%'.
+[1mSEE ALSO[0m
+       [4mdate[24m(1), [4mctime[24m(3), [4mprintf[24m(1), [4mprintf[24m(3)
 
-SSEEEE AALLSSOO
-     date(1),  ctime(3),  printf(1),  printf(3)
+[1mSTANDARDS[0m
+       The [1mstrftime[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).  The
+       ‘%s’ conversion specification is an extension.
 
-SSTTAANNDDAARRDDSS
-     The ssttrrffttiimmee() function conforms to ANSI C3.159-1989 (``ANSI C''). The
-     `%s' conversion specification is an extension.
+[1mBUGS[0m
+       There is no conversion specification for the phase of the moon.
 
-BBUUGGSS
-     There is no conversion specification for the phase of the moon.
-
-BSD Experimental                 June 29, 1991                               2
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                     STRFTIME(3)

@@ -39,12 +39,15 @@
 #include "proc.h"
 #include "resourcevar.h"
 #include "kernel.h"	/* time, bootime, ... */
+#include "signalvar.h"
 
 #include "machine/cpu.h"
 
 #include "prototypes.h"
 
 struct timeval boottime;
+
+extern int splclock(void);
 
 /* 
  * Time of day and interval timer support.
@@ -57,21 +60,19 @@ struct timeval boottime;
  */
 
 /* ARGSUSED */
-gettimeofday(p, uap, retval)
-	struct proc *p;
+int gettimeofday(struct proc* p, void* vap, int* retval)
+{
 	register struct args {
 		struct	timeval *tp;
 		struct	timezone *tzp;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct timeval atv;
 	int error = 0;
 
 	if (uap->tp) {
 		microtime(&atv);
-		if (error = copyout(p, (caddr_t)&atv, (caddr_t)uap->tp,
-		    sizeof (atv)))
+		error = copyout(p, (caddr_t)&atv, (caddr_t)uap->tp, sizeof (atv));
+		if (error != 0)
 			return (error);
 	}
 	if (uap->tzp)
@@ -81,25 +82,24 @@ gettimeofday(p, uap, retval)
 }
 
 /* ARGSUSED */
-settimeofday(p, uap, retval)
-	struct proc *p;
+int settimeofday(struct proc* p, void* vap, int* retval)
+{
 	struct args {
 		struct	timeval *tv;
 		struct	timezone *tzp;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct timeval atv;
 	struct timezone atz;
 	int error, s;
 
 	/* have priviledge to set time? */
-	if (error = use_priv(p->p_ucred, PRV_SETTIMEOFDAY, p))
+	error = use_priv(p->p_ucred, PRV_SETTIMEOFDAY, p);
+	if (error != 0)
 		return (error);
 
-	if (uap->tv) {
-		if (error = copyin(p, (caddr_t)uap->tv, (caddr_t)&atv,
-		    sizeof (struct timeval)))
+	if (uap->tv != 0) {
+		error = copyin(p, (caddr_t)uap->tv, (caddr_t)&atv, sizeof (struct timeval));
+		if (error != 0)
 			return (error);
 		/* WHAT DO WE DO ABOUT PENDING REAL-TIME TIMEOUTS??? */
 		boottime.tv_sec += atv.tv_sec - time.tv_sec;
@@ -118,31 +118,32 @@ long	timedelta;			/* unapplied time correction, us. */
 long	bigadj = 1000000;		/* use 10x skew above bigadj us. */
 
 /* ARGSUSED */
-adjtime(p, uap, retval)
-	struct proc *p;
+int adjtime(struct proc* p, void* vap, int* retval)
+{
 	register struct args {
 		struct timeval *delta;
 		struct timeval *olddelta;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct timeval atv, oatv;
 	register long ndelta;
 	int s, error;
 
 	/* have priviledge to adjust time? */
-	if (error = use_priv(p->p_ucred, PRV_ADJTIME, p))
+	error = use_priv(p->p_ucred, PRV_ADJTIME, p);
+	if (error != 0)
 		return (error);
 
-	if (error =
-	    copyin(p, (caddr_t)uap->delta, (caddr_t)&atv, sizeof (struct timeval)))
+	error = copyin(p, (caddr_t)uap->delta, (caddr_t)&atv, sizeof (struct timeval));
+	if (error != 0)
 		return (error);
 	ndelta = atv.tv_sec * 1000000 + atv.tv_usec;
 	if (timedelta == 0)
+	{
 		if (ndelta > bigadj)
 			tickdelta = 10 * tickadj;
 		else
 			tickdelta = tickadj;
+	}
 	if (ndelta % tickdelta)
 		ndelta = ndelta / tickadj * tickadj;
 
@@ -182,14 +183,12 @@ adjtime(p, uap, retval)
  * absolute time the timer should go off.
  */
 /* ARGSUSED */
-getitimer(p, uap, retval)
-	struct proc *p;
-	register struct args {
+int getitimer(struct proc* p, void* vap, int* retval)
+{
+	struct args {
 		u_int	which;
 		struct	itimerval *itv;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct itimerval aitv;
 	int s;
 
@@ -205,10 +204,12 @@ getitimer(p, uap, retval)
 		 */
 		aitv = p->p_realtimer;
 		if (timerisset(&aitv.it_value))
+		{
 			if (timercmp(&aitv.it_value, &time, <))
 				timerclear(&aitv.it_value);
 			else
 				timevalsub(&aitv.it_value, &time);
+		}
 	} else
 		aitv = p->p_stats->p_timer[uap->which];
 	splx(s);
@@ -217,14 +218,12 @@ getitimer(p, uap, retval)
 }
 
 /* ARGSUSED */
-setitimer(p, uap, retval)
-	struct proc *p;
-	register struct args {
+int setitimer(struct proc* p, void* vap, int* retval)
+{
+	struct args {
 		u_int	which;
 		struct	itimerval *itv, *oitv;
-	} *uap;
-	int *retval;
-{
+	} *uap = (struct args*)vap;
 	struct itimerval aitv;
 	register struct itimerval *itvp;
 	int s, error;

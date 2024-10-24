@@ -1,66 +1,40 @@
-BYTEORDER(3)              386BSD Programmer's Manual              BYTEORDER(3)
+BYTEORDER(3)                Library Functions Manual              BYTEORDER(3)
 
-NNAAMMEE
-     hhttoonnll, hhttoonnss, nnttoohhll, nnttoohhss - convert values between host and network byte
-     order
+[1mNAME[0m
+       htonl,  htons,  ntohl,  ntohs — convert values between host and network
+       byte order
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//ppaarraamm..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <sys/param.h>[0m
 
-     _u__l_o_n_g
-     hhttoonnll(_u__l_o_n_g _h_o_s_t_l_o_n_g)
+       [4mu_long[0m
+       [1mhtonl[22m([4mu_long[24m [4mhostlong[24m);
 
-     _u__s_h_o_r_t
-     hhttoonnss(_u__s_h_o_r_t _h_o_s_t_s_h_o_r_t)
+       [4mu_short[0m
+       [1mhtons[22m([4mu_short[24m [4mhostshort[24m);
 
-     _u__l_o_n_g
-     nnttoohhll(_u__l_o_n_g _n_e_t_l_o_n_g)
+       [4mu_long[0m
+       [1mntohl[22m([4mu_long[24m [4mnetlong[24m);
 
-     _u__s_h_o_r_t
-     nnttoohhss(_u__s_h_o_r_t _n_e_t_s_h_o_r_t)
+       [4mu_short[0m
+       [1mntohs[22m([4mu_short[24m [4mnetshort[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     These routines convert 16 and 32 bit quantities between network byte
-     order and host byte order.  On machines which have a byte order which is
-     the same as the network order, routines are defined as null macros.
+[1mDESCRIPTION[0m
+       These routines convert 16 and 32 bit quantities  between  network  byte
+       order  and  host byte order.  On machines which have a byte order which
+       is the same as the network order, routines are defined as null macros.
 
-     These routines are most often used in conjunction with Internet addresses
-     and ports as returned by gethostbyname(3) and getservent(3).
+       These routines are most often used in  conjunction  with  Internet  ad‐
+       dresses and ports as returned by [4mgethostbyname[24m(3) and [4mgetservent[24m(3).
 
-SSEEEE AALLSSOO
-     gethostbyname(3),  getservent(3)
+[1mSEE ALSO[0m
+       [4mgethostbyname[24m(3), [4mgetservent[24m(3)
 
-HHIISSTTOORRYY
-     The bbyytteeoorrddeerr functions appeared in 4.2BSD.
+[1mHISTORY[0m
+       The [1mbyteorder [22mfunctions appeared in 4.2BSD.
 
-BBUUGGSS
-     On the VAX bytes are handled backwards from most everyone else in the
-     world.  This is not expected to be fixed in the near future.
+[1mBUGS[0m
+       On  the  VAX bytes are handled backwards from most everyone else in the
+       world.  This is not expected to be fixed in the near future.
 
-4.2 Berkeley Distribution       April 19, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4.2 Berkeley Distribution       April 19, 1991                    BYTEORDER(3)

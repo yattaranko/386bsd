@@ -1,66 +1,30 @@
-ALARM(3)                  386BSD Programmer's Manual                  ALARM(3)
+ALARM(3)                    Library Functions Manual                  ALARM(3)
 
-NNAAMMEE
-     aallaarrmm - set signal timer alarm
+[1mNAME[0m
+       alarm — set signal timer alarm
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
 
-     _u__i_n_t
-     aallaarrmm(_u__i_n_t _s_e_c_o_n_d_s)
+       [4mu_int[0m
+       [1malarm[22m([4mu_int[24m [4mseconds[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     TThhiiss iinntteerrffaaccee iiss mmaaddee oobbssoolleettee bbyy sseettiittiimmeerr((22))..
+[1mDESCRIPTION[0m
+       [1mThis interface is made obsolete by setitimer(2).[0m
 
-     The aallaarrmm() function waits a count of _s_e_c_o_n_d_s before asserting the
-     terminating signal SIGALRM. When the signal has successfully been caught,
-     aallaarrmm() returns the amount of time left on the clock.  The maximum mumber
-     of _s_e_c_o_n_d_s allowed is 2147483647.
+       The [1malarm[22m() function waits a count of [4mseconds[24m before asserting the ter‐
+       minating signal SIGALRM.  When the signal has successfully been caught,
+       [1malarm[22m() returns the amount of time left on the clock.  The maximum mum‐
+       ber of [4mseconds[24m allowed is 2147483647.
 
-     If an alarm has been set with aallaarrmm(), another call to aallaarrmm() will
-     superceed the prior call.  The request aallaarrmm(_0) voids the current alarm.
+       If an alarm has been set with [1malarm[22m(), another call to [1malarm[22m() will su‐
+       perceed the prior call.  The request [1malarm[22m([4m0[24m) voids the current alarm.
 
-SSEEEE AALLSSOO
-     sigaction(2),  setitimer(2),  sigpause(2),  sigvec(2),  signal(3),
-     sleep(3),  ualarm(3),  usleep(3)
+[1mSEE ALSO[0m
+       [4msigaction[24m(2),    [4msetitimer[24m(2),   [4msigpause[24m(2),   [4msigvec[24m(2),   [4msignal[24m(3),
+       [4msleep[24m(3), [4mualarm[24m(3), [4musleep[24m(3)
 
-HHIISSTTOORRYY
-     An aallaarrmm() function appeared in Version 7 AT&T UNIX.
+[1mHISTORY[0m
+       An [1malarm[22m() function appeared in Version 7 AT&T UNIX.
 
-4th Berkeley Distribution       April 19, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       April 19, 1991                        ALARM(3)

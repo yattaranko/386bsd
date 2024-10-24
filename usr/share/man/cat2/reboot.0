@@ -1,132 +1,93 @@
-REBOOT(2)                 386BSD Programmer's Manual                 REBOOT(2)
+REBOOT(2)                     System Calls Manual                    REBOOT(2)
 
-NNAAMMEE
-     rreebboooott - reboot system or halt processor
+[1mNAME[0m
+       reboot — reboot system or halt processor
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
-     ##iinncclluuddee <<ssyyss//rreebboooott..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
+       [1m#include <sys/reboot.h>[0m
 
-     _i_n_t
-     rreebboooott(_i_n_t _h_o_w_t_o)
+       [4mint[0m
+       [1mreboot[22m([4mint[24m [4mhowto[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     RReebboooott() reboots the system.  Only the super-user may reboot a machine on
-     demand.  However, a reboot is invoked automatically in the event of
-     unrecoverable system failures.
+[1mDESCRIPTION[0m
+       [1mReboot[22m()  reboots the system.  Only the super‐user may reboot a machine
+       on demand.  However, a reboot is invoked automatically in the event  of
+       unrecoverable system failures.
 
-     _H_o_w_t_o is a mask of options; the system call interface allows the
-     following options, defined in the include file <_s_y_s/_r_e_b_o_o_t._h>, to be
-     passed to the new kernel or the new bootstrap and init programs.
+       [4mHowto[24m  is  a mask of options; the system call interface allows the fol‐
+       lowing options, defined in  the  include  file  ⟨[4msys/reboot.h[24m⟩,  to  be
+       passed to the new kernel or the new bootstrap and init programs.
 
-     RB_AUTOBOOT   The default, causing the system to reboot in its usual
-                   fashion.
+       RB_AUTOBOOT   The  default,  causing  the system to reboot in its usual
+                     fashion.
 
-     RB_ASKNAME    Interpreted by the bootstrap program itself, causing it to
-                   prompt on the console as to what file should be booted.
-                   Normally, the system is booted from the file
-                   ``_x_x(0,0)vmunix'', where _x_x is the default disk name,
-                   without prompting for the file name.
+       RB_ASKNAME    Interpreted by the bootstrap program itself,  causing  it
+                     to  prompt  on  the  console  as  to  what file should be
+                     booted.  Normally, the system is  booted  from  the  file
+                     “[4mxx[24m(0,0)vmunix”, where [4mxx[24m is the default disk name, with‐
+                     out prompting for the file name.
 
-     RB_DFLTROOT   Use the compiled in root device.  Normally, the system uses
-                   the device from which it was booted as the root device if
-                   possible.  (The default behavior is dependent on the
-                   ability of the bootstrap program to determine the drive
-                   from which it was loaded, which is not possible on all
-                   systems.)
+       RB_DFLTROOT   Use  the  compiled  in root device.  Normally, the system
+                     uses the device from which it was booted as the root  de‐
+                     vice  if possible.  (The default behavior is dependent on
+                     the ability of the bootstrap  program  to  determine  the
+                     drive  from which it was loaded, which is not possible on
+                     all systems.)
 
-     RB_DUMP       Dump kernel memory before rebooting; see savecore(8) for
-                   more information.
+       RB_DUMP       Dump kernel memory before rebooting; see [4msavecore[24m(8)  for
+                     more information.
 
-     RB_HALT       the processor is simply halted; no reboot takes place.
-                   This option should be used with caution.
+       RB_HALT       the  processor  is  simply halted; no reboot takes place.
+                     This option should be used with caution.
 
-     RB_INITNAME   An option allowing the specification of an init program
-                   (see init(8))  other than /_s_b_i_n/_i_n_i_t to be run when the
-                   system reboots.  This switch is not currently available.
+       RB_INITNAME   An option allowing the specification of an  init  program
+                     (see  [4minit[24m(8))  other  than [4m/sbin/init[24m to be run when the
+                     system reboots.  This switch is not currently available.
 
-     RB_KDB        Load the symbol table and enable a built-in debugger in the
-                   system.  This option will have no useful function if the
-                   kernel is not configured for debugging.  Several other
-                   options have different meaning if combined with this
-                   option, although their use may not be possible via the
-                   rreebboooott() call.  See kadb(4) for more information.
+       RB_KDB        Load the symbol table and enable a built‐in  debugger  in
+                     the  system.  This option will have no useful function if
+                     the kernel is  not  configured  for  debugging.   Several
+                     other  options  have  different  meaning if combined with
+                     this option, although their use may not be  possible  via
+                     the [1mreboot[22m() call.  See [4mkadb[24m(4) for more information.
 
-     RB_NOSYNC     Normally, the disks are sync'd (see sync(8))  before the
-                   processor is halted or rebooted.  This option may be useful
-                   if file system changes have been made manually or if the
-                   processor is on fire.
+       RB_NOSYNC     Normally,  the  disks are sync’d (see [4msync[24m(8)) before the
+                     processor is halted or rebooted.  This option may be use‐
+                     ful if file system changes have been made manually or  if
+                     the processor is on fire.
 
-     RB_RDONLY     Initially mount the root file system read-only.  This is
-                   currently the default, and this option has been deprecated.
+       RB_RDONLY     Initially  mount the root file system read‐only.  This is
+                     currently the default, and this option  has  been  depre‐
+                     cated.
 
-     RB_SINGLE     Normally, the reboot procedure involves an automatic disk
-                   consistency check and then multi-user operations.
-                   RB_SINGLE prevents this, booting the system with a single-
-                   user shell on the console.  RB_SINGLE is actually
-                   interpreted by the init(8) program in the newly booted
-                   system.
+       RB_SINGLE     Normally, the reboot procedure involves an automatic disk
+                     consistency   check   and   then  multi‐user  operations.
+                     RB_SINGLE prevents this, booting the system with  a  sin‐
+                     gle‐user shell on the console.  RB_SINGLE is actually in‐
+                     terpreted by the [4minit[24m(8) program in the newly booted sys‐
+                     tem.
 
-                   When no options are given (i.e., RB_AUTOBOOT is used), the
-                   system is rebooted from file ``vmunix'' in the root file
-                   system of unit 0 of a disk chosen in a processor specific
-                   way.  An automatic consistency check of the disks is
-                   normally performed (see fsck(8)).
+                     When  no  options  are given (i.e., RB_AUTOBOOT is used),
+                     the system is rebooted from file ‘‘vmunix’’ in  the  root
+                     file  system  of  unit  0 of a disk chosen in a processor
+                     specific way.  An  automatic  consistency  check  of  the
+                     disks is normally performed (see [4mfsck[24m(8)).
 
-RREETTUURRNN VVAALLUUEESS
-     If successful, this call never returns.  Otherwise, a -1 is returned and
-     an error is returned in the global variable _e_r_r_n_o.
+[1mRETURN VALUES[0m
+       If  successful,  this  call never returns.  Otherwise, a ‐1 is returned
+       and an error is returned in the global variable [4merrno[24m.
 
-EERRRROORRSS
-     [EPERM]       The caller is not the super-user.
+[1mERRORS[0m
+       [EPERM]            The caller is not the super‐user.
 
-SSEEEE AALLSSOO
-     kadb(4),  crash(8),  halt(8),  init(8),  reboot(8),  savecore(8)
+[1mSEE ALSO[0m
+       [4mkadb[24m(4), [4mcrash[24m(8), [4mhalt[24m(8), [4minit[24m(8), [4mreboot[24m(8), [4msavecore[24m(8)
 
-BBUUGGSS
-     The HP300 implementation supports neither RB_DFLTROOT nor RB_KDB.
+[1mBUGS[0m
+       The HP300 implementation supports neither RB_DFLTROOT nor RB_KDB.
 
-HHIISSTTOORRYY
-     The rreebboooott function call appeared in 4.0BSD.
+[1mHISTORY[0m
+       The [1mreboot [22mfunction call appeared in 4.0BSD.
 
-4th Berkeley Distribution       March 10, 1991                               2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       March 10, 1991                       REBOOT(2)

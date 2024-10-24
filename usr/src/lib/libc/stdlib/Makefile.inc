@@ -11,7 +11,7 @@ SRCS+=	abort.c atexit.c atoi.c atol.c bsearch.c calloc.c div.c exit.c \
 .if   (${MACHINE} == "hp300")
 SRCS+=	abs.s atof.c
 .elif (${MACHINE} == "i386")
-SRCS+=	abs.s atof.c
+SRCS+=	abs.S atof.c
 .elif (${MACHINE} == "tahoe")
 SRCS+=	abs.s atof.s
 .elif (${MACHINE} == "vax")

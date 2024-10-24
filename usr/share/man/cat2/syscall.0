@@ -1,66 +1,29 @@
-SYSCALL(2)                386BSD Programmer's Manual                SYSCALL(2)
+SYSCALL(2)                    System Calls Manual                   SYSCALL(2)
 
-NNAAMMEE
-     ssyyssccaallll - indirect system call
+[1mNAME[0m
+       syscall — indirect system call
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
-     ##iinncclluuddee <<ssyyss//ssyyssccaallll..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
+       [1m#include <sys/syscall.h>[0m
 
-     _i_n_t
-     ssyyssccaallll(_i_n_t _n_u_m_b_e_r, ...)
+       [4mint[0m
+       [1msyscall[22m([4mint[24m [4mnumber[24m, [4m...[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     SSyyssccaallll() performs the system call whose assembly language interface has
-     the specified _n_u_m_b_e_r with the specified arguments.  Symbolic constants
-     for system calls can be found in the header file <_s_y_s_c_a_l_l._h>.
+[1mDESCRIPTION[0m
+       [1mSyscall[22m()  performs  the  system call whose assembly language interface
+       has the specified [4mnumber[24m with the specified arguments.   Symbolic  con‐
+       stants for system calls can be found in the header file ⟨[4msyscall.h[24m⟩.
 
-RREETTUURRNN VVAALLUUEESS
-     The r0 value of the system call is returned.  When the C-bit is set,
-     ssyyssccaallll() returns -1 and sets the external variable _e_r_r_n_o (see intro(2)).
+[1mRETURN VALUES[0m
+       The  r0  value  of the system call is returned.  When the C‐bit is set,
+       [1msyscall[22m()  returns  ‐1  and  sets  the  external  variable  [4merrno[24m  (see
+       [4mintro[24m(2)).
 
+[1mBUGS[0m
+       There is no way to simulate system calls such as [4mpipe[24m(2).
 
-BBUUGGSS
-     There is no way to simulate system calls such as pipe(2).
+[1mHISTORY[0m
+       The [1msyscall [22mfunction call appeared in 4.0BSD.
 
-HHIISSTTOORRYY
-     The ssyyssccaallll function call appeared in 4.0BSD.
-
-4th Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       March 10, 1991                      SYSCALL(2)

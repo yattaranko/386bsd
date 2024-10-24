@@ -42,8 +42,8 @@
 	 *  ws@tools.de     (Wolfgang Solfrank, TooLs GmbH) +49-228-985800
 	 */
 
-	.globl	_bcopy
-_bcopy:
+	.globl	bcopy
+bcopy:
 	pushl	%esi
 	pushl	%edi
 	movl	12(%esp),%esi

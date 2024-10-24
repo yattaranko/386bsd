@@ -1,66 +1,26 @@
-ALLOCA(3)                 386BSD Programmer's Manual                 ALLOCA(3)
+ALLOCA(3)                   Library Functions Manual                 ALLOCA(3)
 
-NNAAMMEE
-     aallllooccaa - memory allocator
+[1mNAME[0m
+       alloca — memory allocator
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddlliibb..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdlib.h>[0m
 
-     _v_o_i_d *
-     aallllooccaa(_s_i_z_e__t _s_i_z_e)
+       [4mvoid[24m [4m*[0m
+       [1malloca[22m([4msize_t[24m [4msize[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The aallllooccaa() function allocates _s_i_z_e bytes of space in the stack frame of
-     the caller.  This temporary space is automatically freed on return.
+[1mDESCRIPTION[0m
+       The  [1malloca[22m() function allocates [4msize[24m bytes of space in the stack frame
+       of the caller.  This temporary space is automatically freed on return.
 
-RREETTUURRNN VVAALLUUEESS
-     The aallllooccaa() function returns a pointer to the beginning of the allocated
-     space.  If the allocation failed, a NULL pointer is returned.
+[1mRETURN VALUES[0m
+       The [1malloca[22m() function returns a pointer to the beginning of  the  allo‐
+       cated space.  If the allocation failed, a NULL pointer is returned.
 
-SSEEEE AALLSSOO
-     brk(2),  pagesize(2) calloc(3),  malloc(3),  realloc(3),
+[1mSEE ALSO[0m
+       [4mbrk[24m(2), [4mpagesize[24m(2) [4mcalloc[24m(3), [4mmalloc[24m(3), [4mrealloc[24m(3),
 
-BBUUGGSS
-     The aallllooccaa() function is machine dependent; its use is discouraged.
+[1mBUGS[0m
+       The [1malloca[22m() function is machine dependent; its use is discouraged.
 
-4th Berkeley Distribution         May 2, 1991                                1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution         May 2, 1991                        ALLOCA(3)

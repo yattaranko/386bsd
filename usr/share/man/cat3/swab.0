@@ -1,66 +1,24 @@
-SWAB(3)                   386BSD Programmer's Manual                   SWAB(3)
+SWAB(3)                     Library Functions Manual                   SWAB(3)
 
-NNAAMMEE
-     sswwaabb - swap adjacent bytes
+[1mNAME[0m
+       swab — swap adjacent bytes
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _v_o_i_d
-     sswwaabb(_c_o_n_s_t _v_o_i_d *_s_r_c, _v_o_i_d *_d_s_t, _s_i_z_e__t _l_e_n)
+       [4mvoid[0m
+       [1mswab[22m([4mconst[24m [4mvoid[24m [4m*src[24m, [4mvoid[24m [4m*dst[24m, [4msize_t[24m [4mlen[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The function sswwaabb() copies _l_e_n bytes from the location referenced by _s_r_c
-     to the location referenced by _d_s_t, swapping adjacent bytes.
+[1mDESCRIPTION[0m
+       The  function  [1mswab[22m()  copies [4mlen[24m bytes from the location referenced by
+       [4msrc[24m to the location referenced by [4mdst[24m, swapping adjacent bytes.
 
-     The argument _l_e_n must be even number.
+       The argument [4mlen[24m must be even number.
 
-SSEEEE AALLSSOO
-     bzero(3),  memset(3)
+[1mSEE ALSO[0m
+       [4mbzero[24m(3), [4mmemset[24m(3)
 
-HHIISSTTOORRYY
-     A sswwaabb() function appeared in Version 7 AT&T UNIX.
+[1mHISTORY[0m
+       A [1mswab[22m() function appeared in Version 7 AT&T UNIX.
 
-BSD Experimental                  May 1, 1991                                1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                      May 1, 1991                          SWAB(3)

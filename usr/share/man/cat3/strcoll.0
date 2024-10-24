@@ -1,66 +1,24 @@
-STRCOLL(3)                386BSD Programmer's Manual                STRCOLL(3)
+STRCOLL(3)                  Library Functions Manual                STRCOLL(3)
 
-NNAAMMEE
-     ssttrrccoollll - compare strings according to current collation
+[1mNAME[0m
+       strcoll — compare strings according to current collation
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _i_n_t
-     ssttrrccoollll(_c_o_n_s_t _c_h_a_r *_s_1, _c_o_n_s_t _c_h_a_r *_s_2)
+       [4mint[0m
+       [1mstrcoll[22m([4mconst[24m [4mchar[24m [4m*s1[24m, [4mconst[24m [4mchar[24m [4m*s2[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssttrrccoollll() function lexicographically compares the null-terminated
-     strings _s_1 and _s_2 according to the current locale collation and returns
-     an integer greater than, equal to, or less than 0, according as _s_1 is
-     greater than, equal to, or less than _s_2.
+[1mDESCRIPTION[0m
+       The  [1mstrcoll[22m()  function lexicographically compares the null‐terminated
+       strings [4ms1[24m and [4ms2[24m according to the current locale collation and returns
+       an integer greater than, equal to, or less than 0, according as  [4ms1[24m  is
+       greater than, equal to, or less than [4ms2[24m.
 
-SSEEEE AALLSSOO
-     bcmp(3),  memcmp(3),  setlocale(3),  strcasecmp(3),  strcmp(3),
-     strxfrm(3)
+[1mSEE ALSO[0m
+       [4mbcmp[24m(3), [4mmemcmp[24m(3), [4msetlocale[24m(3), [4mstrcasecmp[24m(3), [4mstrcmp[24m(3), [4mstrxfrm[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ssttrrccoollll() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mstrcoll[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                      STRCOLL(3)

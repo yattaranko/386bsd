@@ -31,7 +31,13 @@
 			"vm_param.h": "c",
 			"stat.h": "c",
 			"vm_map.h": "c",
-			"resource.h": "c"
+			"resource.h": "c",
+			"errno.h": "c",
+			"stddef.h": "c",
+			"string.h": "c",
+			"cdefs.h": "c",
+			"resourcevar.h": "c",
+			"signalvar.h": "c"
 		}
 	}
 }

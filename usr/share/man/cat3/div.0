@@ -1,66 +1,23 @@
-DIV(3)                    386BSD Programmer's Manual                    DIV(3)
+DIV(3)                      Library Functions Manual                    DIV(3)
 
-NNAAMMEE
-     ddiivv - return quotient and remainder from division
+[1mNAME[0m
+       div — return quotient and remainder from division
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddlliibb..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdlib.h>[0m
 
-     _d_i_v__t
-     ddiivv(_i_n_t _n_u_m, _i_n_t _d_e_n_o_m)
+       [4mdiv_t[0m
+       [1mdiv[22m([4mint[24m [4mnum[24m, [4mint[24m [4mdenom[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ddiivv() function computes the value _n_u_m/_d_e_n_o_m and returns the quotient
-     and remainder in a structure named _d_i_v__t that contains two _i_n_t members
-     named _q_u_o_t and _r_e_m.
+[1mDESCRIPTION[0m
+       The  [1mdiv[22m()  function  computes the value [4mnum/denom[24m and returns the quo‐
+       tient and remainder in a structure named [4mdiv_t[24m that  contains  two  [4mint[0m
+       members named [4mquot[24m and [4mrem[24m.
 
-SSEEEE AALLSSOO
-     ldiv(3)
+[1mSEE ALSO[0m
+       [4mldiv[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ddiivv() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mdiv[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                April 19, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                    April 19, 1991                          DIV(3)

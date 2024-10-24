@@ -1,66 +1,32 @@
-SYNC(2)                   386BSD Programmer's Manual                   SYNC(2)
+SYNC(2)                       System Calls Manual                      SYNC(2)
 
-NNAAMMEE
-     ssyynncc - synchronize disk block in-core status with that on disk
+[1mNAME[0m
+       sync — synchronize disk block in‐core status with that on disk
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
 
-     _v_o_i_d
-     ssyynncc(_v_o_i_d)
+       [4mvoid[0m
+       [1msync[22m([4mvoid[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssyynncc() function forces a write of dirty (modified) buffers in the
-     block buffer cache out to disk. The kernel keeps this information in core
-     to reduce the number of disk I/O transfers required by the system.  As
-     information in the cache is lost after a system crash a ssyynncc() call is
-     issued frequently by the user process update(8) (about every 30 seconds).
+[1mDESCRIPTION[0m
+       The  [1msync[22m()  function forces a write of dirty (modified) buffers in the
+       block buffer cache out to disk. The kernel keeps  this  information  in
+       core to reduce the number of disk I/O transfers required by the system.
+       As  information in the cache is lost after a system crash a [1msync[22m() call
+       is issued frequently by the user process [4mupdate[24m(8) (about every 30 sec‐
+       onds).
 
-     The function fsync(2) may be used to synchronize individual file
-     descriptor attributes.
+       The function [4mfsync[24m(2) may be used to synchronize  individual  file  de‐
+       scriptor attributes.
 
-SSEEEE AALLSSOO
-     fsync(2),  sync(8),  update(8)
+[1mSEE ALSO[0m
+       [4mfsync[24m(2), [4msync[24m(8), [4mupdate[24m(8)
 
-BBUUGGSS
-     SSyynncc() may return before the buffers are completely flushed.
+[1mBUGS[0m
+       [1mSync[22m() may return before the buffers are completely flushed.
 
-HHIISSTTOORRYY
-     A ssyynncc function call appeared in Version 6 AT&T UNIX.
+[1mHISTORY[0m
+       A [1msync [22mfunction call appeared in Version 6 AT&T UNIX.
 
-4th Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       March 10, 1991                         SYNC(2)

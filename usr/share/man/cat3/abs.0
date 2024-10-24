@@ -1,66 +1,27 @@
-ABS(3)                    386BSD Programmer's Manual                    ABS(3)
+ABS(3)                      Library Functions Manual                    ABS(3)
 
-NNAAMMEE
-     aabbss - integer absolute value function
+[1mNAME[0m
+       abs — integer absolute value function
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddlliibb..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdlib.h>[0m
 
-     _i_n_t
-     aabbss(_i_n_t _j)
+       [4mint[0m
+       [1mabs[22m([4mint[24m [4mj[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The aabbss() function computes the absolute value of the integer _j.
+[1mDESCRIPTION[0m
+       The [1mabs[22m() function computes the absolute value of the integer [4mj[24m.
 
-RREETTUURRNN VVAALLUUEESS
-     The aabbss() function returns the absolute value.
+[1mRETURN VALUES[0m
+       The [1mabs[22m() function returns the absolute value.
 
-SSEEEE AALLSSOO
-     floor(3),  labs(3) cabs(3) hypot(3) math(3)
+[1mSEE ALSO[0m
+       [4mfloor[24m(3), [4mlabs[24m(3) [4mcabs[24m(3) [4mhypot[24m(3) [4mmath[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The aabbss() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mabs[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BBUUGGSS
-     The absolute value of the most negative integer remains negative.
+[1mBUGS[0m
+       The absolute value of the most negative integer remains negative.
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                          ABS(3)

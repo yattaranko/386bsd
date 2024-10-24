@@ -1,66 +1,62 @@
-GETTIMEOFDAY(2)           386BSD Programmer's Manual           GETTIMEOFDAY(2)
+GETTIMEOFDAY(2)               System Calls Manual              GETTIMEOFDAY(2)
 
-NNAAMMEE
-     ggeettttiimmeeooffddaayy, sseettttiimmeeooffddaayy - get/set date and time
+[1mNAME[0m
+       gettimeofday, settimeofday — get/set date and time
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//ttiimmee..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <sys/time.h>[0m
 
-     _i_n_t
-     ggeettttiimmeeooffddaayy(_s_t_r_u_c_t _t_i_m_e_v_a_l *_t_p, _s_t_r_u_c_t _t_i_m_e_z_o_n_e *_t_z_p)
+       [4mint[0m
+       [1mgettimeofday[22m([4mstruct[24m [4mtimeval[24m [4m*tp[24m, [4mstruct[24m [4mtimezone[24m [4m*tzp[24m);
 
-     _i_n_t
-     sseettttiimmeeooffddaayy(_s_t_r_u_c_t _t_i_m_e_v_a_l *_t_p, _s_t_r_u_c_t _t_i_m_e_z_o_n_e *_t_z_p)
+       [4mint[0m
+       [1msettimeofday[22m([4mstruct[24m [4mtimeval[24m [4m*tp[24m, [4mstruct[24m [4mtimezone[24m [4m*tzp[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     NNoottee:: ttiimmeezzoonnee iiss nnoo lloonnggeerr uusseedd;; tthhiiss iinnffoorrmmaattiioonn iiss kkeepptt oouuttssiiddee tthhee
-     kkeerrnneell..   The system's notion of the current Greenwich time and the
-     current time zone is obtained with the ggeettttiimmeeooffddaayy() call, and set with
-     the sseettttiimmeeooffddaayy() call.  The time is expressed in seconds and
-     microseconds since midnight (0 hour), January 1, 1970.  The resolution of
-     the system clock is hardware dependent, and the time may be updated
-     continuously or in ``ticks.''  If _t_p or _t_z_p is NULL, the associated time
-     information will not be returned or set.
+[1mDESCRIPTION[0m
+       [1mNote:  timezone is no longer used; this information is kept outside the[0m
+       [1mkernel.  [22mThe system’s notion of the current Greenwich time and the cur‐
+       rent time zone is obtained with the [1mgettimeofday[22m() call, and  set  with
+       the  [1msettimeofday[22m()  call.   The  time  is expressed in seconds and mi‐
+       croseconds since midnight (0 hour), January 1, 1970.  The resolution of
+       the system clock is hardware dependent, and the  time  may  be  updated
+       continuously  or  in  ‘‘ticks.’’   If [4mtp[24m or [4mtzp[24m is NULL, the associated
+       time information will not be returned or set.
 
-     The structures pointed to by _t_p and _t_z_p are defined in <_s_y_s/_t_i_m_e._h> as:
+       The structures pointed to by [4mtp[24m and [4mtzp[24m are defined in ⟨[4msys/time.h[24m⟩ as:
 
-     struct timeval {
-             long    tv_sec;         /* seconds since Jan. 1, 1970 */
-             long    tv_usec;        /* and microseconds */
-     };
+       struct timeval {
+               long    tv_sec;         /* seconds since Jan. 1, 1970 */
+               long    tv_usec;        /* and microseconds */
+       };
 
-     struct timezone {
-             int     tz_minuteswest; /* of Greenwich */
-             int     tz_dsttime;     /* type of dst correction to apply */
-     };
+       struct timezone {
+               int     tz_minuteswest; /* of Greenwich */
+               int     tz_dsttime;     /* type of dst correction to apply */
+       };
 
-     The _t_i_m_e_z_o_n_e structure indicates the local time zone (measured in minutes
-     of time westward from Greenwich), and a flag that, if nonzero, indicates
-     that Daylight Saving time applies locally during the appropriate part of
-     the year.
+       The [4mtimezone[24m structure indicates the local time zone (measured in  min‐
+       utes of time westward from Greenwich), and a flag that, if nonzero, in‐
+       dicates  that Daylight Saving time applies locally during the appropri‐
+       ate part of the year.
 
-     Only the super-user may set the time of day or time zone.
+       Only the super‐user may set the time of day or time zone.
 
-RREETTUURRNN
-     A 0 return value indicates that the call succeeded.  A -1 return value
-     indicates an error occurred, and in this case an error code is stored
-     into the global variable _e_r_r_n_o.
+[1mRETURN[0m
+       A 0 return value indicates that the call succeeded.  A ‐1 return  value
+       indicates  an  error occurred, and in this case an error code is stored
+       into the global variable [4merrno[24m.
 
-EERRRROORRSS
-     The following error codes may be set in _e_r_r_n_o:
+[1mERRORS[0m
+       The following error codes may be set in [4merrno[24m:
 
-     [EFAULT]  An argument address referenced invalid memory.
+       [EFAULT]  An argument address referenced invalid memory.
 
-     [EPERM]   A user other than the super-user attempted to set the time.
+       [EPERM]   A user other than the super‐user attempted to set the time.
 
-SSEEEE AALLSSOO
-     date(1),  adjtime(2),  ctime(3),  timed(8)
+[1mSEE ALSO[0m
+       [4mdate[24m(1), [4madjtime[24m(2), [4mctime[24m(3), [4mtimed[24m(8)
 
-HHIISSTTOORRYY
-     The ggeettttiimmeeooffddaayy function call appeared in 4.2BSD.
+[1mHISTORY[0m
+       The [1mgettimeofday [22mfunction call appeared in 4.2BSD.
 
-4th Berkeley Distribution       March 10, 1991                               1
-
-
-
-
+4th Berkeley Distribution       March 10, 1991                 GETTIMEOFDAY(2)

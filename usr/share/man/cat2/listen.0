@@ -1,66 +1,47 @@
-LISTEN(2)                 386BSD Programmer's Manual                 LISTEN(2)
+LISTEN(2)                     System Calls Manual                    LISTEN(2)
 
-NNAAMMEE
-     lliisstteenn - listen for connections on a socket
+[1mNAME[0m
+       listen — listen for connections on a socket
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//ssoocckkeett..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <sys/socket.h>[0m
 
-     _i_n_t
-     lliisstteenn(_i_n_t _s, _i_n_t _b_a_c_k_l_o_g)
+       [4mint[0m
+       [1mlisten[22m([4mint[24m [4ms[24m, [4mint[24m [4mbacklog[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     To accept connections, a socket is first created with socket(2),  a
-     willingness to accept incoming connections and a queue limit for incoming
-     connections are specified with lliisstteenn(), and then the connections are
-     accepted with accept(2).  The lliisstteenn() call applies only to sockets of
-     type SOCK_STREAM or SOCK_SEQPACKET.
+[1mDESCRIPTION[0m
+       To  accept  connections,  a  socket  is first created with [4msocket[24m(2), a
+       willingness to accept incoming connections and a queue limit for incom‐
+       ing connections are specified with [1mlisten[22m(), and then  the  connections
+       are accepted with [4maccept[24m(2).  The [1mlisten[22m() call applies only to sockets
+       of type SOCK_STREAM or SOCK_SEQPACKET.
 
-     The _b_a_c_k_l_o_g parameter defines the maximum length the queue of pending
-     connections may grow to.  If a connection request arrives with the queue
-     full the client may receive an error with an indication of ECONNREFUSED,
-     or, if the underlying protocol supports retransmission, the request may
-     be ignored so that retries may succeed.
+       The  [4mbacklog[24m  parameter defines the maximum length the queue of pending
+       connections may grow to.  If a  connection  request  arrives  with  the
+       queue  full  the  client  may  receive  an  error with an indication of
+       ECONNREFUSED, or, if the underlying protocol  supports  retransmission,
+       the request may be ignored so that retries may succeed.
 
-RREETTUURRNN VVAALLUUEESS
-     A 0 return value indicates success; -1 indicates an error.
+[1mRETURN VALUES[0m
+       A 0 return value indicates success; ‐1 indicates an error.
 
-EERRRROORRSS
-     LLiisstteenn(_w_i_l_l, _f_a_i_l, _i_f:)
+[1mERRORS[0m
+       [1mListen[22m([4mwill[24m, [4mfail[24m, [4mif:[24m)
 
-     [EBADF]       The argument _s is not a valid descriptor.
+       [EBADF]       The argument [4ms[24m is not a valid descriptor.
 
-     [ENOTSOCK]    The argument _s is not a socket.
+       [ENOTSOCK]    The argument [4ms[24m is not a socket.
 
-     [EOPNOTSUPP]  The socket is not of a type that supports the operation
-                   lliisstteenn().
+       [EOPNOTSUPP]  The  socket  is not of a type that supports the operation
+                     [1mlisten[22m().
 
-SSEEEE AALLSSOO
-     accept(2),  connect(2),  socket(2)
+[1mSEE ALSO[0m
+       [4maccept[24m(2), [4mconnect[24m(2), [4msocket[24m(2)
 
-BBUUGGSS
-     The _b_a_c_k_l_o_g is currently limited (silently) to 5.
+[1mBUGS[0m
+       The [4mbacklog[24m is currently limited (silently) to 5.
 
-HHIISSTTOORRYY
-     The lliisstteenn function call appeared in 4.2BSD.
+[1mHISTORY[0m
+       The [1mlisten [22mfunction call appeared in 4.2BSD.
 
-4.2 Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4.2 Berkeley Distribution       March 10, 1991                       LISTEN(2)

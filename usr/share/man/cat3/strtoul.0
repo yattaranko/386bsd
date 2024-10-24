@@ -1,66 +1,56 @@
-STRTOUL(3)                386BSD Programmer's Manual                STRTOUL(3)
+STRTOUL(3)                  Library Functions Manual                STRTOUL(3)
 
-NNAAMMEE
-     ssttrrttoouull - convert a string to an unsigned long integer
+[1mNAME[0m
+       strtoul — convert a string to an unsigned long integer
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddlliibb..hh>>
-     ##iinncclluuddee <<lliimmiittss..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdlib.h>[0m
+       [1m#include <limits.h>[0m
 
-     ssttrrttoouull(_c_o_n_s_t _c_h_a_r *_n_p_t_r, _c_h_a_r **_e_n_d_p_t_r, _i_n_t _b_a_s_e)
+       [1mstrtoul[22m([4mconst[24m [4mchar[24m [4m*nptr[24m, [4mchar[24m [4m**endptr[24m, [4mint[24m [4mbase[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssttrrttoouull() function converts the string in _n_p_t_r to an _u_n_s_i_g_n_e_d _l_o_n_g
-     value according to the given _b_a_s_e, which must be between 2 and 36
-     inclusive, or be the special value 0.
+[1mDESCRIPTION[0m
+       The  [1mstrtoul[22m() function converts the string in [4mnptr[24m to an [4munsigned[24m [4mlong[0m
+       value according to the given [4mbase[24m, which must be between 2 and  36  in‐
+       clusive, or be the special value 0.
 
-     The string may begin with an arbitrary amount of white space (as
-     determined by isspace(3))  followed by a single optional `+' or `-' sign.
-     If _b_a_s_e is zero or 16, the string may then include a `0x' prefix, and the
-     number will be read in base 16; otherwise, a zero _b_a_s_e is taken as 10
-     (decimal) unless the next character is `0', in which case it is taken as
-     8 (octal).
+       The string may begin with an arbitrary amount of white space (as deter‐
+       mined by [4misspace[24m(3)) followed by a single optional ‘+’ or ‘‐’ sign.  If
+       [4mbase[24m  is zero or 16, the string may then include a ‘0x’ prefix, and the
+       number will be read in base 16; otherwise, a zero [4mbase[24m is taken  as  10
+       (decimal)  unless  the next character is ‘0’, in which case it is taken
+       as 8 (octal).
 
-     The remainder of the string is converted to an _u_n_s_i_g_n_e_d _l_o_n_g value in the
-     obvious manner, stopping at the end of the string or at the first
-     character that does not produce a valid digit in the given base.  (In
-     bases above 10, the letter `A' in either upper or lower case represents
-     10, `B' represents 11, and so forth, with `Z' representing 35.)
+       The remainder of the string is converted to an [4munsigned[24m [4mlong[24m  value  in
+       the  obvious  manner, stopping at the end of the string or at the first
+       character that does not produce a valid digit in the given  base.   (In
+       bases above 10, the letter ‘A’ in either upper or lower case represents
+       10, ‘B’ represents 11, and so forth, with ‘Z’ representing 35.)
 
-     If _e_n_d_p_t_r is non nil, ssttrrttoouull() stores the address of the first invalid
-     character in *_e_n_d_p_t_r. If there were no digits at all, however, ssttrrttoouull()
-     stores the original value of _n_p_t_r in *_e_n_d_p_t_r. (Thus, if *_n_p_t_r is not `\0'
-     but **_e_n_d_p_t_r is `\0' on return, the entire string was valid.)
+       If [4mendptr[24m is non nil, [1mstrtoul[22m() stores the address of the first invalid
+       character  in  [4m*endptr[24m.   If  there  were  no  digits  at all, however,
+       [1mstrtoul[22m() stores the original value of  [4mnptr[24m  in  [4m*endptr[24m.   (Thus,  if
+       [4m*nptr[24m is not ‘\0’ but [4m**endptr[24m is ‘\0’ on return, the entire string was
+       valid.)
 
-RREETTUURRNN VVAALLUUEESS
-     The ssttrrttoouull() function returns either the result of the conversion or, if
-     there was a leading minus sign, the negation of the result of the
-     conversion, unless the original (non-negated) value would overflow; in
-     the latter case, ssttrrttoouull() returns ULONG_MAX and sets the global variable
-     _e_r_r_n_o to ERANGE.
+[1mRETURN VALUES[0m
+       The  [1mstrtoul[22m() function returns either the result of the conversion or,
+       if there was a leading minus sign, the negation of the  result  of  the
+       conversion,  unless the original (non‐negated) value would overflow; in
+       the latter case, [1mstrtoul[22m() returns ULONG_MAX and sets the global  vari‐
+       able [4merrno[24m to ERANGE.
 
-EERRRROORRSS
-     [ERANGE]  The given string was out of range; the value converted has been
-               clamped.
+[1mERRORS[0m
+       [ERANGE]  The  given  string  was out of range; the value converted has
+                 been clamped.
 
-SSEEEE AALLSSOO
-     strtol(3)
+[1mSEE ALSO[0m
+       [4mstrtol[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ssttrrttoouull() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mstrtoul[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BBUUGGSS
-     Ignores the current locale.
+[1mBUGS[0m
+       Ignores the current locale.
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                      STRTOUL(3)

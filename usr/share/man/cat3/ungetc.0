@@ -1,66 +1,40 @@
-UNGETC(3)                 386BSD Programmer's Manual                 UNGETC(3)
+â/ÿ¾ýÿ¾ýâ/â/¤ÿ¾ýÿ¾ý¿ý.Üÿ¾ýñ.¿ý  ¿ýP  þøÿ¾ý?¿ý¿ý  Àontribu‐
+tors.
+UNGETC(3)                   Library Functions Manual                 UNGETC(3)
 
-///.......P ? ontributors.  NNAAMMEE
-     uunnggeettcc - un-get character from input stream
+[1mNAME[0m
+       ungetc — un‐get character from input stream
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdio.h>[0m
 
-     _i_n_t
-     uunnggeettcc(_i_n_t _c, _F_I_L_E *_s_t_r_e_a_m)
+       [4mint[0m
+       [1mungetc[22m([4mint[24m [4mc[24m, [4mFILE[24m [4m*stream[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The uunnggeettcc() function pushes the character _c (converted to an unsigned
-     char) back onto the input stream pointed to by _s_t_r_e_a_m. The pushed-backed
-     characters will be returned by subsequent reads on the stream (in reverse
-     order).  A successful intervening call, using the same stream, to one of
-     the file positioning functions (fseek(3),  fsetpos(3),  or rewind(3))
-     will discard the pushed back characters.
+[1mDESCRIPTION[0m
+       The [1mungetc[22m() function pushes the character [4mc[24m (converted to an  unsigned
+       char)  back  onto  the  input stream pointed to by [4mstream[24m.  The pushed‐
+       backed characters will be returned by subsequent reads  on  the  stream
+       (in  reverse  order).   A  successful  intervening call, using the same
+       stream, to one of the file positioning functions ([4mfseek[24m(3), [4mfsetpos[24m(3),
+       or [4mrewind[24m(3)) will discard the pushed back characters.
 
-     One character of push-back is guaranteed, but as long as there is
-     sufficient memory, an effectively infinite amount of pushback is allowed.
+       One character of push‐back is guaranteed, but as long as there is  suf‐
+       ficient memory, an effectively infinite amount of pushback is allowed.
 
-     If a character is successfully pushed-back, the end-of-file indicator for
-     the stream is cleared.
+       If  a  character is successfully pushed‐back, the end‐of‐file indicator
+       for the stream is cleared.
 
-RREETTUURRNN VVAALLUUEESS
-     The uunnggeettcc() function returns the character pushed-back after the
-     conversion, or EOF if the operation fails.  If the value of the argument
-     _c character equals EOF, the operation will fail and the stream will
-     remain unchanged.
+[1mRETURN VALUES[0m
+       The [1mungetc[22m() function returns the character pushed‐back after the  con‐
+       version, or EOF if the operation fails.  If the value of the argument [4mc[0m
+       character  equals  EOF, the operation will fail and the stream will re‐
+       main unchanged.
 
-SSEEEE AALLSSOO
-     getc(3),  fseek(3),  setvbuf(3)
+[1mSEE ALSO[0m
+       [4mgetc[24m(3), [4mfseek[24m(3), [4msetvbuf[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The uunnggeettcc() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mungetc[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                       UNGETC(3)

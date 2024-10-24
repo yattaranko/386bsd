@@ -1,66 +1,33 @@
-GETHOSTID(2)              386BSD Programmer's Manual              GETHOSTID(2)
+GETHOSTID(2)                  System Calls Manual                 GETHOSTID(2)
 
-NNAAMMEE
-     ggeetthhoossttiidd, sseetthhoossttiidd - get/set unique identifier of current host
+[1mNAME[0m
+       gethostid, sethostid — get/set unique identifier of current host
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
 
-     _l_o_n_g
-     ggeetthhoossttiidd(_v_o_i_d)
+       [4mlong[0m
+       [1mgethostid[22m([4mvoid[24m);
 
-     _i_n_t
-     sseetthhoossttiidd(_l_o_n_g _h_o_s_t_i_d)
+       [4mint[0m
+       [1msethostid[22m([4mlong[24m [4mhostid[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     SSeetthhoossttiidd() establishes a 32-bit identifier for the current processor
-     that is intended to be unique among all UNIX systems in existence.  This
-     is normally a DARPA Internet address for the local machine.  This call is
-     allowed only to the super-user and is normally performed at boot time.
+[1mDESCRIPTION[0m
+       [1mSethostid[22m()  establishes  a 32‐bit identifier for the current processor
+       that is intended to be unique among  all  UNIX  systems  in  existence.
+       This  is normally a DARPA Internet address for the local machine.  This
+       call is allowed only to the super‐user and  is  normally  performed  at
+       boot time.
 
-     GGeetthhoossttiidd() returns the 32-bit identifier for the current processor.
+       [1mGethostid[22m() returns the 32‐bit identifier for the current processor.
 
-SSEEEE AALLSSOO
-     hostid(1),  gethostname(2)
+[1mSEE ALSO[0m
+       [4mhostid[24m(1), [4mgethostname[24m(2)
 
-BBUUGGSS
-     32 bits for the identifier is too small.
+[1mBUGS[0m
+       32 bits for the identifier is too small.
 
-HHIISSTTOORRYY
-     The ggeetthhoossttiidd function call appeared in 4.2BSD.
+[1mHISTORY[0m
+       The [1mgethostid [22mfunction call appeared in 4.2BSD.
 
-4.2 Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4.2 Berkeley Distribution       March 10, 1991                    GETHOSTID(2)

@@ -5,7 +5,7 @@ SRCS=	cchar.c gfmt.c key.c modes.c print.c stty.c util.c
 
 LDONLY=ldonly
 
-SRCHOME=/home/share/386bsd-2.0
+SRCHOME=/home/share/386bsd
 CFLAGS+=-nostdinc -nostdlib -nodefaultlibs -fgnu89-inline -fcommon -fno-builtin
 CFLAGS+=-I${SRCHOME}/usr/src/include -I${SRCHOME}/usr/src/kernel/include
 LDADD=	-L${SRCHOME}/usr/lib

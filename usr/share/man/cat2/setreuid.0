@@ -1,66 +1,34 @@
-SETREUID(2)               386BSD Programmer's Manual               SETREUID(2)
+SETREUID(2)                   System Calls Manual                  SETREUID(2)
 
-NNAAMMEE
-     sseettrreeuuiidd - set real and effective user ID's
+[1mNAME[0m
+       setreuid — set real and effective user ID’s
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
 
-     _i_n_t
-     sseettrreeuuiidd(_i_n_t _r_u_i_d, _i_n_t _e_u_i_d)
+       [4mint[0m
+       [1msetreuid[22m([4mint[24m [4mruid[24m, [4mint[24m [4meuid[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The real and effective user ID's of the current process are set according
-     to the arguments.  If _r_u_i_d or _e_u_i_d is -1, the current uid is filled in by
-     the system.  Unprivileged users may change the real user ID to the
-     effective user ID and vice-versa; only the super-user may make other
-     changes.
+[1mDESCRIPTION[0m
+       The real and effective user ID’s of the current process are set accord‐
+       ing to the arguments.  If [4mruid[24m or [4meuid[24m is ‐1, the current uid is filled
+       in  by  the  system.  Unprivileged users may change the real user ID to
+       the effective user ID and vice‐versa;  only  the  super‐user  may  make
+       other changes.
 
-RREETTUURRNN VVAALLUUEESS
-     Upon successful completion, a value of 0 is returned.  Otherwise, a value
-     of -1 is returned and _e_r_r_n_o is set to indicate the error.
+[1mRETURN VALUES[0m
+       Upon  successful  completion,  a  value of 0 is returned.  Otherwise, a
+       value of ‐1 is returned and [4merrno[24m is set to indicate the error.
 
-EERRRROORRSS
-     [EPERM]  The current process is not the super-user and a change other
-              than changing the effective user-id to the real user-id was
-              specified.
+[1mERRORS[0m
+       [EPERM]  The current process is not the super‐user and a  change  other
+                than  changing  the  effective user‐id to the real user‐id was
+                specified.
 
-SSEEEE AALLSSOO
-     getuid(2),  setregid(2),  setuid(3)
+[1mSEE ALSO[0m
+       [4mgetuid[24m(2), [4msetregid[24m(2), [4msetuid[24m(3)
 
-HHIISSTTOORRYY
-     The sseettrreeuuiidd function call appeared in 4.2BSD.
+[1mHISTORY[0m
+       The [1msetreuid [22mfunction call appeared in 4.2BSD.
 
-4th Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       March 10, 1991                     SETREUID(2)

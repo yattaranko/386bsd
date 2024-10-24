@@ -1,66 +1,43 @@
-EXIT(2)                   386BSD Programmer's Manual                   EXIT(2)
+EXIT(2)                       System Calls Manual                      EXIT(2)
 
-NNAAMMEE
-     __eexxiitt - terminate the calling process
+[1mNAME[0m
+       _exit — terminate the calling process
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
 
-     _v_o_i_d _v_o_l_a_t_i_l_e
-     __eexxiitt(_i_n_t _s_t_a_t_u_s)
+       [4mvoid[24m [4mvolatile[0m
+       [1m_exit[22m([4mint[24m [4mstatus[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The __eexxiitt() function terminates a process with the following
-     consequences:
+[1mDESCRIPTION[0m
+       The  [1m_exit[22m()  function  terminates  a process with the following conse‐
+       quences:
 
-     oo   All of the descriptors open in the calling process are closed.  This
-         may entail delays, for example, waiting for output to drain; a
-         process in this state may not be killed, as it is already dying.
+       [1m•   [22mAll of the descriptors open in  the  calling  process  are  closed.
+           This may entail delays, for example, waiting for output to drain; a
+           process in this state may not be killed, as it is already dying.
 
-     oo   If the parent process of the calling process has an outstanding wait
-         call or is interested in the SIGCHLD signal, it is notified of the
-         calling process's termination and the _s_t_a_t_u_s area is set as defined
-         by wait(2).
+       [1m•   [22mIf  the  parent  process  of the calling process has an outstanding
+           [4mwait[24m call or is interested in the SIGCHLD signal, it is notified of
+           the calling process’s termination and the [4mstatus[24m area is set as de‐
+           fined by [4mwait[24m(2).
 
-     oo   The parent process-ID of all of the calling process's existing child
-         processes are set to 1; the initialization process (see the
-         DEFINITIONS section of intro(2))  inherits each of these processes.
-         Any stopped children are restarted with a hangup signal (SIGHUP).
+       [1m•   [22mThe parent process‐ID of all  of  the  calling  process’s  existing
+           child  processes  are set to 1; the initialization process (see the
+           DEFINITIONS section of [4mintro[24m(2)) inherits each of these  processes.
+           Any stopped children are restarted with a hangup signal (SIGHUP).
 
-     Most C programs call the library routine exit(3),  which flushes buffers,
-     closes streams, unlinks temporary files, etc., before calling __eexxiitt().
+       Most  C  programs  call  the  library  routine  [4mexit[24m(3),  which flushes
+       buffers, closes streams, unlinks temporary files, etc., before  calling
+       [1m_exit[22m().
 
-RREETTUURRNN VVAALLUUEE
-     __eexxiitt() can never return.
+[1mRETURN VALUE[0m
+       [1m_exit[22m() can never return.
 
-SSEEEE AALLSSOO
-     fork(2),  sigvec(2),  wait(2),  exit(3)
+[1mSEE ALSO[0m
+       [4mfork[24m(2), [4msigvec[24m(2), [4mwait[24m(2), [4mexit[24m(3)
 
-HHIISSTTOORRYY
-     An eexxiitt function call appeared in Version 6 AT&T UNIX.
+[1mHISTORY[0m
+       An [1mexit [22mfunction call appeared in Version 6 AT&T UNIX.
 
-4th Berkeley Distribution        July 25, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution        July 25, 1991                         EXIT(2)

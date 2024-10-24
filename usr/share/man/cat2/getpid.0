@@ -1,66 +1,32 @@
-GETPID(2)                 386BSD Programmer's Manual                 GETPID(2)
+GETPID(2)                     System Calls Manual                    GETPID(2)
 
-NNAAMMEE
-     ggeettppiidd, ggeettppppiidd - get parent or calling process identification
+[1mNAME[0m
+       getpid, getppid — get parent or calling process identification
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
 
-     _p_i_d__t
-     ggeettppiidd(_v_o_i_d)
+       [4mpid_t[0m
+       [1mgetpid[22m([4mvoid[24m);
 
-     _p_i_d__t
-     ggeettppppiidd(_v_o_i_d)
+       [4mpid_t[0m
+       [1mgetppid[22m([4mvoid[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     GGeettppiidd() returns the process ID of the calling process.  The ID is
-     guaranteed to be unique and is useful for constructing temporary file
-     names.
+[1mDESCRIPTION[0m
+       [1mGetpid[22m()  returns  the  process  ID  of the calling process.  The ID is
+       guaranteed to be unique and is useful for constructing  temporary  file
+       names.
 
-     GGeettppppiidd() returns the process ID of the parent of the calling process.
+       [1mGetppid[22m() returns the process ID of the parent of the calling process.
 
-EERRRROORRSS
-     The ggeettppiidd() and ggeettppppiidd() functions are always successful, and no return
-     value is reserved to indicate an error.
+[1mERRORS[0m
+       The  [1mgetpid[22m() and [1mgetppid[22m() functions are always successful, and no re‐
+       turn value is reserved to indicate an error.
 
-SSEEEE AALLSSOO
-     gethostid(2)
+[1mSEE ALSO[0m
+       [4mgethostid[24m(2)
 
-SSTTAANNDDAARRDDSS
-     GGeettppiidd() and ggeettppppiidd() conform to IEEE Std 1003.1-1988 (``POSIX'').
+[1mSTANDARDS[0m
+       [1mGetpid[22m() and [1mgetppid[22m() conform to IEEE Std 1003.1‐1988 (“POSIX”).
 
-4th Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       March 10, 1991                       GETPID(2)

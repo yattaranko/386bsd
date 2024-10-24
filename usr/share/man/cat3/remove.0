@@ -1,66 +1,30 @@
-REMOVE(3)                 386BSD Programmer's Manual                 REMOVE(3)
+REMOVE(3)                   Library Functions Manual                 REMOVE(3)
 
-NNAAMMEE
-     rreemmoovvee - remove directory entry
+[1mNAME[0m
+       remove — remove directory entry
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdio.h>[0m
 
-     _i_n_t
-     rreemmoovvee(_c_o_n_s_t _c_h_a_r *_p_a_t_h)
+       [4mint[0m
+       [1mremove[22m([4mconst[24m [4mchar[24m [4m*path[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The rreemmoovvee() function is an alias for the unlink(2) system call.  It
-     deletes the file referenced by _p_a_t_h.
+[1mDESCRIPTION[0m
+       The  [1mremove[22m()  function  is an alias for the [4munlink[24m(2) system call.  It
+       deletes the file referenced by [4mpath[24m.
 
-RREETTUURRNN VVAALLUUEESS
-     Upon successful completion, rreemmoovvee() returns 0.  Otherwise, -1 is
-     returned and the global variable _e_r_r_n_o is set to indicate the error.
+[1mRETURN VALUES[0m
+       Upon successful completion, [1mremove[22m() returns 0.  Otherwise, -1  is  re‐
+       turned and the global variable [4merrno[24m is set to indicate the error.
 
-EERRRROORRSS
-     The rreemmoovvee() function may fail and set _e_r_r_n_o for any of the errors
-     specified for the routine unlink(2).
+[1mERRORS[0m
+       The  [1mremove[22m()  function  may  fail  and set [4merrno[24m for any of the errors
+       specified for the routine [4munlink[24m(2).
 
-SSEEEE AALLSSOO
-     unlink(2)
+[1mSEE ALSO[0m
+       [4munlink[24m(2)
 
-SSTTAANNDDAARRDDSS
-     The rreemmoovvee() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mremove[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                       REMOVE(3)

@@ -1,264 +1,258 @@
-PRINTF(3)                 386BSD Programmer's Manual                 PRINTF(3)
+PRINTF(3)                   Library Functions Manual                 PRINTF(3)
 
-NNAAMMEE
-     pprriinnttff, ffpprriinnttff, sspprriinnttff, ssnnpprriinnttff, vvpprriinnttff, vvffpprriinnttff,, vvsspprriinnttff,
-     vvssnnpprriinnttff - formatted output conversion
+[1mNAME[0m
+       printf,   fprintf,  sprintf,  snprintf,  vprintf,  vfprintf,  vsprintf,
+       vsnprintf — formatted output conversion
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdio.h>[0m
 
-     _i_n_t
-     pprriinnttff(_c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t, ...)
+       [4mint[0m
+       [1mprintf[22m([4mconst[24m [4mchar[24m [4m*format[24m, [4m...[24m);
 
-     _i_n_t
-     ffpprriinnttff(_F_I_L_E *_s_t_r_e_a_m, _c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t, ...)
+       [4mint[0m
+       [1mfprintf[22m([4mFILE[24m [4m*stream[24m, [4mconst[24m [4mchar[24m [4m*format[24m, [4m...[24m);
 
-     _i_n_t
-     sspprriinnttff(_c_h_a_r *_s_t_r, _c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t, ...)
+       [4mint[0m
+       [1msprintf[22m([4mchar[24m [4m*str[24m, [4mconst[24m [4mchar[24m [4m*format[24m, [4m...[24m);
 
-     _i_n_t
-     ssnnpprriinnttff(_c_h_a_r *_s_t_r, _s_i_z_e__t _s_i_z_e, _c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t, ...)
+       [4mint[0m
+       [1msnprintf[22m([4mchar[24m [4m*str[24m, [4msize_t[24m [4msize[24m, [4mconst[24m [4mchar[24m [4m*format[24m, [4m...[24m);
 
-     ##iinncclluuddee <<ssttddaarrgg..hh>>
+       [1m#include <stdarg.h>[0m
 
-     _i_n_t
-     vvpprriinnttff(_c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t, _v_a__l_i_s_t _a_p)
+       [4mint[0m
+       [1mvprintf[22m([4mconst[24m [4mchar[24m [4m*format[24m, [4mva_list[24m [4map[24m);
 
-     _i_n_t
-     vvffpprriinnttff(_F_I_L_E *_s_t_r_e_a_m, _c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t, _v_a__l_i_s_t _a_p)
+       [4mint[0m
+       [1mvfprintf[22m([4mFILE[24m [4m*stream[24m, [4mconst[24m [4mchar[24m [4m*format[24m, [4mva_list[24m [4map[24m);
 
-     _i_n_t
-     vvsspprriinnttff(_c_h_a_r *_s_t_r, _c_h_a_r *_f_o_r_m_a_t, _v_a__l_i_s_t _a_p)
+       [4mint[0m
+       [1mvsprintf[22m([4mchar[24m [4m*str[24m, [4mchar[24m [4m*format[24m, [4mva_list[24m [4map[24m);
 
-     _i_n_t
-     vvssnnpprriinnttff(_c_h_a_r *_s_t_r, _s_i_z_e__t _s_i_z_e, _c_o_n_s_t _c_h_a_r *_f_o_r_m_a_t, _v_a__l_i_s_t _a_p)
+       [4mint[0m
+       [1mvsnprintf[22m([4mchar[24m [4m*str[24m, [4msize_t[24m [4msize[24m, [4mconst[24m [4mchar[24m [4m*format[24m, [4mva_list[24m [4map[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The pprriinnttff() family of functions produces output according to a _f_o_r_m_a_t as
-     described below.  PPrriinnttff() and vvpprriinnttff() write output to _s_t_d_o_u_t, the
-     standard output stream; ffpprriinnttff() and vvffpprriinnttff() write output to the
-     given output _s_t_r_e_a_m; sspprriinnttff(), ssnnpprriinnttff(), vvsspprriinnttff(), and vvssnnpprriinnttff()
-     write to the character string _s_t_r. These functions write the output under
-     the control of a _f_o_r_m_a_t string that specifies how subsequent arguments
-     (or arguments accessed via the variable-length argument facilities of
-     stdarg(3))  are converted for output.  These functions return the number
-     of characters printed (not including the trailing `\0' used to end output
-     to strings).  SSnnpprriinnttff() and vvssnnpprriinnttff() will write at most _s_i_z_e-1 of the
-     characters printed into the output string (the _s_i_z_e'th character then
-     gets the terminating `\0'); if the return value is greater than or equal
-     to the _s_i_z_e argument, the string was too short and some of the printed
-     characters were discarded.  SSpprriinnttff() and vvsspprriinnttff() effectively assume
-     an infinte _s_i_z_e.
+[1mDESCRIPTION[0m
+       The [1mprintf[22m() family of functions produces output according to a  [4mformat[0m
+       as described below.  [1mPrintf[22m() and [1mvprintf[22m() write output to [4mstdout,[24m the
+       standard  output  stream;  [1mfprintf[22m() and [1mvfprintf[22m() write output to the
+       given output [4mstream[24m; [1msprintf[22m(), [1msnprintf[22m(), [1mvsprintf[22m(), and [1mvsnprintf[22m()
+       write to the character string [4mstr[24m.  These functions  write  the  output
+       under  the control of a [4mformat[24m string that specifies how subsequent ar‐
+       guments (or arguments accessed via the variable‐length argument facili‐
+       ties of [4mstdarg[24m(3)) are converted for output.   These  functions  return
+       the  number of characters printed (not including the trailing ‘\0’ used
+       to end output to strings).  [1mSnprintf[22m() and [1mvsnprintf[22m()  will  write  at
+       most  [4msize[24m-1  of  the  characters  printed  into the output string (the
+       [4msize[24m’th character then gets the terminating ‘\0’); if the return  value
+       is greater than or equal to the [4msize[24m argument, the string was too short
+       and  some  of  the  printed  characters  were discarded.  [1mSprintf[22m() and
+       [1mvsprintf[22m() effectively assume an infinte [4msize[24m.
 
-     The format string is composed of zero or more directives: ordinary
-     characters (not %%), which are copied unchanged to the output stream; and
-     conversion specifications, each of which results in fetching zero or more
-     subsequent arguments.  Each conversion specification is introduced by the
-     character %%. The arguments must correspond properly (after type
-     promotion) with the conversion specifier.  After the %%, the following
-     appear in sequence:
+       The format string is composed of  zero  or  more  directives:  ordinary
+       characters  (not  [1m%[22m),  which are copied unchanged to the output stream;
+       and conversion specifications, each of which results in  fetching  zero
+       or  more subsequent arguments.  Each conversion specification is intro‐
+       duced by the character [1m%[22m.  The arguments must correspond properly  (af‐
+       ter  type  promotion)  with the conversion specifier.  After the [1m%[22m, the
+       following appear in sequence:
 
-     oo   Zero or more of the following flags:
+       [1m•   [22mZero or more of the following flags:
 
-               --   a ## character specifying that the value should be converted
-                   to an ``alternate form''.  For cc, dd, ii, nn, pp, ss, and uu,
-                   conversions, this option has no effect.  For oo conversions,
-                   the precision of the number is increased to force the first
-                   character of the output string to a zero (except if a zero
-                   value is printed with an explicit precision of zero).  For
-                   xx and XX conversions, a non-zero result has the string `0x'
-                   (or `0X' for XX conversions) prepended to it.  For ee, EE, ff,
-                   gg, and GG, conversions, the result will always contain a
-                   decimal point, even if no digits follow it (normally, a
-                   decimal point appears in the results of those conversions
-                   only if a digit follows).  For gg and GG conversions,
-                   trailing zeros are not removed from the result as they
-                   would otherwise be.
+                 [1m-   [22ma [1m# [22mcharacter specifying that the value  should  be  con‐
+                     verted  to  an ‘‘alternate form’’.  For [1mc[22m, [1md[22m, [1mi[22m, [1mn[22m, [1mp[22m, [1ms[22m,
+                     and [1mu[22m, conversions, this option has  no  effect.   For  [1mo[0m
+                     conversions,  the precision of the number is increased to
+                     force the first character of the output string to a  zero
+                     (except  if a zero value is printed with an explicit pre‐
+                     cision of zero).  For [1mx [22mand [1mX [22mconversions, a non‐zero re‐
+                     sult has the string ‘0x’  (or  ‘0X’  for  [1mX  [22mconversions)
+                     prepended to it.  For [1me[22m, [1mE[22m, [1mf[22m, [1mg[22m, and [1mG[22m, conversions, the
+                     result  will  always  contain a decimal point, even if no
+                     digits follow it (normally, a decimal  point  appears  in
+                     the  results  of  those  conversions only if a digit fol‐
+                     lows).  For [1mg [22mand [1mG [22mconversions, trailing zeros  are  not
+                     removed from the result as they would otherwise be.
 
-               --   A zero `00' character specifying zero padding.  For all
-                   conversions except nn, the converted value is padded on the
-                   left with zeros rather than blanks.  If a precision is
-                   given with a numeric conversion (Mc d, ii, oo, uu, ii, xx, and
-                   XX), the `00' flag is ignored.
+                 [1m-   [22mA  zero  ‘[1m0[22m’  character specifying zero padding.  For all
+                     conversions except [1mn[22m, the converted value  is  padded  on
+                     the  left  with zeros rather than blanks.  If a precision
+                     is given with a numeric conversion (Mc d, [1mi[22m, [1mo[22m, [1mu[22m, [1mi[22m,  [1mx[22m,
+                     and [1mX[22m), the ‘[1m0[22m’ flag is ignored.
 
-               --   A negative field width flag `--' indicates the converted
-                   value is to be left adjusted on the field boundary.  Except
-                   for nn conversions, the converted value is padded on the
-                   right with blanks, rather than on the left with blanks or
-                   zeros.  A `--' overrides a `00' if both are given.
+                 [1m-   [22mA  negative  field width flag ‘[1m-[22m’ indicates the converted
+                     value is to be left adjusted on the field boundary.   Ex‐
+                     cept  for [1mn [22mconversions, the converted value is padded on
+                     the right with blanks,  rather  than  on  the  left  with
+                     blanks  or  zeros.   A  ‘[1m-[22m’  overrides  a ‘[1m0[22m’ if both are
+                     given.
 
-               --   A space, specifying that a blank should be left before a
-                   positive number produced by a signed conversion (dd, ee, EE,
-                   ff, gg, GG, or ii).
+                 [1m-   [22mA space, specifying that a blank should be left before  a
+                     positive number produced by a signed conversion ([1md[22m, [1me[22m, [1mE[22m,
+                     [1mf[22m, [1mg[22m, [1mG[22m, or [1mi[22m).
 
-               --   a `++' character specifying that a sign always be placed
-                   before a number produced by a signed conversion.  A `++'
-                   overrides a space if both are used.
+                 [1m-   [22ma  ‘[1m+[22m’  character specifying that a sign always be placed
+                     before a number produced by a signed conversion.   A  ‘[1m+[22m’
+                     overrides a space if both are used.
 
-     oo   An optional decimal digit string specifying a minimum field width.
-         If the converted value has fewer characters than the field width, it
-         will be padded with spaces on the left (or right, if the left-
-         adjustment flag has been given) to fill out the field width.
+       [1m•   [22mAn  optional decimal digit string specifying a minimum field width.
+           If the converted value has fewer characters than the  field  width,
+           it  will  be padded with spaces on the left (or right, if the left‐
+           adjustment flag has been given) to fill out the field width.
 
-     oo   An optional precision, in the form of a period `..' followed by an
-         optional digit string.  If the digit string is omitted, the precision
-         is taken as zero.  This gives the minimum number of digits to appear
-         for dd, ii, oo, uu, xx, and XX conversions, the number of digits to appear
-         after the decimal-point for ee, EE, and ff conversions, the maximum
-         number of significant digits for gg and GG conversions, or the maximum
-         number of characters to be printed from a string for ss conversions.
+       [1m•   [22mAn optional precision, in the form of a period ‘[1m.[22m’ followed  by  an
+           optional  digit string.  If the digit string is omitted, the preci‐
+           sion is taken as zero.  This gives the minimum number of digits  to
+           appear  for  [1md[22m, [1mi[22m, [1mo[22m, [1mu[22m, [1mx[22m, and [1mX [22mconversions, the number of digits
+           to appear after the decimal‐point for [1me[22m, [1mE[22m, and [1mf [22mconversions,  the
+           maximum  number  of  significant digits for [1mg [22mand [1mG [22mconversions, or
+           the maximum number of characters to be printed from a string for  [1ms[0m
+           conversions.
 
-     oo   The optional character hh, specifying that a following dd, ii, oo, uu, xx,
-         or XX conversion corresponds to a _s_h_o_r_t _i_n_t or _u_n_s_i_g_n_e_d _s_h_o_r_t _i_n_t
-         argument, or that a following nn conversion corresponds to a pointer
-         to a _s_h_o_r_t _i_n_t argument.
+       [1m•   [22mThe  optional  character [1mh[22m, specifying that a following [1md[22m, [1mi[22m, [1mo[22m, [1mu[22m,
+           [1mx[22m, or [1mX [22mconversion corresponds to a [4mshort[24m [4mint[24m or [4munsigned[24m [4mshort[24m [4mint[0m
+           argument, or that a following [1mn [22mconversion corresponds to a pointer
+           to a [4mshort[24m [4mint[24m argument.
 
-     oo   The optional character ll (ell) specifying that a following dd, ii, oo,
-         uu, xx, or XX conversion applies to a pointer to a _l_o_n_g _i_n_t or _u_n_s_i_g_n_e_d
-         _l_o_n_g _i_n_t argument, or that a following nn conversion corresponds to a
-         pointer to a _l_o_n_g _i_n_t argument.
+       [1m•   [22mThe optional character [1ml [22m(ell) specifying that a following [1md[22m, [1mi[22m, [1mo[22m,
+           [1mu[22m, [1mx[22m, or [1mX [22mconversion applies  to  a  pointer  to  a  [4mlong[24m  [4mint[24m  or
+           [4munsigned[24m [4mlong[24m [4mint[24m argument, or that a following [1mn [22mconversion corre‐
+           sponds to a pointer to a [4mlong[24m [4mint[24m argument.
 
-     oo   The character LL specifying that a following ee, EE, ff, gg, or GG
-         conversion corresponds to a _l_o_n_g _d_o_u_b_l_e argument (but note that long
-         double values are not currently supported by the VAX and Tahoe
-         compilers).
+       [1m•   [22mThe  character  [1mL [22mspecifying that a following [1me[22m, [1mE[22m, [1mf[22m, [1mg[22m, or [1mG [22mcon‐
+           version corresponds to a [4mlong[24m [4mdouble[24m argument (but note  that  long
+           double values are not currently supported by the VAX and Tahoe com‐
+           pilers).
 
-     oo   A character that specifies the type of conversion to be applied.
+       [1m•   [22mA character that specifies the type of conversion to be applied.
 
-     A field width or precision, or both, may be indicated by an asterisk `*'
-     instead of a digit string.  In this case, an _i_n_t argument supplies the
-     field width or precision.  A negative field width is treated as a left
-     adjustment flag followed by a positive field width; a negative precision
-     is treated as though it were missing.
+       A  field  width  or precision, or both, may be indicated by an asterisk
+       ‘*’ instead of a digit string.  In this case, an [4mint[24m argument  supplies
+       the  field  width or precision.  A negative field width is treated as a
+       left adjustment flag followed by a positive  field  width;  a  negative
+       precision is treated as though it were missing.
 
-     The conversion specifiers and their meanings are:
+       The conversion specifiers and their meanings are:
 
-     ddiioouuxxXX  The _i_n_t (or appropriate variant) argument is converted to signed
-             decimal (dd and ii), unsigned octal (oo), unsigned decimal (uu), or
-             unsigned hexadecimal (xx and XX) notation.  The letters aabbccddeeff are
-             used for xx conversions; the letters AABBCCDDEEFF are used for
-             conversions.  The precision, if any, gives the minimum number of
-             digits that must appear; if the converted value requires fewer
-             digits, it is padded on the left with zeros.
+       [1mdiouxX  [22mThe  [4mint[24m  (or  appropriate  variant)  argument  is converted to
+               signed decimal ([1md [22mand [1mi[22m), unsigned octal ([1mo[22m), unsigned  decimal
+               ([1mu[22m),  or  unsigned hexadecimal ([1mx [22mand [1mX[22m) notation.  The letters
+               [1mabcdef [22mare used for [1mx [22mconversions; the letters [1mABCDEF [22mare  used
+               for conversions.  The precision, if any, gives the minimum num‐
+               ber of digits that must appear; if the converted value requires
+               fewer digits, it is padded on the left with zeros.
 
-     DDOOUU     The _l_o_n_g _i_n_t argument is converted to signed decimal, unsigned
-             octal, or unsigned decimal, as if the format had been lldd, lloo, or
-             lluu respectively.  These conversion characters are deprecated, and
-             will eventually disappear.
+       [1mDOU     [22mThe  [4mlong[24m [4mint[24m argument is converted to signed decimal, unsigned
+               octal, or unsigned decimal, as if the format had been  [1mld[22m,  [1mlo[22m,
+               or  [1mlu  [22mrespectively.   These  conversion characters are depre‐
+               cated, and will eventually disappear.
 
-     eeEE      The _d_o_u_b_l_e argument is rounded and converted in the style
-             [-]d..dddee+-dd where there is one digit before the decimal-point
-             character and the number of digits after it is equal to the
-             precision; if the precision is missing, it is taken as 6; if the
-             precision is zero, no decimal-point character appears.  An EE
-             conversion uses the letter EE (rather than ee) to introduce the
-             exponent.  The exponent always contains at least two digits; if
-             the value is zero, the exponent is 00.
+       [1meE      [22mThe [4mdouble[24m argument is  rounded  and  converted  in  the  style
+               [-]d[1m.[22mddd[1me[22m±dd  where there is one digit before the decimal‐point
+               character and the number of digits after it  is  equal  to  the
+               precision;  if  the  precision is missing, it is taken as 6; if
+               the precision is zero, no decimal‐point character appears.   An
+               [1mE [22mconversion uses the letter [1mE [22m(rather than [1me[22m) to introduce the
+               exponent.  The exponent always contains at least two digits; if
+               the value is zero, the exponent is 00.
 
-     ff       The _d_o_u_b_l_e argument is rounded and converted to decimal notation
-             in the style [-]ddd..ddd, where the number of digits after the
-             decimal-point character is equal to the precision specification.
-             If the precision is missing, it is taken as 6; if the precision
-             is explicitly zero, no decimal-point character appears.  If a
-             decimal point appears, at least one digit appears before it.
+       [1mf       [22mThe  [4mdouble[24m  argument is rounded and converted to decimal nota‐
+               tion in the style [‐]ddd[1m.[22mddd, where the number of digits  after
+               the  decimal‐point character is equal to the precision specifi‐
+               cation.  If the precision is missing, it is taken as 6; if  the
+               precision  is  explicitly  zero, no decimal‐point character ap‐
+               pears.  If a decimal point appears, at least one digit  appears
+               before it.
 
-     gg       The _d_o_u_b_l_e argument is converted in style ff or ee (or EE for GG
-             conversions).  The precision specifies the number of significant
-             digits.  If the precision is missing, 6 digits are given; if the
-             precision is zero, it is treated as 1.  Style ee is used if the
-             exponent from its conversion is less than -4 or greater than or
-             equal to the precision.  Trailing zeros are removed from the
-             fractional part of the result; a decimal point appears only if it
-             is followed by at least one digit.
+       [1mg       [22mThe  [4mdouble[24m  argument  is converted in style [1mf [22mor [1me [22m(or [1mE [22mfor [1mG[0m
+               conversions).  The precision specifies the number  of  signifi‐
+               cant  digits.  If the precision is missing, 6 digits are given;
+               if the precision is zero, it is treated as 1.  Style [1me [22mis  used
+               if  the exponent from its conversion is less than ‐4 or greater
+               than or equal to the precision.   Trailing  zeros  are  removed
+               from the fractional part of the result; a decimal point appears
+               only if it is followed by at least one digit.
 
-     cc       The _i_n_t argument is converted to an _u_n_s_i_g_n_e_d _c_h_a_r, and the
-             resulting character is written.
+       [1mc       [22mThe  [4mint[24m argument is converted to an [4munsigned[24m [4mchar[24m, and the re‐
+               sulting character is written.
 
-     ss       The ``_c_h_a_r *'' argument is expected to be a pointer to an array
-             of character type (pointer to a string).  Characters from the
-             array are written up to (but not including) a terminating NUL
-             character; if a precision is specified, no more than the number
-             specified are written.  If a precision is given, no null
-             character need be present; if the precision is not specified, or
-             is greater than the size of the array, the array must contain a
-             terminating NUL character.
+       [1ms       [22mThe “[4mchar[24m [4m*[24m” argument is expected to be a pointer to  an  array
+               of  character  type (pointer to a string).  Characters from the
+               array are written up to (but not including) a  terminating  NUL
+               character; if a precision is specified, no more than the number
+               specified  are written.  If a precision is given, no null char‐
+               acter need be present; if the precision is not specified, or is
+               greater than the size of the array, the array  must  contain  a
+               terminating NUL character.
 
-     pp       The ``_v_o_i_d *'' pointer argument is printed in hexadecimal (as if
-             by `%#x' or `%#lx').
+       [1mp       [22mThe  “[4mvoid[24m [4m*[24m” pointer argument is printed in hexadecimal (as if
+               by ‘%#x’ or ‘%#lx’).
 
-     nn       The number of characters written so far is stored into the
-             integer indicated by the ``_i_n_t *'' (or variant) pointer argument.
-             No argument is converted.
+       [1mn       [22mThe number of characters written so far is stored into the  in‐
+               teger  indicated  by the “[4mint[24m [4m*[24m” (or variant) pointer argument.
+               No argument is converted.
 
-     %%       A `%' is written. No argument is converted. The complete
-             conversion specification is `%%'.
+       [1m%       [22mA ‘%’ is written. No argument is converted. The  complete  con‐
+               version specification is ‘%%’.
 
-     In no case does a non-existent or small field width cause truncation of a
-     field; if the result of a conversion is wider than the field width, the
-     field is expanded to contain the conversion result.
+       In no case does a non‐existent or small field width cause truncation of
+       a  field;  if the result of a conversion is wider than the field width,
+       the field is expanded to contain the conversion result.
 
-EEXXAAMMPPLLEESS
-     To print a date and time in the form `Sunday, July 3, 10:02', where
-     _w_e_e_k_d_a_y and _m_o_n_t_h are pointers to strings:
+[1mEXAMPLES[0m
+       To print a date and time in the form ‘Sunday,  July  3,  10:02’,  where
+       [4mweekday[24m and [4mmonth[24m are pointers to strings:
 
-           #include <stdio.h>
-           fprintf(stdout, "%s, %s %d, %.2d:%.2d\n",
-                   weekday, month, day, hour, min);
+             #include <stdio.h>
+             fprintf(stdout, "%s, %s %d, %.2d:%.2d\n",
+                     weekday, month, day, hour, min);
 
-     To print pi to five decimal places:
+       To print π to five decimal places:
 
-           #include <math.h>
-           #include <stdio.h>
-           fprintf(stdout, "pi = %.5f\n", 4 * atan(1.0));
+             #include <math.h>
+             #include <stdio.h>
+             fprintf(stdout, "pi = %.5f\n", 4 * atan(1.0));
 
-     To allocate a 128 byte string and print into it:
+       To allocate a 128 byte string and print into it:
 
-           #include <stdio.h>
-           #include <stdlib.h>
-           #include <stdarg.h>
-           char *newfmt(const char *fmt, ...)
-           {
-                           char *p;
-                           va_list ap;
-                           if ((p = malloc(128)) == NULL)
-                                   return (NULL);
-                           va_start(ap, fmt);
-                           (void) vsnprintf(p, 128, fmt, ap);
-                           va_end(ap);
-                           return (p);
-           }
+             #include <stdio.h>
+             #include <stdlib.h>
+             #include <stdarg.h>
+             char *newfmt(const char *fmt, ...)
+             {
+                             char *p;
+                             va_list ap;
+                             if ((p = malloc(128)) == NULL)
+                                     return (NULL);
+                             va_start(ap, fmt);
+                             (void) vsnprintf(p, 128, fmt, ap);
+                             va_end(ap);
+                             return (p);
+             }
 
-SSEEEE AALLSSOO
-     printf(1),  scanf(3)
+[1mSEE ALSO[0m
+       [4mprintf[24m(1), [4mscanf[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ffpprriinnttff(), pprriinnttff(), sspprriinnttff(), vvpprriinnttff(), vvffpprriinnttff(), and vvsspprriinnttff()
-     functions conform to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The   [1mfprintf[22m(),   [1mprintf[22m(),   [1msprintf[22m(),  [1mvprintf[22m(),  [1mvfprintf[22m(),  and
+       [1mvsprintf[22m() functions conform to ANSI X3.159‐1989 (“ANSI C89”).
 
-HHIISSTTOORRYY
-     The functions ssnnpprriinnttff() and vvssnnpprriinnttff() are new to this release.
+[1mHISTORY[0m
+       The functions [1msnprintf[22m() and [1mvsnprintf[22m() are new to this release.
 
-BBUUGGSS
-     The conversion formats %%DD, %%OO, and %%UU are not standard and are provided
-     only for backward compatibility.  The effect of padding the %%pp format
-     with zeros (either by the `00' flag or by specifying a precision), and the
-     benign effect (i.e., none) of the `##' flag on %%nn and %%pp conversions, as
-     well as other nonsensical combinations such as %%LLdd, are not standard;
-     such combinations should be avoided.
+[1mBUGS[0m
+       The conversion formats [1m%D[22m, [1m%O[22m, and are not standard  and  are  provided
+       only for backward compatibility.  The effect of padding the format with
+       zeros  (either  by  the ‘[1m0[22m’ flag or by specifying a precision), and the
+       benign effect (i.e., none) of the ‘[1m#[22m’ flag on [1m%n [22mand [1m%p [22mconversions, as
+       well as other nonsensical combinations such as [1m%Ld[22m, are  not  standard;
+       such combinations should be avoided.
 
-     Because sspprriinnttff() and vvsspprriinnttff() assume an infinitely long string,
-     callers must be careful not to overflow the actual space; this is often
-     impossible to assure.  For safety, programmers should use the ssnnpprriinnttff()
-     interface instead.  Unfortunately, this interface is not portable.
+       Because  [1msprintf[22m()  and  [1mvsprintf[22m()  assume  an infinitely long string,
+       callers must be careful not to overflow the actual space; this is often
+       impossible  to  assure.   For  safety,  programmers  should   use   the
+       [1msnprintf[22m()  interface  instead.   Unfortunately,  this interface is not
+       portable.
 
-BSD Experimental                 July 30, 1991                               4
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     July 30, 1991                       PRINTF(3)

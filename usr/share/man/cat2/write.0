@@ -1,132 +1,111 @@
-WRITE(2)                  386BSD Programmer's Manual                  WRITE(2)
+WRITE(2)                      System Calls Manual                     WRITE(2)
 
-NNAAMMEE
-     wwrriittee, wwrriitteevv - write output
+[1mNAME[0m
+       write, writev — write output
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
-     ##iinncclluuddee <<ssyyss//ttyyppeess..hh>>
-     ##iinncclluuddee <<ssyyss//uuiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
+       [1m#include <sys/types.h>[0m
+       [1m#include <sys/uio.h>[0m
 
-     _s_s_i_z_e__t
-     wwrriittee(_i_n_t _d, _c_o_n_s_t _c_h_a_r *_b_u_f, _s_i_z_e__t _n_b_y_t_e_s)
+       [4mssize_t[0m
+       [1mwrite[22m([4mint[24m [4md[24m, [4mconst[24m [4mchar[24m [4m*buf[24m, [4msize_t[24m [4mnbytes[24m);
 
-     _i_n_t
-     wwrriitteevv(_i_n_t _d, _s_t_r_u_c_t _i_o_v_e_c *_i_o_v, _i_n_t _i_o_v_c_n_t)
+       [4mint[0m
+       [1mwritev[22m([4mint[24m [4md[24m, [4mstruct[24m [4miovec[24m [4m*iov[24m, [4mint[24m [4miovcnt[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     WWrriittee() attempts to write _n_b_y_t_e_s of data to the object referenced by the
-     descriptor _d from the buffer pointed to by _b_u_f. WWrriitteevv() performs the
-     same action, but gathers the output data from the _i_o_v_c_n_t buffers
-     specified by the members of the _i_o_v array: iov[0], iov[1], ...,
-     iov[iovcnt-1].
+[1mDESCRIPTION[0m
+       [1mWrite[22m()  attempts  to  write [4mnbytes[24m of data to the object referenced by
+       the descriptor [4md[24m from the buffer pointed to by [4mbuf[24m.  [1mWritev[22m()  performs
+       the  same  action,  but gathers the output data from the [4miovcnt[24m buffers
+       specified by the  members  of  the  [4miov[24m  array:  iov[0],  iov[1],  ...,
+       iov[iovcnt‐1].
 
-     For wwrriitteevv(), the _i_o_v_e_c structure is defined as:
-           struct iovec {
-                   caddr_t iov_base;
-                   int     iov_len;
-           };
+       For [1mwritev[22m(), the [4miovec[24m structure is defined as:
+             struct iovec {
+                     caddr_t iov_base;
+                     int     iov_len;
+             };
 
-     Each _i_o_v_e_c entry specifies the base address and length of an area in
-     memory from which data should be written.  WWrriitteevv() will always write a
-     complete area before proceeding to the next.
+       Each  [4miovec[24m  entry  specifies the base address and length of an area in
+       memory from which data should be written.  [1mWritev[22m() will always write a
+       complete area before proceeding to the next.
 
-     On objects capable of seeking, the wwrriittee() starts at a position given by
-     the pointer associated with _d, see lseek(2).  Upon return from wwrriittee(),
-     the pointer is incremented by the number of bytes which were written.
+       On objects capable of seeking, the [1mwrite[22m() starts at a  position  given
+       by  the  pointer  associated  with  [4md[24m,  see [4mlseek[24m(2).  Upon return from
+       [1mwrite[22m(), the pointer is incremented by the number of bytes  which  were
+       written.
 
-     Objects that are not capable of seeking always write from the current
-     position.  The value of the pointer associated with such an object is
-     undefined.
+       Objects  that  are not capable of seeking always write from the current
+       position.  The value of the pointer associated with such an  object  is
+       undefined.
 
-     If the real user is not the super-user, then wwrriittee() clears the set-user-
-     id bit on a file.  This prevents penetration of system security by a user
-     who ``captures'' a writable set-user-id file owned by the super-user.
+       If  the  real  user is not the super‐user, then [1mwrite[22m() clears the set‐
+       user‐id bit on a file.  This prevents penetration of system security by
+       a user who “captures” a writable set‐user‐id file owned by  the  super‐
+       user.
 
-     When using non-blocking I/O on objects such as sockets that are subject
-     to flow control, wwrriittee() and wwrriitteevv() may write fewer bytes than
-     requested; the return value must be noted, and the remainder of the
-     operation should be retried when possible.
+       When using non‐blocking I/O on objects such as sockets that are subject
+       to  flow  control,  [1mwrite[22m() and [1mwritev[22m() may write fewer bytes than re‐
+       quested; the return value must be noted, and the remainder of the oper‐
+       ation should be retried when possible.
 
-RREETTUURRNN VVAALLUUEESS
-     Upon successful completion the number of bytes which were written is
-     returned.  Otherwise a -1 is returned and the global variable _e_r_r_n_o is
-     set to indicate the error.
+[1mRETURN VALUES[0m
+       Upon successful completion the number of bytes which  were  written  is
+       returned.   Otherwise a ‐1 is returned and the global variable [4merrno[24m is
+       set to indicate the error.
 
-EERRRROORRSS
-     WWrriittee() and wwrriitteevv() will fail and the file pointer will remain unchanged
-     if:
+[1mERRORS[0m
+       [1mWrite[22m() and [1mwritev[22m() will fail and the file  pointer  will  remain  un‐
+       changed if:
 
-     [EBADF]       _D is not a valid descriptor open for writing.
+       [EBADF]            [4mD[24m is not a valid descriptor open for writing.
 
-     [EPIPE]       An attempt is made to write to a pipe that is not open for
-                   reading by any process.
+       [EPIPE]            An  attempt  is  made to write to a pipe that is not
+                          open for reading by any process.
 
-     [EPIPE]       An attempt is made to write to a socket of type that is not
+       [EPIPE]            An attempt is made to write to a socket of type that
+                          is not connected to a peer socket.
 
-                   connected to a peer socket.
+       [EFBIG]            An attempt was made to write a file that exceeds the
+                          process’s file size limit or the maximum file size.
 
-     [EFBIG]       An attempt was made to write a file that exceeds the
-                   process's file size limit or the maximum file size.
+       [EFAULT]           Part of [4miov[24m or data to be written to the file points
+                          outside the process’s allocated address space.
 
-     [EFAULT]      Part of _i_o_v or data to be written to the file points
-                   outside the process's allocated address space.
+       [EINVAL]           The pointer associated with [4md[24m was negative.
 
-     [EINVAL]      The pointer associated with _d was negative.
+       [ENOSPC]           There is no free space remaining on the file  system
+                          containing the file.
 
-     [ENOSPC]      There is no free space remaining on the file system
-                   containing the file.
+       [EDQUOT]           The  user’s  quota of disk blocks on the file system
+                          containing the file has been exhausted.
 
-     [EDQUOT]      The user's quota of disk blocks on the file system
-                   containing the file has been exhausted.
+       [EIO]              An I/O error occurred while reading from or  writing
+                          to the file system.
 
-     [EIO]         An I/O error occurred while reading from or writing to the
-                   file system.
+       [EWOULDBLOCK]      The  file  was  marked  for non‐blocking I/O, and no
+                          data could be written immediately.
 
-     [EWOULDBLOCK]
-                   The file was marked for non-blocking I/O, and no data could
-                   be written immediately.
+       In addition, [1mwritev[22m() may return one of the following errors:
 
-     In addition, wwrriitteevv() may return one of the following errors:
+       [EINVAL]           [4mIovcnt[24m was less than or equal to 0, or greater  than
+                          16.
 
-     [EINVAL]      _I_o_v_c_n_t was less than or equal to 0, or greater than 16.
+       [EINVAL]           One of the [4miov_len[24m values in the [4miov[24m array was nega‐
+                          tive.
 
-     [EINVAL]      One of the _i_o_v__l_e_n values in the _i_o_v array was negative.
+       [EINVAL]           The sum of the [4miov_len[24m values in the [4miov[24m array over‐
+                          flowed a 32‐bit integer.
 
-     [EINVAL]      The sum of the _i_o_v__l_e_n values in the _i_o_v array overflowed a
-                   32-bit integer.
+[1mSEE ALSO[0m
+       [4mfcntl[24m(2), [4mlseek[24m(2), [4mopen[24m(2), [4mpipe[24m(2), [4mselect[24m(2)
 
-SSEEEE AALLSSOO
-     fcntl(2),  lseek(2),  open(2),  pipe(2),  select(2)
+[1mSTANDARDS[0m
+       [1mWrite[22m() is expected to conform to IEEE Std 1003.1‐1988 (“POSIX”).
 
-SSTTAANNDDAARRDDSS
-     WWrriittee() is expected to conform to IEEE Std 1003.1-1988 (``POSIX'').
+[1mHISTORY[0m
+       The  [1mwritev[22m()  function call appeared in 4.2BSD.  A [1mwrite [22mfunction call
+       appeared in Version 6 AT&T UNIX.
 
-HHIISSTTOORRYY
-     The wwrriitteevv() function call appeared in 4.2BSD. A wwrriittee function call
-     appeared in Version 6 AT&T UNIX.
-
-4th Berkeley Distribution       March 10, 1991                               2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4th Berkeley Distribution       March 10, 1991                        WRITE(2)

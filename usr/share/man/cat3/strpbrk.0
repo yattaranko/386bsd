@@ -1,66 +1,25 @@
-STRPBRK(3)                386BSD Programmer's Manual                STRPBRK(3)
+STRPBRK(3)                  Library Functions Manual                STRPBRK(3)
 
-NNAAMMEE
-     ssttrrppbbrrkk - locate multiple characters in string
+[1mNAME[0m
+       strpbrk — locate multiple characters in string
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttrriinngg..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <string.h>[0m
 
-     _c_h_a_r *
-     ssttrrppbbrrkk(_c_o_n_s_t _c_h_a_r *_s, _c_o_n_s_t _c_h_a_r *_c_h_a_r_s_e_t)
+       [4mchar[24m [4m*[0m
+       [1mstrpbrk[22m([4mconst[24m [4mchar[24m [4m*s[24m, [4mconst[24m [4mchar[24m [4m*charset[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The ssttrrppbbrrkk() function locates in the null-terminated string _s the first
-     occurrence of any character in the string _c_h_a_r_s_e_t and returns a pointer
-     to this character.  If no characters from _c_h_a_r_s_e_t occur anywhere in _s
-     ssttrrppbbrrkk() returns NULL.
+[1mDESCRIPTION[0m
+       The  [1mstrpbrk[22m()  function  locates  in  the null‐terminated string [4ms[24m the
+       first occurrence of any character in the string [4mcharset[24m and  returns  a
+       pointer  to  this  character.  If no characters from [4mcharset[24m occur any‐
+       where in [4ms[24m [1mstrpbrk[22m() returns NULL.
 
-SSEEEE AALLSSOO
-     index(3),  memchr(3),  rindex(3),  strchr(3),  strcspn(3),  strrchr(3),
-     strsep(3),  strspn(3),  strstr(3),  strtok(3)
+[1mSEE ALSO[0m
+       [4mindex[24m(3),  [4mmemchr[24m(3),  [4mrindex[24m(3),  [4mstrchr[24m(3),  [4mstrcspn[24m(3),  [4mstrrchr[24m(3),
+       [4mstrsep[24m(3), [4mstrspn[24m(3), [4mstrstr[24m(3), [4mstrtok[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The ssttrrppbbrrkk() function conforms to ANSI C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The [1mstrpbrk[22m() function conforms to ANSI X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                      STRPBRK(3)

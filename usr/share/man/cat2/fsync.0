@@ -1,66 +1,39 @@
-FSYNC(2)                  386BSD Programmer's Manual                  FSYNC(2)
+FSYNC(2)                      System Calls Manual                     FSYNC(2)
 
-NNAAMMEE
-     ffssyynncc - synchronize a file's in-core state with that on disk
+[1mNAME[0m
+       fsync — synchronize a file’s in‐core state with that on disk
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<uunniissttdd..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <unistd.h>[0m
 
-     _i_n_t
-     ffssyynncc(_i_n_t _f_d)
+       [4mint[0m
+       [1mfsync[22m([4mint[24m [4mfd[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     FFssyynncc() causes all modified data and attributes of _f_d to be moved to a
-     permanent storage device.  This normally results in all in-core modified
-     copies of buffers for the associated file to be written to a disk.
+[1mDESCRIPTION[0m
+       [1mFsync[22m()  causes all modified data and attributes of [4mfd[24m to be moved to a
+       permanent storage device.  This normally results in all  in‐core  modi‐
+       fied copies of buffers for the associated file to be written to a disk.
 
-     FFssyynncc() should be used by programs that require a file to be in a known
-     state, for example, in building a simple transaction facility.
+       [1mFsync[22m() should be used by programs that require a file to be in a known
+       state, for example, in building a simple transaction facility.
 
-RREETTUURRNN VVAALLUUEESS
-     A 0 value is returned on success.  A -1 value indicates an error.
+[1mRETURN VALUES[0m
+       A 0 value is returned on success.  A ‐1 value indicates an error.
 
-EERRRROORRSS
-     The ffssyynncc() fails if:
+[1mERRORS[0m
+       The [1mfsync[22m() fails if:
 
-     [EBADF]       _F_d is not a valid descriptor.
+       [EBADF]            is not a valid descriptor.
 
-     [EINVAL]      _F_d refers to a socket, not to a file.
+       [EINVAL]           refers to a socket, not to a file.
 
-     [EIO]         An I/O error occurred while reading from or writing to the
-                   file system.
+       [EIO]              An  I/O error occurred while reading from or writing
+                          to the file system.
 
-SSEEEE AALLSSOO
-     sync(2),  sync(8),  update(8)
+[1mSEE ALSO[0m
+       [4msync[24m(2), [4msync[24m(8), [4mupdate[24m(8)
 
-HHIISSTTOORRYY
-     The ffssyynncc function call appeared in 4.2BSD.
+[1mHISTORY[0m
+       The [1mfsync [22mfunction call appeared in 4.2BSD.
 
-4.2 Berkeley Distribution       March 10, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+4.2 Berkeley Distribution       March 10, 1991                        FSYNC(2)

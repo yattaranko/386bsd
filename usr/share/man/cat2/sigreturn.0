@@ -1,66 +1,56 @@
-SIGRETURN(2)              386BSD Programmer's Manual              SIGRETURN(2)
+SIGRETURN(2)                  System Calls Manual                 SIGRETURN(2)
 
-NNAAMMEE
-     ssiiggrreettuurrnn - return from signal
+[1mNAME[0m
+       sigreturn — return from signal
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssyyss//ssiiggnnaall..hh>>
-     struct sigcontext {
-             int sc_onstack;
-             int sc_mask;
-             int sc_sp;
-             int sc_fp;
-             int sc_ap;
-             int sc_pc;
-             int sc_ps;
-     };
+[1mSYNOPSIS[0m
+       [1m#include <sys/signal.h>[0m
 
-     _i_n_t
-     ssiiggrreettuurrnn(_s_t_r_u_c_t _s_i_g_c_o_n_t_e_x_t *_s_c_p)
+       struct sigcontext {
+               int sc_onstack;
+               int sc_mask;
+               int sc_sp;
+               int sc_fp;
+               int sc_ap;
+               int sc_pc;
+               int sc_ps;
+       };
 
-DDEESSCCRRIIPPTTIIOONN
-     SSiiggrreettuurrnn() allows users to atomically unmask, switch stacks, and return
-     from a signal context.  The processes signal mask and stack status are
-     restored from the context.  The system call does not return; the users
-     stack pointer, frame pointer, argument pointer, and processor status
-     longword are restored from the context.  Execution resumes at the
-     specified pc.  This system call is used by the trampoline code and
-     longjmp(3) when returning from a signal to the previously executing
-     program.
+       [4mint[0m
+       [1msigreturn[22m([4mstruct[24m [4msigcontext[24m [4m*scp[24m);
 
-NNOOTTEESS
-     This system call is not available in 4.2 BSD hence it should not be used
-     if backward compatibility is needed.
+[1mDESCRIPTION[0m
+       [1mSigreturn[22m()  allows  users to atomically unmask, switch stacks, and re‐
+       turn from a signal context.  The processes signal mask and stack status
+       are restored from the context.  The system call does  not  return;  the
+       users  stack  pointer,  frame  pointer, argument pointer, and processor
+       status longword are restored from the context.   Execution  resumes  at
+       the  specified pc.  This system call is used by the trampoline code and
+       [4mlongjmp[24m(3) when returning from a signal  to  the  previously  executing
+       program.
 
-RREETTUURRNN VVAALLUUEESS
-     If successful, the system call does not return.  Otherwise, a value of -1
-     is returned and _e_r_r_n_o is set to indicate the error.
+[1mNOTES[0m
+       This  system  call  is  not available in 4.2 BSD hence it should not be
+       used if backward compatibility is needed.
 
-EERRRROORRSS
-     SSiiggrreettuurrnn() will fail and the process context will remain unchanged if
-     one of the following occurs.
+[1mRETURN VALUES[0m
+       If successful, the system call does not return.  Otherwise, a value  of
+       ‐1 is returned and [4merrno[24m is set to indicate the error.
 
-     [EFAULT]  _S_c_p points to memory that is not a valid part of the process
-               address space.
+[1mERRORS[0m
+       [1mSigreturn[22m()  will fail and the process context will remain unchanged if
+       one of the following occurs.
 
-     [EINVAL]  The process status longword is invalid or would improperly
-               raise the privilege level of the process.
+       [EFAULT]  [4mScp[24m points to memory that is not a valid part of the  process
+                 address space.
 
-SSEEEE AALLSSOO
-     sigvec(2),  setjmp(3)
+       [EINVAL]  The  process  status  longword is invalid or would improperly
+                 raise the privilege level of the process.
 
-HHIISSTTOORRYY
-     The ssiiggrreettuurrnn function call appeared in 4.3BSD.
+[1mSEE ALSO[0m
+       [4msigvec[24m(2), [4msetjmp[24m(3)
 
-4.3 Berkeley Distribution       March 10, 1991                               1
+[1mHISTORY[0m
+       The [1msigreturn [22mfunction call appeared in 4.3BSD.
 
-
-
-
-
-
-
-
-
-
-
+4.3 Berkeley Distribution       March 10, 1991                    SIGRETURN(2)

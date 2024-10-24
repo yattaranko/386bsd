@@ -301,6 +301,7 @@ int ialloc(register struct inode* pip, ino_t ipref, int mode, struct ucred* cred
 	register struct inode *ip;
 	int cg, error;
 	
+printf("ialloc1");
 	*ipp = 0;
 	fs = pip->i_fs;
 	if (fs->fs_cstotal.cs_nifree == 0)
@@ -309,24 +310,29 @@ int ialloc(register struct inode* pip, ino_t ipref, int mode, struct ucred* cred
 		ipref = 0;
 	cg = itog(fs, ipref);
 	ino = (ino_t)hashalloc(pip, cg, (long)ipref, mode, ialloccg);
+printf("2");
 	if (ino == 0)
 		goto noinodes;
+printf("3");
 	error = iget(pip, ino, ipp);
 	if (error) {
 		ifree(pip, ino, mode);
 		return (error);
 	}
 	ip = *ipp;
+printf("4");
 	if (ip->i_mode) {
 		printf("mode = 0%o, inum = %d, fs = %s\n",
 		    ip->i_mode, ip->i_number, fs->fs_fsmnt);
 		panic("ialloc: dup alloc");
 	}
+printf("5");
 	if (ip->i_blocks) {				/* XXX */
 		printf("free inode %s/%d had %d blocks\n",
 		    fs->fs_fsmnt, ino, ip->i_blocks);
 		ip->i_blocks = 0;
 	}
+printf("6\n");
 	ip->i_flags = 0;
 	/*
 	 * Set up a new generation number for this inode.

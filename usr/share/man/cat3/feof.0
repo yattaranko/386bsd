@@ -1,66 +1,47 @@
-FERROR(3)                 386BSD Programmer's Manual                 FERROR(3)
+FERROR(3)                   Library Functions Manual                 FERROR(3)
 
-NNAAMMEE
-     cclleeaarreerrrr, ffeeooff, ffeerrrroorr, ffiilleennoo - check and reset stream status
+[1mNAME[0m
+       clearerr, feof, ferror, fileno — check and reset stream status
 
-SSYYNNOOPPSSIISS
-     ##iinncclluuddee <<ssttddiioo..hh>>
+[1mSYNOPSIS[0m
+       [1m#include <stdio.h>[0m
 
-     _v_o_i_d
-     cclleeaarreerrrr(_F_I_L_E *_s_t_r_e_a_m)
+       [4mvoid[0m
+       [1mclearerr[22m([4mFILE[24m [4m*stream[24m);
 
-     _i_n_t
-     ffeeooff(_F_I_L_E *_s_t_r_e_a_m)
+       [4mint[0m
+       [1mfeof[22m([4mFILE[24m [4m*stream[24m);
 
-     _i_n_t
-     ffeerrrroorr(_F_I_L_E *_s_t_r_e_a_m)
+       [4mint[0m
+       [1mferror[22m([4mFILE[24m [4m*stream[24m);
 
-     _i_n_t
-     ffiilleennoo(_F_I_L_E *_s_t_r_e_a_m)
+       [4mint[0m
+       [1mfileno[22m([4mFILE[24m [4m*stream[24m);
 
-DDEESSCCRRIIPPTTIIOONN
-     The function cclleeaarreerrrr() clears the end-of-file and error indicators for
-     the stream pointed to by _s_t_r_e_a_m.
+[1mDESCRIPTION[0m
+       The function [1mclearerr[22m() clears the end‐of‐file and error indicators for
+       the stream pointed to by [4mstream[24m.
 
-     The function ffeeooff() tests the end-of-file indicator for the stream
-     pointed to by _s_t_r_e_a_m, returning non-zero if it is set.  The end-of-file
-     indicator can only be cleared by the function cclleeaarreerrrr().
+       The  function  [1mfeof[22m()  tests  the  end‐of‐file indicator for the stream
+       pointed to by [4mstream[24m, returning non‐zero if it is set.  The end‐of‐file
+       indicator can only be cleared by the function [1mclearerr[22m().
 
-     The function ffeerrrroorr() tests the error indicator for the stream pointed to
-     by _s_t_r_e_a_m, returning non-zero if it is set.  The error indicator can only
-     be reset by the cclleeaarreerrrr() function.
+       The function [1mferror[22m() tests the error indicator for the stream  pointed
+       to by [4mstream[24m, returning non‐zero if it is set.  The error indicator can
+       only be reset by the [1mclearerr[22m() function.
 
-     The function ffiilleennoo() examines the argument _s_t_r_e_a_m and returns its
-     integer desciptor.
+       The  function [1mfileno[22m() examines the argument [4mstream[24m and returns its in‐
+       teger desciptor.
 
-EERRRROORRSS
-     These functions should not fail and do not set the external variable
-     _e_r_r_n_o.
+[1mERRORS[0m
+       These functions should not fail and do not set  the  external  variable
+       [4merrno[24m.
 
-SSEEEE AALLSSOO
-     open(2),  stdio(3)
+[1mSEE ALSO[0m
+       [4mopen[24m(2), [4mstdio[24m(3)
 
-SSTTAANNDDAARRDDSS
-     The functions cclleeaarreerrrr(), ffeeooff(), and ffeerrrroorr() conform to ANSI
-     C3.159-1989 (``ANSI C'').
+[1mSTANDARDS[0m
+       The   functions  [1mclearerr[22m(),  [1mfeof[22m(),  and  [1mferror[22m()  conform  to  ANSI
+       X3.159‐1989 (“ANSI C89”).
 
-BSD Experimental                 June 29, 1991                               1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FreeBSD 13.2                     June 29, 1991                       FERROR(3)
