@@ -10,7 +10,7 @@
  */
 
 #include "asm.h"
-#include "assym.s"
+#include "assym.S"
 
 ENTRY(addupc)
 	pushl %ebp

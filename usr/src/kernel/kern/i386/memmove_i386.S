@@ -7,7 +7,7 @@
  */
 
 #include "asm.h"
-#include "assym.s"
+#include "assym.S"
 
 ENTRY(memmove)
 	pushl	%esi

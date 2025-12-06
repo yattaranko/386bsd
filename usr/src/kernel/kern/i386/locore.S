@@ -52,7 +52,7 @@
  * primatives.
  */
 
-#include "assym.s"
+#include "assym.S"
 #include "sys/errno.h"
 
 #include "machine/psl.h"
