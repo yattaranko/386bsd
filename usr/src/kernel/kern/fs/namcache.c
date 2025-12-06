@@ -33,19 +33,19 @@
  * $Id: namcache.c,v 1.1 94/10/19 17:09:22 bill Exp Locker: bill $
  */
 
-#include "sys/param.h"
-#include "sys/time.h"
-#include "sys/mount.h"
-#include "sys/file.h"
-#include "sys/errno.h"
-#include "systm.h"
-#include "uio.h"
-#include "malloc.h"
+#include <sys/param.h>
+#include <sys/time.h>
+#include <sys/mount.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+#include <systm.h>
+#include <uio.h>
+#include <malloc.h>
 
-#include "vnode.h"
-#include "namei.h"
+#include <vnode.h>
+#include <namei.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 /*
  * Name caching works as follows:
@@ -193,7 +193,7 @@ cache_lookup(struct nameidata *ndp)
 /*
  * Add an entry to the cache
  */
-int
+void
 cache_enter(struct nameidata *ndp)
 {
 	register struct namecache *ncp;
@@ -269,7 +269,7 @@ nchinit(void)
  * Cache flush, a particular vnode; called when a vnode is renamed to
  * hide entries that would now be invalid
  */
-int
+void
 cache_purge(struct vnode *vp)
 {
 	union nchash *nhp;

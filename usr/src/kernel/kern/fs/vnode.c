@@ -35,28 +35,32 @@
  * Virtual filesystem vnode abstraction implementation.
  */
 
-#include "sys/param.h"
-#include "sys/mount.h"
-#include "sys/time.h"
-#include "sys/file.h"
-#include "sys/errno.h"
-#include "sys/kinfo.h"
+#include <sys/param.h>
+#include <sys/mount.h>
+#include <sys/time.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+#include <sys/kinfo.h>
 
-#include "proc.h"
-#include "uio.h"
-#include "specdev.h"
-#include "buf.h"
-#include "malloc.h"
-#include "modconfig.h"
+#include <proc.h>
+#include <uio.h>
+#include <specdev.h>
+#include <buf.h>
+#include <malloc.h>
+#include <modconfig.h>
 
-#include "vnode.h"
-/*#include "namei.h"*/
+#include <vnode.h>
+/*#include <namei.h>*/
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
 u_long nextvnodeid;
 
-/*static*/ void insmntque(struct vnode *vp, struct mount *mp);
+extern void spec_remove_(struct vnode *vp);
+extern void spec_remove_aliases(struct vnode *vp);
+extern void insmntque(struct vnode *vp, struct mount *mp);
+
 #if defined(DEBUG) || defined(DIAGNOSTIC)
 void vprint(char *label, struct vnode *vp);
 void printlockedvnodes(void);

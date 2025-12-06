@@ -33,24 +33,24 @@
  * $Id: lookup.c,v 1.1 94/10/19 17:09:21 bill Exp Locker: bill $
  */
 
-#include "sys/param.h"
-#include "sys/syslimits.h"
-#include "sys/time.h"
-#include "sys/mount.h"
-#include "sys/errno.h"
-#include "malloc.h"
-#include "uio.h"
-#include "filedesc.h"
-#include "proc.h"
+#include <sys/param.h>
+#include <sys/syslimits.h>
+#include <sys/time.h>
+#include <sys/mount.h>
+#include <sys/errno.h>
+#include <malloc.h>
+#include <uio.h>
+#include <filedesc.h>
+#include <proc.h>
 
-#include "namei.h"
-#include "vnode.h"
+#include <namei.h>
+#include <vnode.h>
 
 #ifdef KTRACE
-#include "sys/ktrace.h"
+#include <sys/ktrace.h>
 #endif
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 /*
  * Convert a pathname into a pointer to a locked inode.

@@ -33,26 +33,26 @@
  * $Id: specfs.c,v 1.1 94/10/19 17:09:23 bill Exp Locker: bill $
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/mount.h"
-#include "sys/stat.h"
-#include "sys/errno.h"
-#include "sys/ioctl.h"
-#include "uio.h"
-#include "proc.h"
-#include "systm.h"
-#include "malloc.h"
-#include "buf.h"
-#include "modconfig.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/mount.h>
+#include <sys/stat.h>
+#include <sys/errno.h>
+#include <sys/ioctl.h>
+#include <uio.h>
+#include <proc.h>
+#include <systm.h>
+#include <malloc.h>
+#include <buf.h>
+#include <modconfig.h>
 
-#include "vnode.h"
-#include "namei.h"
-#include "specdev.h"
-#include "dkbad.h"	/* XXX */
-#include "disklabel.h"
+#include <vnode.h>
+#include <namei.h>
+#include <specdev.h>
+#include <dkbad.h>	/* XXX */
+#include <disklabel.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 /* symbolic sleep message strings for devices */
 char	devopn[] = "devopn";
@@ -100,6 +100,8 @@ struct vnodeops spec_vnodeops = {
 };
 
 struct vnode *speclisth[SPECHSZ];
+
+extern void insmntque(struct vnode *, struct mount *);
 
 /* XXX -- belongs in spec_node, spec_vfsops, etc, when moves to ./specfs */
 /*
@@ -321,6 +323,7 @@ mountedon(struct vnode *vp)
 /*
  * Trivial lookup routine that always fails.
  */
+int
 spec_lookup(vp, ndp, p)
 	struct vnode *vp;
 	struct nameidata *ndp;
@@ -338,6 +341,7 @@ spec_lookup(vp, ndp, p)
  * Otherwise, call device driver open function.
  */
 /* ARGSUSED */
+int
 spec_open(vp, mode, cred, p)
 	register struct vnode *vp;
 	int mode;
@@ -385,6 +389,7 @@ spec_open(vp, mode, cred, p)
  * Vnode op for read
  */
 /* ARGSUSED */
+int
 spec_read(vp, uio, ioflag, cred)
 	register struct vnode *vp;
 	register struct uio *uio;
@@ -470,6 +475,7 @@ spec_read(vp, uio, ioflag, cred)
  * Vnode op for write
  */
 /* ARGSUSED */
+int
 spec_write(vp, uio, ioflag, cred)
 	register struct vnode *vp;
 	register struct uio *uio;
@@ -555,6 +561,7 @@ spec_write(vp, uio, ioflag, cred)
  * Device ioctl operation.
  */
 /* ARGSUSED */
+int
 spec_ioctl(vp, com, data, fflag, cred, p)
 	struct vnode *vp;
 	int com;
@@ -590,6 +597,7 @@ spec_ioctl(vp, com, data, fflag, cred, p)
 }
 
 /* ARGSUSED */
+int
 spec_select(vp, which, fflags, cred, p)
 	struct vnode *vp;
 	int which, fflags;
@@ -613,6 +621,7 @@ spec_select(vp, which, fflags, cred, p)
 /*
  * Just call the device strategy routine
  */
+int
 spec_strategy(bp)
 	register struct buf *bp;
 {
@@ -625,6 +634,7 @@ spec_strategy(bp)
 /*
  * This is a noop, simply returning what one has been given.
  */
+int
 spec_bmap(vp, bn, vpp, bnp)
 	struct vnode *vp;
 	daddr_t bn;
@@ -643,6 +653,7 @@ spec_bmap(vp, bn, vpp, bnp)
  * At the moment we do not do any locking.
  */
 /* ARGSUSED */
+int
 spec_lock(vp)
 	struct vnode *vp;
 {
@@ -651,6 +662,7 @@ spec_lock(vp)
 }
 
 /* ARGSUSED */
+int
 spec_unlock(vp)
 	struct vnode *vp;
 {
@@ -662,6 +674,7 @@ spec_unlock(vp)
  * Device close routine
  */
 /* ARGSUSED */
+int
 spec_close(vp, flag, cred, p)
 	register struct vnode *vp;
 	int flag;
@@ -724,6 +737,7 @@ spec_close(vp, flag, cred, p)
 /*
  * Print out the contents of a special device vnode.
  */
+int
 spec_print(vp)
 	struct vnode *vp;
 {
@@ -736,6 +750,7 @@ spec_print(vp)
  * Special device advisory byte-level locks.
  */
 /* ARGSUSED */
+int
 spec_advlock(vp, id, op, fl, flags)
 	struct vnode *vp;
 	caddr_t id;
@@ -750,6 +765,7 @@ spec_advlock(vp, id, op, fl, flags)
 /*
  * Special device failed operation
  */
+int
 spec_ebadf()
 {
 
@@ -759,6 +775,7 @@ spec_ebadf()
 /*
  * Special device bad operation
  */
+int
 spec_badop()
 {
 

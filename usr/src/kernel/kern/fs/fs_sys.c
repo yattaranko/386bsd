@@ -33,20 +33,26 @@
  * $Id: fs_sys.c,v 1.1 94/10/19 17:09:19 bill Exp Locker: bill $
  */
 
-#include "sys/param.h"
-#include "sys/stat.h"
-#include "sys/mount.h"
-#include "sys/errno.h"
-#include "filedesc.h"
-#include "proc.h"
-#include "privilege.h"
-#include "uio.h"
-#include "malloc.h"
+#include <sys/param.h>
+#include <sys/stat.h>
+#include <sys/mount.h>
+#include <sys/errno.h>
+#include <filedesc.h>
+#include <proc.h>
+#include <privilege.h>
+#include <uio.h>
+#include <malloc.h>
 
-#include "vnode.h"
-#include "namei.h"
+#include <vnode.h>
+#include <namei.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+
+static int dounmount(struct mount*, int, struct proc*);
+static int chdirec(struct nameidata* ndp, struct proc* p);
+
+extern int vn_writechk(struct vnode *);
+extern int vn_stat(struct vnode *, struct stat *, struct proc *);
 
 /*
  * File System System Calls
@@ -73,6 +79,7 @@ getvnode(struct filedesc *fdp, int fdes, struct file **fpp)
  * Mount system call.
  */
 /* ARGSUSED */
+int
 mount(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -228,6 +235,7 @@ update:
  * not special file (as before).
  */
 /* ARGSUSED */
+int
 unmount(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -268,6 +276,7 @@ unmount(p, uap, retval)
 /*
  * Do an unmount.
  */
+int
 dounmount(mp, flags, p)
 	register struct mount *mp;
 	int flags;
@@ -304,6 +313,7 @@ dounmount(mp, flags, p)
  * Sync each mounted filesystem.
  */
 /* ARGSUSED */
+int
 sync(p, uap, retval)
 	struct proc *p;
 	void *uap;
@@ -339,6 +349,7 @@ sync(p, uap, retval)
  * Operate on filesystem quotas.
  */
 /* ARGSUSED */
+int
 quotactl(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -369,6 +380,7 @@ quotactl(p, uap, retval)
  * Get filesystem statistics.
  */
 /* ARGSUSED */
+int
 statfs(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -402,6 +414,7 @@ statfs(p, uap, retval)
  * Get filesystem statistics.
  */
 /* ARGSUSED */
+int
 fstatfs(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -428,6 +441,7 @@ fstatfs(p, uap, retval)
 /*
  * Get statistics on all filesystems.
  */
+int
 getfsstat(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -479,6 +493,7 @@ getfsstat(p, uap, retval)
  * Change current working directory to a given file descriptor.
  */
 /* ARGSUSED */
+int
 fchdir(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -512,6 +527,7 @@ fchdir(p, uap, retval)
  * Change current working directory (``.'').
  */
 /* ARGSUSED */
+int
 chdir(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -539,6 +555,7 @@ chdir(p, uap, retval)
  * Change notion of root (``/'') directory.
  */
 /* ARGSUSED */
+int
 chroot(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -569,6 +586,7 @@ chroot(p, uap, retval)
 /*
  * Common routine for chroot and chdir.
  */
+int
 chdirec(ndp, p)
 	struct nameidata *ndp;
 	struct proc *p;
@@ -594,6 +612,7 @@ chdirec(ndp, p)
  * Check permissions, allocate an open file structure,
  * and call the device open routine if any.
  */
+int
 open(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -670,6 +689,7 @@ open(p, uap, retval)
 /*
  * Creat system call.
  */
+int
 ocreat(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -695,6 +715,7 @@ ocreat(p, uap, retval)
  * Mknod system call.
  */
 /* ARGSUSED */
+int
 mknod(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -761,6 +782,7 @@ out:
  * Mkfifo system call.
  */
 /* ARGSUSED */
+int
 mkfifo(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -803,6 +825,7 @@ mkfifo(p, uap, retval)
  * Link system call.
  */
 /* ARGSUSED */
+int
 link(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -862,6 +885,7 @@ out1:
  * Make a symbolic link.
  */
 /* ARGSUSED */
+int
 symlink(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -907,6 +931,7 @@ out:
  * Delete a name from the filesystem.
  */
 /* ARGSUSED */
+int
 unlink(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -956,6 +981,7 @@ out:
 /*
  * Seek system call.
  */
+int
 lseek(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1004,6 +1030,7 @@ lseek(p, uap, retval)
  * Check access permissions.
  */
 /* ARGSUSED */
+int
 saccess(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1055,6 +1082,7 @@ out1:
  * This version follows links.
  */
 /* ARGSUSED */
+int
 stat(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1087,6 +1115,7 @@ stat(p, uap, retval)
  * This version does not follow links.
  */
 /* ARGSUSED */
+int
 lstat(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1118,6 +1147,7 @@ lstat(p, uap, retval)
  * Return target name of a symbolic link.
  */
 /* ARGSUSED */
+int
 readlink(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1165,6 +1195,7 @@ out:
  * Change flags of a file given path name.
  */
 /* ARGSUSED */
+int
 chflags(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1202,6 +1233,7 @@ out:
  * Change flags of a file given a file descriptor.
  */
 /* ARGSUSED */
+int
 fchflags(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1235,6 +1267,7 @@ out:
  * Change mode of a file given path name.
  */
 /* ARGSUSED */
+int
 chmod(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1272,6 +1305,7 @@ out:
  * Change mode of a file given a file descriptor.
  */
 /* ARGSUSED */
+int
 fchmod(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1305,6 +1339,7 @@ out:
  * Set ownership given a path name.
  */
 /* ARGSUSED */
+int
 chown(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1344,6 +1379,7 @@ out:
  * Set ownership given a file descriptor.
  */
 /* ARGSUSED */
+int
 fchown(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1379,6 +1415,7 @@ out:
  * Set the access and modification times of a file.
  */
 /* ARGSUSED */
+int
 utimes(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1420,6 +1457,7 @@ out:
  * Truncate a file given its path name.
  */
 /* ARGSUSED */
+int
 truncate(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1460,6 +1498,7 @@ out:
  * Truncate a file given a file descriptor.
  */
 /* ARGSUSED */
+int
 ftruncate(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1497,6 +1536,7 @@ out:
  * Synch an open file.
  */
 /* ARGSUSED */
+int
 fsync(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -1524,6 +1564,7 @@ fsync(p, uap, retval)
  * not be directories.  If target is a directory, it must be empty.
  */
 /* ARGSUSED */
+int
 rename(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1610,6 +1651,7 @@ out1:
  * Mkdir system call.
  */
 /* ARGSUSED */
+int
 mkdir(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1653,6 +1695,7 @@ mkdir(p, uap, retval)
  * Rmdir system call.
  */
 /* ARGSUSED */
+int
 rmdir(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -1705,6 +1748,7 @@ out:
 /*
  * Read a block of directory entries in a file system independent format.
  */
+int
 getdirentries(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -1772,6 +1816,7 @@ umask(p, uap, retval)
  * away from vnode.
  */
 /* ARGSUSED */
+int
 revoke(p, uap, retval)
 	struct proc *p;
 	register struct args {

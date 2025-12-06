@@ -33,32 +33,33 @@
  * $Id: fs_fops.c,v 1.1 94/10/19 17:09:18 bill Exp Locker: bill $
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/stat.h"
-#include "sys/mount.h"
-#include "sys/ioctl.h"
-#include "sys/errno.h"
-#include "buf.h"
-#include "proc.h"
-#include "resourcevar.h"
-#include "tty.h"
-#include "uio.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/stat.h>
+#include <sys/mount.h>
+#include <sys/ioctl.h>
+#include <sys/errno.h>
+#include <buf.h>
+#include <proc.h>
+#include <resourcevar.h>
+#include <signalvar.h>
+#include <tty.h>
+#include <uio.h>
 
-#include "namei.h"
-#include "vnode.h"
+#include <namei.h>
+#include <vnode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
-int vn_writechk(struct vnode *vp);
+extern int vn_writechk(struct vnode *);
+extern int vn_stat(struct vnode *, struct stat *, struct proc *);
 
-static int
-	vn_read(struct file *fp, struct uio *uio, struct ucred *cred),
-	vn_write(struct file *fp, struct uio *uio, struct ucred *cred),
-	vn_ioctl(struct file *fp, int com, caddr_t data, struct proc *p),
-	vn_select(struct file *fp, int which, struct proc *p),
-	vn_closefile(struct file *fp, struct proc *p),
-	vn_statfile(struct file *fp, struct stat *s, struct proc *p);
+static int vn_read(struct file *, struct uio *, struct ucred *);
+static int vn_write(struct file *, struct uio *, struct ucred *);
+static int vn_ioctl(struct file *, int, caddr_t, struct proc *);
+static int vn_select(struct file *, int, struct proc *);
+static int vn_closefile(struct file *, struct proc *);
+static int vn_statfile(struct file *, struct stat *, struct proc *);
 
 struct 	fileops vnops =
 	{ vn_read, vn_write, vn_ioctl, vn_select, vn_closefile, vn_statfile };
@@ -177,7 +178,7 @@ vn_writechk(struct vnode *vp)
 /*
  * Vnode close call
  */
-vn_close(vp, flags, cred, p)
+int vn_close(vp, flags, cred, p)
 	register struct vnode *vp;
 	int flags;
 	struct ucred *cred;
@@ -196,7 +197,7 @@ vn_close(vp, flags, cred, p)
  * Package up an I/O request on a vnode into a uio and do it.
  * [internal interface to file i/o for kernel only]
  */
-vn_rdwr(rw, vp, base, len, offset, segflg, ioflg, cred, aresid, p)
+int vn_rdwr(rw, vp, base, len, offset, segflg, ioflg, cred, aresid, p)
 	enum uio_rw rw;
 	struct vnode *vp;
 	caddr_t base;

@@ -159,7 +159,7 @@ void nameiexec(struct nameidata *ndp, struct proc *p);
 __ISYM__(int, namei, (struct nameidata *ndp, struct proc *p))
 __ISYM__(int, lookup, (struct nameidata *ndp, struct proc *p))
 __ISYM__(int, cache_lookup, (struct nameidata *ndp))
-__ISYM__(int, cache_enter, (struct nameidata *ndp))
+__ISYM__(void, cache_enter, (struct nameidata *ndp))
 
 #undef __ISYM__
 #undef __ISYM_ALIAS__

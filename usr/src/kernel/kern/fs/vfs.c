@@ -35,29 +35,31 @@
  * Virtual filesystem interface routines and implementation.
  */
 
-#include "sys/param.h"
-#include "sys/mount.h"
-#include "sys/time.h"
-#include "sys/file.h"
-#include "sys/errno.h"
-#include "sys/kinfo.h"
+#include <sys/param.h>
+#include <sys/mount.h>
+#include <sys/time.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+#include <sys/kinfo.h>
 
-#include "proc.h"
-#include "uio.h"
-#include "specdev.h"
-#include "buf.h"
-#include "malloc.h"
-#include "modconfig.h"
+#include <proc.h>
+#include <uio.h>
+#include <specdev.h>
+#include <buf.h>
+#include <malloc.h>
+#include <modconfig.h>
 
-#include "vnode.h"
-#include "namei.h"
+#include <vnode.h>
+#include <namei.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 struct mount *rootfs;
 struct vfsops *vfs;
 
-/*static*/ void insmntque(struct vnode *vp, struct mount *mp);
+extern void nchinit(void);
+extern void spec_anonymous(struct vnode *);
+extern void insmntque(struct vnode *, struct mount *);
 
 /*
  * Remove a mount point from the list of mounted filesystems.

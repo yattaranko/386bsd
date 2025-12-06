@@ -51,24 +51,25 @@
  * Un*x styled block transfer buffer filesystem buffer cache.
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/mount.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "uio.h"
-#include "buf.h"
-#include "specdev.h"
-#include "malloc.h"
-#include "vm.h"
-#include "resourcevar.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/mount.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <uio.h>
+#include <buf.h>
+#include <specdev.h>
+#include <malloc.h>
+#include <vm.h>
+#include <resourcevar.h>
 #ifdef KTRACE
-#include "sys/ktrace.h"
+#include <sys/ktrace.h>
 #endif
 
-#include "vnode.h"
+#include <vnode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
 struct buf *getnewbuf(int);
 extern	vm_map_t buffer_map;

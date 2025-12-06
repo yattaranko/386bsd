@@ -33,17 +33,17 @@
  * $Id: deadfs.c,v 1.1 94/10/19 17:09:16 bill Exp Locker: bill $
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "uio.h"
-#include "buf.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <uio.h>
+#include <buf.h>
 
-#include "vnode.h"
-#include "namei.h"
+#include <vnode.h>
+#include <namei.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 /*
  * Prototypes for dead operations on vnodes.
@@ -229,7 +229,7 @@ struct vnodeops dead_vnodeops = {
  * Trivial lookup routine that always fails.
  */
 /* ARGSUSED */
-dead_lookup(vp, ndp, p)
+int dead_lookup(vp, ndp, p)
 	struct vnode *vp;
 	struct nameidata *ndp;
 	struct proc *p;
@@ -244,7 +244,7 @@ dead_lookup(vp, ndp, p)
  * Open always fails as if device did not exist.
  */
 /* ARGSUSED */
-dead_open(vp, mode, cred, p)
+int dead_open(vp, mode, cred, p)
 	struct vnode *vp;
 	int mode;
 	struct ucred *cred;
@@ -258,7 +258,7 @@ dead_open(vp, mode, cred, p)
  * Vnode op for read
  */
 /* ARGSUSED */
-dead_read(vp, uio, ioflag, cred)
+int dead_read(vp, uio, ioflag, cred)
 	struct vnode *vp;
 	struct uio *uio;
 	int ioflag;
@@ -279,7 +279,7 @@ dead_read(vp, uio, ioflag, cred)
  * Vnode op for write
  */
 /* ARGSUSED */
-dead_write(vp, uio, ioflag, cred)
+int dead_write(vp, uio, ioflag, cred)
 	register struct vnode *vp;
 	struct uio *uio;
 	int ioflag;
@@ -295,7 +295,7 @@ dead_write(vp, uio, ioflag, cred)
  * Device ioctl operation.
  */
 /* ARGSUSED */
-dead_ioctl(vp, com, data, fflag, cred, p)
+int dead_ioctl(vp, com, data, fflag, cred, p)
 	struct vnode *vp;
 	register int com;
 	caddr_t data;
@@ -310,7 +310,7 @@ dead_ioctl(vp, com, data, fflag, cred, p)
 }
 
 /* ARGSUSED */
-dead_select(vp, which, fflags, cred, p)
+int dead_select(vp, which, fflags, cred, p)
 	struct vnode *vp;
 	int which, fflags;
 	struct ucred *cred;
@@ -326,7 +326,7 @@ dead_select(vp, which, fflags, cred, p)
 /*
  * Just call the device strategy routine
  */
-dead_strategy(bp)
+int dead_strategy(bp)
 	register struct buf *bp;
 {
 
@@ -341,7 +341,7 @@ dead_strategy(bp)
 /*
  * Wait until the vnode has finished changing state.
  */
-dead_lock(vp)
+int dead_lock(vp)
 	struct vnode *vp;
 {
 
@@ -353,7 +353,7 @@ dead_lock(vp)
 /*
  * Wait until the vnode has finished changing state.
  */
-dead_bmap(vp, bn, vpp, bnp)
+int dead_bmap(vp, bn, vpp, bnp)
 	struct vnode *vp;
 	daddr_t bn;
 	struct vnode **vpp;
@@ -369,7 +369,7 @@ dead_bmap(vp, bn, vpp, bnp)
  * Print out the contents of a dead vnode.
  */
 /* ARGSUSED */
-dead_print(vp)
+int dead_print(vp)
 	struct vnode *vp;
 {
 
@@ -379,7 +379,7 @@ dead_print(vp)
 /*
  * Empty vnode failed operation
  */
-dead_ebadf()
+int dead_ebadf()
 {
 
 	return (EBADF);
@@ -388,7 +388,7 @@ dead_ebadf()
 /*
  * Empty vnode bad operation
  */
-dead_badop()
+int dead_badop()
 {
 
 	panic("dead_badop called");
@@ -398,7 +398,7 @@ dead_badop()
 /*
  * Empty vnode null operation
  */
-dead_nullop()
+int dead_nullop()
 {
 
 	return (0);
