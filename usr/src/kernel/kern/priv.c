@@ -51,12 +51,12 @@
  * 386BSD Process Privilege Mechanism.
  */
 
-#include "sys/param.h"
-#include "sys/syslog.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "privilege.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/syslog.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <privilege.h>
+#include <prototypes.h>
 
 /* attempt to use a credential with a privilege in a role and account for it */
 int

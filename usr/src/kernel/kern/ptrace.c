@@ -36,20 +36,22 @@
  */
 
 #define IPCREG
-#include "sys/param.h"
-#include "sys/user.h"
-#include "sys/file.h"
-#include "sys/ptrace.h"
-#include "sys/mman.h"
-#include "resourcevar.h"
-#include "vm.h"
-#include "vm_page.h"
+#include <sys/param.h>
+#include <sys/user.h>
+#include <sys/file.h>
+#include <sys/ptrace.h>
+#include <sys/mman.h>
+#include <resourcevar.h>
+#include <vm.h>
+#include <vm_page.h>
+#include <vm_fault.h>
 
-#include "machine/reg.h"
-#include "machine/psl.h"
-#include "machine/cpu.h"
+#include <machine/reg.h>
+#include <machine/psl.h>
+#include <machine/cpu.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
 /*
  * NOTES.
@@ -99,6 +101,7 @@ struct {
 /*
  * Process debugging system call.
  */
+int
 ptrace(curp, uap, retval)
 	struct proc *curp;
 	register struct args {
@@ -256,6 +259,7 @@ out:
 	return error;
 }
 
+int
 procxmt(p)
 	register struct proc *p;
 {
@@ -342,7 +346,7 @@ procxmt(p)
 				if (i == 10)
 					*uadr |= SEL_UPL;
 				if (i == 8)
-					(unsigned)*uadr %= VM_MAX_ADDRESS;
+					*uadr %= VM_MAX_ADDRESS;
 #endif
 				break;
 			};

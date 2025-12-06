@@ -33,14 +33,14 @@
  *	$Id: malloc.c,v 1.1 94/10/20 00:03:04 bill Exp $
  */
 
-#include "sys/param.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "malloc.h"
-#include "vm.h"
-#include "kmem.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <malloc.h>
+#include <vm.h>
+#include <kmem.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 struct kmembuckets bucket[MINBUCKET + 16];
 struct kmemstats kmemstats[M_LAST];

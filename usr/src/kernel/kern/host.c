@@ -33,14 +33,15 @@
  * $Id: host.c,v 1.1 94/10/20 00:02:55 bill Exp $
  */
 
-#include "sys/param.h"
-#include "privilege.h"
-#include "sys/errno.h"
-#include "kernel.h"	/* hostname .... */
-#include "proc.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <privilege.h>
+#include <sys/errno.h>
+#include <kernel.h>	/* hostname .... */
+#include <proc.h>
+#include <prototypes.h>
 
 /* BSD get host id */
+int
 gethostid(p, uap, retval)
 	struct proc *p;
 	void *uap;
@@ -52,6 +53,7 @@ gethostid(p, uap, retval)
 }
 
 /* BSD set host id */
+int
 sethostid(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -68,6 +70,7 @@ sethostid(p, uap, retval)
 }
 
 /* BSD get host name */
+int
 gethostname(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -84,6 +87,7 @@ gethostname(p, uap, retval)
 }
 
 /* BSD set host name */
+int
 sethostname(p, uap, retval)
 	struct proc *p;
 	register struct args {

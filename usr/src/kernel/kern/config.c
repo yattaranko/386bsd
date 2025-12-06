@@ -50,17 +50,17 @@
  * Software module configuration.
  */
 
-#include "sys/param.h"
-#include "sys/stat.h"
-#include "sys/ioctl.h"
-#include "buf.h"	/* devif_strategy ... */
-#include "tty.h"	/* ldiscif...() ... */
-#include "modconfig.h"
-#include "sys/errno.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <buf.h>	/* devif_strategy ... */
+#include <tty.h>	/* ldiscif...() ... */
+#include <modconfig.h>
+#include <sys/errno.h>
+#include <prototypes.h>
+#include <strings.h>
 
 
-int query(char *s, ...);
 extern char config_string[];
 
 static int console_minor;
@@ -68,6 +68,9 @@ extern struct devif pc_devif;
 struct devif *console_devif = &pc_devif;
 struct devif *default_console_devif = &pc_devif;
 static struct ldiscif *ldisc;
+
+extern int pg(const char*, ...);
+static int query(char *s, ...);
 
 /*
  * config script language primatives
@@ -264,7 +267,7 @@ static char arg[32];	/* currently configuring module */
 /* discover if module should configure itself */
 int
 config_scan(char *cfg, char **cfg_sp) {
-	extern end;
+	extern int end;
 	char *lp = (char *)&end /*config_string*/;
 	char strbuf[32];
 	int dummy, exclaim;
@@ -848,11 +851,11 @@ devif_config(char **cfg, struct devif *dif)
 	/* check sanity - all devices */
 	if (cmaj >= 0 || bmaj >= 0) {
 		if ((int)dif->di_open == 0)
-			(int *) dif->di_open = (int *)nullop;
+			dif->di_open = (int (*)(dev_t, int, int, struct proc *))nullop;
 		if ((int)dif->di_close == 0)
-			(int *) dif->di_close = (int *)nullop;
+			dif->di_close = (int (*)(dev_t, int, int, struct proc *))nullop;
 		if ((int)dif->di_ioctl == 0)
-			(int *) dif->di_ioctl = (int *)_ENODEV_;
+			dif->di_ioctl = (int (*)(dev_t, int, caddr_t, int, struct proc *))_ENODEV_;
 	}
 
 	/* check sanity - character devices */
@@ -866,9 +869,9 @@ devif_config(char **cfg, struct devif *dif)
 		if ((int)dif->di_select == 0)
 			dif->di_select = seltrue;
 		if (dif->di_write == 0)
-			(int *)dif->di_write = _ENODEV_;
+			dif->di_write = (int (*)(dev_t, struct uio *, int))_ENODEV_;
 		if (dif->di_read == 0)
-			(int *)dif->di_read = _ENODEV_;
+			dif->di_read = (int (*)(dev_t, struct uio *, int))_ENODEV_;
 	}
 
 	/* check sanity - block devices */
@@ -880,9 +883,9 @@ devif_config(char **cfg, struct devif *dif)
 			return (0);
 		}
 		if ((int)dif->di_dump == 0)
-			(int *) dif->di_dump = (int *)_ENODEV_;
+			dif->di_dump = (int (*)(dev_t))_ENODEV_;
 		if ((int)dif->di_psize == 0)
-			(int *) dif->di_psize = (int *)_ENODEV_;
+			dif->di_psize = (int (*)(dev_t))_ENODEV_;
 	}
 
 	return (1);
@@ -1066,21 +1069,21 @@ ldiscif_config(char **cfg, struct ldiscif *lif)
 			
 	/* check sanity */
 	if ((int)lif->li_open == 0)
-		(int *) lif->li_open = (int *)_ENODEV_;
+		lif->li_open = (int (*)(dev_t, struct tty *, int))_ENODEV_;
 	if ((int)lif->li_close == 0)
-		(int *) lif->li_close = (int *)_ENODEV_;
+		lif->li_close = (void (*)(struct tty *, int))_ENODEV_;
 	if ((int)lif->li_read == 0)
-		(int *) lif->li_read = (int *)_ENODEV_;
+		lif->li_read = (int (*)(struct tty *, struct uio *, int))_ENODEV_;
 	if ((int)lif->li_write == 0)
-		(int *) lif->li_write = (int *)_ENODEV_;
+		lif->li_write = (int (*)(struct tty *, struct uio *, int))_ENODEV_;
 	if ((int)lif->li_ioctl == 0)
-		(int *) lif->li_ioctl = (int *)_ENODEV_;
+		lif->li_ioctl = (int (*)(struct tty *, int, caddr_t, int, struct proc *))_ENODEV_;
 	if ((int)lif->li_rint == 0)
-		(int *) lif->li_rint = (int *)_ENODEV_;
+		lif->li_rint = (void (*)(unsigned int, struct tty *))_ENODEV_;
 	if ((int)lif->li_start == 0)
-		(int *) lif->li_start = (int *)_ENODEV_;
+		lif->li_start = (void (*)(struct tty *))_ENODEV_;
 	if ((int)lif->li_modem == 0)
-		(int *) lif->li_modem = (int *)_ENODEV_;
+		lif->li_modem = (int (*)(struct tty *, int))_ENODEV_;
 	/* if ((int)lif->li_qsize == 0)
 		(int *) lif->li_qsize = def_qsize; */
 

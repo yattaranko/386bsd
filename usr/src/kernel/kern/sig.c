@@ -34,39 +34,45 @@
  */
 
 #define	SIGPROP		/* include signal properties table */
-#include "sys/param.h"
-#include "sys/user.h"		/* for coredump */
-#include "sys/file.h"
-#include "sys/wait.h"
-#include "sys/mman.h"
-#include "resourcevar.h"
-#include "signalvar.h"
-#include "uio.h"
-#include "kernel.h"
+#include <sys/param.h>
+#include <sys/user.h>		/* for coredump */
+#include <sys/file.h>
+#include <sys/wait.h>
+#include <sys/mman.h>
+#include <resourcevar.h>
+#include <signalvar.h>
+#include <uio.h>
+#include <kernel.h>
 #ifdef	KTRACE
-#include "sys/ktrace.h"
+#include <sys/ktrace.h>
 #endif /* KTRACE */
 
-#include "sys/kinfo_proc.h"
+#include <sys/kinfo_proc.h>
 
-#include "machine/cpu.h"
+#include <machine/cpu.h>
 
-#include "namei.h"
-#include "vnode.h"
+#include <namei.h>
+#include <vnode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <string.h>
+#include <spl.h>
 
 /* forward declarations of private functions as well as inline functions */
 
-static void stop(struct proc *p, int swtchit, int sig);
-static void volatile sigexit(struct proc *p, int sig);
-static int killpg(struct proc *cp, int signo, int pgid, int all);
+extern int  procxmt(struct proc *);
+extern void ktrpsig(struct vnode *, int, sig_t, int, int);
+
+static void stop(struct proc *, int, int);
+static void volatile sigexit(struct proc *, int);
+static int killpg(struct proc *, int, int, int);
 
 /*
  * Can process p send the signal signo to process q?
  */
 extern inline
-int cansignal(struct proc *p, struct proc *q, int signo)
+int
+cansignal(struct proc *p, struct proc *q, int signo)
 {
 	struct pcred *pc = p->p_cred, *qc = q->p_cred;
 
@@ -681,7 +687,7 @@ issig(struct proc *p)
 		 */
 		switch ((int)p->p_sigacts->ps_sigact[sig]) {
 
-		case SIG_DFL:
+		case (int)SIG_DFL:
 			/*
 			 * Don't take default actions on system processes.
 			 */
@@ -712,7 +718,7 @@ issig(struct proc *p)
 				return (sig);
 			/*NOTREACHED*/
 
-		case SIG_IGN:
+		case (int)SIG_IGN:
 #ifdef DIAGNOSTIC
 			/*
 			 * Masking above should prevent us ever trying

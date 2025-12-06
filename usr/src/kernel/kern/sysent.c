@@ -2,8 +2,8 @@
  * System call switch table  XXX (holdover from 0.1).
  */
 
-#include "sys/param.h"
-#include "systm.h"
+#include <sys/param.h>
+#include <systm.h>
 
 int	nosys();
 int	nullop();

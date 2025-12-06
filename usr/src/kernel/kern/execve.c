@@ -52,37 +52,43 @@
  * 386BSD. It interfaces to the BSD kernel as the execve() system call.
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/mount.h"
-#include "sys/exec.h"
-#include "sys/stat.h"
-#include "sys/wait.h"
-#include "sys/mman.h"
-#include "sys/errno.h"
+#include <sys/param.h>
+// #include <sys/file.h>
+#include <sys/mount.h>
+#include <sys/exec.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <sys/mman.h>
+#include <sys/errno.h>
 
-#include "malloc.h"
-#include "systm.h"
-#include "proc.h"
-#include "resourcevar.h"
-#include "uio.h"
-#include "vm.h"
-#include "vmspace.h"
-#include "vm_pager.h"		/* XXX */
+#include <filedesc.h>
+#include <malloc.h>
+#include <systm.h>
+#include <proc.h>
+#include <resourcevar.h>
+#include <uio.h>
+#include <vm.h>
+#include <vmspace.h>
+#include <vm_pager.h>		/* XXX */
 
-#include "namei.h"
-#include "vnode.h"
+#include <namei.h>
+#include <vnode.h>
 
 #undef	KERNEL			/* XXX */
-#include "vnode_pager.h"	/* XXX */
+#include <vnode_pager.h>	/* XXX */
 #define	KERNEL
 
-#include "machine/reg.h"
-#include "machine/cpu.h"
+#include <signalvar.h>
+#include <machine/reg.h>
+#include <machine/cpu.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 #define	copyinoutstr	copyinstr
+
+extern int 	chk4space(int);
+extern int 	vmspace_mmap(struct vmspace*, vm_offset_t*, vm_size_t,
+							 vm_prot_t, int, caddr_t, vm_offset_t);
 
 /*
  * execve() system call.

@@ -51,24 +51,27 @@
  * Support for Un*x device driver physical I/O functionality.
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/mman.h"
-#include "sys/errno.h"
-#include "buf.h"
-#include "proc.h"
-#include "uio.h"
-#include "modconfig.h"
-#include "vm.h"
-#include "kmem.h"
-#include "vmspace.h"
-#include "vm_fault.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/mman.h>
+#include <sys/errno.h>
+#include <buf.h>
+#include <proc.h>
+#include <uio.h>
+#include <modconfig.h>
+#include <vm.h>
+#include <kmem.h>
+#include <vmspace.h>
+#include <vm_fault.h>
 
-#include "vnode.h"
-#include "specdev.h"
+#include <vnode.h>
+#include <specdev.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
+extern int uioapply(int (*func)(dev_t, int, int, caddr_t, int*, struct proc*),
+					int arg1, struct uio *uio);
 static int physio(dev_t, int, int, caddr_t, int *, struct proc *);
 
 /*

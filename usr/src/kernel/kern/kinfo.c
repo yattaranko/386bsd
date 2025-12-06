@@ -33,22 +33,22 @@
  * $Id: kinfo.c,v 1.1 94/10/20 00:02:57 bill Exp $
  */
 
-#include "sys/param.h"
-#include "sys/kinfo.h"
-#include "sys/ioctl.h"
-#include "sys/file.h"
-#include "sys/mman.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "resourcevar.h"
-#include "tty.h"
-#include "vm.h"
-#include "vmspace.h"
+#include <sys/param.h>
+#include <sys/kinfo.h>
+#include <sys/ioctl.h>
+#include <sys/file.h>
+#include <sys/mman.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <resourcevar.h>
+#include <tty.h>
+#include <vm.h>
+#include <vmspace.h>
 
-#include "sys/kinfo_proc.h"
+#include <sys/kinfo_proc.h>
 
-#include "modconfig.h"
-#include "prototypes.h"
+#include <modconfig.h>
+#include <prototypes.h>
 
 #define snderr(e) { error = (e); goto release;}
 static int
@@ -126,7 +126,7 @@ kinfo_doproc(int op, char *where, int *acopysize, int arg, int *aneeded)
 {
 	register struct proc *p;
 	register struct kinfo_proc *dp = (struct kinfo_proc *)where;
-	register needed = 0;
+	int needed = 0;
 	int buflen;
 	int doingzomb;
 	struct eproc eproc;

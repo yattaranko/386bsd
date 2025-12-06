@@ -35,22 +35,28 @@
 static char *kern_config =
 	"kernel maxusers 5 hz 100.";
 
-#include "sys/param.h"
-#include "sys/user.h"		/* ... for signals in kstack ... */
-#include "sys/mount.h"
-#include "sys/stat.h"
-#include "sys/reboot.h"
-#include "filedesc.h"
-#include "kernel.h"		/* for boot time and time */
-#include "resourcevar.h"
-#include "uio.h"
-#include "malloc.h"
-#include "modconfig.h"
+#include <sys/param.h>
+#include <sys/user.h>		/* ... for signals in kstack ... */
+#include <sys/mount.h>
+#include <sys/stat.h>
+#include <sys/reboot.h>
+#include <dmap.h>
+#include <machine/cpu.h>
+#include <filedesc.h>
+#include <kmem.h>
+#include <mbuf.h>
+#include <modconfig.h>
+#include <kernel.h>		/* for boot time and time */
+#include <resourcevar.h>
+#include <uio.h>
+#include <malloc.h>
 
-#include "vnode.h"
-/*#include "quota.h" ??? */
+#include <vm_pageout.h>
+#include <vnode.h>
+/*#include <quota.h> ??? */
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
 
 char	copyright1[] =
@@ -126,6 +132,19 @@ struct namelist kern_options[] =
 int fscale = FSCALE;		/* kernel uses `FSCALE', user uses `fscale' */
 int nmbclusters = NMBCLUSTERS;	/* number of mbuf clusters in free pool*/
 
+extern void     startrtclock(void);
+extern void     vm_pager_init(void);
+extern void     kmeminit(void);
+extern void     isa_configure(void);
+extern int		devif_root(unsigned int, unsigned int, unsigned int, dev_t *);
+extern void     ifinit(void);
+extern void     domaininit(void);
+extern void     enablertclock(void);
+extern caddr_t  load_module(const char*, int*, int*);
+extern void		smodscaninit(modtype_t, int*, int*);
+extern int		fork(struct proc *, void *, int []);
+
+
 /*
  * System startup; initialize the world, create process 0,
  * mount root filesystem, and fork to create init and pagedaemon.
@@ -133,7 +152,7 @@ int nmbclusters = NMBCLUSTERS;	/* number of mbuf clusters in free pool*/
  * routines including startup(), which does memory initialization
  * and autoconfiguration.
  */
-main()
+void main()
 {
 	int i;
 	struct proc *p;
@@ -369,23 +388,24 @@ isa_configure();
 	VOP_UNLOCK(rootdir);
 	fdp->fd_fd.fd_rdir = NULL;
 
-{ volatile int sstart, send;
-if (load_module("inet", &sstart, &send)) {
-printf("\n init ");
-smodscaninit(__MODT_ALL__, sstart, send);
-}
-if(load_module("ed", &sstart, &send)) {
-printf("\n init ");
-smodscaninit(__MODT_ALL__, sstart, send);
-}
-if(load_module("nfs", &sstart, &send)) {
-printf("\n init ");
-smodscaninit(__MODT_ALL__, sstart, send);
-}
-printf("after init\n");
-/*ifinit();*/
-/*domaininit();*/
-}
+	{
+		volatile int sstart, send;
+		if (load_module("inet", &sstart, &send)) {
+		printf("\n init ");
+		smodscaninit(__MODT_ALL__, &sstart, &send);
+		}
+		if(load_module("ed", &sstart, &send)) {
+		printf("\n init ");
+		smodscaninit(__MODT_ALL__, &sstart, &send);
+		}
+		if(load_module("nfs", &sstart, &send)) {
+		printf("\n init ");
+		smodscaninit(__MODT_ALL__, &sstart, &send);
+		}
+		printf("after init\n");
+		/*ifinit();*/
+		/*domaininit();*/
+	}
 	swapinit();	/* XXX */
 
 	/*

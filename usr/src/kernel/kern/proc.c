@@ -35,19 +35,21 @@
  * Process hierarchy and control.
  */
 
-#include "sys/param.h"
-#include "sys/wait.h"
-#include "sys/file.h"
-#include "sys/ioctl.h"
-#include "sys/errno.h"
-#include "tty.h"
-#include "proc.h"
-#include "malloc.h"
-#include "uio.h"
+#include <sys/param.h>
+#include <sys/wait.h>
+#include <sys/file.h>
+#include <sys/ioctl.h>
+#include <sys/errno.h>
+#include <tty.h>
+#include <proc.h>
+#include <malloc.h>
+#include <uio.h>
+#include <signalvar.h>
+#include <vnode.h>
 
-/*#include "quota.h"*/
+/*#include <quota.h>*/
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 struct proc *initproc, *pageproc, *zombproc, *allproc;
 int whichqs;
@@ -342,6 +344,7 @@ pgrpdump(void)
 #endif /* DEBUG */
 
 /* POSIX set session ID */
+int
 setsid(p, uap, retval)
 	register struct proc *p;
 	void *uap;
@@ -358,6 +361,7 @@ setsid(p, uap, retval)
 }
 
 /* POSIX insert a specified process into a specified process group */
+int
 setpgid(curp, uap, retval)
 	struct proc *curp;
 	struct args {
@@ -404,6 +408,7 @@ setpgid(curp, uap, retval)
 }
 
 /* Get process group ID; note that POSIX getpgrp takes no parameter */
+int
 getpgrp(p, uap, retval)
 	struct proc *p;
 	void *uap;
@@ -415,6 +420,7 @@ getpgrp(p, uap, retval)
 }
 
 /* POSIX get current processes process ID */
+int
 getpid(p, uap, retval)
 	struct proc *p;
 	void *uap;
@@ -426,6 +432,7 @@ getpid(p, uap, retval)
 }
 
 /* POSIX get parent processes process ID */
+int
 getppid(p, uap, retval)
 	struct proc *p;
 	void *uap;

@@ -51,19 +51,19 @@
  * Process profiling control.
  */
 
-#include "sys/param.h"
-#include "sys/user.h"
-#include "sys/file.h"
-#include "sys/mman.h"
-#include "resourcevar.h"
-#include "vm.h"
-#include "vmspace.h"
+#include <sys/param.h>
+#include <sys/user.h>
+#include <sys/file.h>
+#include <sys/mman.h>
+#include <resourcevar.h>
+#include <vm.h>
+#include <vmspace.h>
 
-#include "machine/reg.h"
-#include "machine/psl.h"
-#include "machine/cpu.h"
+#include <machine/reg.h>
+#include <machine/psl.h>
+#include <machine/cpu.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 /*
  * Request process profiling system call handler.

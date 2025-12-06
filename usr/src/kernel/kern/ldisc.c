@@ -34,36 +34,39 @@
  * $Id: ldisc.c,v 1.1 94/10/20 00:02:58 bill Exp $
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/ioctl.h"
-#include "sys/syslog.h"
-#include "sys/errno.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/ioctl.h>
+#include <sys/syslog.h>
+#include <sys/errno.h>
 
-#include "systm.h"	/* selwait */
-#include "proc.h"
-#include "privilege.h"
-#include "uio.h"
+#include <systm.h>	/* selwait */
+#include <proc.h>
+#include <privilege.h>
+#include <uio.h>
 #define TTYDEFCHARS
-#include "tty.h"
+#include <tty.h>
 #undef TTYDEFCHARS
-#include "dkstat.h"	/* tkn_... */
-#include "kernel.h"	/* lbolt */
-#include "vm.h"
-#include "vmspace.h"
-#include "modconfig.h"
+#include <dkstat.h>	/* tkn_... */
+#include <kernel.h>	/* lbolt */
+#include <signalvar.h>
+#include <vm.h>
+#include <vmspace.h>
+#include <modconfig.h>
 
-#include "vnode.h"
+#include <vnode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
 
-static int proc_compare (struct proc *p1, struct proc *p2);
-static int ttnread(struct tty *tp);
-static void ttyrubo(struct tty *tp, int cnt);
-static void ttyretype(struct tty *tp);
-void ttypend(struct tty *tp);
-static void ttyrub(int c, struct tty *tp);
+static int proc_compare (struct proc *, struct proc *);
+static int ttnread(struct tty *);
+static void ttyrubo(struct tty *, int);
+static void ttyretype(struct tty *);
+/* void ttypend(struct tty *tp); */
+static void ttyrub(int c, struct tty *);
+extern int ttcompat(struct tty *, int, caddr_t, int, struct proc *);
 
 /* symbolic sleep message strings */
 char ttyin[] = "ttyin";
@@ -709,8 +712,8 @@ ttspeedtab(int speed, register struct speedtab *table)
 int
 ttsetwater(struct tty *tp)
 {
-	register cps = tp->t_ospeed / 10;
-	register x;
+	int cps = tp->t_ospeed / 10;
+	int x;
 
 #define clamp(x, h, l) ((x)>h ? h : ((x)<l) ? l : (x))
 	tp->t_lowat = x = clamp(cps/2, TTMAXLOWAT, TTMINLOWAT);
@@ -862,7 +865,7 @@ proc_compare(register struct proc *p1, register struct proc *p2)
 int
 tputchar(int c, struct tty *tp)
 {
-	register s = spltty();
+	int s = spltty();
 
 	if ((tp->t_state & (TS_CARR_ON|TS_ISOPEN)) == (TS_CARR_ON|TS_ISOPEN)) {
 		if (c == '\n')

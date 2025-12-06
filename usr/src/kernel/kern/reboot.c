@@ -32,12 +32,15 @@
  *
  *	$Id: reboot.c,v 1.1 94/10/20 00:03:12 bill Exp $
  */
-#include "sys/param.h"
-#include "sys/reboot.h"
-#include "privilege.h"
-#include "buf.h"
-#include "proc.h"
-#include "machine/pcb.h"
+#include <sys/param.h>
+#include <sys/reboot.h>
+#include <privilege.h>
+#include <buf.h>
+#include <proc.h>
+#include <sys/mount.h>
+#include <machine/pcb.h>
+#include <machine/cpu.h>
+#include <spl.h>
 
 dev_t	dumpdev = BLK_NODEV;
 unsigned	dumpmag = 0x8fca0101;	/* magic number for savecore */
@@ -45,6 +48,11 @@ int		dumpsize = 0;		/* also for savecore */
 extern int	dumpsize;
 int	waittime = -1;
 struct pcb dumppcb;
+
+extern void	printf(const char *fmt, ...);
+extern int sync(struct proc *, void *, int *);
+extern int	pg(const char*, ...);
+extern void	dumpsys(void);
 
 /* BSD force system to boot */
 int
@@ -89,7 +97,7 @@ boot(int arghowto)
 		 */
 		if (panicstr == 0)
 			vnode_pager_umount(NULL);
-		sync((struct sigcontext *)0);
+		sync(/* (struct sigcontext *)0*/ NULL, NULL, NULL);
 
 		for (iter = 0; iter < 20; iter++) {
 			nbusy = 0;

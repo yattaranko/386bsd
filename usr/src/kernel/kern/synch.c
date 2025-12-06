@@ -34,21 +34,25 @@
  *	$Id: synch.c,v 1.1 94/10/20 00:03:15 bill Exp $
  */
 
-#include "sys/param.h"
-#include "sys/errno.h"
-#include "systm.h"	/* panicstr */
-#include "proc.h"
-#include "vm.h"
-#include "vmspace.h"
-#include "kernel.h"	/* hz, avenrunnable, lbolt */
-#include "signalvar.h"
-#include "resourcevar.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <systm.h>	/* panicstr */
+#include <proc.h>
+#include <vm.h>
+#include <vmspace.h>
+#include <kernel.h>	/* hz, avenrunnable, lbolt */
+#include <signalvar.h>
+#include <resourcevar.h>
+#include <vmmeter.h>
 
-#include "machine/cpu.h"
+#include <machine/cpu.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
 u_char	curpri;			/* usrpri of curproc */
+
+static void endtsleep(struct proc *);
 
 /* Force switch among equal priority processes every 100ms. */
 void
@@ -209,7 +213,7 @@ tsleep(caddr_t chan, int pri, char *wmesg, int timo)
 	int s;
 	int sig, catch = pri & PCATCH;
 	extern int cold;
-	static void endtsleep(struct proc *p);
+	/* static void endtsleep(struct proc *p); */
 
 	s = splhigh();
 	if (cold || panicstr) {

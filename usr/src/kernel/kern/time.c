@@ -33,16 +33,18 @@
  *	$Id: time.c,v 1.1 94/10/20 00:03:17 bill Exp $
  */
 
-#include "sys/param.h"
-#include "privilege.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "resourcevar.h"
-#include "kernel.h"	/* time, bootime, ... */
+#include <sys/param.h>
+#include <privilege.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <resourcevar.h>
+#include <kernel.h>	/* time, bootime, ... */
+#include <signalvar.h>
 
-#include "machine/cpu.h"
+#include <machine/cpu.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
 /* 
  * Time of day and interval timer support.
@@ -55,6 +57,7 @@
  */
 
 /* ARGSUSED */
+int
 gettimeofday(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -79,6 +82,7 @@ gettimeofday(p, uap, retval)
 }
 
 /* ARGSUSED */
+int
 settimeofday(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -116,6 +120,7 @@ long	timedelta;			/* unapplied time correction, us. */
 long	bigadj = 1000000;		/* use 10x skew above bigadj us. */
 
 /* ARGSUSED */
+int
 adjtime(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -180,6 +185,7 @@ adjtime(p, uap, retval)
  * absolute time the timer should go off.
  */
 /* ARGSUSED */
+int
 getitimer(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -215,6 +221,7 @@ getitimer(p, uap, retval)
 }
 
 /* ARGSUSED */
+int
 setitimer(p, uap, retval)
 	struct proc *p;
 	register struct args {

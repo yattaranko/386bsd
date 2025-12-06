@@ -33,20 +33,24 @@
  *	$Id: resource.c,v 1.1 94/10/20 00:03:13 bill Exp $
  */
 
-#include "sys/param.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "privilege.h"
-#include "resourcevar.h"
-#include "malloc.h"
-#include "vm.h"
-#include "vmspace.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <privilege.h>
+#include <resourcevar.h>
+#include <malloc.h>
+#include <vm.h>
+#include <vmspace.h>
+#include <prototypes.h>
+#include <spl.h>
+
+static int donice(struct proc* curp, struct proc* chgp, int n);
 
 /*
  * Resource controls and accounting.
  */
 
+int
 getpriority(curp, uap, retval)
 	struct proc *curp;
 	register struct args {
@@ -104,6 +108,7 @@ getpriority(curp, uap, retval)
 }
 
 /* ARGSUSED */
+int
 setpriority(curp, uap, retval)
 	struct proc *curp;
 	register struct args {
@@ -161,6 +166,7 @@ setpriority(curp, uap, retval)
 	return (0);
 }
 
+int
 donice(curp, chgp, n)
 	register struct proc *curp, *chgp;
 	register int n;
@@ -194,6 +200,7 @@ PRV_RLIMIT_OFILE,
 };
 
 /* ARGSUSED */
+int
 setrlimit(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -282,6 +289,7 @@ setrlimit(p, uap, retval)
 }
 
 /* ARGSUSED */
+int
 getrlimit(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -298,6 +306,7 @@ getrlimit(p, uap, retval)
 }
 
 /* ARGSUSED */
+int
 getrusage(p, uap, retval)
 	register struct proc *p;
 	register struct args {

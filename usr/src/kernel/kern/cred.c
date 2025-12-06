@@ -37,12 +37,12 @@
  * System calls related to process protection
  */
 
-#include "sys/param.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "privilege.h"
-#include "malloc.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <privilege.h>
+#include <malloc.h>
+#include <prototypes.h>
 
 /* if process credentials are to be modified, check if they need to unshare */
 struct pcred *

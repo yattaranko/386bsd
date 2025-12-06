@@ -33,19 +33,23 @@
  * $Id: fork.c,v 1.1 94/10/20 00:02:54 bill Exp $
  */
 
-#include "sys/param.h"
-#include "sys/user.h"	/* only for signals */
-#include "privilege.h"
-#include "uio.h"
-#include "filedesc.h"
-#include "resourcevar.h"
-#include "kernel.h"
-#include "malloc.h"
-#include "vnode.h"
+#include <sys/param.h>
+#include <sys/user.h>	/* only for signals */
+#include <privilege.h>
+#include <uio.h>
+#include <filedesc.h>
+#include <resourcevar.h>
+#include <kernel.h>
+#include <malloc.h>
+#include <vnode.h>
+#include <machine/cpu.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
+extern void ktrace_fork(struct proc *p1, struct proc *p2);
 
+int
 fork(p, uap, retval)
 	struct proc *p;
 	void *uap;
@@ -55,6 +59,7 @@ fork(p, uap, retval)
 	return (fork1(p, 0, retval));
 }
 
+int
 vfork(p, uap, retval)
 	struct proc *p;
 	void *uap;

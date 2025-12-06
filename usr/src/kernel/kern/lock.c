@@ -64,12 +64,12 @@
 
 /* Locking primitives implementation. */
 
-#include "sys/param.h"
-#include "vm_param.h"
-#include "lock.h"
-#include "proc.h"
+#include <sys/param.h>
+#include <vm_param.h>
+#include <lock.h>
+#include <proc.h>
 #define __NO_INLINES
-#include "prototypes.h"
+#include <prototypes.h>
 static char nothread;
 
 /*

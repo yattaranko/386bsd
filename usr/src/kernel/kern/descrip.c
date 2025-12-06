@@ -35,28 +35,32 @@
  * File instance and file descriptor management and system calls.
  */
 
-#include "sys/param.h"
-#include "sys/stat.h"
-#include "sys/ioctl.h"
-#include "sys/fcntl.h"
-#include "sys/syslog.h"
-#include "sys/errno.h"
-#include "filedesc.h"
-#include "kernel.h"	/* time */
-#include "malloc.h"
-#include "modconfig.h"
-#include "proc.h"
-/*#include "socketvar.h"*/
-#include "resourcevar.h"
-#include "uio.h"
+#include <sys/param.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <sys/fcntl.h>
+#include <sys/syslog.h>
+#include <sys/errno.h>
+#include <filedesc.h>
+#include <kernel.h>	/* time */
+#include <malloc.h>
+#include <modconfig.h>
+#include <proc.h>
+/*#include <socketvar.h>*/
+#include <resourcevar.h>
+#include <signalvar.h>
+#include <uio.h>
+#include <vm.h>
 #ifdef KTRACE
-#include "sys/ktrace.h"
+#include <sys/ktrace.h>
 #endif
 
 
-#include "vnode.h"
+#include <vnode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
+#include <strings.h>
 
 /*
  * Descriptor management.

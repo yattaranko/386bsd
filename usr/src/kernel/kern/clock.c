@@ -33,22 +33,24 @@
  * $Id: clock.c,v 1.1 94/10/20 00:02:45 bill Exp $
  */
 
-#include "sys/param.h"
-#include "sys/errno.h"	/* XXX prototypes.h only! */
+#include <sys/param.h>
+#include <sys/errno.h>	/* XXX prototypes.h only! */
 
-#include "systm.h"
-#include "dkstat.h"
-#include "callout.h"
-#include "kernel.h"
-#include "proc.h"
-#include "resourcevar.h"
+#include <systm.h>
+#include <dkstat.h>
+#include <callout.h>
+#include <kernel.h>
+#include <proc.h>
+#include <resourcevar.h>
+#include <signalvar.h>
 
-#include "machine/cpu.h"
+#include <machine/cpu.h>
 
 #ifdef GPROF
-#include "sys/gprof.h"
+#include <sys/gprof.h>
 #endif
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
 /*
  * Clock handling routines.
@@ -214,7 +216,7 @@ hardclock(clockframe frame)
 	if (timedelta == 0)
 		BUMPTIME(&time, tick)
 	else {
-		register delta;
+		int delta;
 
 		if (timedelta < 0) {
 			delta = tick - tickdelta;

@@ -33,18 +33,25 @@
  * $Id: exit.c,v 1.1 94/10/20 00:02:52 bill Exp $
  */
 
-#include "sys/param.h"
-#include "sys/wait.h"
-#include "sys/errno.h"
-#include "kernel.h"
-#include "proc.h"
-#include "malloc.h"
-#include "signalvar.h"
-#include "resourcevar.h"
+#include <sys/param.h>
+#include <sys/wait.h>
+#include <sys/errno.h>
+#include <kernel.h>
+#include <proc.h>
+#include <malloc.h>
+#include <signalvar.h>
+#include <resourcevar.h>
+#include <filedesc.h>
+#include <vm.h>
+#include <vmspace.h>
 
-#include "machine/cpu.h"
+#include <machine/cpu.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+
+extern void exitsessleader(struct proc *);
+extern void ktrace_exit(struct proc *);
+extern void ruadd(struct rusage *, struct rusage *);
 
 /*
  * POSIX exit() function system call handler. Force process to exit,
