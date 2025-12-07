@@ -34,19 +34,19 @@
  */
 
 
-#include "sys/param.h"
-#include "sys/uio.h"
-#include "sys/file.h"
-#include "sys/syslog.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "sys/ktrace.h"
-#include "malloc.h"
+#include <sys/param.h>
+#include <sys/uio.h>
+#include <sys/file.h>
+#include <sys/syslog.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <sys/ktrace.h>
+#include <malloc.h>
 
-#include "namei.h"
-#include "vnode.h"
+#include <namei.h>
+#include <vnode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 struct ktr_header *
 ktrgetheader(type)

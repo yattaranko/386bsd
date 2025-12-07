@@ -38,14 +38,15 @@
  */
 #ifdef COMPAT_43
 
-#include "sys/param.h"
-#include "sys/termios.h"
-#include "sys/errno.h"
-#include "sys/ioctl.h"
-#include "tty.h"
-#include "kernel.h"	/* lbolt */
-#include "proc.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/termios.h>
+#include <sys/errno.h>
+#include <sys/ioctl.h>
+#include <tty.h>
+#include <kernel.h>	/* lbolt */
+#include <proc.h>
+#include <prototypes.h>
+#include <signalvar.h>
 
 int ttydebug = 0;
 
@@ -112,7 +113,7 @@ ttcompat(register struct tty *tp, int com, caddr_t data, int flag, struct proc *
 	case TIOCGETP: {
 		register struct sgttyb *sg = (struct sgttyb *)data;
 		register u_char *cc = tp->t_cc;
-		register speed;
+		int speed;
 
 		speed = ttspeedtab(tp->t_ospeed, compatspeeds);
 		sg->sg_ospeed = (speed == -1) ? 15 : speed;
@@ -259,7 +260,7 @@ ttcompatgetflags(register struct tty *tp)
 	long lflag = tp->t_lflag;
 	long oflag = tp->t_oflag;
 	long cflag = tp->t_cflag;
-	register flags = 0;
+	int flags = 0;
 
 	if (iflag&IXOFF)
 		flags |= TANDEM;
@@ -309,7 +310,7 @@ if (ttydebug)
 static void
 ttcompatsetflags(struct tty *tp, struct termios *t)
 {
-	register flags = tp->t_flags;
+	int flags = tp->t_flags;
 	long iflag = t->c_iflag;
 	long oflag = t->c_oflag;
 	long lflag = t->c_lflag;
@@ -381,7 +382,7 @@ ttcompatsetflags(struct tty *tp, struct termios *t)
 static void
 ttcompatsetlflags(struct tty *tp, struct termios *t)
 {
-	register flags = tp->t_flags;
+	int flags = tp->t_flags;
 	long iflag = t->c_iflag;
 	long oflag = t->c_oflag;
 	long lflag = t->c_lflag;
