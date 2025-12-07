@@ -33,7 +33,7 @@
  *	$Id$
  */
 
-#include "sys/socket.h"
+#include <sys/socket.h>
 
 /*
  * Kernel structure per socket.
@@ -184,7 +184,7 @@ struct socket {
 #ifdef KERNEL
 u_long	sb_max;
 /* to catch callers missing new second argument to sonewconn: */
-#define	sonewconn(head, connstatus)	sonewconn1((head), (connstatus))
+#define	sonewconn(head, connstatus)	sonewconn1(head, connstatus)
 struct	socket *sonewconn1 __P((struct socket *head, int connstatus));
 
 /* strings for sleep message: */

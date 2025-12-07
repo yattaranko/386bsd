@@ -33,7 +33,7 @@
  *	$Id: socketvar.h,v 1.2 95/02/07 21:02:09 bill Exp Locker: bill $
  */
 
-#include "sys/socket.h"
+#include <sys/socket.h>
 
 /*
  * Kernel structure per socket.
@@ -249,7 +249,7 @@ void sorflush(struct socket *so);
 
 /* interface symbols */
 #define	__ISYM_VERSION__ "1"	/* XXX RCS major revision number of hdr file */
-#include "isym.h"		/* this header has interface symbols */
+#include <isym.h>		/* this header has interface symbols */
 
 __ISYM__(u_long, sb_max,)
 __ISYM__(int,  sbappendaddr, (struct sockbuf *sb, struct sockaddr *asa, struct mbuf *m0, struct mbuf *control))

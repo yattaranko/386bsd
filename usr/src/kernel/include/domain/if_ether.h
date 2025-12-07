@@ -135,7 +135,7 @@ extern inline void
 arpwhohas(struct arpcom *a, struct in_addr *i) {
 	void (*f)(struct arpcom *, struct in_addr *);
 
-	(const void *) f = esym_fetch(arpwhohas);
+	f = esym_fetch(arpwhohas);
 	if (f == 0)
 		return;
 	(*f)(a, i);
@@ -144,7 +144,7 @@ extern inline void
 arpinput(struct arpcom *a, struct mbuf *m) {
 	void (*f)(struct arpcom *, struct mbuf *);
 
-	(const void *) f = esym_fetch(arpinput);
+	f = esym_fetch(arpinput);
 	if (f == 0)
 		return;
 	(*f)(a, m);
@@ -153,7 +153,7 @@ extern inline int
 arpresolve(struct arpcom *a, struct mbuf *m, struct in_addr *d, u_char *c, int *u) {
 	int (*f)(struct arpcom *, struct mbuf *, struct in_addr *, u_char *, int *);
 
-	(const void *) f = esym_fetch(arpresolve);
+	f = esym_fetch(arpresolve);
 	if (f == 0)
 		return (0);
 	return ((*f)(a, m, d, c, u));

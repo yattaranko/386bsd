@@ -58,7 +58,7 @@
  * interfaces.  These routines live in the files if.c and route.c
  */
 #ifdef KERNEL
-#include "sys/time.h"
+#include <sys/time.h>
 #else
 #include <sys/time.h>
 #endif
@@ -176,6 +176,7 @@ struct ifnet {
 #define	IFQ_MAXLEN	50
 #define	IFNET_SLOWHZ	1		/* granularity is 1 second */
 
+struct rtentry;
 /*
  * The ifaddr structure contains information about one address
  * of an interface.  They are maintained by the different address families,
@@ -183,18 +184,19 @@ struct ifnet {
  * together so all addresses for an interface can be located.
  */
 struct ifaddr {
-	struct	sockaddr *ifa_addr;	/* address of interface */
+	struct	sockaddr *ifa_addr;		/* address of interface */
 	struct	sockaddr *ifa_dstaddr;	/* other end of p-to-p link */
 #define	ifa_broadaddr	ifa_dstaddr	/* broadcast address interface */
 	struct	sockaddr *ifa_netmask;	/* used to determine subnet */
-	struct	ifnet *ifa_ifp;		/* back-pointer to interface */
-	struct	ifaddr *ifa_next;	/* next address for interface */
-	int	(*ifa_rtrequest)();	/* check or clean routes (+ or -)'d */
-	struct 	rtentry *ifa_rt;	/* ??? for ROUTETOIF */
-	u_short	ifa_flags;		/* mostly rt_flags for cloning */
-	u_short	ifa_llinfolen;		/* extra to malloc for link info */
+	struct	ifnet *ifa_ifp;			/* back-pointer to interface */
+	struct	ifaddr *ifa_next;		/* next address for interface */
+	void	(*ifa_rtrequest)(int, struct rtentry *, struct sockaddr *);
+									/* check or clean routes (+ or -)'d */
+	struct 	rtentry *ifa_rt;		/* ??? for ROUTETOIF */
+	u_short	ifa_flags;				/* mostly rt_flags for cloning */
+	u_short	ifa_llinfolen;			/* extra to malloc for link info */
 };
-#define IFA_ROUTE	RTF_UP		/* route installed */
+#define IFA_ROUTE	RTF_UP			/* route installed */
 /*
  * Interface request structure used for socket
  * ioctl's.  All interface ioctl's must have parameter
@@ -243,7 +245,7 @@ struct	ifconf {
 #define	ifc_req	ifc_ifcu.ifcu_req	/* array of structures returned */
 };
 
-#include "if_arp.h"
+#include <if_arp.h>
 #ifdef KERNEL
 #ifdef nope
 extern struct	ifqueue rawintrq;		/* raw packet input queue */
@@ -254,7 +256,7 @@ struct	ifaddr *ifa_ifwithdstaddr();
 
 /* interface symbols */
 #define	__ISYM_VERSION__ "1"	/* XXX RCS major revision number of hdr file */
-#include "isym.h"		/* this header has interface symbols */
+#include <isym.h>		/* this header has interface symbols */
 
 /* global variables used in core kernel and other modules */
 __ISYM__(int, if_index,)	/* */
@@ -262,7 +264,7 @@ __ISYM__(struct	ifqueue, rawintrq,)		/* raw packet input queue */
 __ISYM__(struct	ifnet *, ifnet,)
 
 /* functions used in modules */
-__ISYM__(int, if_attach, (struct ifnet *))	/* XXX void */
+__ISYM__(void, if_attach, (struct ifnet *))	/* XXX void */
 __ISYM__(struct	ifaddr *, ifa_ifwithaddr, (struct sockaddr *))
 __ISYM__(struct	ifaddr *, ifa_ifwithnet, (struct sockaddr *))
 __ISYM__(struct	ifaddr *, ifa_ifwithdstaddr, (struct sockaddr *))
@@ -272,4 +274,4 @@ __ISYM__(int, ifioctl, (struct socket *so, int cmd, caddr_t data, struct proc *p
 #undef __ISYM_ALIAS__
 #undef __ISYM_VERSION__
 
-#endif KERNEL
+#endif /* KERNEL */

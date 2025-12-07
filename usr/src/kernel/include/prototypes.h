@@ -72,7 +72,7 @@ int	suiword (void *base, int word);
 int	scanc (unsigned size, u_char *cp, u_char *table, int mask);
 int	skpc (int mask, int size, char *cp);
 int	locc (int mask, char *cp, unsigned size);
-int	ffs (long value);
+// int	ffs (long value);
 
 #ifdef _CPU_H_
 void hardclock(clockframe frame);

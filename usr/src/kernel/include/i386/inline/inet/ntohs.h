@@ -6,6 +6,9 @@
  * Network to Host Short byte order conversion.
  */
 
+#ifndef	_NTOHS_H_
+#define	_NTOHS_H_
+
 __INLINE unsigned short
 ntohs(unsigned short wd)
 {	unsigned short rv;
@@ -13,3 +16,5 @@ ntohs(unsigned short wd)
 	asm ("xchgb %b1, %h0" : "=q" (rv) : "0" (wd));
 	return (rv);
 }
+
+#endif	/* _NTOHS_H_ */
