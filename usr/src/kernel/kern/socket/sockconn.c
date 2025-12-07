@@ -35,18 +35,21 @@
  * Connection-oriented socket primatives.
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "mbuf.h"
-#include "signalvar.h"
-#include "malloc.h"
-#include "socketvar.h"
-#include "protosw.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <mbuf.h>
+#include <signalvar.h>
+#include <malloc.h>
+#include <socketvar.h>
+#include <protosw.h>
+#include <prototypes.h>
 
-static void soqinsque(struct socket *head, struct socket *so, int q);
+static void soqinsque(struct socket *, struct socket *, int);
+
+extern int	soqremque(struct socket*, int);
+extern int	soreserve(struct socket*, u_long, u_long);
 
 /* indicate that socket is attempting an active connection */
 void

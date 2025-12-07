@@ -38,25 +38,29 @@
  * $Id: sockops.c,v 1.2 95/02/24 10:40:28 bill Exp Locker: bill $
  */
 
-#include "sys/param.h"
-#include "sys/stat.h"
-#include "sys/file.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "malloc.h"
-#include "signalvar.h"
-#include "mbuf.h"
-#include "domain.h"
-#include "kernel.h" /* hz/tick */
-#include "socketvar.h"
-#include "protosw.h"
-#include "resourcevar.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/stat.h>
+#include <sys/file.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <malloc.h>
+#include <signalvar.h>
+#include <mbuf.h>
+#include <domain.h>
+#include <kernel.h> /* hz/tick */
+#include <resourcevar.h>
+#include <prototypes.h>
+#include <spl.h>
+#include <domain/socketvar.h>
+#include <protosw.h>
 
 /* strings for sleep message: */
-static char	netcls[] = "netcls";
+char	netcls[] = "netcls";
 
+static int sodisconnect(struct socket*);
+
+extern int	soqremque(struct socket*, int);
 
 /* Create a socket */
 int

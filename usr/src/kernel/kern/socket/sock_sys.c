@@ -33,19 +33,21 @@
  * $Id: sock_sys.c,v 1.2 95/02/24 11:04:00 bill Exp Locker: bill $
  */
 
-#include "sys/param.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "filedesc.h"
-#include "proc.h"
-#include "malloc.h"
-#include "mbuf.h"
-#include "socketvar.h"
-#include "protosw.h"
+#include <sys/param.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <filedesc.h>
+#include <proc.h>
+#include <malloc.h>
+#include <mbuf.h>
+#include <signalvar.h>
+#include <socketvar.h>
+#include <protosw.h>
 #ifdef KTRACE
-#include "sys/ktrace.h"
+#include <sys/ktrace.h>
 #endif
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
 /*
  * System call interface to the socket abstraction.
@@ -54,7 +56,27 @@
 extern	struct fileops socketops;
 
 /* strings for sleep message: */
-static char	netcon[] = "netcon";
+/* static */ char	netcon[] = "netcon";
+
+extern int	socreate(int, struct socket **, int, int);
+extern int	getsock(struct filedesc *, int, struct file **);
+extern int	sockargs(struct mbuf **, caddr_t, int, int);
+extern int	sobind(struct socket *, struct mbuf *);
+extern int	solisten(struct socket *, int);
+extern int	soqremque(struct socket *, int);
+extern int	soaccept(struct socket *, struct mbuf *);
+extern int	soconnect(struct socket *, struct mbuf *);
+extern int	soconnect2(struct socket *, struct socket *);
+extern int	soclose(struct socket *);
+extern int	sosend(struct socket *, struct mbuf *, struct uio *, struct mbuf *, struct mbuf *, int);
+extern int	soreceive(struct socket *, struct mbuf **, struct uio *, struct mbuf **, struct mbuf **, int *);
+extern int	soshutdown(struct socket *, int);
+extern int	sosetopt(struct socket *, int, int, struct mbuf *);
+extern int	sogetopt(struct socket *, int, int, struct mbuf **);
+extern int	unp_connect2(struct socket *, struct socket *);
+
+static int	sendit(struct proc *, int, struct msghdr *, int, int *);
+static int	recvit(struct proc *, int, struct msghdr *, caddr_t, int *);
 
 /* create a socket */
 int
@@ -142,7 +164,7 @@ listen(p, uap, retval)
 }
 
 /* accept a new connection from a passive listen socket */
-
+int
 accept(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -659,6 +681,7 @@ out:
 }
 
 /* ARGSUSED */
+int
 shutdown(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -676,6 +699,7 @@ shutdown(p, uap, retval)
 }
 
 /* ARGSUSED */
+int
 setsockopt(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -711,6 +735,7 @@ setsockopt(p, uap, retval)
 }
 
 /* ARGSUSED */
+int
 getsockopt(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -749,6 +774,7 @@ getsockopt(p, uap, retval)
 }
 
 /* ARGSUSED */
+int
 pipe(p, uap, retval)
 	struct proc *p;
 	struct args *uap;
@@ -878,6 +904,7 @@ bad:
 	return (error);
 }
 
+int
 sockargs(mp, buf, buflen, type)
 	struct mbuf **mp;
 	caddr_t buf;

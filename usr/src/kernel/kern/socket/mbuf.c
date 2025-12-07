@@ -34,19 +34,21 @@
  *
  * $Id: mbuf.c,v 1.1 94/10/19 23:49:51 bill Exp Locker: bill $
  */
-#include "sys/param.h"
-#include "sys/syslog.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "malloc.h"
+#include <sys/param.h>
+#include <sys/syslog.h>
+#include <sys/errno.h>
+#include <sys/file.h>
+#include <proc.h>
+#include <malloc.h>
 #define MBTYPES
-#include "mbuf.h"
-#include "domain.h"
-#include "socketvar.h"	/* for protosw.h */
-#include "protosw.h"
-#include "vm.h"
-#include "kmem.h"
-#include "prototypes.h"
+#include <mbuf.h>
+#include <domain.h>
+#include <socketvar.h>	/* for protosw.h */
+#include <protosw.h>
+#include <vm.h>
+#include <kmem.h>
+#include <prototypes.h>
+#include <spl.h>
 
 extern	vm_map_t mb_map;
 struct	mbuf *mbutl;

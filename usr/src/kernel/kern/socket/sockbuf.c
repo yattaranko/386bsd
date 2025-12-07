@@ -38,24 +38,29 @@
  * the contents of the buffer by potentially multiple processes.
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/errno.h"
-#include "systm.h"	/* selwait */
-#include "proc.h"
-#include "signalvar.h"
-#include "buf.h"
-#include "malloc.h"
-#include "mbuf.h"
-#include "socketvar.h"
-#include "protosw.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+#include <systm.h>	/* selwait */
+#include <proc.h>
+#include <signalvar.h>
+#include <buf.h>
+#include <malloc.h>
+#include <mbuf.h>
+#include <socketvar.h>
+#include <protosw.h>
+#include <prototypes.h>
 
 /* strings for sleep message: */
-static char	netio[] = "netio";
+char	netio[] = "netio";
 
 u_long	sb_max = SB_MAX;	/* patchable administrative size limit */
 
+static void sbcompress(struct sockbuf *sb, struct mbuf *m, struct mbuf *p);
+
+extern void sbflush(struct sockbuf *sb);
+extern void sbdrop(struct sockbuf *sb, int len);
+extern void sbappendrecord(struct sockbuf *sb, struct mbuf *m0);
 
 /*
  * Commit storage to sockbuf to allow the desired largest logical

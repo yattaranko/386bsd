@@ -33,15 +33,18 @@
  * $Id: domain.c,v 1.1 94/10/19 23:49:50 bill Exp Locker: bill $
  */
 
-#include "sys/param.h"
-#include "sys/time.h"
-#include "sys/socket.h"
-#include "sys/errno.h"
-#include "protosw.h"
-#include "domain.h"
-#include "mbuf.h"
-#include "kernel.h"	/* hz */
-#include "netisr.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/time.h>
+#include <sys/socket.h>
+#include <sys/errno.h>
+#include <domain/mbuf.h>
+#include <socketvar.h>
+#include <protosw.h>
+#include <domain.h>
+#include <kernel.h>	/* hz */
+#include <netisr.h>
+#include <prototypes.h>
 
 struct domain *domains;		/* head of list of domains */
 
@@ -69,12 +72,14 @@ adddomain(struct domain *dp)
 }
 
 /* XXX catch bogus software interrupts */
+void
 defaultnetintr() {
 
 	printf("default net interrupt\n");
 }
 
-static void pffasttimo(void), pfslowtimo(void);
+static int pffasttimo(int);
+static int pfslowtimo(int);
 net_intr_t netintr[32];
 
 /* initialize domains */
@@ -87,8 +92,8 @@ domaininit(void)
 	for (i = 0; i < NBBY*sizeof(netisr); i++)
 		netintr[i] = (void (*)(void)) defaultnetintr;
 
-	pffasttimo();
-	pfslowtimo();
+	pffasttimo(0);
+	pfslowtimo(0);
 }
 
 /* locate a protocol in a family by type alone */
@@ -157,8 +162,8 @@ pfctlinput(int cmd, struct sockaddr *sa)
 }
 
 /* poke all protocols slow timeout functions */
-static void
-pfslowtimo(void)
+static int
+pfslowtimo(int arg)
 {
 	struct domain *dp;
 	struct protosw *pr;
@@ -170,11 +175,13 @@ pfslowtimo(void)
 				(*pr->pr_slowtimo)();
 
 	timeout(pfslowtimo, (caddr_t)0, hz/2);
+
+	return (0);
 }
 
 /* poke all protocols fast timeout functions */
-static void
-pffasttimo(void)
+static int
+pffasttimo(int arg)
 {
 	struct domain *dp;
 	struct protosw *pr;
@@ -186,4 +193,6 @@ pffasttimo(void)
 				(*pr->pr_fasttimo)();
 
 	timeout(pffasttimo, (caddr_t)0, hz/5);
+
+	return (0);
 }

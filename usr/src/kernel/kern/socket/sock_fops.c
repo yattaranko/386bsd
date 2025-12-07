@@ -35,33 +35,32 @@
  * $Id: sock_fops.c,v 1.1 94/10/19 23:49:52 bill Exp Locker: root $
  */
 
-#include "sys/param.h"
-#include "sys/ioctl.h"
-#include "sys/stat.h"
-#include "sys/file.h"
-#include "sys/errno.h"
-#include "mbuf.h"
-#include "socketvar.h"
-#include "protosw.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+#include <mbuf.h>
+#include <socketvar.h>
+#include <protosw.h>
+#include <prototypes.h>
+#include <spl.h>
 
-#include "if.h"
-#include "route.h"
+#include <if.h>
+#include <route.h>
 
+static int	soo_stat(struct file *fp, struct stat *ub, struct proc *);
 
-static int
-	soo_read(struct file *fp, struct uio *uio, struct ucred *cred),
-	soo_write(struct file *fp, struct uio *uio, struct ucred *cred),
-	soo_ioctl(struct file *fp, int com, caddr_t data, struct proc *p),
-	soo_select(struct file *fp, int which, struct proc *p),
-	soo_close(struct file *fp, struct proc *p),
-	soo_stat(struct file *fp, struct stat *ub, struct proc *);
+extern int	sosend(struct socket*, struct mbuf*, struct uio*, struct mbuf*, struct mbuf*, int);
+extern int	soreceive(struct socket*, struct mbuf**, struct uio*, struct mbuf**, struct mbuf**, int*);
+extern void	sbselqueue(struct sockbuf*, struct proc*);
+extern int	soclose(struct socket*);
 
 struct	fileops socketops =
     { soo_read, soo_write, soo_ioctl, soo_select, soo_close, soo_stat };
 
 /* perform a read() on a socket file descriptor */
-static int
+int
 soo_read(struct file *fp, struct uio *uio, struct ucred *cred)
 {
 
@@ -70,7 +69,7 @@ soo_read(struct file *fp, struct uio *uio, struct ucred *cred)
 }
 
 /* perform a write() on a socket file descriptor */
-static int
+int
 soo_write(struct file *fp, struct uio *uio, struct ucred *cred)
 {
 
@@ -79,7 +78,7 @@ soo_write(struct file *fp, struct uio *uio, struct ucred *cred)
 }
 
 /* perform a ioctl() on a socket file descriptor */
-static int
+int
 soo_ioctl(struct file *fp, int cmd, caddr_t data, struct proc *p)
 {
 	struct socket *so = (struct socket *)fp->f_data;
@@ -150,7 +149,7 @@ soo_ioctl(struct file *fp, int cmd, caddr_t data, struct proc *p)
 }
 
 /* examine socket of the file descriptor to see if it is select()ed */
-static int
+int
 soo_select(struct file *fp, int which, struct proc *p)
 {
 	struct socket *so = (struct socket *)fp->f_data;
@@ -204,7 +203,7 @@ soo_stat(struct file *fp, struct stat *ub, struct proc *p)
 }
 
 /* perform a close() on a socket file descriptor */
-static int
+int
 soo_close(struct file *fp, struct proc *p)
 {
 	int error = 0;
