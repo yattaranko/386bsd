@@ -65,20 +65,20 @@
  * Virtual address management layer.
  */
 
-#include "sys/param.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "sys/mman.h"
-#include "malloc.h"
-#include "vm.h"
-#include "vm_fault.h"
-#include "proc.h"
-#include "vmspace.h"
+#include <sys/param.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <sys/mman.h>
+#include <malloc.h>
+#include <vm.h>
+#include <vm_fault.h>
+#include <proc.h>
+#include <vmspace.h>
 #ifdef	KTRACE
-#include "sys/ktrace.h"
+#include <sys/ktrace.h>
 #endif
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 /* internal function prototypes */
 
@@ -100,6 +100,8 @@ static int vm_map_insert(vm_map_t map, vm_object_t object,
 	vm_offset_t offset, vm_offset_t start, vm_offset_t end);
 static boolean_t vm_map_lookup_entry(vm_map_t map, vm_offset_t address,
 	vm_map_entry_t *entry); */
+
+extern int 	chk4space(int);
 
 /*
  *  Map and entry structures are allocated from the general

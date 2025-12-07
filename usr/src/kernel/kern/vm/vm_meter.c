@@ -33,16 +33,16 @@
  *	$Id: vm_meter.c,v 1.1 94/10/19 17:37:26 bill Exp $
  */
 
-#include "sys/param.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "kernel.h"	/* time */
-#include "vmmeter.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <kernel.h>	/* time */
+#include <vmmeter.h>
 
-#include "vm.h"
-#include "vmspace.h"
+#include <vm.h>
+#include <vmspace.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 fixpt_t	averunnable[3];		/* load average, of runnable procs */
 

@@ -64,20 +64,24 @@
 
 /* Address space fault handler */
 
-#include "sys/param.h"
-#include "uio.h"
-#include "proc.h"
-#include "resourcevar.h"
-#include "vmmeter.h"
+#include <sys/param.h>
+#include <uio.h>
+#include <proc.h>
+#include <resourcevar.h>
+#include <vmmeter.h>
 #ifdef	KTRACE
-#include "sys/ktrace.h"
+#include <sys/ktrace.h>
 #endif
-#include "vm.h"
-#include "vmspace.h"
-#include "vm_pageout.h"
-#include "vm_fault.h"
+#include <vm.h>
+#include <vmspace.h>
+#include <vm_pageout.h>
+#include <vm_fault.h>
 #define	__NO_INLINES
-#include "prototypes.h"
+#include <prototypes.h>
+
+
+extern int 	chk4space(int);
+extern void vm_page_wait(char const *, int);
 
 /*
  * Evaluate a faulting reference at a given protection on an address space

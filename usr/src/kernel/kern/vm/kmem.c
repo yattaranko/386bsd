@@ -51,20 +51,22 @@
  * Kernel memory / address space management.
  */
 
-#include "sys/param.h"
-#include "proc.h"
-#include "vm.h"
-#include "vmspace.h"
-#include "kmem.h"
-#include "vm_pageout.h"
-#include "malloc.h"
-#include "buf.h"
-#include "modconfig.h"
+#include <sys/param.h>
+#include <proc.h>
+#include <vm.h>
+#include <vmspace.h>
+#include <kmem.h>
+#include <vm_pageout.h>
+#include <malloc.h>
+#include <buf.h>
+#include <modconfig.h>
 #define	__NO_INLINES
-#include "prototypes.h"
+#include <prototypes.h>
 
 static int kmem_needed;
 vm_map_t kernel_map, kmem_map, mb_map, pager_map, phys_map;
+
+extern void vm_page_wait(char const *, int);
 
 /*
  * Bootstrap the virtual memory system by constructing the

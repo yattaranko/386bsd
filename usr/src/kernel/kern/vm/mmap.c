@@ -42,23 +42,23 @@
  * Mapped file (mmap) interface to VM
  */
 
-#include "sys/param.h"
-#include "sys/mman.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "filedesc.h"
-#include "proc.h"
-#include "namei.h"	/* specdev.h */
-#include "specdev.h"
-#include "vm.h"
-#include "vmspace.h"
+#include <sys/param.h>
+#include <sys/mman.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <filedesc.h>
+#include <proc.h>
+#include <namei.h>	/* specdev.h */
+#include <specdev.h>
+#include <vm.h>
+#include <vmspace.h>
 #ifdef	KTRACE
-#include "sys/ktrace.h"
+#include <sys/ktrace.h>
 #endif
 
-#include "vnode.h"
+#include <vnode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 #ifdef DEBUG
 int mmapdebug = 0;
@@ -66,6 +66,8 @@ int mmapdebug = 0;
 #define MDB_SYNC	0x02
 #define MDB_MAPIT	0x04
 #endif
+
+extern int 	chk4space(int);
 
 void
 munmapfd(struct proc *p, int fd)

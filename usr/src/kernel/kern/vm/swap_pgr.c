@@ -38,30 +38,31 @@
  *	$Id: swap_pgr.c,v 1.1 94/10/19 17:37:24 bill Exp $
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "buf.h"
-#include "systm.h"	/* panicstr, swapvp */
-#include "namei.h"	/* specdev */
-#include "specdev.h"
-#include "malloc.h"
-#include "queue.h"
-#include "rlist.h"
-#include "vmmeter.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <buf.h>
+#include <systm.h>	/* panicstr, swapvp */
+#include <namei.h>	/* specdev */
+#include <specdev.h>
+#include <malloc.h>
+#include <queue.h>
+#include <rlist.h>
+#include <vmmeter.h>
 
-#include "vm.h"
-#include "vm_pageout.h"
-#include "swap_pager.h"
+#include <vm.h>
+#include <vm_pageout.h>
+#include <swap_pager.h>
 
-#include "vnode.h"
+#include <vnode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
 #define DEBUG
-#include "swap.h"
+#include <swap.h>
 
 #ifdef DEBUG
 int	swpagerdebug = 0x100;
@@ -79,6 +80,7 @@ int	swpagerdebug = 0x100;
 
 int swap_empty;				/* out of swap space */
 extern struct rlist *swapmap;
+extern struct vnode *swapdev_vp;
 
 queue_head_t	swap_pager_inuse;	/* list of pending page cleans */
 queue_head_t	swap_pager_free;	/* list of free pager clean structs */
@@ -89,7 +91,7 @@ static void swap_pager_iodone(struct buf *bp);
 static boolean_t swap_pager_finish(swp_clean_t spc);
 static boolean_t swap_pager_clean(vm_page_t m, int rw);
 
-extern struct vnode *swapdev_vp;
+extern int pg(const char*, ...);
 
 void
 swap_pager_init()
@@ -357,7 +359,7 @@ swap_pager_putpage(vm_pager_t pager, vm_page_t m, boolean_t sync)
 #endif
 	if (pager == NULL) {
 		(void) swap_pager_clean(NULL, B_WRITE);
-		return;
+		return EINVAL;
 	}
 	flags = B_WRITE;
 	if (!sync)
@@ -690,7 +692,7 @@ swap_pager_clean(vm_page_t m, int rw)
 #ifdef DEBUG
 	/* save panic time state */
 	if ((swpagerdebug & SDB_ANOMPANIC) && panicstr)
-		return;
+		return FALSE;
 	if (swpagerdebug & SDB_FOLLOW)
 		printf("swpg_clean(%x, %d)\n", m, rw);
 #endif

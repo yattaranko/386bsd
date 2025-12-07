@@ -64,15 +64,15 @@
 
 /* Physical memory page allocation via logical page abstraction.  */
 
-#include "sys/param.h"
-#include "sys/errno.h" 	/* for inlines */
-#include "proc.h"
+#include <sys/param.h>
+#include <sys/errno.h> 	/* for inlines */
+#include <proc.h>
 #ifdef	KTRACE_notyet
-#include "sys/ktrace.h"
+#include <sys/ktrace.h>
 #endif
-#include "vm.h"
-#include "vm_pageout.h"
-#include "prototypes.h"
+#include <vm.h>
+#include <vm_pageout.h>
+#include <prototypes.h>
 
 /*
  * Each unit of physical memory has a logical page (vm_page) entry.

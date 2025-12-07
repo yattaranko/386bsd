@@ -42,28 +42,29 @@
  * System calls of the virtual memory system.
  */
 
-#include "sys/param.h"
-#include "sys/mman.h"
-#include "privilege.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "systm.h"
-#include "filedesc.h"
-#include "proc.h"
-#include "namei.h"	/* specdev.h */
-#include "specdev.h"
-/*#include "conf.h"*/
+#include <sys/param.h>
+#include <sys/mman.h>
+#include <privilege.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <systm.h>
+#include <filedesc.h>
+#include <proc.h>
+#include <namei.h>	/* specdev.h */
+#include <specdev.h>
+/*#include <conf.h>*/
 #ifdef	KTRACE
-#include "sys/ktrace.h"
+#include <sys/ktrace.h>
 #endif
-#include "resourcevar.h"
-#include "vm.h"
-#include "vmspace.h"
+#include <resourcevar.h>
+#include <vm.h>
+#include <vmspace.h>
 
-#include "namei.h"
-#include "vnode.h"
+#include <namei.h>
+#include <vnode.h>
+#include <dmap.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 #ifdef DEBUG
 int mmapdebug = 0;
@@ -72,7 +73,12 @@ int mmapdebug = 0;
 #define MDB_MAPIT	0x04
 #endif
 
+extern int 	vmspace_mmap(struct vmspace *vs, vm_offset_t *addr,
+	vm_size_t size, vm_prot_t prot, int flags,
+	caddr_t handle, vm_offset_t foff);
+
 /* ARGSUSED */
+int
 getpagesize(p, uap, retval)
 	struct proc *p;
 	void *uap;
@@ -84,6 +90,7 @@ getpagesize(p, uap, retval)
 }
 
 /* ARGSUSED */
+int
 sstk(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -96,6 +103,7 @@ sstk(p, uap, retval)
 	return (EOPNOTSUPP);
 }
 
+int
 smmap(p, uap, retval)
 	struct proc *p;
 	register struct args {
@@ -209,6 +217,7 @@ smmap(p, uap, retval)
 	return(error);
 }
 
+int
 msync(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -279,6 +288,7 @@ msync(p, uap, retval)
 	return(0);
 }
 
+int
 munmap(p, uap, retval)
 	register struct proc *p;
 	register struct args {
@@ -309,6 +319,7 @@ munmap(p, uap, retval)
 	return(0);
 }
 
+int
 mprotect(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -354,6 +365,7 @@ mprotect(p, uap, retval)
 }
 
 /* ARGSUSED */
+int
 madvise(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -369,6 +381,7 @@ madvise(p, uap, retval)
 }
 
 /* ARGSUSED */
+int
 mincore(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -390,6 +403,7 @@ mincore(p, uap, retval)
  * if already swapping on this device.
  */
 /* ARGSUSED */
+int
 swapon(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -451,6 +465,7 @@ swapon(p, uap, retval)
 }
 
 /* ARGSUSED */
+int
 obreak(p, uap, retval)
 	struct proc *p;
 	struct args {
@@ -485,6 +500,7 @@ obreak(p, uap, retval)
 }
 
 /* ARGSUSED */
+int
 ovadvise(p, uap, retval)
 	struct proc *p;
 	struct args {

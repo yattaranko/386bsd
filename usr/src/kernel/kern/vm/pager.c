@@ -67,17 +67,17 @@
  *	for builtin pagers.
  */
 
-#include "sys/param.h"
-#include "sys/errno.h"
-#include "uio.h"
-#include "malloc.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <uio.h>
+#include <malloc.h>
 #ifdef	KTRACE
-#include "proc.h"
-#include "sys/ktrace.h"
+#include <proc.h>
+#include <sys/ktrace.h>
 #endif
-#include "vm.h"
-#include "kmem.h"
-#include "prototypes.h"
+#include <vm.h>
+#include <kmem.h>
+#include <prototypes.h>
 
 extern struct pagerops swappagerops;
 extern struct pagerops vnodepagerops;

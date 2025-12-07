@@ -38,26 +38,26 @@ static char *sw_config =
 	"swap	1 4 swapbuf 100 maxswap 100.	# multiple unit swap device (/dev/swap)";
 */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "sys/ioctl.h"
-#include "malloc.h"
-#include "buf.h"
-#include "systm.h"
-#include "proc.h"
-#include "dkbad.h"
-#include "disklabel.h"
-#include "dmap.h"		/* XXX */
-#include "modconfig.h"
-#include "namei.h"	/* specdev.h */
-#include "specdev.h"
-#include "rlist.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <sys/ioctl.h>
+#include <malloc.h>
+#include <buf.h>
+#include <systm.h>
+#include <proc.h>
+#include <dkbad.h>
+#include <disklabel.h>
+#include <dmap.h>		/* XXX */
+#include <modconfig.h>
+#include <namei.h>	/* specdev.h */
+#include <specdev.h>
+#include <rlist.h>
 
-#include "vnode.h"
+#include <vnode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 /*
  * Indirect driver for multi-controller paging.
@@ -191,7 +191,7 @@ swstrategy(register struct buf *bp)
 	if (bp->b_blkno + sz > nswap) {
 		bp->b_flags |= B_ERROR;
 		biodone(bp);
-		return;
+		return EINVAL;
 	}
 
 	/* if more than one device, find underlying block address */
@@ -221,7 +221,7 @@ printf("overlap");
 	if (sp->sw_vp == NULL) {
 		bp->b_error |= B_ERROR;
 		biodone(bp);
-		return;
+		return ENODEV;
 	}
 	if ((bp->b_dev = sp->sw_dev) == 0)
 		panic("swstrategy");
@@ -245,6 +245,8 @@ printf("overlap");
 		bp->b_vp = sp->sw_vp;
 		bp->b_dev = sp->sw_dev;
 	VOP_STRATEGY(bp);
+
+	return (0);
 }
 
 /*

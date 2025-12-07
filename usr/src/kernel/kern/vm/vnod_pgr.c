@@ -46,25 +46,27 @@
  *	fix credential use (uses current process credentials now)
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/mount.h"
-#include "uio.h"
-#include "sys/exec.h"	/* XXX */
-#include "sys/errno.h"
-#include "proc.h"
-#include "malloc.h"
-#include "vm.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/mount.h>
+#include <uio.h>
+#include <sys/exec.h>	/* XXX */
+#include <sys/errno.h>
+#include <proc.h>
+#include <malloc.h>
+#include <vm.h>
 #ifdef KTRACEx
-#include "sys/ktrace.h"
+#include <sys/ktrace.h>
 #endif
-#include "prototypes.h"
+#include <prototypes.h>
 
-#include "vnode.h"
-#include "vnode_pager.h"
+#include <vnode.h>
+#include <vnode_pager.h>
 
 queue_head_t	vnode_pager_list;	/* list of managed vnodes */
 static int vnode_pager_io(vn_pager_t vnp, vm_page_t m, enum uio_rw rw);
+
+extern int pg(const char*, ...);
 
 #ifdef DEBUG
 int	vpagerdebug = 0x00;
@@ -219,7 +221,7 @@ vnode_pager_putpage(vm_pager_t pager, vm_page_t m, boolean_t sync)
 		printf("vnode_pager_putpage(%x, %x)\n", pager, m);
 #endif
 	if (pager == NULL)
-		return;
+		return FALSE;
 	err = vnode_pager_io((vn_pager_t)pager->pg_data, m, UIO_WRITE);
 	if (err == VM_PAGER_OK) {
 		m->clean = TRUE;			/* XXX - wrong place */

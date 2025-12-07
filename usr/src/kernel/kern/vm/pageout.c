@@ -64,13 +64,15 @@
 
 /* Page replacement mechnism of the virtul memory subsystem. */
 
-#include "sys/param.h"
-#include "proc.h"
-#include "kernel.h"	/* hz */
-#include "resourcevar.h"
-#include "vmmeter.h"
-#include "vm.h"
-#include "vm_pageout.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <kernel.h>	/* hz */
+#include <resourcevar.h>
+#include <vmmeter.h>
+#include <vm.h>
+#include <vm_pageout.h>
+#include <machine/inline/kernel.h>
 
 int vm_pages_needed;		/* event on which pageout daemon sleeps */
 int vm_page_free_min_sanity = 40;

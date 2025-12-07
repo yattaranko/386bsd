@@ -64,12 +64,12 @@
 
 /* Resident contents of virtual address space via memory object abstraction. */
 
-#include "sys/param.h"
-#include "proc.h"
-#include "malloc.h"
-#include "vm.h"
+#include <sys/param.h>
+#include <proc.h>
+#include <malloc.h>
+#include <vm.h>
 #define __NO_INLINES
-#include "prototypes.h"
+#include <prototypes.h>
 
 /*
  * Virtual memory objects maintain the actual data associated with

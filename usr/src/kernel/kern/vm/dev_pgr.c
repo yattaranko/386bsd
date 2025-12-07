@@ -41,15 +41,16 @@
  * independent of the RAM memory pool.
  */
 
-#include "sys/param.h"
-#include "sys/mman.h"
-#include "sys/errno.h"
-#include "malloc.h"
-#include "vm.h"
-#include "kmem.h"
-#include "device_pager.h"
-#include "modconfig.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/mman.h>
+#include <sys/errno.h>
+#include <malloc.h>
+#include <proc.h>
+#include <vm.h>
+#include <kmem.h>
+#include <device_pager.h>
+#include <modconfig.h>
+#include <prototypes.h>
 
 queue_head_t	dev_pager_list;	/* list of managed devices */
 
