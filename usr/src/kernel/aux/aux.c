@@ -44,26 +44,28 @@
 static char *aux_config =
 	"aux 14	(0x310 12).	# mouse port";
 
-#include "sys/param.h"
-#include "proc.h"
-#include "sys/file.h"
-#include "uio.h"
-#include "vnode.h"
-#include "sys/ioctl.h"
-#include "sys/user.h"
-#include "tty.h"
-#include "isa_driver.h"
-#include "systm.h"
-#include "kernel.h"
-#include "modconfig.h"
-/*#include "i386/isa/icu.h"*/
-#include "isa_irq.h"
-/* #include "i386/isa/isa.h" */
-/* #include "i386/isa/ic/82c710.h" */
-#include "prototypes.h"
-#include "machine/inline/io.h"
+#include <sys/param.h>
+#include <proc.h>
+#include <sys/file.h>
+#include <uio.h>
+#include <vnode.h>
+#include <sys/ioctl.h>
+#include <sys/user.h>
+#include <tty.h>
+#include <isa_driver.h>
+#include <systm.h>
+#include <kernel.h>
+#include <modconfig.h>
+/*#include <i386/isa/icu.h>*/
+#include <isa_irq.h>
+/* #include <i386/isa/isa.h> */
+/* #include <i386/isa/ic/82c710.h> */
+#include <prototypes.h>
+#include <machine/inline/io.h>
 
-int auxprobe(), auxattach(), auxintr();
+int auxprobe(struct isa_device *);
+void auxattach(struct isa_device *);
+void auxintr(int);
 
 struct	isa_driver auxdriver = {
 	auxprobe, auxattach, auxintr, "aux", 0
@@ -72,36 +74,37 @@ struct	isa_driver auxdriver = {
 static struct ringb rcv;
 static int  auxopenf, auxflag, auxpid, auxpgid;
 
-extern auxopen(dev_t, int, int, struct proc *);
+extern int auxopen(dev_t, int, int, struct proc *);
 
+int
 auxprobe(dev)
-struct isa_device *dev;
+	struct isa_device *dev;
 {
 	unsigned c;
 	int again = 0;
-int i;
+	int i;
 
-/*outb(0x2fa,0x55);
-outb(0x3fa,0xaa);
-outb(0x3fa,0x36);
-outb(0x3fa,0xe4);
-outb(0x2fa,0x1b);
-outb(0x2fa,0x36);
-printf("\n[");
-for(i=0; i < 16; i++) {
-outb(0x390, i);
-printf("%x ", inb(0x391));
-}
-printf("]\n"); */
-/* outb(0x311, 0x88);
-DELAY(250);
-outb(0x311, 0x80);
-DELAY(2500);
-while((inb(0x311)&4)==0) ;
-outb(0x310, 0xf4);
-while((inb(0x311)&4)==0) ;
-outb(0x311, 0x95); */
-return(1);
+	/*outb(0x2fa,0x55);
+	outb(0x3fa,0xaa);
+	outb(0x3fa,0x36);
+	outb(0x3fa,0xe4);
+	outb(0x2fa,0x1b);
+	outb(0x2fa,0x36);
+	printf("\n[");
+	for(i=0; i < 16; i++) {
+	outb(0x390, i);
+	printf("%x ", inb(0x391));
+	}
+	printf("]\n"); */
+	/* outb(0x311, 0x88);
+	DELAY(250);
+	outb(0x311, 0x80);
+	DELAY(2500);
+	while((inb(0x311)&4)==0) ;
+	outb(0x310, 0xf4);
+	while((inb(0x311)&4)==0) ;
+	outb(0x311, 0x95); */
+	return(1);
 }
 
 #ifdef nope
@@ -117,55 +120,56 @@ return(1);
 	if((c = kbd_rd()) != KBR_RSTDONE)
 		printf("keyboard failed selftest (%x) \n", c);
 
-kbd_drain();
+	kbd_drain();
 
-/*printf("6");
+	/*printf("6");
 	kbd_cmd(K_DISKEY);
 	kbd_cmd(K_ENAKEY);*/
 
-/*DELAY(0x10000);
-kbd_drain();
+	/*DELAY(0x10000);
+	kbd_drain();
 	while(aux_cmd(0xff) != KBR_ACK)
 		printf("!");
 	if((c = kbd_rd()) != KBR_RSTDONE)
 		printf("aux failed selftest (%x) \n", c);
-kbd_drain();
-DELAY(0x10000);
-printf("9");
+	kbd_drain();
+	DELAY(0x10000);
+	printf("9");
 	while(aux_cmd(0xf4) != KBR_ACK);
-kbd_drain(); */
-/*DELAY(0x10000);
-printf("9");
+	kbd_drain(); */
+	/*DELAY(0x10000);
+	printf("9");
 	aux_cmd(0xf6);
-kbd_drain(); */
-printf("A");
+	kbd_drain(); */
+	printf("A");
 
 	/* enable interrupts and keyboard controller */
 	kbd_cmd_write_param(K_WRITE + K__CMDBYTE, ENABLE_CMDBYTE);
-kbd_drain();
-printf("B");
+	kbd_drain();
+	printf("B");
 
 	/* enable interrupts and keyboard controller */
 	/*kbd_cmd(K_DISKEY);
-kbd_drain();
+	kbd_drain();
 	kbd_cmd(K_DISAUX); */
-kbd_drain();
+	kbd_drain();
 	kbd_cmd_write_param(K_WRITE + K__CMDBYTE, 0x47);
-kbd_drain();
-printf("C");
+	kbd_drain();
+	printf("C");
 
-/*	kbd_cmd(K_ENAAUX);
-kbd_drain(); */
+	/*	kbd_cmd(K_ENAAUX);
+	kbd_drain(); */
 	kbd_cmd(K_ENAKEY);
-kbd_drain();
+	kbd_drain();
 	printf (" kbd %x ", kbd_cmd_read_param(K_READ + K__CMDBYTE));
-kbd_drain();
+	kbd_drain();
 	kbd_cmd(K_ENAAUX);
 	return 1;
 #endif
 
+void
 auxattach(dev)
-struct isa_device *dev;
+	struct isa_device *dev;
 {
 }
 
@@ -176,16 +180,16 @@ auxopen(dev_t dev, int flag, int mode, struct proc *p)
 
 	if(auxopenf) return(EBUSY);
 	initrb(&rcv);
-outb(0x311, 0x88);
-DELAY(250);
-outb(0x311, 0x80);
-DELAY(2500);
-while((inb(0x311)&4)==0) ;
-outb(0x310, 0xf4);
-while((inb(0x311)&4)==0) ;
-while((inb(0x311)&1)==0) ;
-(void)inb(0x310);
-outb(0x311, 0x95);
+	outb(0x311, 0x88);
+	DELAY(250);
+	outb(0x311, 0x80);
+	DELAY(2500);
+	while((inb(0x311)&4)==0) ;
+	outb(0x310, 0xf4);
+	while((inb(0x311)&4)==0) ;
+	while((inb(0x311)&1)==0) ;
+	(void)inb(0x310);
+	outb(0x311, 0x95);
 	auxflag=0;
 	auxopenf=1;
 	return (0);
@@ -249,6 +253,7 @@ auxwrite(dev_t dev, struct uio *uio, int flag)
 	return (0);
 }
 
+void
 auxintr(dev)
 	dev_t dev;
 {

@@ -39,21 +39,21 @@
 static char *ctty_config =
 	"devtty 1.	 # tty indirect device (/dev/tty) $Revision: 1.3 $";
 
-#include "sys/param.h"
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/ioctl.h"
-#include "sys/errno.h"
+#include <sys/param.h>
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/ioctl.h>
+#include <sys/errno.h>
 
-#include "systm.h"
-#include "tty.h"
-#include "uio.h"
-#include "proc.h"
-#include "modconfig.h"
+#include <systm.h>
+#include <tty.h>
+#include <uio.h>
+#include <proc.h>
+#include <modconfig.h>
 
-#include "vnode.h"
+#include <vnode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 #define cttyvp(p) ((p)->p_flag&SCTTY ? (p)->p_session->s_ttyvp : NULL)
 

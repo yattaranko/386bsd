@@ -45,37 +45,27 @@ static char *com_console_config =
  * COM driver, based on HP dca driver
  * uses National Semiconductor NS16450/NS16550AF UART
  */
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/ioctl.h"
-#include "sys/errno.h"
-#include "systm.h"
-#include "tty.h"
-#include "proc.h"
-#include "kernel.h"
-#include "uio.h"
-#include "sys/syslog.h"
-#include "modconfig.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/ioctl.h>
+#include <sys/errno.h>
+#include <systm.h>
+#include <tty.h>
+#include <proc.h>
+#include <kernel.h>
+#include <uio.h>
+#include <sys/syslog.h>
+#include <modconfig.h>
+#include <prototypes.h>
 
-#include "machine/inline/io.h"
-#include "isa_driver.h"
+#include <machine/inline/io.h>
+#include <isa_driver.h>
 #include "comreg.h"
-#include "machine/icu.h"
-#include "isa_irq.h"
-#include "ns16550.h"
+#include <machine/icu.h>
+#include <isa_irq.h>
+#include <ns16550.h>
+#include <spl.h>
 #define cominor(d)
-
-int comprobe(struct isa_device *dev);
-void comattach(struct isa_device *isdp);
-void comintr(int unit);
-int comstop(struct tty *tp, int flag);
-
-int 	comstart(), comparam();
-
-struct	isa_driver comdriver = {
-	comprobe, comattach, comintr, "com", &ttymask
-};
 
 int	comsoftCAR;
 int	com_active;
@@ -124,10 +114,27 @@ extern int kgdb_debug_init;
 
 #define	UNIT(x)		(minor(x)-1)
 
+extern int commctl(dev_t, int, int);
+extern int	ttyclose(struct tty*);
+
+static int	comprobe(struct isa_device *);
+static void	comattach(struct isa_device *);
+static void	comintr(int);
+static int	comstop(struct tty *, int);
+static int	comstart(struct tty *);
+static int	comparam(struct tty *, struct termios *);
+static void	comeint(int, int, int);
+static void	commint(int, int);
+
+struct	isa_driver comdriver = {
+	comprobe, comattach, comintr, "com", &ttymask
+};
+
+
 int
 comprobe(struct isa_device *dev)
 {
-	static lastunit = 1;
+	static int lastunit = 1;
 
 	if (dev->id_unit == '?')
 		dev->id_unit = lastunit;
@@ -253,9 +260,9 @@ comopen(dev_t dev, int flag, int mode, struct proc *p)
 int
 comclose(dev_t dev, int flag, int mode, struct proc *p)
 {
-	register struct tty *tp;
-	register com;
-	register int unit;
+	struct tty *tp;
+	int com;
+	int unit;
  
 	unit = UNIT(dev);
 	com = com_addr[unit];
@@ -307,9 +314,9 @@ comwrite(dev_t dev, struct uio *uio, int flag)
 void
 comintr(int unit)
 {
-	register com;
-	register u_char code;
-	register struct tty *tp;
+	int com;
+	u_char code;
+	struct tty *tp;
 
 	unit--;
 	com = com_addr[unit];
@@ -377,9 +384,10 @@ comintr(int unit)
 	}
 }
 
+void
 comeint(unit, stat, com)
-	register int unit, stat;
-	register com;
+	int unit, stat;
+	int com;
 {
 	register struct tty *tp;
 	register int c;
@@ -412,9 +420,10 @@ comeint(unit, stat, com)
 	/* (*linesw[tp->t_line].l_rint)(c, tp); */
 }
 
+void
 commint(unit, com)
-	register int unit;
-	register com;
+	int unit;
+	int com;
 {
 	register struct tty *tp;
 	register int stat;
@@ -444,10 +453,10 @@ commint(unit, com)
 int
 comioctl(dev_t dev, int cmd, caddr_t data, int flag, struct proc *p)
 {
-	register struct tty *tp;
-	register int unit = UNIT(dev);
-	register com;
-	register int error;
+	struct tty *tp;
+	int unit = UNIT(dev);
+	int com;
+	int error;
  
 	tp = &com_tty[unit];
 	error = ldiscif_ioctl(tp, cmd, data, flag, p);
@@ -499,12 +508,13 @@ comioctl(dev_t dev, int cmd, caddr_t data, int flag, struct proc *p)
 	return (0);
 }
 
+int
 comparam(tp, t)
-	register struct tty *tp;
-	register struct termios *t;
+	struct tty *tp;
+	struct termios *t;
 {
-	register com;
-	register int cfcr, cflag = t->c_cflag;
+	int com;
+	int cfcr, cflag = t->c_cflag;
 	int unit = UNIT(tp->t_dev);
 	int ospeed = ttspeedtab(t->c_ospeed, comspeedtab);
  
@@ -550,10 +560,10 @@ comparam(tp, t)
 	return(0);
 }
  
-comstart(tp)
-	register struct tty *tp;
+int comstart(tp)
+	struct tty *tp;
 {
-	register com;
+	int com;
 	int s, unit, c;
  
 	unit = UNIT(tp->t_dev);
@@ -584,6 +594,8 @@ comstart(tp)
 	}
 out:
 	splx(s);
+
+	return 0;
 }
  
 /*
@@ -608,12 +620,13 @@ comselect(dev_t dev, int rw, struct proc *p) {
 	return (ttselect(&com_tty[UNIT(dev)], rw, p));
 }
 
+int
 commctl(dev, bits, how)
 	dev_t dev;
 	int bits, how;
 {
-	register com;
-	register int unit;
+	int com;
+	int unit;
 	int s;
 
 	unit = UNIT(dev);
@@ -645,7 +658,7 @@ commctl(dev, bits, how)
  * Following are all routines needed for COM to act as console
  */
 #ifdef nope
-#include "cons.h"
+#include <cons.h>
 
 comcnprobe(cp)
 	struct consdev *cp;
@@ -693,12 +706,14 @@ cominit(unit, rate)
 	int unit, rate;
 {
 #else
+void
 cominit(dev, rate)
+	int dev;
 	int rate;
 {
 	int unit = UNIT(dev);
 #endif
-	register int com;
+	int com;
 	int s;
 	short stat;
 
@@ -721,7 +736,7 @@ cominit(dev, rate)
 static int
 comcngetc(dev_t dev)
 {
-	register com = com_addr[UNIT(dev)];
+	int com = com_addr[UNIT(dev)];
 	short stat;
 	int c, s;
 
@@ -743,8 +758,8 @@ comcngetc(dev_t dev)
 static void
 comcnputc(dev_t dev, unsigned c)
 {
-	register com = com_addr[UNIT(dev)];
-	register int timo;
+	int com = com_addr[UNIT(dev)];
+	int timo;
 	short stat;
 	int s = spltty();
 

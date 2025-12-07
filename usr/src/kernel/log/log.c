@@ -39,20 +39,20 @@
 static char *log_config =
 	"log 7.	 # kernel log device /dev/log $Revision: 1.4 $";
 
-#include "sys/param.h"
-#include "sys/errno.h"
-#include "sys/file.h"
-#include "sys/ioctl.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <sys/file.h>
+#include <sys/ioctl.h>
 
-#include "uio.h"
-#include "proc.h"
-#include "msgbuf.h"
-#include "signalvar.h"
-#include "modconfig.h"
+#include <uio.h>
+#include <proc.h>
+#include <msgbuf.h>
+#include <signalvar.h>
+#include <modconfig.h>
 
-#include "vnode.h"	/* IO_NDELAY */
+#include <vnode.h>	/* IO_NDELAY */
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 #define LOG_RDPRI	(PWAIT + 1)
 
@@ -161,6 +161,7 @@ logselect(dev_t dev, int rw, struct proc *p)
 	return (0);
 }
 
+void
 logwakeup()
 {
 	struct proc *p;

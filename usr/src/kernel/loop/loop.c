@@ -191,6 +191,7 @@ loioctl(struct ifnet *ifp, int cmd, caddr_t data)
 
 	default:
 		error = EINVAL;
+		break;
 	}
 	return (error);
 }

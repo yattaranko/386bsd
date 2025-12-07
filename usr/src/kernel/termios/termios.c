@@ -35,33 +35,37 @@
  */
 static char *tty_config = "termios 0. # POSIX/BSD line discipline $Revision: 1.1 $";
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/ioctl.h"
-#include "sys/syslog.h"
-#include "uio.h"
-#include "sys/errno.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/ioctl.h>
+#include <sys/syslog.h>
+#include <uio.h>
+#include <sys/errno.h>
 
-#include "proc.h"
-#include "tty.h"
-#include "kernel.h"	/* lbolt */
-#include "dkstat.h"	/* tkn_... */
-#include "vm.h"
-#include "vmspace.h"
-#include "modconfig.h"
+#include <proc.h>
+#include <tty.h>
+#include <kernel.h>	/* lbolt */
+#include <dkstat.h>	/* tkn_... */
+#include <vm.h>
+#include <vmspace.h>
+#include <modconfig.h>
+#include <signalvar.h>
 
-#include "vnode.h"
+#include <vnode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
-static void ttyrubo(struct tty *tp, int cnt);
-static void ttyretype(struct tty *tp);
-static void ttyrub(int c, struct tty *tp);
+extern void ttypend(struct tty *tp);
+
+static void ttyrubo(struct tty *, int);
+static void ttyretype(struct tty *);
+static void ttyrub(int, struct tty *);
 
 /* --- termios --- */
-static int ttyoutput(unsigned c, struct tty *tp);
-static void ttyecho(int c, struct tty *tp);
-static void ttyoutstr(char *cp, struct tty *tp);
+static int ttyoutput(unsigned int, struct tty *);
+static void ttyecho(int, struct tty *);
+static void ttyoutstr(char *, struct tty *);
 
 #define	PARITY(c)	(partab[c] & 0x80)
 #define	ISALPHA(c)	(partab[(c)&TTY_CHARMASK] & 0x40)
@@ -474,7 +478,7 @@ ttyoutstr(char *cp, struct tty *tp)
 static void
 ttyblock(register struct tty *tp)
 {
-	register x;
+	int x;
 	int rawcc, cancc;
 
 	rawcc = RB_LEN(&tp->t_raw);

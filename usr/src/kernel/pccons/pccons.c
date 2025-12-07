@@ -47,28 +47,32 @@ static char *pc_config =
 static char *pc_console_config =
 	"console default 0.";
 
-#include "sys/param.h"
-#include "sys/ioctl.h"
-#include "proc.h"
-#include "sys/file.h"
-#include "sys/user.h"
-#include "tty.h"
-#include "uio.h"
-#include "isa_driver.h"
-#include "callout.h"
-#include "systm.h"
-#include "kernel.h"
-#include "sys/syslog.h"
-#include "isa_irq.h"
-#include "isa_stdports.h"
-#include "modconfig.h"
-#include "machine/icu.h"
-#include "i8042.h"
-#include "isa_kbd.h"
-#include "isa_display.h"
+#include <sys/param.h>
+#include <sys/ioctl.h>
+#include <proc.h>
+#include <sys/file.h>
+#include <sys/user.h>
+#include <tty.h>
+#include <uio.h>
+#include <isa_driver.h>
+#include <callout.h>
+#include <systm.h>
+#include <kernel.h>
+#include <sys/syslog.h>
+#include <isa_irq.h>
+#include <isa_stdports.h>
+#include <modconfig.h>
+#include <machine/icu.h>
+#include <i8042.h>
+#include <isa_kbd.h>
+#include <isa_display.h>
+#include <machine/stdarg.h>
+#include <machine/cpu.h>
 
-#include "prototypes.h"
-#include "machine/inline/io.h"
+#include <prototypes.h>
+#include <string.h>
+#include <machine/inline/io.h>
+#include <spl.h>
 
 int pc_xmode;
 int _debug_mode_;
@@ -106,21 +110,13 @@ static struct video_state {
 	char	color;	/* color or mono display */
 } vs;
 
-int pcprobe(struct isa_device *dev);
-void pcattach(struct isa_device *dev);
-void pcrint(int dev);
-
-struct	isa_driver pcdriver = {
-	pcprobe, pcattach, pcrint, "pc", &ttymask
-};
-
 /* block cursor so wfj does not go blind on laptop hunting for
 	the verdamnt cursor -wfj */
 /* #define	FAT_CURSOR */
 
-#define	COL		80
-#define	ROW		25
-#define	CHR		2
+#define	COL			80
+#define	ROW			25
+#define	CHR			2
 #define MONO_BASE	0x3B4
 #define MONO_BUF	0xfe0B0000
 #define CGA_BASE	0x3D4
@@ -129,11 +125,11 @@ struct	isa_driver pcdriver = {
 
 static unsigned int addr_6845 = MONO_BASE;
 u_short *Crtat = (u_short *)MONO_BUF;
-static openf;
+static int	openf;
 
-char *sgetc(int);
-static	char	*more_chars;
-static	int	char_count;
+extern char	*sgetc(int);
+static char	*more_chars;
+static int	char_count;
 
 /*
  * We check the console periodically to make sure
@@ -144,11 +140,36 @@ static	int	char_count;
 #define	CN_TIMERVAL	(hz)		/* frequency at which to check cons */
 #define	CN_TIMO		(2*60)		/* intervals to allow for output char */
 
-int	pcstart();
-int	pcparam();
 char	partab[];
 
-extern pcopen(dev_t, int, int, struct proc *);
+extern void	kbd_drain();
+extern u_char kbd_rd();
+extern u_char kbd_cmd_read_param();
+extern void	kbd_cmd(unsigned int);
+extern u_char kbd_cmd_read_param(unsigned int);
+extern u_char aux_cmd(unsigned int);
+extern int	ttyclose(struct tty*);
+extern void	sysbeep(int, int);
+extern void	kbd_cmd_write_param(unsigned int, unsigned int);
+extern u_char key_cmd(unsigned int);
+extern u_char rtcin(u_char);
+extern void kprintf(const char *, int, struct tty *, va_list);
+
+static int	pcstart(struct tty *);
+static int	pcparam(struct tty *, struct termios *);
+static int	pcopen(dev_t, int, int, struct proc *);
+static int	pcprobe(struct isa_device *);
+static void	pcattach(struct isa_device *);
+static void	pcrint(int);
+static int	cursor(int);
+static void pc_xmode_off();
+static void pc_xmode_on();
+static void sput(u_char, u_char);
+
+struct	isa_driver pcdriver = {
+	pcprobe, pcattach, pcrint, "pc", &ttymask
+};
+
 /*
  * Wait for CP to accept last CP command sent
  * before setting up next command.
@@ -161,8 +182,6 @@ extern pcopen(dev_t, int, int, struct proc *);
 		while ((pclast->cp_unit&CPTAKE) == 0 && --(timo)); \
 	} \
 }
-
-unsigned kbd_rd(), kbd_cmd_read_param();
 
 /*
  * these are both bad jokes
@@ -358,8 +377,8 @@ printf("*");
 int
 pcioctl(dev_t dev, int cmd, caddr_t addr, int flag, struct proc *p)
 {
-	register struct tty *tp = &pccons;
-	register error;
+	struct tty *tp = &pccons;
+	int error;
  
 	if (cmd == CONSOLE_X_MODE_ON) {
 		pc_xmode_on ();
@@ -384,6 +403,7 @@ int	pcconsintr = 1;
  * Got a console transmission interrupt -
  * the console processor wants another character.
  */
+void
 pcxint(dev)
 	dev_t dev;
 {
@@ -401,8 +421,9 @@ pcxint(dev)
 		pcstart(&pccons);
 }
 
+int
 pcstart(tp)
-	register struct tty *tp;
+	struct tty *tp;
 {
 	int c, s;
 
@@ -434,7 +455,7 @@ out:
 	splx(s);
 }
 
-static __color;
+static int __color;
 
 /* ARGSUSED */
 void
@@ -448,9 +469,10 @@ pccnputc(dev_t dev, unsigned c)
 /*
  * Print a character on console.
  */
+void
 pcputchar(c, tp)
 	char c;
-	register struct tty *tp;
+	struct tty *tp;
 {
 	sput(c, 1);
 	/*if (c=='\n') getchar();*/
@@ -466,20 +488,20 @@ pccngetc(dev_t dev)
 
 	if (pc_xmode)
 		return(0);
-_debug_mode_ = 1;
+	_debug_mode_ = 1;
 	s = spltty();		/* block pcrint while we poll */
 	cp = sgetc(0);
 	splx(s);
-_debug_mode_ = 0;
-	if (cp == 0)
-{
-printf("+");
+	_debug_mode_ = 0;
+	if (cp == 0) {
+		printf("+");
 		return (0);
-}
+	}
 	if (*cp == '\r') return('\n');
 	return (*cp);
 }
 
+int
 pcgetchar(tp)
 	register struct tty *tp;
 {
@@ -494,9 +516,10 @@ pcgetchar(tp)
 /*
  * Set line parameters
  */
+int
 pcparam(tp, t)
-	register struct tty *tp;
-	register struct termios *t;
+	struct tty *tp;
+	struct termios *t;
 {
 	register int cflag = t->c_cflag;
         /* and copy to tty */
@@ -511,6 +534,7 @@ pcparam(tp, t)
 /*
  * Turn input polling on/off (used by debugger).
  */
+void
 pcpoll(onoff)
 	int onoff;
 {
@@ -528,6 +552,7 @@ pcpoll(onoff)
 
 static u_short *crtat = 0;
 
+int
 cursor(int a)
 { 	int pos = crtat - Crtat;
 
@@ -541,10 +566,12 @@ cursor(int a)
 	outb(addr_6845+1, 0);
 	outb(addr_6845, 11);
 	outb(addr_6845+1, 18);
-#endif	FAT_CURSOR
+#endif	/* FAT_CURSOR */
 	}
 	if (a == 0)
 		timeout(cursor, 0, hz/10);
+
+	return (0);
 }
 
 /*
@@ -587,6 +614,7 @@ static char bgansitopc[] =
  *   sput has support for emulation of the 'pc3' termcap entry.
  *   if ka, use kernel attributes.
  */
+void
 sput(c,  ka)
 u_char c;
 u_char ka;
@@ -1348,7 +1376,7 @@ static Scan_def	scan_codes[] =
 };
 
 
-
+void
 update_led()
 {
 /*printf("- %x ",	kbd_cmd_read_param(K_READOUTP));
@@ -1373,7 +1401,7 @@ printf("|");
  *    if no characters are present 0.
  */
 char *
-sgetc(noblock)
+sgetc(int noblock)
 {
 	u_char		dt, sts;
 	unsigned	key,op;
@@ -1547,24 +1575,29 @@ loop:
 		goto loop;
 }
 
-pg(p,q,r,s,t,u,v,w,x,y,z) char *p; {
+int
+pg(p,q,r,s,t,u,v,w,x,y,z)
+	char *p;
+	int q,r,s,t,u,v,w,x,y,z;
+{
 	printf(p,q,r,s,t,u,v,w,x,y,z);
 	printf("\n");
 	return(console_getchar());
 }
 
 /* special characters */
-#define bs	8
-#define lf	10	
-#define cr	13	
+#define bs		8
+#define lf		10	
+#define cr		13	
 #define cntlc	3	
-#define del	0177	
+#define del		0177	
 #define cntld	4
 
+int
 getchar()
 {
 	char	thechar;
-	register	delay;
+	int		delay;
 	int		x;
 
 	pcconsoftc.cs_flags |= CSF_POLLING;
@@ -1575,31 +1608,33 @@ getchar()
 		pcconsoftc.cs_flags &= ~CSF_POLLING;
 		splx(x);
 		switch (thechar) {
-		    default: if (thechar >= ' ')
+		    default:
+				if (thechar >= ' ')
 			     	sput(thechar, 1);
-			     return(thechar);
+			    return(thechar);
 		    case cr:
-		    case lf: sput('\r', 1);
-		    		sput('\n', 1);
-			     return(lf);
+		    case lf:
+				sput('\r', 1);
+		    	sput('\n', 1);
+			    return(lf);
 		    case bs:
 		    case del:
-			     sput('\b', 1);
-			     sput(' ', 1);
-			     sput('\b', 1);
-			     return(thechar);
+			    sput('\b', 1);
+			    sput(' ', 1);
+			    sput('\b', 1);
+			    return(thechar);
 		    case cntlc:
-			     sput('^', 1) ; sput('C', 1) ; sput('\r', 1) ; sput('\n', 1) ;
-			     cpu_reset();
+			    sput('^', 1) ; sput('C', 1) ; sput('\r', 1) ; sput('\n', 1) ;
+			    cpu_reset();
 		    case cntld:
-			     sput('^', 1) ; sput('D', 1) ; sput('\r', 1) ; sput('\n', 1) ;
-			     return(0);
+			    sput('^', 1) ; sput('D', 1) ; sput('\r', 1) ; sput('\n', 1) ;
+			    return(0);
 		}
 	/*}*/
 }
 
-#include "machine/stdarg.h"
-static nrow;
+#include <machine/stdarg.h>
+static int nrow;
 
 #define	DPAUSE 1
 void
@@ -1610,7 +1645,8 @@ dprintf(flgs, fmt /*, va_alist */)
         char *fmt;
 	unsigned flgs;
 #endif
-{	extern unsigned __debug;
+{
+	extern unsigned int __debug;
 	va_list ap;
 
 	if((flgs&__debug) > DPAUSE) {
@@ -1618,22 +1654,23 @@ dprintf(flgs, fmt /*, va_alist */)
 		va_start(ap,fmt);
 		kprintf(fmt, 1, (struct tty *)0, ap);
 		va_end(ap);
-	if (flgs&DPAUSE || nrow%24 == 23) { 
-		int x;
-		x = splhigh();
-		if (nrow%24 == 23) nrow = 0;
-		(void)sgetc(0);
-		splx(x);
-	}
+		if (flgs&DPAUSE || nrow%24 == 23) { 
+			int x;
+			x = splhigh();
+			if (nrow%24 == 23) nrow = 0;
+			(void)sgetc(0);
+			splx(x);
+		}
 	}
 	__color = 0;
 }
 
 
-#include "machine/psl.h"
-#include "machine/frame.h"
+#include <machine/psl.h>
+/* #include <machine/frame.h>  <- "machine/cpu.h" includes this header. */
 
-pc_xmode_on ()
+void
+pc_xmode_on()
 {
     struct syscframe *fp;
 
@@ -1645,7 +1682,8 @@ pc_xmode_on ()
     fp->sf_eflags |= PSL_IOPL;
 }
 
-pc_xmode_off ()
+void
+pc_xmode_off()
 {
     struct syscframe *fp;
 
@@ -1705,6 +1743,7 @@ CONSOLE_MODCONFIG() {
 /*
  *
  */
+void
 wpl(int x, int y) {
 	short *p = Crtat ;
 	int i, clr;

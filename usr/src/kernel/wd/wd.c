@@ -41,31 +41,32 @@ static char *wd_config =
 	"wd 0 3 1 (0x1f0 14).	# ide driver $Revision$ ";
 #define	NWD 2	/* XXX dynamic */
 
-#include "sys/param.h"
-#include "sys/errno.h"
-#include "sys/file.h"
-#include "sys/stat.h"
-#include "sys/ioctl.h"
-#include "sys/syslog.h"
-#include "dkbad.h"
-#include "disklabel.h"
-#include	"sys/uio.h"
-#include	"sys/time.h"
-#include	"sys/mount.h"
-#include	"vnode.h"
-#include "buf.h"
-#include "uio.h"
-#include "malloc.h"
-#include "machine/cpu.h"
-#include "isa_driver.h"
-#include "isa_irq.h"
-#include "machine/icu.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <sys/file.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <sys/syslog.h>
+#include <dkbad.h>
+#include <disklabel.h>
+#include <sys/uio.h>
+#include <sys/time.h>
+#include <sys/mount.h>
+#include <vnode.h>
+#include <buf.h>
+#include <uio.h>
+#include <malloc.h>
+#include <machine/cpu.h>
+#include <isa_driver.h>
+#include <isa_irq.h>
+#include <machine/icu.h>
 #include "wdreg.h"
 #include "atapi.h"
-#include "vm.h"
-#include "modconfig.h"
-#include "prototypes.h"
-#include "machine/inline/io.h"	/* inline io port functions */
+#include <vm.h>
+#include <modconfig.h>
+#include <prototypes.h>
+#include <machine/inline/io.h>	/* inline io port functions */
+#include <spl.h>
 
 #define	RETRIES		5	/* number of retries before giving up */
 #define	MAXTRANSFER	32	/* max size of transfer in page clusters */
@@ -155,6 +156,7 @@ static int wdcontrol(struct buf *);
 static int wdsetctlr(dev_t, struct disk *);
 static int wdgetctlr(int, struct disk *);
 
+extern char	*sgetc(int);
 
 /*
  * Probe for controller.
@@ -299,17 +301,18 @@ wdstrategy(register struct buf *bp)
 	}
 
 #ifdef SPECIALDEBUG
+	{
+		int blknum = bp->b_blkno; 
 
-{ int blknum = bp->b_blkno; 
-	lp = &du->dk_dd;
-	if ((du->dk_flags & DKFL_BSDLABEL) != 0 && wdpart(bp->b_dev) != WDRAW)
-		blknum += lp->d_partitions[wdpart(bp->b_dev)].p_offset;
-if(blknum > 65312 &&  blknum < 398944 && *(int *)(bp->b_un.b_addr) == 0
-	&& (bp->b_flags & B_READ) == 0 && bp->b_lblkno == 0) {
-printf("%s:\n", bp->b_vp->v_name);
-	Debugger();
-}
-}
+		lp = &du->dk_dd;
+		if ((du->dk_flags & DKFL_BSDLABEL) != 0 && wdpart(bp->b_dev) != WDRAW)
+			blknum += lp->d_partitions[wdpart(bp->b_dev)].p_offset;
+		if(blknum > 65312 &&  blknum < 398944 && *(int *)(bp->b_un.b_addr) == 0
+			&& (bp->b_flags & B_READ) == 0 && bp->b_lblkno == 0) {
+			printf("%s:\n", bp->b_vp->v_name);
+			Debugger();
+		}
+	}
 #endif
 q:
 	/* queue transfer on drive, activate drive and controller if idle */
@@ -321,11 +324,13 @@ q:
 	if (wdtab.b_active == 0)
 		wdstart();		/* start controller */
 	splx(s);
-	return;
+	return (0);
 
 done:
 	/* toss transfer, we're done early */
 	biodone(bp);
+
+	return bp->b_error;
 }
 
 /*
@@ -1436,7 +1441,7 @@ wddump(dev_t dev)			/* dump core after a system crash */
 		/* update block count */
 		num--;
 		blknum++ ;
-		(int) addr += 512;
+		addr += 512;
 
 		/* operator aborting dump? */
 		if (sgetc(1))
