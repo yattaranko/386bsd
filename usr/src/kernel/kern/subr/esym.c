@@ -54,7 +54,8 @@
  *  Symbols must be unbound before being rebound differently.
  */
 
-#include "esym.h"
+#include <esym.h>
+#include <strings.h>
 
 struct _esym_entry_ *_esym_elist_, *_esym_llist_;
 

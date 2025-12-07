@@ -33,13 +33,14 @@
  *	$Id: disklabel.c,v 1.1 94/10/19 18:33:17 bill Exp $
  */
 
-#include "sys/param.h"
-#include "sys/syslog.h"
-#include "sys/errno.h"
-#include "buf.h"
-#include "dkbad.h"
-#include "disklabel.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/syslog.h>
+#include <sys/errno.h>
+#include <buf.h>
+#include <dkbad.h>
+#include <disklabel.h>
+#include <prototypes.h>
+#include <string.h>
 
 /*
  * Seek sort for disks.  We depend on the driver
@@ -239,12 +240,13 @@ done:
  * Check new disk label for sensibility
  * before setting it.
  */
+int
 setdisklabel(olp, nlp, openmask, dp)
 	register struct disklabel *olp, *nlp;
 	u_long openmask;
 	struct dos_partition *dp;
 {
-	register i;
+	int i;
 	register struct partition *opp, *npp;
 
 	/* sanity clause */
@@ -294,6 +296,7 @@ setdisklabel(olp, nlp, openmask, dp)
 /*
  * Write disk label back to device after modification.
  */
+int
 writedisklabel(dev, strat, lp, dp)
 	dev_t dev;
 	int (*strat)();
@@ -383,6 +386,7 @@ done:
 /*
  * Compute checksum for disk label.
  */
+int
 dkcksum(lp)
 	register struct disklabel *lp;
 {

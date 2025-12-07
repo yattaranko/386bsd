@@ -33,24 +33,25 @@
  *	$Id: printf.c,v 1.1 94/10/19 18:33:25 bill Exp Locker: bill $
  */
 
-#include "sys/param.h"
-#include "sys/ioctl.h"
-#include "sys/file.h"
-#include "sys/syslog.h"
-#include "sys/reboot.h"
-#include "sys/errno.h"
+#include <sys/param.h>
+#include <sys/ioctl.h>
+#include <sys/file.h>
+#include <sys/syslog.h>
+#include <sys/reboot.h>
+#include <sys/errno.h>
 
-#include "tprintf.h"
-#include "msgbuf.h"
-#include "proc.h"
-#include "uio.h"
-#include "tty.h"
-#include "malloc.h"
+#include <tprintf.h>
+#include <msgbuf.h>
+#include <proc.h>
+#include <uio.h>
+#include <tty.h>
+#include <malloc.h>
 
-#include "vnode.h"
-#include "modconfig.h"
+#include <vnode.h>
+#include <modconfig.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
 /*
  * Note that stdarg.h and the ANSI style va_start macro is used for both
@@ -59,10 +60,8 @@
 #include <machine/stdarg.h>
 
 #ifdef KADB
-#include "machine/kdbparam.h"
+#include <machine/kdbparam.h>
 #endif
-void log(int level, const char *fmt, ...);
-void printf(const char *fmt, ...);
 
 #define TOCONS	0x01
 #define TOTTY	0x02
@@ -70,10 +69,14 @@ void printf(const char *fmt, ...);
 
 struct	tty *constty;			/* pointer to console "window" tty */
 
-static void  logpri(int level);
-static void  putchar(int ch, int flags, struct tty *tp);
-static char *ksprintn(u_long num, int base, int *len);
-void  kprintf(const char *fmt, int flags, struct tty *tp, va_list);
+static void  logpri(int);
+static void  putchar(int, int, struct tty *);
+static char *ksprintn(u_long, int, int *);
+extern void  kprintf(const char *, int, struct tty *, va_list);
+
+extern int	pg(const char*, ...);
+extern void log(int level, const char *fmt, ...);
+extern void logwakeup();
 
 /*
  * Variable panicstr contains argument to first call to panic; used
@@ -460,6 +463,7 @@ putchar(c, flags, tp)
 /*
  * Scaled down version of sprintf(3).
  */
+int
 sprintf(char *buf, const char *cfmt, ...)
 {
 	register const char *fmt = cfmt;
@@ -524,6 +528,8 @@ number:			for (p = ksprintn(ul, base, NULL); ch = *p--;)
 		}
 	}
 	va_end(ap);
+
+	return (0);
 }
 
 /*

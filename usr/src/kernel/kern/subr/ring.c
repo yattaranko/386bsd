@@ -47,10 +47,10 @@
  *
  *	$Id: ring.c,v 1.1 94/10/19 18:33:26 bill Exp $
  */
-#include "sys/param.h"
-#include "sys/errno.h"
-#include "ringbuf.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <ringbuf.h>
+#include <prototypes.h>
 
 /* add a character to a buffer */
 int

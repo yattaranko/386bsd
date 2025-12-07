@@ -10,14 +10,14 @@ KERN_SRCS+= \
 KERN_SRCS+= strcat.c strcpy.c strncpy.c strcmp.c # strlen.c
 # XXX should be conditional.
 MACH_SRCS_S+= \
-	memmove_${MACHINE}.s scanc_${MACHINE}.s skpc_${MACHINE}.s locc_${MACHINE}.s
+	memmove_${MACHINE}.S scanc_${MACHINE}.S skpc_${MACHINE}.S locc_${MACHINE}.S
 	
 # check for possible inline, C, or assembler machine-dependant versions first.
 
 .if exists(addupc_${MACHINE}.c)
 MACH_SRCS+= addupc_${MACHINE}.c
-.elif exists(addupc_${MACHINE}.s)
-MACH_SRCS_S+= addupc_${MACHINE}.s
+.elif exists(addupc_${MACHINE}.S)
+MACH_SRCS_S+= addupc_${MACHINE}.S
 .else
 KERN_SRCS+= addupc.c
 .endif
@@ -40,7 +40,7 @@ OBJS+=	${ERROR}
 
 ${ERROR}: $S/include/sys/errno.h
 	@echo creating ${.PREFIX}.o
-	@printf '#include "sys/errno.h"\n_${.PREFIX}_(){ return(${.PREFIX});}\n' \
+	@printf '#include "sys/errno.h"\nint _${.PREFIX}_(){ return(${.PREFIX});}\n' \
 	    > ${.PREFIX}.c
 	@$(CC) -c ${.PREFIX}.c
 	@rm ${.PREFIX}.c

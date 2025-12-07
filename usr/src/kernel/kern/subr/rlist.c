@@ -51,9 +51,11 @@
  * Resource lists.
  */
 
-#include "sys/param.h"
-#include "malloc.h"
-#include "rlist.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <malloc.h>
+#include <rlist.h>
+#include <prototypes.h>
 
 /*
  * Add space to a resource list. Used to either

@@ -51,11 +51,11 @@
  * Primatives for implementing I/O operations on user process segments.
  */
 
-#include "sys/param.h"
-#include "sys/errno.h"
-#include "uio.h"
-#include "proc.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <uio.h>
+#include <proc.h>
+#include <prototypes.h>
 
 /*
  * Apply a function to successive portions of the memory described by
@@ -90,7 +90,8 @@ uioapply(int (*func)(), int arg1, struct uio *uio)
 
 /* pass len bytes to a uio via a function*/
 int
-uiotofunc (int (*func)(...), char *cp, int len, struct uio *uio, int order)
+uiotofunc (void *(*func)(void *, const void *, size_t), char *cp, int len,
+		struct uio *uio, int order)
 {
 	struct iovec *iov;
 	int cnt, rv;
@@ -106,9 +107,9 @@ uiotofunc (int (*func)(...), char *cp, int len, struct uio *uio, int order)
 		cnt = imin (iov->iov_len, len);
 
 		if (order & 1)
-			rv = (*func)(iov->iov_base, cp, cnt);
+			rv = (int)(*func)(iov->iov_base, cp, cnt);
 		else
-			rv = (*func)(cp, iov->iov_base, cnt);
+			rv = (int)(*func)(cp, iov->iov_base, cnt);
 
 		if ((order & 2) != 0 && rv)
 			return(rv);
@@ -122,8 +123,8 @@ uiotofunc (int (*func)(...), char *cp, int len, struct uio *uio, int order)
 
 /* pass len bytes to a uio */
 int
-uiotofunc1 (int (*func)(...), int arg, char *cp, int len, struct uio *uio,
-	 int order)
+uiotofunc1 (int (*func)(struct proc *, void *, void *, u_int), struct	proc *p,
+	 char *cp, int len, struct uio *uio, int order)
 {
 	struct iovec *iov;
 	int cnt, rv;
@@ -139,9 +140,9 @@ uiotofunc1 (int (*func)(...), int arg, char *cp, int len, struct uio *uio,
 		cnt = imin (iov->iov_len, len);
 
 		if (order & 1)
-			rv = (*func)(arg, iov->iov_base, cp, cnt);
+			rv = (*func)(p, iov->iov_base, cp, cnt);
 		else
-			rv = (*func)(arg, cp, iov->iov_base, cnt);
+			rv = (*func)(p, cp, iov->iov_base, cnt);
 
 		if ((order & 2) != 0 && rv)
 			return(rv);
@@ -164,16 +165,16 @@ uiomove(caddr_t cp, int len, struct uio *uio)
 	/* user space */
 	if (uio->uio_segflg == UIO_USERSPACE) {
 		if (uio->uio_rw == UIO_READ)
-			rv = uiotofunc1((int(*)())copyout, (int)uio->uio_procp,
+			rv = uiotofunc1(copyout, uio->uio_procp,
 			    cp, len, uio, 0);
 		else
-			rv = uiotofunc1((int(*)())copyin, (int)uio->uio_procp,
+			rv = uiotofunc1(copyin, uio->uio_procp,
 			    cp, len, uio, 1);
 	}
 
 	/* kernel */
 	if (uio->uio_segflg == UIO_SYSSPACE)
-		(void)uiotofunc((int(*)())memcpy, cp, len, uio,
+		(void)uiotofunc(memcpy, cp, len, uio,
 		    (uio->uio_rw == UIO_READ));
 
 	/* (add new segment types here) */
