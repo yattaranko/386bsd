@@ -33,29 +33,33 @@
  * $Id: if.c,v 1.1 94/10/20 00:01:32 bill Exp $
  */
 
-#include "sys/param.h"
-/*#include "sys/file.h"*/
-#include "sys/ioctl.h"
-#include "sys/errno.h"
-#include "mbuf.h"
-#include "systm.h"
-#include "socketvar.h"
-#include "protosw.h"
-#include "proc.h"
-#include "privilege.h"
-#include "ucred.h"
-#include "kernel.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/ioctl.h>
+#include <sys/errno.h>
+#include <mbuf.h>
+#include <systm.h>
+#include <socketvar.h>
+#include <protosw.h>
+#include <proc.h>
+#include <privilege.h>
+#include <ucred.h>
+#include <kernel.h>
+#include <prototypes.h>
+#include <spl.h>
 
-#include "if.h"
-#include "af.h"
-#include "if_dl.h"
-#include "if_types.h"
+#include <if.h>
+#include <af.h>
+#include <if_dl.h>
+#include <if_types.h>
 
-/*#include "ether.h"*/
+/*#include <ether.h>*/
 
 int	ifqmaxlen = IFQ_MAXLEN;
 struct	ifnet *ifnet;	/* head of list of interfaces */
+
+static int ifconf(int, caddr_t);
+static int if_slowtimo(/* int */);
 
 /*
  * Network interface utility routines.
@@ -64,6 +68,7 @@ struct	ifnet *ifnet;	/* head of list of interfaces */
  * parameters.
  */
 
+void
 ifinit()
 {
 #ifdef nope
@@ -80,6 +85,7 @@ ifinit()
 /*
  * Call each interface on a Unibus reset.
  */
+void
 ifubareset(uban)
 	int uban;
 {
@@ -93,12 +99,15 @@ ifubareset(uban)
 
 int if_index = 0;
 struct ifaddr **ifnet_addrs;
-static char *sprint_d();
+static char *sprint_d(u_int, char*, int);
+static void if_qflush(struct ifqueue *ifq);
+static void link_rtrequest(int, struct rtentry *, struct sockaddr *);
 
 /*
  * Attach an interface to the
  * list of "active" interfaces.
  */
+void
 if_attach(ifp)
 	struct ifnet *ifp;
 {
@@ -109,7 +118,7 @@ if_attach(ifp)
 	register struct sockaddr_dl *sdl;
 	register struct ifaddr *ifa;
 	static int if_indexlim = 8;
-	extern link_rtrequest(); /* , ether_output(); */
+	/* extern link_rtrequest();  , ether_output(); */
 
 	while (*p)
 		p = &((*p)->if_next);
@@ -372,14 +381,16 @@ ifa_ifwithroute(int flags, struct sockaddr *dst, struct sockaddr *gateway)
 }
 #endif
 
-#include "route.h"
+#include <route.h>
 /*
  * Default action when installing a route with a Link Level gateway.
  * Lookup an appropriate real ifa to point to.
  * This should be moved to /sys/net/link.c eventually.
  */
+void
 link_rtrequest(cmd, rt, sa)
-register struct rtentry *rt;
+int cmd;
+struct rtentry *rt;
 struct sockaddr *sa;
 {
 	register struct ifaddr *ifa;
@@ -401,6 +412,7 @@ struct sockaddr *sa;
  * the transition.
  * NOTE: must be called at splnet or eqivalent.
  */
+void
 if_down(ifp)
 	register struct ifnet *ifp;
 {
@@ -415,6 +427,7 @@ if_down(ifp)
 /*
  * Flush an interface queue.
  */
+void
 if_qflush(ifq)
 	register struct ifqueue *ifq;
 {
@@ -435,6 +448,7 @@ if_qflush(ifq)
  * from softclock, we decrement timers (if set) and
  * call the appropriate interface routine on expiration.
  */
+int
 if_slowtimo()
 {
 	register struct ifnet *ifp;
@@ -499,7 +513,7 @@ extern inline int
 arpioctl(int cmd, caddr_t data) {
 	int (*f)(int, caddr_t);
 
-	(const void *) f = esym_fetch(arpioctl);
+	f = esym_fetch(arpioctl);
 	if (f == 0)
 		return(0);
 	return ((*f)(cmd, data));
@@ -510,6 +524,7 @@ extern int arpioctl(int cmd, caddr_t data);
 /*
  * Interface ioctls.
  */
+int
 ifioctl(so, cmd, data, p)
 	struct socket *so;
 	int cmd;
@@ -588,7 +603,7 @@ ifioctl(so, cmd, data, p)
 		if (ifp->if_ioctl == NULL)
 			return (EOPNOTSUPP);
 		return ((*ifp->if_ioctl)(ifp, cmd, data));
-#endif MULTICAST
+#endif /* MULTICAST */
 
 	default:
 		if (so->so_proto == 0)
@@ -658,6 +673,7 @@ ifioctl(so, cmd, data, p)
  * other information.
  */
 /*ARGSUSED*/
+int
 ifconf(cmd, data)
 	int cmd;
 	caddr_t data;

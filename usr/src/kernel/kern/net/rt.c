@@ -7,11 +7,16 @@
  * Dummy, do nothing routing mechanism.
  */
 
-#include "sys/param.h"
-#include "sys/socket.h"
-#include "sys/errno.h"
-#include "if.h"
-#include "route.h"
+#include <sys/param.h>
+#include <sys/socket.h>
+#include <sys/errno.h>
+#include <sys/file.h>
+#include <socketvar.h>
+#include <if.h>
+
+extern void panic(const char *);
+
+#include <route.h>
 
 static void
 nortalloc(struct route *ro)
@@ -64,8 +69,10 @@ nortmissmsg(int type, struct sockaddr *dst, struct sockaddr *gate,
 	panic("nortmissmsg");
 }
 
+#if notuse
 struct route_ops _router_ = {
 	0,
 	nortinit, nortalloc, nortfree,
 	nortrequest, nortredirect, nortmissmsg, nortioctl
 };
+#endif

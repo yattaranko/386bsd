@@ -33,47 +33,54 @@
  * $Id: ethersubr.c,v 1.1 94/10/20 00:01:31 bill Exp $
  */
 
-#include "sys/param.h"
-/*#include "sys/socket.h"*/
-#include "sys/ioctl.h"
-#include "sys/syslog.h"
-#include "sys/errno.h"
-#include "systm.h"
-#include "kernel.h"
-#include "malloc.h"
-#include "mbuf.h"
-#include "socketvar.h"
-#include "protosw.h"
+#include <sys/param.h>
+/*#include <sys/socket.h>*/
+#include <sys/ioctl.h>
+#include <sys/syslog.h>
+#include <sys/errno.h>
+#include <sys/file.h>
+#include <systm.h>
+#include <kernel.h>
+#include <malloc.h>
+#include <mbuf.h>
+#include <socketvar.h>
+#include <protosw.h>
+#include <strings.h>
 
-#include "machine/cpu.h"
+#include <machine/cpu.h>
+#include <spl.h>
 
-#include "if.h"
-#include "netisr.h"
-#include "route.h"
-#include "if_llc.h"
-#include "if_dl.h"
+extern void panic(const char *);
+extern void printf (const char *, ...);
 
-#include "in.h"		/* XXX: for if_ether */
+#include <if.h>
+#include <netisr.h>
+#include <route.h>
+#include <if_llc.h>
+#include <if_dl.h>
+
+#include <in.h>		/* XXX: for if_ether */
 #ifdef INET
-#include "in_var.h"
+#include <in_var.h>
 #endif
-#include "if_ether.h"
+#include <if_ether.h>
 
 #ifdef NS
-#include "ns.h"
-#include "ns_if.h"
+#include <ns.h>
+#include <ns_if.h>
 #endif
 
 #ifdef ISO
-#include "argo_debug.h"
-#include "iso.h"
-#include "iso_var.h"
-#include "iso_snpac.h"
+#include <argo_debug.h>
+#include <iso.h>
+#include <iso_var.h>
+#include <iso_snpac.h>
 #endif
 
 u_char	etherbroadcastaddr[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 /*extern	struct ifnet loif;*/
 struct ifqueue ipintrq;
+int netpending = 0;
 
 /*
  * Ethernet output routine.
@@ -191,7 +198,7 @@ ether_output(struct ifnet *ifp, struct mbuf *m0, struct sockaddr *dst,
 			printf("\n");
 		ENDDEBUG
 		} goto gottype;
-#endif	ISO
+#endif	/* ISO */
 #ifdef RMP
 	case AF_RMP:
 		/*
@@ -382,7 +389,7 @@ ether_input(struct ifnet *ifp, struct ether_header *eh, struct mbuf *m)
 #else
 	    m_freem(m);
 	    return;
-#endif	ISO
+#endif	/* ISO */
 	}
 
 	s = splimp();
@@ -401,7 +408,7 @@ static char digits[] = "0123456789abcdef";
 char *
 ether_sprintf(u_char *ap)
 {
-	register i;
+	int i;
 	static char etherbuf[18];
 	register char *cp = etherbuf;
 

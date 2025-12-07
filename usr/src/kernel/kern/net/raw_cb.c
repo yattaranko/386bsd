@@ -33,20 +33,20 @@
  * $Id: raw_cb.c,v 1.1 94/10/20 00:01:35 bill Exp Locker: bill $
  */
 
-#include "sys/param.h"
-/*#include "sys/file.h"*/
-#include "sys/errno.h"
-#include "systm.h"
-#include "mbuf.h"
-#include "socketvar.h"
-#include "domain.h"
-#include "protosw.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+#include <systm.h>
+#include <mbuf.h>
+#include <socketvar.h>
+#include <domain.h>
+#include <protosw.h>
+#include <prototypes.h>
 
-#include "if.h"
-#include "route.h"
-#include "raw_cb.h"
-#include "in.h"
+#include <if.h>
+#include <route.h>
+#include <raw_cb.h>
+#include <in.h>
 
 /*
  * Routines to manage the raw protocol control blocks. 
@@ -61,10 +61,14 @@ u_long	raw_sendspace = RAWSNDQ;
 u_long	raw_recvspace = RAWRCVQ;
 struct rawcb rawcb;
 
+extern void sofree(struct socket *);
+extern int soreserve(struct socket *, u_long, u_long);
+
 /*
  * Allocate a control block and a nominal amount
  * of buffer space for the socket.
  */
+int
 raw_attach(so, proto)
 	register struct socket *so;
 	int proto;
@@ -92,6 +96,7 @@ raw_attach(so, proto)
  * Detach the raw connection block and discard
  * socket resources.
  */
+void
 raw_detach(rp)
 	register struct rawcb *rp;
 {
@@ -111,6 +116,7 @@ raw_detach(rp)
 /*
  * Disconnect and possibly release resources.
  */
+void
 raw_disconnect(rp)
 	struct rawcb *rp;
 {

@@ -33,30 +33,41 @@
  * $Id: raw_usrreq.c,v 1.1 94/10/20 00:01:36 bill Exp Locker: bill $
  */
 
-#include "sys/param.h"
-/*#include "sys/file.h"*/
-#include "sys/errno.h"
-#include "mbuf.h"
-#include "domain.h"
-#include "socketvar.h"
-#include "protosw.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+#include <mbuf.h>
+#include <domain.h>
+#include <socketvar.h>
+#include <protosw.h>
+#include <prototypes.h>
 
-#include "if.h"
-#include "route.h"
-#include "netisr.h"
-#include "raw_cb.h"
+#include <if.h>
+#include <route.h>
+#include <netisr.h>
+#include <raw_cb.h>
 
 struct ifqueue rawintrq;	/* raw protocol input queue */
+
+extern int sbappendaddr(struct sockbuf*, struct sockaddr*, struct mbuf*, struct mbuf*);
+extern int raw_attach(struct socket* so, int proto);
+extern void raw_detach(struct rawcb* rp);
+extern void raw_disconnect(struct rawcb* rp);
+extern void soisdisconnected(struct socket* so);
+extern void socantsendmore(struct socket* so);
+extern void sofree(struct socket *so);
 
 /*
  * Initialize raw connection block q.
  */
+int
 raw_init()
 {
 
 	rawcb.rcb_next = rawcb.rcb_prev = &rawcb;
 	rawintrq.ifq_maxlen = IFQ_MAXLEN;
+
+	return (0);
 }
 
 
@@ -68,6 +79,7 @@ raw_init()
 /*
  * Raw protocol interface.
  */
+int
 raw_input(m0, proto, src, dst)
 	struct mbuf *m0;
 	register struct sockproto *proto;
@@ -128,6 +140,7 @@ raw_input(m0, proto, src, dst)
 }
 
 /*ARGSUSED*/
+void
 raw_ctlinput(cmd, arg)
 	int cmd;
 	struct sockaddr *arg;
@@ -139,6 +152,7 @@ raw_ctlinput(cmd, arg)
 }
 
 /*ARGSUSED*/
+int
 raw_usrreq(so, req, m, nam, control)
 	struct socket *so;
 	int req;
