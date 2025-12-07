@@ -43,31 +43,34 @@
 static	char *clk_config =
 	"clock (0 0).	# process timeslice clock $Revision$";
 
-#include "sys/param.h"
-#include "sys/time.h"
-#include "sys/errno.h"
-#include "tzfile.h"
-#include "kernel.h"
-#include "malloc.h"
-#include "modconfig.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/time.h>
+#include <sys/errno.h>
+#include <tzfile.h>
+#include <kernel.h>
+#include <malloc.h>
+#include <modconfig.h>
+#include <prototypes.h>
 
-#include "machine/cpu.h"
-#include "machine/pcb.h"
-#include "machine/inline/io.h"
+#include <machine/cpu.h>
+#include <machine/pcb.h>
+#include <machine/inline/io.h>
 
-#include "machine/icu.h"
-#include "isa_stdports.h"
-#include "isa_irq.h"
-#include "rtc.h"
-#include "isa_driver.h"
+#include <machine/icu.h>
+#include <isa_stdports.h>
+#include <isa_irq.h>
+#include <rtc.h>
+#include <isa_driver.h>
 
 #define DAYST 119
 #define DAYEN 303
 unsigned long it_ticks, it_ticksperintr;
 
+extern void hardclock(clockframe frame);
 
-startrtclock() {
+void
+startrtclock()
+{
 	int s;
 
 	/* initialize 8253 clock */
@@ -90,11 +93,13 @@ startrtclock() {
 	outb (IO_RTC+1, 0);
 }
 
-static ena;
+static int ena;
 /*
  * Wire clock interrupt in.
  */
-enablertclock() {
+void
+enablertclock()
+{
 	ena=1;
 }
 
@@ -122,12 +127,15 @@ clkattach(struct isa_device *dvp)
 }
 
 static void
-clkintr(struct intrframe f) {
+clkintr(struct intrframe f)
+{
+	clockframe cf = {f.if_ppl, f.if_eip, f.if_cs};
 
 	if (!ena) return;
 	splhigh();
 	it_ticks += it_ticksperintr;
-	hardclock(f.if_ppl, f.if_eip, f.if_cs);
+	/* hardclock(f.if_ppl, f.if_eip, f.if_cs); */
+	hardclock(cf);
 }
 
 DRIVER_MODCONFIG() {
