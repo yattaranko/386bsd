@@ -52,23 +52,26 @@
  * portions of the kernel's internal facilities.
  */
 
-#include "sys/param.h"
-#include "sys/user.h"
-#include "signalvar.h"
-/* #include "malloc.h" */
-#include "proc.h"
-#include "kmem.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/user.h>
+#include <signalvar.h>
+/* #include <malloc.h> */
+#include <proc.h>
+#include <kmem.h>
+#include <prototypes.h>
 
 
-#include "machine/cpu.h"
+#include <machine/cpu.h>
 #define IPCREG
-#include "machine/reg.h"
-#include "machine/psl.h"
+#include <machine/reg.h>
+#include <machine/psl.h>
 
 #include "segments.h"
 #include "specialreg.h"
 #include "sigframe.h"
+#include <spl.h>
+
+extern void tlbflush(void);
 
 /*
  * Implement the innermost part of a fork() operation, by building
@@ -127,7 +130,7 @@ cpu_tfork(struct proc *p1, register struct proc *p2)
 	}
 
 	/* relocate md_reg pointer. */
-	(int)p2->p_md.md_regs = (int) p1->p_md.md_regs + diff;
+	p2->p_md.md_regs = p1->p_md.md_regs + diff;
 	p2->p_md.md_flags = 0;
 
 	/* allocate a TSS for this thread. */

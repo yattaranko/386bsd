@@ -54,37 +54,43 @@
  */
 
 #undef i486
-#include "sys/param.h"
-#include "systm.h"
-#include "proc.h"
-#include "resourcevar.h"
-#include "sys/user.h"
-#include "kernel.h"
+#include <sys/param.h>
+#include <systm.h>
+#include <proc.h>
+#include <resourcevar.h>
+#include <sys/user.h>
+#include <kernel.h>
 #ifdef KTRACE
-#include "sys/ktrace.h"
+#include <sys/ktrace.h>
 #endif
-#include "prototypes.h"
+#include <prototypes.h>
 
-#include "vm_param.h"
-#include "pmap.h"
-#include "vm_map.h"
-#include "vmmeter.h"
+#include <vm_fault.h>
+#include <vm_param.h>
+#include <pmap.h>
+#include <vm_map.h>
+#include <vmmeter.h>
 
-#include "machine/cpu.h"
-#include "machine/psl.h"
-#include "machine/reg.h"
-#include "machine/trap.h"
+#include <machine/cpu.h>
+#include <machine/psl.h>
+#include <machine/reg.h>
+#include <machine/trap.h>
 
 #include "specialreg.h"
 #include "segments.h"
+#include <spl.h>
 
 extern int npxlasterror;
 
-extern iret, syscall_entry, syscall_lret;	/* see locore.s */
+extern int iret, syscall_entry, syscall_lret;	/* see locore.s */
 static void trapexcept(struct trapframe *tf, int *);
 #ifdef DDB
 extern int enterddb;
 #endif
+
+extern int	npxerror(void);
+extern void	pmap_ptalloc(struct pmap *, pd_entry_t *);
+extern void	qswtch(void);
 
 /*
  * trap(frame):
@@ -377,7 +383,7 @@ trap(struct trapframe frame)
 		break;
 
 #ifdef nope
-#include "isa.h"
+#include <isa.h>
 #if	NISA > 0
 	case T_NMI:
 	case T_NMI|T_USER:
@@ -595,9 +601,12 @@ copyin3(struct proc *p, void *fromaddr, void *toaddr, u_int sz) {
 		asm (" movl	$4f, %0" : : "m" (p->p_md.md_onfault));
 
 		/* copy the arguments */
-		*((int *) toaddr)++ = *((int *) fromaddr)++;
-		*((int *) toaddr)++ = *((int *) fromaddr)++;
-		*((int *) toaddr)++ = *((int *) fromaddr)++;
+		/* *((int *) toaddr)++ = *((int *) fromaddr)++; */
+		*((int *) toaddr + 0) = *((int *) fromaddr + 0);
+		/* *((int *) toaddr)++ = *((int *) fromaddr)++; */
+		*((int *) toaddr + 1) = *((int *) fromaddr + 1);
+		/* *((int *) toaddr)++ = *((int *) fromaddr)++; */
+		*((int *) toaddr + 2) = *((int *) fromaddr + 2);
 
 		/* catch the possible fault */
 		asm ("\

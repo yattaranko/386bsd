@@ -77,23 +77,23 @@
  *	and to when physical maps must be made correct.
  */
 
-#include "sys/param.h"
-#include "proc.h"
-#include "malloc.h"
-#include "sys/user.h"
-#include "resourcevar.h"
+#include <sys/param.h>
+#include <proc.h>
+#include <malloc.h>
+#include <sys/user.h>
+#include <resourcevar.h>
 
-#include "vm.h"
-#include "vmspace.h"
-#include "kmem.h"
-#include "vm_page.h"
-#include "vm_pageout.h"
+#include <vm.h>
+#include <vmspace.h>
+#include <kmem.h>
+#include <vm_page.h>
+#include <vm_pageout.h>
 
-#include "machine/cpu.h"
-/*#include "isa.h"*/
+#include <machine/cpu.h>
+/*#include <isa.h>*/
 #include "specialreg.h"
 
-#include "prototypes.h"
+#include <prototypes.h>
 #define	DEBUG
 
 
@@ -226,18 +226,18 @@ int		i386pagesperpage;	/* PAGE_SIZE / I386_PAGE_SIZE */
 boolean_t	pmap_initialized = FALSE;	/* Has pmap_init completed? */
 char		*pmap_attributes;	/* reference and modify bits */
 
-void pmap_clear_modify(vm_offset_t pa);
+extern void	vm_page_wait(char const *, int);
+extern void pmap_clear_modify(vm_offset_t);
+
 static void i386_protection_init();
-/*static */  struct pte *pmap_pte(register struct pmap *pmap, vm_offset_t va);
-void
-pmap_ptalloc(struct pmap *pmap, pd_entry_t *pde);
-static void
-pmap_ptfree(struct pmap *pmap, pd_entry_t *pde);
-void
-pmap_activate(register struct pmap *pmap, struct pcb *pcbp);
+extern struct pte *pmap_pte(struct pmap *, vm_offset_t);
+extern void pmap_ptalloc(struct pmap *, pd_entry_t *);
+static void pmap_ptfree(struct pmap *, pd_entry_t *);
+extern void pmap_activate(struct pmap *, struct pcb *);
+static void pads(struct pmap *pm);
 
 #if BSDVM_COMPAT
-#include "msgbuf.h"
+#include <msgbuf.h>
 
 /*
  * All those kernel PT submaps that BSD is so fond of
@@ -1322,7 +1322,7 @@ pmap_change_wiring(register struct pmap *pmap, vm_offset_t va, boolean_t wired)
  */
 /* db_something() calls pmap_pte()! */
 /* static */ struct pte *
-pmap_pte(register struct pmap *pmap, vm_offset_t va)
+pmap_pte(struct pmap *pmap, vm_offset_t va)
 {
 
 #ifdef DEBUG
@@ -1544,7 +1544,9 @@ pmap_zero_page(vm_offset_t phys)
  * copy a page of physical memory
  * specified in relocation units (NBPG bytes)
  */
-physcopyseg(frm, to) {
+void
+physcopyseg(int frm, int to)
+{
 
 	*(int *)CMAP1 = PG_V | PG_KW | ctob(frm);
 	*(int *)CMAP2 = PG_V | PG_KW | ctob(to);
@@ -1895,6 +1897,7 @@ panic("chg");
 }
 
 #ifdef DEBUG
+void
 pmap_pvdump(vm_offset_t pa)
 {
 	register pv_entry_t pv;
@@ -1934,7 +1937,9 @@ pmap_check_wiring(char *str, vm_offset_t va)
 #endif
 
 /* print address space of pmap*/
-pads(register struct pmap *pm) {
+void
+pads(register struct pmap *pm)
+{
 	unsigned va, i, j;
 	struct pte *ptep;
 

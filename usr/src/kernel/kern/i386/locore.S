@@ -503,7 +503,7 @@ _szicode:
  */
 	.globl	_sigcode, _szsigcode
 _sigcode:
-	call	12(%esp)
+	call	*12(%esp)
 	xorl	%eax, %eax	/* smaller movl $103, %eax */
 	movb	$103, %al
 	/* enter kernel with args on stack */
@@ -531,7 +531,7 @@ ENTRY(ssdtosd)
 	movl	4(%ecx),%eax
 	movw	%ax,%dx
 	andl	$0xf0000,%eax
-	orl	%eax,%ebx
+	orl		%eax,%ebx
 	movl	12(%esp),%ecx
 	movl	%edx,(%ecx)
 	movl	%ebx,4(%ecx)
@@ -900,18 +900,18 @@ swtch_selq:
 	movl	%eax, P_RLINK(%ecx) /* isolate process to run */
 
 	/* recover state of previous register contents */
-	popl %esi
-	popl %ebx
+	popl	%esi
+	popl	%ebx
 
 	/* recover previous process pointer */
-	popl  %eax
+	popl	%eax
 	PROC_EXIT
 
 	/* if process is switching to itself then don't ljmp */
 	cmpl	%ecx, %eax
-	je	1f
+	je		1f
 
-	ljmp	PMD_TSEL - 4(%ecx)
+	ljmp	*(PMD_TSEL - 4)(%ecx)
 1:	movl	%eax, _curproc		/* into next process */
 	ret
 
@@ -937,14 +937,14 @@ ENTRY(qswtch)
 	xchgl	%eax, _curproc
 	pushl	%eax
 
-	pushl %ebx
-	pushl %esi
+	pushl	%ebx
+	pushl	%esi
 
 	cli
 	/* stick on a queue */
 #ifdef	DIAGNOSTIC
 	cmpl	$0, P_RLINK(%eax)	/* should not be on q already */
-	jne	1f
+	jne		1f
 #endif
 	andl	$~MDP_RESCHED, PMD_FLAGS(%eax)
 	movzbl	P_PRI(%eax), %edx
@@ -968,7 +968,7 @@ ENTRY(qswtch)
 
 	.data
 	.globl	_proc0paddr
-_proc0paddr:	.long	0	/* process 0 address of kstack. */
+_proc0paddr:.long	0	/* process 0 address of kstack. */
 	.space 4
 	.globl	_intrnames, _eintrnames, _intrcnt, _eintrcnt
 _intrnames:	.space 16*4
@@ -989,26 +989,26 @@ _eintrcnt:
  */
 
 /* Trap and fault vector macros.  */ 
-#define	IDTVEC(name)	.align 4; .globl _X/**/name; _X/**/name:
+// #define	IDTVEC(name)	.align 4; .globl _X/**/name; _X/**/name:
 #define	TRAP(a)		pushl $(a) ; jmp common_traps
 
-IDTVEC(div)	pushl $0; TRAP(T_DIVIDE)
-IDTVEC(dbg)	pushl $0; TRAP(T_TRCTRAP)
-IDTVEC(nmi)	pushl $0; TRAP(T_NMI)
-IDTVEC(bpt)	pushl $0; TRAP(T_BPTFLT)
-IDTVEC(ofl)	pushl $0; TRAP(T_OFLOW)
-IDTVEC(bnd)	pushl $0; TRAP(T_BOUND)
-IDTVEC(ill)	pushl $0; TRAP(T_PRIVINFLT)
-IDTVEC(dna)	pushl $0; TRAP(T_DNA)
-IDTVEC(dble)	TRAP(T_DOUBLEFLT)
+IDTVEC(div)		pushl $0; TRAP(T_DIVIDE)
+IDTVEC(dbg)		pushl $0; TRAP(T_TRCTRAP)
+IDTVEC(nmi)		pushl $0; TRAP(T_NMI)
+IDTVEC(bpt)		pushl $0; TRAP(T_BPTFLT)
+IDTVEC(ofl)		pushl $0; TRAP(T_OFLOW)
+IDTVEC(bnd)		pushl $0; TRAP(T_BOUND)
+IDTVEC(ill)		pushl $0; TRAP(T_PRIVINFLT)
+IDTVEC(dna)		pushl $0; TRAP(T_DNA)
+IDTVEC(dble)			  TRAP(T_DOUBLEFLT)
 IDTVEC(fpusegm)	pushl $0; TRAP(T_FPOPFLT)
-IDTVEC(tss)	TRAP(T_TSSFLT)
-IDTVEC(missing)	TRAP(T_SEGNPFLT)
-IDTVEC(stk)	TRAP(T_STKFLT)
-IDTVEC(prot)	TRAP(T_PROTFLT)
-IDTVEC(page)	TRAP(T_PAGEFLT)
+IDTVEC(tss)				  TRAP(T_TSSFLT)
+IDTVEC(missing)			  TRAP(T_SEGNPFLT)
+IDTVEC(stk)				  TRAP(T_STKFLT)
+IDTVEC(prot)			  TRAP(T_PROTFLT)
+IDTVEC(page)			  TRAP(T_PAGEFLT)
 IDTVEC(rsvd)	pushl $0; TRAP(T_RESERVED)
-IDTVEC(fpu)	pushl $0; TRAP(T_ARITHTRAP)
+IDTVEC(fpu)		pushl $0; TRAP(T_ARITHTRAP)
 	/* 17 - 31 reserved for future exp */
 IDTVEC(rsvd0)	pushl $0; TRAP(17)
 IDTVEC(rsvd1)	pushl $0; TRAP(18)
@@ -1030,15 +1030,15 @@ IDTVEC(rsvd14)	pushl $0; TRAP(31)
 common_traps:
 	pushal
 	nop
-	push %ds
-	push %es
+	push	 %ds
+	push	 %es
 	movw	$KDSEL, %ax
 	movw	%ax,%ds
 	movw	%ax,%es
 	incl	_cnt+V_TRAP
 	call	_trap
 	movl	_cpl, %ecx
-	jmp	trap_exit
+	jmp		trap_exit
 
 /*
  * Interrupts, otherwise known as asynchronous traps.
@@ -1051,14 +1051,14 @@ common_traps:
  */
 
 #define	WUP(n)	\
-	pushl %eax  ; \
-	pushl $n  ; \
-	inb $IO_ICU2+1, %al ; \
-	movb %al,%ah ; \
-	inb $IO_ICU1+1, %al ; \
-	pushl %eax ; \
-	call _wpl ; \
-	popl %eax ;  popl %eax ;  popl %eax ; 
+	pushl	%eax  ; \
+	pushl	$n  ; \
+	inb		$IO_ICU2+1, %al ; \
+	movb	%al,%ah ; \
+	inb		$IO_ICU1+1, %al ; \
+	pushl	%eax ; \
+	call	_wpl ; \
+	popl	%eax ;  popl %eax ;  popl %eax ; 
 
 /* If this is an old 386 that requires recovery time on the 8259, add nops */
 #define	NOP	/* none with modern machines */
@@ -1071,22 +1071,22 @@ common_traps:
 	pushl	$0 ; \
 	pushl	$T_ASTFLT ; \
 	pushal ; \
-	NOP ;			/* wait for 8259 recovery */ \
-	movb	$3, %al ; 	/* select ISR ... */ \
-	outb	%al, $IO_ICU1 ; /* in 8259 unit 1 ...*/ \
-	NOP ;			/* wait for 8259 recovery */ \
-	inb	$IO_ICU1, %al ;	/* grab ISR */ \
-	movb	%al, %dl ;	/* save ISR */ \
-	NOP ;			/* ... ASAP */ \
-	movb	$2, %al ; 	/* reselect IRR ... */ \
-	outb	%al, $IO_ICU1 ; /* ... ...*/ \
-	NOP ;			/* ... ASAP */ \
+	NOP ;							/* wait for 8259 recovery */ \
+	movb	$3, %al ; 				/* select ISR ... */ \
+	outb	%al, $IO_ICU1 ;			/* in 8259 unit 1 ...*/ \
+	NOP ;							/* wait for 8259 recovery */ \
+	inb		$IO_ICU1, %al ;			/* grab ISR */ \
+	movb	%al, %dl ;				/* save ISR */ \
+	NOP ;							/* ... ASAP */ \
+	movb	$2, %al ;			 	/* reselect IRR ... */ \
+	outb	%al, $IO_ICU1 ;			/* ... ...*/ \
+	NOP ;							/* ... ASAP */ \
 	movb	$(0x20 | unit), %al ; 	/* next, as soon as possible send EOI ... */ \
-	outb	%al, $IO_ICU1 ; /* ... so in service bit may be cleared ...*/ \
-	NOP ;			/* wait for 8259 recovery */ \
-	pushl	%ds ; 		/* save our data and extra segments ... */ \
+	outb	%al, $IO_ICU1 ; 		/* ... so in service bit may be cleared ...*/ \
+	NOP ;							/* wait for 8259 recovery */ \
+	pushl	%ds ; 					/* save our data and extra segments ... */ \
 	pushl	%es ; \
-	movw	$KDSEL, %ax ;	/* ... and reload with kernel's own */ \
+	movw	$KDSEL, %ax ;			/* ... and reload with kernel's own */ \
 	movw	%ax, %ds ; \
 	movw	%ax, %es ; \
 	movl	_cpl, %eax ; \
@@ -1094,43 +1094,43 @@ common_traps:
 	shll	$8, %edx ; \
 	movb	$unit, %dl ; \
 	pushl	%edx ; \
-	orw	mask, %ax ; \
+	orw		mask, %ax ; \
 	movl	%eax,_cpl ; \
-	orw	_imen, %ax ; \
+	orw		_imen, %ax ; \
 	outb	%al, $IO_ICU1+1 ; \
-	NOP ;			/* wait for 8259 recovery */ \
+	NOP ;							/* wait for 8259 recovery */ \
 	movb	%ah, %al ; \
 	outb	%al, $IO_ICU2+1	; \
-	NOP ;			/* wait for 8259 recovery */ \
-	WRPOST ; /* do write post */ \
+	NOP ;							/* wait for 8259 recovery */ \
+	WRPOST ;						/* do write post */ \
 	sti ; \
 	call	_isa_strayintr ; \
-	jmp	common_int_return
+	jmp		common_int_return
 
 #define	INTRSTRAY2(unit, mask, offst) \
 	pushl	$0 ; \
 	pushl	$T_ASTFLT ; \
 	pushal ; \
-	NOP ;			/* wait for 8259 recovery */ \
-	movb	$3, %al ; 	/* select ISR ... */ \
-	outb	%al, $IO_ICU2 ; /* in 8259 unit 2 ...*/ \
-	NOP ;			/* wait for 8259 recovery */ \
-	inb	$IO_ICU2, %al ;	/* grab ISR */ \
+	NOP ;							/* wait for 8259 recovery */ \
+	movb	$3, %al ; 				/* select ISR ... */ \
+	outb	%al, $IO_ICU2 ;			/* in 8259 unit 2 ...*/ \
+	NOP ;							/* wait for 8259 recovery */ \
+	inb		$IO_ICU2, %al ;			/* grab ISR */ \
 	xorb	%dl, %dl ;	 \
-	movb	%al, %dh ;	/* save ISR */ \
-	NOP ;			/* ... ASAP */ \
-	movb	$2, %al ; 	/* reselect IRR ... */ \
-	outb	%al, $IO_ICU2 ; /* ... ...*/ \
-	movb	$0x62, %al ; 	/* next, as soon as possible send EOI ... */ \
-	outb	%al, $IO_ICU1 ; /* ... so in service bit may be cleared ...*/ \
-	NOP ;			/* wait for 8259 recovery */ \
-	movb	$(0x60|(unit-8)), %al ; 	/* next, as soon as possible send EOI ... */ \
-	outb	%al, $IO_ICU1 ; /* ... so in service bit may be cleared ...*/ \
-	outb	%al, $IO_ICU2 ; /* ... ...*/ \
-	NOP ;			/* wait for 8259 recovery */ \
-	pushl	%ds ; 		/* save our data and extra segments ... */ \
+	movb	%al, %dh ;				/* save ISR */ \
+	NOP ;							/* ... ASAP */ \
+	movb	$2, %al ; 				/* reselect IRR ... */ \
+	outb	%al, $IO_ICU2 ;			/* ... ...*/ \
+	movb	$0x62, %al ; 			/* next, as soon as possible send EOI ... */ \
+	outb	%al, $IO_ICU1 ;			/* ... so in service bit may be cleared ...*/ \
+	NOP ;							/* wait for 8259 recovery */ \
+	movb	$(0x60|(unit-8)), %al ;	/* next, as soon as possible send EOI ... */ \
+	outb	%al, $IO_ICU1 ;			/* ... so in service bit may be cleared ...*/ \
+	outb	%al, $IO_ICU2 ;			/* ... ...*/ \
+	NOP ;							/* wait for 8259 recovery */ \
+	pushl	%ds ; 					/* save our data and extra segments ... */ \
 	pushl	%es ; \
-	movw	$KDSEL, %ax ;	/* ... and reload with kernel's own */ \
+	movw	$KDSEL, %ax ;			/* ... and reload with kernel's own */ \
 	movw	%ax, %ds ; \
 	movw	%ax, %es ; \
 	movl	_cpl, %eax ; \
@@ -1138,17 +1138,17 @@ common_traps:
 	shll	$8, %edx ; \
 	movb	$unit, %dl ; \
 	pushl	%edx ; \
-	orw	mask, %ax ; \
+	orw		mask, %ax ; \
 	movl	%eax,_cpl ; \
-	orw	_imen, %ax ; \
+	orw		_imen, %ax ; \
 	outb	%al, $IO_ICU1+1 ; \
-	NOP ;			/* wait for 8259 recovery */ \
+	NOP ;							/* wait for 8259 recovery */ \
 	movb	%ah, %al ; \
 	outb	%al, $IO_ICU2+1	; \
-	WRPOST ; /* do write post */ \
+	WRPOST ;						/* do write post */ \
 	sti ; \
 	call	_isa_strayintr ; \
-	jmp	common_int_return
+	jmp		common_int_return
 
 /*
  * Stray Interrupt Catcher Table
@@ -1184,29 +1184,29 @@ IDTVEC(intrdefault) INTRSTRAY2(255, _highmask, 255)
 	pushl	$T_ASTFLT; \
 	pushal; \
 	NOP ; \
-	movb	$(0x60|offst), %al; 	/* next, as soon as possible send EOI ... */ \
-	outb	%al, $IO_ICU1; /* ... so in service bit may be cleared ...*/ \
-	pushl	%ds; 		/* save our data and extra segments ... */ \
+	movb	$(0x60|offst), %al; 		/* next, as soon as possible send EOI ... */ \
+	outb	%al, $IO_ICU1; 				/* ... so in service bit may be cleared ...*/ \
+	pushl	%ds; 						/* save our data and extra segments ... */ \
 	pushl	%es; \
-	movw	$0x10, %ax;	/* ... and reload with kernel's own */ \
+	movw	$0x10, %ax;					/* ... and reload with kernel's own */ \
 	movw	%ax, %ds; \
 	movw	%ax, %es; \
-	incl	_cnt+V_INTR;	/* tally interrupts */ \
+	incl	_cnt+V_INTR;				/* tally interrupts */ \
 	incl	_intrcnt+offst*4; \
 	movl	_cpl, %eax; \
 	pushl	%eax; \
 	pushl	_isa_unit+offst*4; \
-	orw	_isa_mask+offst*2, %ax; \
+	orw		_isa_mask+offst*2, %ax; \
 	movl	%eax, _cpl; \
-	orw	_imen, %ax; \
+	orw		_imen, %ax; \
 	NOP ; \
 	outb	%al, $IO_ICU1+1; \
 	movb	%ah, %al; \
 	outb	%al, $IO_ICU2+1; \
-	WRPOST ; /* do write post */ \
+	WRPOST ;							 /* do write post */ \
 	sti; \
 	call	*(_isa_vec+(offst*4)); \
-	jmp	common_int_return
+	jmp		common_int_return
 
 /* Mask a group of interrupts atomically */
 #define	INTR2(offst) \
@@ -1216,29 +1216,29 @@ IDTVEC(intrdefault) INTRSTRAY2(255, _highmask, 255)
 	NOP ; \
 	movb	$(0x60|(offst-8)), %al; 	/* next, as soon as possible send EOI ... */ \
 	outb	%al, $IO_ICU2; \
-	movb	$0x62, %al; 	/* next, as soon as possible send EOI ... */ \
-	outb	%al, $IO_ICU1; /* ... so in service bit may be cleared ...*/ \
-	pushl	%ds; 		/* save our data and extra segments ... */ \
+	movb	$0x62, %al; 				/* next, as soon as possible send EOI ... */ \
+	outb	%al, $IO_ICU1;				 /* ... so in service bit may be cleared ...*/ \
+	pushl	%ds;				 		/* save our data and extra segments ... */ \
 	pushl	%es; \
-	movw	$0x10, %ax;	/* ... and reload with kernel's own */ \
+	movw	$0x10, %ax;					/* ... and reload with kernel's own */ \
 	movw	%ax, %ds; \
 	movw	%ax, %es; \
-	incl	_cnt+V_INTR;	/* tally interrupts */ \
+	incl	_cnt+V_INTR;				/* tally interrupts */ \
 	incl	_intrcnt+offst*4; \
 	movl	_cpl,%eax; \
 	pushl	%eax; \
 	pushl	_isa_unit+offst*4; \
-	orw	_isa_mask+offst*2, %ax; \
-	movl	%ax, _cpl; \
-	orw	_imen, %ax; \
+	orw		_isa_mask+offst*2, %ax; \
+	movl	%eax, _cpl; \
+	orw		_imen, %ax; \
 	outb	%al, $IO_ICU1+1; \
 	NOP ; \
 	movb	%ah, %al; \
 	outb	%al, $IO_ICU2+1; \
-	WRPOST ; /* do write post */ \
+	WRPOST ;							 /* do write post */ \
 	sti; \
 	call	*(_isa_vec+offst*4); \
-	jmp	common_int_return
+	jmp		common_int_return
 
 /*
  * Interrupt vector table:
@@ -1296,13 +1296,13 @@ _netmask:	.long	0
 	.globl	_splstart
 _splstart:	.long	0
 #define	ENFAILSAFE	cmpl	$0, _splstart ;	\
-	jne	3f ;		\
+	jne		3f ;		\
 	movl	0(%esp), %eax ; \
 	movl	%eax, _splstart ; \
 	call	_failsafe_start ; \
 3:
 #define	DISFAILSAFE	cmpl	$0, _splstart ;	\
-	je	4f ;		\
+	je		4f ;		\
 	movl	$0, _splstart ; \
 	call	_failsafe_cancel ; \
 4:
@@ -1324,7 +1324,7 @@ common_int_return:
 	movl	%eax, %ecx
 	cli
 	movl	%eax, _cpl
-	orw	_imen, %ax
+	orw		_imen, %ax
 	outb	%al, $IO_ICU1+1		/* re-enable intr? */
 	NOP
 	movb	%ah, %al
@@ -1333,14 +1333,14 @@ common_int_return:
 
 trap_exit:
 	testl	%ecx, %ecx		/* returning to zero? */
-	je	9f
+	je		9f
 
 	/* returning to greater than basepri */
 5:
 8:
 	/* WUP(1)*/
-	pop	%es			/* returning to previous context */
-	pop	%ds
+	pop		%es			/* returning to previous context */
+	pop		%ds
 	popal
 	nop
 	addl	$8, %esp
@@ -1357,29 +1357,29 @@ _iret:
 	/* first, look for asts ... */
 	/* testw $0x3, 13*4(%esp) */
 	cmpw	$0x1f, 13*4(%esp)
-	jne	1f			/* no asts, move on to swintrs */
+	jne		1f			/* no asts, move on to swintrs */
 	movl	_curproc, %edx		/* have we a process? */
 	/* testl	%edx, %edx	must have if going back to user 
 	je	1f */
 /*testl	%edx, %edx	
 je	9f*/
 	btrl	$0, PMD_FLAGS(%edx)
-	jc	6f
+	jc		6f
 
 	/* then network software interrupts */
 1:
 	xorl	%ebx, %ebx
 	xchgl	%ebx, _netisr
 	testl	%ebx, %ebx
-	jne	4f
+	jne		4f
 
 3:	/* next, look for softclocks. */
 	xorl	%eax, %eax
 	xchgl	%eax, _sclkpending
 	testl	%eax, %eax
-	jne	5f
+	jne		5f
 
-	jmp	8b			/* return at base pri */
+	jmp		8b			/* return at base pri */
 
 	
 #include "netisr.h"

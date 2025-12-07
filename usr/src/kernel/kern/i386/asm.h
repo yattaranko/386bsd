@@ -7,7 +7,8 @@
  */
 
 #define	ENTRY(name) \
-	.globl _/**/name; .align 4;  _/**/name:
+	.globl _##name; .align 4;  _##name:
 #define	ALTENTRY(name) \
-	.globl _/**/name; _/**/name:
-
+	.globl _##name; _##name:
+#define	IDTVEC(name) \
+	.align 4; .globl _X##name; _X##name:

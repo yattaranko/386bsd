@@ -271,7 +271,7 @@ freedesc(struct segment_descriptor *sdp)
  * Allocate a TSS descriptor to a kernel thread, in the course of
  * creating a new thread. Special version of allocdesc().
  */
-extern inline
+extern inline void
 alloctss(struct proc *p) {
 	struct segment_descriptor *sdp = allocdesc();
 	sdp->sd_lolimit = sizeof(struct i386tss) - 1;

@@ -52,38 +52,38 @@
  */
 
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/user.h"
-#include "sys/reboot.h"
-#include "systm.h"
-#include "kernel.h"
-#include "proc.h"
-#include "signalvar.h"
-#include "buf.h"
-#include "callout.h"
-#include "malloc.h"
-#include "mbuf.h"
-#include "msgbuf.h"
-#include "modconfig.h"
-#include "netisr.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/user.h>
+#include <sys/reboot.h>
+#include <systm.h>
+#include <kernel.h>
+#include <proc.h>
+#include <signalvar.h>
+#include <buf.h>
+#include <callout.h>
+#include <malloc.h>
+#include <mbuf.h>
+#include <msgbuf.h>
+#include <modconfig.h>
+#include <netisr.h>
 #define	__NO_INLINES
-#include "prototypes.h"
+#include <prototypes.h>
 #undef	__NO_INLINES
 
-#include "vm.h"
-#include "kmem.h"
+#include <vm.h>
+#include <kmem.h>
 
 extern vm_offset_t avail_end;
 
-#include "machine/cpu.h"
-#include "machine/reg.h"
-#include "machine/psl.h"
+#include <machine/cpu.h>
+#include <machine/reg.h>
+#include <machine/psl.h>
 #include "segments.h"
 #include "specialreg.h"
-#include "rtc.h"
+#include <rtc.h>
 #ifdef SYSVSHMx
-#include "sys/shm.h"
+#include <sys/shm.h>
 #endif
 
 /*
@@ -92,10 +92,11 @@ extern vm_offset_t avail_end;
 /*#ifdef __NO_INLINES*/
 #define	__NO_INLINES_BUT_EMIT_CODE
 /*#undef __NO_INLINES*/
-#include "prototypes.h"
-#include "machine/inline/io.h"
-#include "machine/inline/inet.h"
+#include <prototypes.h>
+#include <machine/inline/io.h>
+#include <machine/inline/inet.h>
 #undef	__NO_INLINES_BUT_EMIT_CODE
+#include <spl.h>
 /* #endif */
 
 /*
@@ -122,6 +123,9 @@ extern char copyright1[], copyright2[];
 extern int boothowto;
 long dumplo;
 int physmem, maxmem;
+
+extern u_char	rtcin(u_char  adr);
+extern void		trap(struct trapframe frame);
 
 void
 cpu_startup(void)
@@ -252,6 +256,7 @@ extern int	dumpsize;
  * Attempt to dump the system's memory image to disk, so
  * that the /sbin/savecore program can recover it after reboot.
  */
+void
 dumpsys()
 {
 
@@ -585,19 +590,22 @@ again:
 
 
 #define	IDTVEC(name)	__CONCAT(X, name)
-extern	IDTVEC(div), IDTVEC(dbg), IDTVEC(nmi), IDTVEC(bpt), IDTVEC(ofl),
-	IDTVEC(bnd), IDTVEC(ill), IDTVEC(dna), IDTVEC(dble), IDTVEC(fpusegm),
-	IDTVEC(tss), IDTVEC(missing), IDTVEC(stk), IDTVEC(prot),
-	IDTVEC(page), IDTVEC(rsvd), IDTVEC(fpu), IDTVEC(rsvd0),
-	IDTVEC(rsvd1), IDTVEC(rsvd2), IDTVEC(rsvd3), IDTVEC(rsvd4),
-	IDTVEC(rsvd5), IDTVEC(rsvd6), IDTVEC(rsvd7), IDTVEC(rsvd8),
-	IDTVEC(rsvd9), IDTVEC(rsvd10), IDTVEC(rsvd11), IDTVEC(rsvd12),
-	IDTVEC(rsvd13), IDTVEC(rsvd14), IDTVEC(rsvd14), IDTVEC(syscall);
+extern int
+	IDTVEC(div),    IDTVEC(dbg),     IDTVEC(nmi),    IDTVEC(bpt),  IDTVEC(ofl),
+	IDTVEC(bnd),    IDTVEC(ill),     IDTVEC(dna),    IDTVEC(dble), IDTVEC(fpusegm),
+	IDTVEC(tss),    IDTVEC(missing), IDTVEC(stk),    IDTVEC(prot),
+	IDTVEC(page),   IDTVEC(rsvd),    IDTVEC(fpu),    IDTVEC(rsvd0),
+	IDTVEC(rsvd1),  IDTVEC(rsvd2),   IDTVEC(rsvd3),  IDTVEC(rsvd4),
+	IDTVEC(rsvd5),  IDTVEC(rsvd6),   IDTVEC(rsvd7),  IDTVEC(rsvd8),
+	IDTVEC(rsvd9),  IDTVEC(rsvd10),  IDTVEC(rsvd11), IDTVEC(rsvd12),
+	IDTVEC(rsvd13), IDTVEC(rsvd14),  IDTVEC(rsvd14), IDTVEC(syscall);
 
 int	cpu_option;
 
 
-invtss() {
+void
+invtss()
+{
 	struct i386tss *tsp = panictss();
 	struct trapframe tf;
 
@@ -616,7 +624,9 @@ invtss() {
 	panic("inval tss");
 }
 
-dbl() {
+void
+dbl()
+{
 	struct i386tss *tsp = panictss();
 	struct trapframe tf;
 
@@ -635,8 +645,9 @@ dbl() {
 	panic("double fault");
 }
 
-
-init386(first) {
+void
+init386(int first)
+{
 	int x;
 	unsigned biosbasemem, biosextmem;
 	struct gate_descriptor *gdp;
