@@ -122,3 +122,9 @@ typedef struct {
 	unsigned char flags		[ISODCL (  4,    4)];
 } ISO_RRIP_EXFLAG;
 
+
+extern void	isofs_rrip_defattr(struct iso_directory_record *, ISO_RRIP_ANALYZE *);
+extern void	isofs_rrip_deftstamp(struct iso_directory_record *, ISO_RRIP_ANALYZE *);
+extern int	isofs_rrip_analyze(struct iso_directory_record *, ISO_RRIP_ANALYZE *);
+extern int	isofs_rrip_getname(struct iso_directory_record *, char	*, short *);
+extern int	isofs_rrip_getsymname(struct vnode *, struct iso_directory_record *, char *, int *);

@@ -36,24 +36,27 @@
  *	$Id: $
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/mount.h"
-#include "ucred.h"
-#include "sys/time.h"
-#include "sys/errno.h"
-#include "systm.h"
-#include "buf.h"
-#include "uio.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/mount.h>
+#include <ucred.h>
+#include <sys/time.h>
+#include <sys/errno.h>
+#include <systm.h>
+#include <buf.h>
+#include <uio.h>
 
-#include "vnode.h"
-#include "namei.h"
+#include <vnode.h>
+#include <namei.h>
 #include "iso.h"
 #include "isofs_node.h"
 #include "iso_rrip.h"
 #include "isofs_rrip.h"
+#include <prototypes.h>
 
 struct	nchstats nchstats;
+
+extern int iso_blkatoff(struct iso_node*, off_t, char**, struct buf**);
 
 /*
  * Convert a component of a pathname into a pointer to a locked inode.
@@ -90,6 +93,7 @@ struct	nchstats nchstats;
  *
  * NOTE: (LOOKUP | LOCKPARENT) currently returns the parent inode unlocked.
  */
+int
 isofs_lookup(vdp, ndp, p)
 	register struct vnode *vdp;
 	register struct nameidata *ndp;
@@ -116,7 +120,7 @@ isofs_lookup(vdp, ndp, p)
 	int error;
 
 	int reclen;
-	int namelen;
+	short namelen;
 	char altname[251];
 	int i;
 
@@ -398,6 +402,7 @@ found:
  * is non-zero, fill it in with a pointer to the
  * remaining space in the directory.
  */
+int
 iso_blkatoff(ip, offset, res, bpp)
 	struct iso_node *ip;
 	off_t offset;

@@ -33,22 +33,23 @@
  *	$Id: $
  */
 
-#include "sys/param.h"
-#include "sys/mount.h"
-#include "sys/file.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "buf.h"
-#include "uio.h"
-#include "malloc.h"
+#include <sys/param.h>
+#include <sys/mount.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <buf.h>
+#include <uio.h>
+#include <malloc.h>
 
-#include "vnode.h"
+#include <vnode.h>
 #include "iso.h"
 #include "isofs_node.h"
 #include "iso_rrip.h"
-#include "ufs_dinode.h"		/* XXX  */
+#include "isofs_rrip.h"
+#include <ufs_dinode.h>		/* XXX  */
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 #define	INOHSZ	512
 #if	((INOHSZ&(INOHSZ-1)) == 0)
@@ -66,6 +67,7 @@ union iso_ihead {
 /*
  * Initialize hash links for inodes.
  */
+int
 isofs_init()
 {
 	register int i;
@@ -79,6 +81,7 @@ isofs_init()
 		ih->ih_head[0] = ih;
 		ih->ih_head[1] = ih;
 	}
+	return (0);
 }
 
 /*
@@ -88,6 +91,7 @@ isofs_init()
  * return the inode locked. Detection and handling of mount
  * points must be done by the calling routine.
  */
+int
 iso_iget(xp, ino, ipp, isodir)
 	struct iso_node *xp;
 	ino_t ino;
@@ -172,12 +176,12 @@ ip->iso_sl = 0;
 	 */
 	switch ( imp->iso_ftype ) {
 		case ISO_FTYPE_9660:
-			isofs_rrip_defattr  ( isodir, &(ip->inode) );
-			isofs_rrip_deftstamp( isodir, &(ip->inode) );
+			isofs_rrip_defattr  ( isodir, (ISO_RRIP_ANALYZE *)&(ip->inode) );
+			isofs_rrip_deftstamp( isodir, (ISO_RRIP_ANALYZE *)&(ip->inode) );
 			goto FlameOff;
 			break;  
 		case ISO_FTYPE_RRIP:
-			result = isofs_rrip_analyze( isodir, &(ip->inode) );
+			result = isofs_rrip_analyze( isodir, (ISO_RRIP_ANALYZE *)&(ip->inode) );
 			break;  
 		default:
 			printf("unknown iso_ftype.. %d\n", imp->iso_ftype );
@@ -342,6 +346,7 @@ ip->iso_sl = malloc(NAME_MAX,M_UFSMNT,M_WAITOK);
 /*
  * Unlock and decrement the reference count of an inode structure.
  */
+int
 iso_iput(ip)
 	register struct iso_node *ip;
 {
@@ -350,12 +355,14 @@ iso_iput(ip)
 		panic("iso_iput");
 	ISO_IUNLOCK(ip);
 	vrele(ITOV(ip));
+	return (0);
 }
 
 /*
  * Last reference to an inode, write the inode out and if necessary,
  * truncate and deallocate the file.
  */
+int
 isofs_inactive(vp, p)
 	struct vnode *vp;
 	struct proc *p;
@@ -370,9 +377,9 @@ isofs_inactive(vp, p)
 #endif
 
 	ip->i_flag = 0;
-if(ip->iso_sl)
-	free(ip->iso_sl, M_UFSMNT);
-ip->iso_sl = 0;
+	if(ip->iso_sl)
+		free(ip->iso_sl, M_UFSMNT);
+	ip->iso_sl = 0;
 
 	/*
 	 * If we are done with the inode, reclaim it
@@ -394,6 +401,7 @@ ip->iso_sl = 0;
 /*
  * Reclaim an inode so that it can be used for other purposes.
  */
+int
 isofs_reclaim(vp)
 	register struct vnode *vp;
 {
@@ -426,6 +434,7 @@ isofs_reclaim(vp)
 /*
  * Lock an inode. If its already locked, set the WANT bit and sleep.
  */
+int
 iso_ilock(ip)
 	register struct iso_node *ip;
 {
@@ -440,11 +449,13 @@ iso_ilock(ip)
 	ip->i_spare1 = 0;
 	ip->i_spare0 = curproc->p_pid;
 	ip->i_flag |= ILOCKED;
+	return (0);
 }
 
 /*
  * Unlock an inode.  If WANT bit is on, wakeup.
  */
+int
 iso_iunlock(ip)
 	register struct iso_node *ip;
 {
@@ -459,4 +470,5 @@ iso_iunlock(ip)
 		ip->i_flag &= ~IWANT;
 		wakeup((caddr_t)ip);
 	}
+	return (0);
 }

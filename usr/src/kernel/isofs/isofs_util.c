@@ -2,14 +2,14 @@
  *	$Id: isofs_util.c,v 1.2 1993/07/20 03:27:33 jkh Exp $
  */
 
-int
+unsigned char
 isonum_711 (p)
 char *p;
 {
 	return (*p & 0xff);
 }
 
-int
+unsigned int
 isonum_712 (p)
 char *p;
 {
@@ -21,21 +21,21 @@ char *p;
 	return (val);
 }
 
-int
+unsigned short
 isonum_721 (p)
 char *p;
 {
 	return ((p[0] & 0xff) | ((p[1] & 0xff) << 8));
 }
 
-int
+unsigned short
 isonum_722 (p)
 char *p;
 {
 	return (((p[0] & 0xff) << 8) | (p[1] & 0xff));
 }
 
-int
+unsigned short
 isonum_723 (p)
 char *p;
 {
@@ -48,7 +48,7 @@ char *p;
 	return (isonum_721 (p));
 }
 
-int
+unsigned int
 isonum_731 (p)
 unsigned char *p;
 {
@@ -58,7 +58,7 @@ unsigned char *p;
 		| ((p[3] & 0xff) << 24));
 }
 
-int
+unsigned int
 isonum_732 (p)
 unsigned char *p;
 {
@@ -68,7 +68,7 @@ unsigned char *p;
 		| (p[3] & 0xff));
 }
 
-int
+unsigned int
 isonum_733 (p)
 unsigned char *p;
 {
@@ -88,8 +88,10 @@ unsigned char *p;
 /*
  * translate and compare a filename
  */
-isofncmp(char *fn, int fnlen, char *isofn, int isolen) {
-	int fnidx;
+int
+isofncmp(char *fn, int fnlen, char *isofn, short isolen)
+{
+	short fnidx;
 
 	fnidx = 0;
 	for (fnidx = 0; fnidx < isolen; fnidx++, fn++) {
@@ -116,7 +118,8 @@ isofncmp(char *fn, int fnlen, char *isofn, int isolen) {
  * translate a filename
  */
 void
-isofntrans(char *infn, int infnlen, char *outfn, short *outfnlen) {
+isofntrans(char *infn, int infnlen, char *outfn, short *outfnlen)
+{
 	int fnidx;
 
 	fnidx = 0;

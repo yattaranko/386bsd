@@ -31,27 +31,27 @@
  *	$Id: $
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/mount.h"
-#include "sys/time.h"
-#include "sys/errno.h"
-#include "uio.h"
-#include "buf.h"
-#include "kernel.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/mount.h>
+#include <sys/time.h>
+#include <sys/errno.h>
+#include <uio.h>
+#include <buf.h>
+#include <kernel.h>
 
-#include "vnode.h"
+#include <vnode.h>
 #include "iso.h"
 #include "isofs_node.h"
-#include "isofs_rrip.h"
 #include "iso_rrip.h"
+#include "isofs_rrip.h"
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 /*
  * POSIX file attribute
  */
-static int isofs_rrip_attr( p, ana )
+static void isofs_rrip_attr( p, ana )
 ISO_RRIP_ATTR	 *p;
 ISO_RRIP_ANALYZE *ana;
 {
@@ -62,7 +62,7 @@ ISO_RRIP_ANALYZE *ana;
 	return;
 }
 
-int isofs_rrip_defattr(  isodir, ana )
+void isofs_rrip_defattr(  isodir, ana )
 struct iso_directory_record 	*isodir;
 ISO_RRIP_ANALYZE 		*ana;
 {
@@ -74,7 +74,7 @@ ISO_RRIP_ANALYZE 		*ana;
 /*
  * POSIX device modes
  */
-static int isofs_rrip_device( p, ana )
+static void isofs_rrip_device( p, ana )
 ISO_RRIP_DEVICE  *p;
 ISO_RRIP_ANALYZE *ana;
 {
@@ -98,7 +98,7 @@ ISO_RRIP_ANALYZE *ana;
 /*
  * Symbolic Links
  */
-static int isofs_rrip_slink( p, ana )
+static void isofs_rrip_slink( p, ana )
 ISO_RRIP_SLINK  *p;
 ISO_RRIP_ANALYZE *ana;
 {
@@ -108,7 +108,7 @@ ISO_RRIP_ANALYZE *ana;
 /*
  * Alternate name
  */
-static int isofs_rrip_altname( p, ana )
+static void isofs_rrip_altname( p, ana )
 ISO_RRIP_ALTNAME *p;
 ISO_RRIP_ANALYZE *ana;
 {
@@ -118,7 +118,7 @@ ISO_RRIP_ANALYZE *ana;
 /*
  * Child Link
  */
-static int isofs_rrip_clink( p, ana )
+static void isofs_rrip_clink( p, ana )
 ISO_RRIP_CLINK  *p;
 ISO_RRIP_ANALYZE *ana;
 {
@@ -138,7 +138,7 @@ ISO_RRIP_ANALYZE *ana;
 /*
  * Parent Link
  */
-static int isofs_rrip_plink( p, ana )
+static void isofs_rrip_plink( p, ana )
 ISO_RRIP_PLINK  *p;
 ISO_RRIP_ANALYZE *ana;
 {
@@ -159,7 +159,7 @@ ISO_RRIP_ANALYZE *ana;
 /*
  * Relocated directory
  */
-static int isofs_rrip_reldir( p, ana )
+static void isofs_rrip_reldir( p, ana )
 ISO_RRIP_RELDIR  *p;
 ISO_RRIP_ANALYZE *ana;
 {
@@ -267,7 +267,7 @@ struct timeval   *pu;
 	isofs_rrip_tstamp_conv7(buf, pu);
 }
 
-static int isofs_rrip_tstamp( p, ana )
+static void isofs_rrip_tstamp( p, ana )
 ISO_RRIP_TSTAMP  *p;
 ISO_RRIP_ANALYZE *ana;
 {
@@ -304,7 +304,7 @@ ISO_RRIP_ANALYZE *ana;
 	return;
 }
 
-int isofs_rrip_deftstamp( isodir, ana )
+void isofs_rrip_deftstamp( isodir, ana )
 struct iso_directory_record  *isodir;
 ISO_RRIP_ANALYZE *ana;
 {
@@ -318,7 +318,7 @@ ISO_RRIP_ANALYZE *ana;
  * Flag indicating
  *   Nothing to do....
  */
-static int isofs_rrip_idflag( p, ana )
+static void isofs_rrip_idflag( p, ana )
 ISO_RRIP_IDFLAG  *p;
 ISO_RRIP_ANALYZE *ana;
 {
@@ -339,7 +339,7 @@ ISO_RRIP_ANALYZE *ana;
  * Extension reference
  *   Nothing to do....
  */
-static int isofs_rrip_exflag( p, ana )
+static void isofs_rrip_exflag( p, ana )
 ISO_RRIP_EXFLAG  *p;
 ISO_RRIP_ANALYZE *ana;
 {
@@ -360,7 +360,7 @@ ISO_RRIP_ANALYZE *ana;
  * Unknown ...
  *   Nothing to do....
  */
-static int isofs_rrip_unknown( p, ana )
+static void isofs_rrip_unknown( p, ana )
 ISO_RRIP_EXFLAG  *p;
 ISO_RRIP_ANALYZE *ana;
 {
@@ -368,10 +368,10 @@ ISO_RRIP_ANALYZE *ana;
 }
 
 typedef struct {
-	char	 type[2];
-	int	 (*func)();
-	int	 (*func2)();
-	int	 result;
+	char	type[2];
+	void	(*func)();
+	void	(*func2)();
+	int		result;
 } RRIP_TABLE;
 
 static RRIP_TABLE rrip_table [] = {
@@ -465,14 +465,14 @@ setdefault:
  *    it will be return the translated ISO9660 name,
  */
 int	isofs_rrip_getname( isodir, outbuf, outlen )
-struct iso_directory_record 	*isodir;
-char				*outbuf;
-int				*outlen;
+	struct iso_directory_record *isodir;
+	char						*outbuf;
+	short						*outlen;
 {
-	ISO_SUSP_HEADER  *phead, *pend;
-	ISO_RRIP_ALTNAME *p;
-	char		 *pwhead;
-	int		 found;
+	ISO_SUSP_HEADER		*phead, *pend;
+	ISO_RRIP_ALTNAME	*p;
+	char				*pwhead;
+	int					found;
 
 	/*
          * Note: If name length is odd,

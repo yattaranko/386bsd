@@ -1,28 +1,29 @@
 /*
  *	$Id: $
  */
-#include "sys/param.h"
-#include "systm.h"
-#include "kernel.h"
-#include "sys/file.h"
-#include "sys/stat.h"
-#include "sys/errno.h"
-#include "buf.h"
-#include "proc.h"
-#include "resourcevar.h"
-#include "sys/mount.h"
-#include "uio.h"
-#include "namei.h"
-#include "vnode.h"
-#include "specdev.h"
-#include "fifo.h"
-#include "malloc.h"
-#include "sys/dir.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <systm.h>
+#include <kernel.h>
+#include <sys/file.h>
+#include <sys/stat.h>
+#include <sys/errno.h>
+#include <buf.h>
+#include <proc.h>
+#include <resourcevar.h>
+#include <sys/mount.h>
+#include <uio.h>
+#include <namei.h>
+#include <vnode.h>
+#include <specdev.h>
+#include <fifo.h>
+#include <malloc.h>
+#include <sys/dir.h>
+#include <prototypes.h>
 
 #include "iso.h"
 #include "isofs_node.h"
 #include "iso_rrip.h"
+#include "isofs_rrip.h"
 
 /*
  * Open called.
@@ -30,6 +31,7 @@
  * Nothing to do.
  */
 /* ARGSUSED */
+int
 isofs_open(vp, mode, cred, p)
 	struct vnode *vp;
 	int mode;
@@ -45,6 +47,7 @@ isofs_open(vp, mode, cred, p)
  * Update the times on the inode on writeable file systems.
  */
 /* ARGSUSED */
+int
 isofs_close(vp, fflag, cred, p)
 	struct vnode *vp;
 	int fflag;
@@ -59,6 +62,7 @@ isofs_close(vp, fflag, cred, p)
  * The mode is shifted to select the owner/group/other fields. The
  * super user is granted all permissions.
  */
+int
 isofs_access(vp, mode, cred, p)
 	struct vnode *vp;
 	register int mode;
@@ -69,6 +73,7 @@ isofs_access(vp, mode, cred, p)
 }
 
 /* ARGSUSED */
+int
 isofs_getattr(vp, vap, cred, p)
 	struct vnode *vp;
 	register struct vattr *vap;
@@ -110,6 +115,7 @@ isofs_getattr(vp, vap, cred, p)
  * Vnode op for reading.
  */
 /* ARGSUSED */
+int
 isofs_read(vp, uio, ioflag, cred)
 	struct vnode *vp;
 	register struct uio *uio;
@@ -169,6 +175,7 @@ isofs_read(vp, uio, ioflag, cred)
 }
 
 /* ARGSUSED */
+int
 isofs_ioctl(vp, com, data, fflag, cred, p)
 	struct vnode *vp;
 	int com;
@@ -181,6 +188,7 @@ isofs_ioctl(vp, com, data, fflag, cred, p)
 }
 
 /* ARGSUSED */
+int
 isofs_select(vp, which, fflags, cred, p)
 	struct vnode *vp;
 	int which, fflags;
@@ -200,6 +208,7 @@ isofs_select(vp, which, fflags, cred, p)
  * NB Currently unsupported.
  */
 /* ARGSUSED */
+int
 isofs_mmap(vp, fflags, cred, p)
 	struct vnode *vp;
 	int fflags;
@@ -216,6 +225,7 @@ isofs_mmap(vp, fflags, cred, p)
  * Nothing to do, so just return.
  */
 /* ARGSUSED */
+int
 isofs_seek(vp, oldoff, newoff, cred)
 	struct vnode *vp;
 	off_t oldoff, newoff;
@@ -228,6 +238,7 @@ isofs_seek(vp, oldoff, newoff, cred)
 /*
  * Vnode op for readdir
  */
+int
 isofs_readdir(vp, uio, cred, eofflagp)
 	struct vnode *vp;
 	register struct uio *uio;
@@ -349,7 +360,7 @@ isofs_readdir(vp, uio, cred, eofflagp)
 		if (uio->uio_resid < dirent.d_reclen)
 			break;
 
-		if (error = uiomove (&dirent, dirent.d_reclen, uio))
+		if (error = uiomove((caddr_t)&dirent, dirent.d_reclen, uio))
 			break;
 
 		iso_offset += reclen;
@@ -375,7 +386,9 @@ isofs_readdir(vp, uio, cred, eofflagp)
 typedef struct iso_directory_record ISODIR;
 typedef struct iso_node             ISONODE;
 typedef struct iso_mnt              ISOMNT;
-int isofs_readlink(vp, uio, cred)
+
+int
+isofs_readlink(vp, uio, cred)
 struct vnode *vp;
 struct uio   *uio;
 struct ucred *cred;
@@ -464,6 +477,7 @@ else
  * done. If a buffer has been saved in anticipation of a CREATE, delete it.
  */
 /* ARGSUSED */
+int
 isofs_abortop(ndp)
 	struct nameidata *ndp;
 {
@@ -476,6 +490,7 @@ isofs_abortop(ndp)
 /*
  * Lock an inode.
  */
+int
 isofs_lock(vp)
 	struct vnode *vp;
 {
@@ -488,6 +503,7 @@ isofs_lock(vp)
 /*
  * Unlock an inode.
  */
+int
 isofs_unlock(vp)
 	struct vnode *vp;
 {
@@ -502,6 +518,7 @@ isofs_unlock(vp)
 /*
  * Check for a locked inode.
  */
+int
 isofs_islocked(vp)
 	struct vnode *vp;
 {
@@ -515,7 +532,7 @@ isofs_islocked(vp)
  * Calculate the logical to physical mapping if not done already,
  * then call the device strategy routine.
  */
-
+int
 isofs_strategy(bp)
 	register struct buf *bp;
 {
@@ -526,7 +543,7 @@ isofs_strategy(bp)
 	if (bp->b_vp->v_type == VBLK || bp->b_vp->v_type == VCHR)
 		panic("isofs_strategy: spec");
 	if (bp->b_blkno == bp->b_lblkno) {
-		if (error = iso_bmap(ip, bp->b_lblkno, &bp->b_blkno))
+		if (error = iso_bmap(ip, bp->b_lblkno, (int *)&bp->b_blkno))
 			return (error);
 		if ((long)bp->b_blkno == -1)
 			clrbuf(bp);
@@ -544,10 +561,12 @@ isofs_strategy(bp)
 /*
  * Print out the contents of an inode.
  */
+int
 isofs_print(vp)
 	struct vnode *vp;
 {
 	printf ("tag VT_ISOFS, isofs vnode\n");
+	return (0);
 }
 
 extern int _ENODEV_ (), nullop();
@@ -559,68 +578,68 @@ struct vnodeops isofs_vnodeops = {
 	isofs_lookup,		/* lookup */
 	(void *)_ENODEV_,	/* create */
 	(void *)_ENODEV_,	/* mknod */
-	isofs_open,		/* open */
+	isofs_open,			/* open */
 	isofs_close,		/* close */
 	isofs_access,		/* access */
 	isofs_getattr,		/* getattr */
-	(void *)_ENODEV_,		/* setattr */
-	isofs_read,		/* read */
-	(void *)_ENODEV_,		/* write */
+	(void *)_ENODEV_,	/* setattr */
+	isofs_read,			/* read */
+	(void *)_ENODEV_,	/* write */
 	isofs_ioctl,		/* ioctl */
 	isofs_select,		/* select */
-	isofs_mmap,		/* mmap */
+	isofs_mmap,			/* mmap */
 	(void *)nullop,		/* fsync */
-	isofs_seek,		/* seek */
-	(void *)_ENODEV_,		/* remove */
-	(void *)_ENODEV_,		/* link */
-	(void *)_ENODEV_,		/* rename */
-	(void *)_ENODEV_,		/* mkdir */
-	(void *)_ENODEV_,		/* rmdir */
-	(void *)_ENODEV_,		/* symlink */
+	isofs_seek,			/* seek */
+	(void *)_ENODEV_,	/* remove */
+	(void *)_ENODEV_,	/* link */
+	(void *)_ENODEV_,	/* rename */
+	(void *)_ENODEV_,	/* mkdir */
+	(void *)_ENODEV_,	/* rmdir */
+	(void *)_ENODEV_,	/* symlink */
 	isofs_readdir,		/* readdir */
 	isofs_readlink,		/* readlink */
 	isofs_abortop,		/* abortop */
 	isofs_inactive,		/* inactive */
 	isofs_reclaim,		/* reclaim */
-	isofs_lock,		/* lock */
+	isofs_lock,			/* lock */
 	isofs_unlock,		/* unlock */
-	(void *)_ENODEV_,		/* bmap */
+	(void *)_ENODEV_,	/* bmap */
 	isofs_strategy,		/* strategy */
 	isofs_print,		/* print */
 	isofs_islocked,		/* islocked */
-	(void *)_ENODEV_,		/* advlock */
+	(void *)_ENODEV_,	/* advlock */
 };
 
 struct vnodeops spec_isonodeops = {
 	spec_lookup,		/* lookup */
 	spec_create,		/* create */
-	spec_mknod,		/* mknod */
-	spec_open,		/* open */
-	spec_close,	/* close */
+	spec_mknod,			/* mknod */
+	spec_open,			/* open */
+	spec_close,			/* close */
 	isofs_access,		/* access */
 	isofs_getattr,		/* getattr */
 	(void *)nullop,		/* setattr -- XXX not enodev so writable*/
-	spec_read,		/* read */
-	spec_write,		/* write */
-	spec_ioctl,		/* ioctl */
+	spec_read,			/* read */
+	spec_write,			/* write */
+	spec_ioctl,			/* ioctl */
 	spec_select,		/* select */
-	spec_mmap,		/* mmap */
-	spec_fsync,		/* fsync */
-	spec_seek,		/* seek */
+	spec_mmap,			/* mmap */
+	spec_fsync,			/* fsync */
+	spec_seek,			/* seek */
 	spec_remove,		/* remove */
-	spec_link,		/* link */
+	spec_link,			/* link */
 	spec_rename,		/* rename */
-	spec_mkdir,		/* mkdir */
-	spec_rmdir,		/* rmdir */
+	spec_mkdir,			/* mkdir */
+	spec_rmdir,			/* rmdir */
 	spec_symlink,		/* symlink */
 	spec_readdir,		/* readdir */
 	spec_readlink,		/* readlink */
 	spec_abortop,		/* abortop */
 	isofs_inactive,		/* inactive */
 	isofs_reclaim,		/* reclaim */
-	isofs_lock,		/* lock */
+	isofs_lock,			/* lock */
 	isofs_unlock,		/* unlock */
-	spec_bmap,		/* bmap */
+	spec_bmap,			/* bmap */
 	spec_strategy,		/* strategy */
 	isofs_print,		/* print */
 	isofs_islocked,		/* islocked */

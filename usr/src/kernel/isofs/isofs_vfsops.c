@@ -58,6 +58,9 @@ FILESYSTEM_MODCONFIG() {
  */
 #define ROOTNAME	"root_device"
 
+static int iso_mountfs(struct vnode*, struct mount*, struct proc*);
+
+int
 isofs_mountroot()
 {
 	register struct mount *mp;
@@ -113,6 +116,7 @@ int iso_doforce = 1;
  *
  * mount system call
  */
+int
 isofs_mount(mp, path, data, ndp, p)
 	register struct mount *mp;
 	char *path;
@@ -210,6 +214,7 @@ isofs_mount(mp, path, data, ndp, p)
 /*
  * Common code for mount and mountroot
  */
+int
 iso_mountfs(devvp, mp, p)
 	register struct vnode *devvp;
 	struct mount *mp;
@@ -353,6 +358,7 @@ out:
  * Nothing to do at the moment.
  */
 /* ARGSUSED */
+int
 isofs_start(mp, flags, p)
 	struct mount *mp;
 	int flags;
@@ -365,6 +371,7 @@ isofs_start(mp, flags, p)
 /*
  * unmount system call
  */
+int
 isofs_unmount(mp, mntflags, p)
 	struct mount *mp;
 	int mntflags;
@@ -423,6 +430,7 @@ iso_mountedon(vp)
 /*
  * Return root of a filesystem
  */
+int
 isofs_root(mp, vpp)
 	struct mount *mp;
 	struct vnode **vpp;
@@ -450,6 +458,7 @@ isofs_root(mp, vpp)
 /*
  * Get file system statistics.
  */
+int
 isofs_statfs(mp, sbp, p)
 	struct mount *mp;
 	register struct statfs *sbp;
@@ -477,6 +486,7 @@ isofs_statfs(mp, sbp, p)
 	return (0);
 }
 
+int
 isofs_sync(mp, waitfor)
 	struct mount *mp;
 	int waitfor;
@@ -503,6 +513,7 @@ struct ifid {
 	int	ifid_ino;
 };
 
+int
 isofs_fhtovp(mp, fhp, vpp)
 	register struct mount *mp;
 	struct fid *fhp;
@@ -579,6 +590,7 @@ isofs_fhtovp(mp, fhp, vpp)
  * Vnode pointer to File handle
  */
 /* ARGSUSED */
+int
 isofs_vptofh(vp, fhp)
 	struct vnode *vp;
 	struct fid *fhp;

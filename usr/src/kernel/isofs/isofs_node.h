@@ -61,36 +61,45 @@ struct iso_node {
 #define ISO_ILOCK(ip)	iso_ilock(ip)
 #define ISO_IUNLOCK(ip)	iso_iunlock(ip)
 
+extern int	isofs_inactive(struct vnode *, struct proc *);
+extern int	isofs_reclaim(struct vnode *);
+extern int	iso_iget(struct iso_node *, ino_t, struct iso_node **, struct iso_directory_record *);
+extern int	iso_iput(struct iso_node *);
+extern int	iso_ilock(struct iso_node *);
+extern int	iso_iunlock(struct iso_node *);
+extern int	iso_blkatoff(struct iso_node*, off_t, char**, struct buf**);
+extern int	iso_bmap(struct iso_node *, int, int *);
+extern unsigned char	isonum_711(char *);
+extern unsigned int		isonum_712(char *);
+extern unsigned short	isonum_721(char *);
+extern unsigned short	isonum_722(char *);
+extern unsigned short	isonum_723(char *);
+extern unsigned int		isonum_731(unsigned char *);
+extern unsigned int		isonum_732(unsigned char *);
+extern unsigned int		isonum_733(unsigned char *);
+extern int	isofncmp(char *, int, char *, short);
+extern int	isofntrans(char*, int, char*, short*);
+
 /*
  * Prototypes for ISOFS vnode operations
  */
-int isofs_lookup __P((struct vnode *vp, struct nameidata *ndp, struct proc *p));
-int isofs_open __P((struct vnode *vp, int mode, struct ucred *cred,
-	struct proc *p));
-int isofs_close __P((struct vnode *vp, int fflag, struct ucred *cred,
-	struct proc *p));
-int isofs_access __P((struct vnode *vp, int mode, struct ucred *cred,
-	struct proc *p));
-int isofs_getattr __P((struct vnode *vp, struct vattr *vap, struct ucred *cred,
-	struct proc *p));
-int isofs_read __P((struct vnode *vp, struct uio *uio, int ioflag,
-	struct ucred *cred));
-int isofs_ioctl __P((struct vnode *vp, int command, caddr_t data, int fflag,
-	struct ucred *cred, struct proc *p));
-int isofs_select __P((struct vnode *vp, int which, int fflags, struct ucred *cred,
-	struct proc *p));
-int isofs_mmap __P((struct vnode *vp, int fflags, struct ucred *cred,
-	struct proc *p));
-int isofs_seek __P((struct vnode *vp, off_t oldoff, off_t newoff,
-	struct ucred *cred));
-int isofs_readdir __P((struct vnode *vp, struct uio *uio, struct ucred *cred,
-	int *eofflagp));
-int isofs_abortop __P((struct nameidata *ndp));
-int isofs_inactive __P((struct vnode *vp, struct proc *p));
-int isofs_reclaim __P((struct vnode *vp));
-int isofs_lock __P((struct vnode *vp));
-int isofs_unlock __P((struct vnode *vp));
-int isofs_strategy __P((struct buf *bp));
-int isofs_print __P((struct vnode *vp));
-int isofs_islocked __P((struct vnode *vp));
+int isofs_lookup __P((struct vnode *, struct nameidata *, struct proc *));
+int isofs_open __P((struct vnode *, int, struct ucred *, struct proc *));
+int isofs_close __P((struct vnode *, int, struct ucred *, struct proc *));
+int isofs_access __P((struct vnode *, int, struct ucred *, struct proc *));
+int isofs_getattr __P((struct vnode *, struct vattr *, struct ucred *, struct proc *));
+int isofs_read __P((struct vnode *, struct uio *, int, struct ucred *));
+int isofs_ioctl __P((struct vnode *, int, caddr_t, int, struct ucred *, struct proc *));
+int isofs_select __P((struct vnode *, int, int, struct ucred *, struct proc *));
+int isofs_mmap __P((struct vnode *, int, struct ucred *, struct proc *));
+int isofs_seek __P((struct vnode *, off_t, off_t, struct ucred *));
+int isofs_readdir __P((struct vnode *, struct uio *, struct ucred *, int *));
+int isofs_abortop __P((struct nameidata *));
+int isofs_inactive __P((struct vnode *, struct proc *));
+int isofs_reclaim __P((struct vnode *));
+int isofs_lock __P((struct vnode *));
+int isofs_unlock __P((struct vnode *));
+int isofs_strategy __P((struct buf *));
+int isofs_print __P((struct vnode *));
+int isofs_islocked __P((struct vnode *));
 

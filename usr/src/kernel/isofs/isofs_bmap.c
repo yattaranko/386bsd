@@ -14,10 +14,11 @@
 #include "iso.h"
 #include "isofs_node.h"
 
+int
 iso_bmap(ip, lblkno, result)
-struct iso_node *ip;
-int lblkno;
-int *result;
+	struct iso_node *ip;
+	int lblkno;
+	int *result;
 {
 	*result = (ip->iso_extent + lblkno)
 		* (ip->i_mnt->im_bsize / DEV_BSIZE);
