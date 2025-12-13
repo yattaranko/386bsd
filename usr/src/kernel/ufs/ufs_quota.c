@@ -35,22 +35,22 @@
  *
  *	$Id: ufs_quota.c,v 1.1 94/10/20 10:56:42 root Exp $
  */
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/mount.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "malloc.h"
-#include "proc.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/mount.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <malloc.h>
+#include <proc.h>
 
-#include "namei.h"
-#include "vnode.h"
-#include "ufs.h"
-#include "ufs_quota.h"
-#include "ufs_inode.h"
-#include "ufs_mount.h"
+#include <namei.h>
+#include <vnode.h>
+#include <ufs.h>
+#include <ufs_quota.h>
+#include <ufs_inode.h>
+#include <ufs_mount.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 /*
  * Quota name to error message mapping.

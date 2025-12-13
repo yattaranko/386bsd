@@ -33,22 +33,22 @@
  *	$Id: ufs_lookup.c,v 1.1 94/10/20 10:56:41 root Exp $
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "ucred.h"
-#include "sys/time.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "buf.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <ucred.h>
+#include <sys/time.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <buf.h>
 
-#include "namei.h"
-#include "vnode.h"
-#include "ufs_quota.h"
-#include "ufs_inode.h"
-#include "ufs_dir.h"
-#include "ufs.h"
+#include <namei.h>
+#include <vnode.h>
+#include <ufs_quota.h>
+#include <ufs_inode.h>
+#include <ufs_dir.h>
+#include <ufs.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 struct	nchstats nchstats;
 #ifdef DIAGNOSTIC
@@ -56,6 +56,10 @@ int	dirchk = 1;
 #else
 int	dirchk = 0;
 #endif
+
+static int	blkatoff(struct inode *, off_t, char **, struct buf **);
+static int	dirbadentry(struct direct *, int);
+extern void	dirbad(struct inode *, off_t, char *);
 
 /*
  * Convert a component of a pathname into a pointer to a locked inode.
@@ -92,6 +96,7 @@ int	dirchk = 0;
  *
  * NOTE: (LOOKUP | LOCKPARENT) currently returns the parent inode unlocked.
  */
+int
 ufs_lookup(vdp, ndp, p)
 	register struct vnode *vdp;
 	register struct nameidata *ndp;
@@ -543,7 +548,7 @@ found:
 	return (0);
 }
 
-
+void
 dirbad(ip, offset, how)
 	struct inode *ip;
 	off_t offset;
@@ -564,6 +569,7 @@ dirbad(ip, offset, how)
  *	name is not longer than MAXNAMLEN
  *	name must be as long as advertised, and null terminated
  */
+int
 dirbadentry(ep, entryoffsetinblock)
 	register struct direct *ep;
 	int entryoffsetinblock;
@@ -588,6 +594,7 @@ dirbadentry(ep, entryoffsetinblock)
  * Remaining parameters (ndp->ni_ufs.ufs_offset, ndp->ni_ufs.ufs_count)
  * indicate how the space for the new entry is to be obtained.
  */
+int
 direnter(ip, ndp)
 	struct inode *ip;
 	register struct nameidata *ndp;
@@ -730,6 +737,7 @@ direnter(ip, ndp)
  * the space of the now empty record by adding the record size
  * to the size of the previous entry.
  */
+int
 dirremove(ndp)
 	register struct nameidata *ndp;
 {
@@ -778,6 +786,7 @@ dirremove(ndp)
  * supplied.  The parameters describing the directory entry are
  * set up by a call to namei.
  */
+int
 dirrewrite(dp, ip, ndp)
 	struct inode *dp, *ip;
 	struct nameidata *ndp;
@@ -805,6 +814,7 @@ dirrewrite(dp, ip, ndp)
  * is non-zero, fill it in with a pointer to the
  * remaining space in the directory.
  */
+int
 blkatoff(ip, offset, res, bpp)
 	struct inode *ip;
 	off_t offset;
@@ -838,6 +848,7 @@ blkatoff(ip, offset, res, bpp)
  *
  * NB: does not handle corrupted directories.
  */
+int
 dirempty(ip, parentino, cred)
 	register struct inode *ip;
 	ino_t parentino;
@@ -888,6 +899,7 @@ dirempty(ip, parentino, cred)
  * Target is supplied locked, source is unlocked.
  * The target is always iput() before returning.
  */
+int
 checkpath(source, target, cred)
 	struct inode *source, *target;
 	struct ucred *cred;

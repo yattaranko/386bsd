@@ -33,22 +33,22 @@
  *	$Id: ufs_inode.c,v 1.1 94/10/20 10:56:38 root Exp $
  */
 
-#include "sys/param.h"
-#include "sys/mount.h"
-#include "sys/file.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "buf.h"
-#include "malloc.h"
+#include <sys/param.h>
+#include <sys/mount.h>
+#include <sys/file.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <buf.h>
+#include <malloc.h>
 
-#include "vnode.h"
-#include "ufs_quota.h"
-#include "ufs_inode.h"
-#include "ufs.h"
-#include "ufs_mount.h"
+#include <vnode.h>
+#include <ufs_quota.h>
+#include <ufs_inode.h>
+#include <ufs.h>
+#include <ufs_mount.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 #define	INOHSZ	512
 #if	((INOHSZ&(INOHSZ-1)) == 0)
@@ -64,9 +64,12 @@ union ihead {
 
 u_long nextgennumber;
 
+static int indirtrunc(struct inode*, daddr_t, daddr_t, int, long*);
+
 /*
  * Initialize hash links for inodes.
  */
+int
 ufs_init()
 {
 	int i;
@@ -93,6 +96,8 @@ ufs_init()
 	fifo_inodeops.vop_close = ufsfifo_close;
 	fifo_inodeops.vop_read = ufsfifo_read;
 	fifo_inodeops.vop_write = ufsfifo_write;*/
+
+	return (0);
 }
 
 /*
@@ -102,6 +107,7 @@ ufs_init()
  * return the inode locked. Detection and handling of mount
  * points must be done by the calling routine.
  */
+int
 iget(xp, ino, ipp)
 	struct inode *xp;
 	ino_t ino;
@@ -251,6 +257,7 @@ loop:
 /*
  * Unlock and decrement the reference count of an inode structure.
  */
+void
 iput(ip)
 	register struct inode *ip;
 {
@@ -265,6 +272,7 @@ iput(ip)
  * Last reference to an inode, write the inode out and if necessary,
  * truncate and deallocate the file.
  */
+int
 ufs_inactive(vp, p)
 	struct vnode *vp;
 	struct proc *p;
@@ -313,6 +321,7 @@ ufs_inactive(vp, p)
 /*
  * Reclaim an inode so that it can be used for other purposes.
  */
+int
 ufs_reclaim(vp)
 	register struct vnode *vp;
 {
@@ -359,6 +368,7 @@ ufs_reclaim(vp)
  * time is always taken from the current time. If waitfor is set,
  * then wait for the disk write of the inode to complete.
  */
+int
 iupdat(ip, ta, tm, waitfor)
 	register struct inode *ip;
 	struct timeval *ta, *tm;
@@ -413,6 +423,7 @@ iupdat(ip, ta, tm, waitfor)
  *
  * NB: triple indirect blocks are untested.
  */
+int
 itrunc(oip, length, flags)
 	register struct inode *oip;
 	u_long length;
@@ -601,6 +612,7 @@ done:
  *
  * NB: triple indirect blocks are untested.
  */
+int
 indirtrunc(ip, bn, lastbn, level, countp)
 	register struct inode *ip;
 	daddr_t bn, lastbn;
@@ -695,6 +707,7 @@ indirtrunc(ip, bn, lastbn, level, countp)
 /*
  * Lock an inode. If its already locked, set the WANT bit and sleep.
  */
+void
 ilock(ip)
 	register struct inode *ip;
 {
@@ -714,6 +727,7 @@ ilock(ip)
 /*
  * Unlock an inode.  If WANT bit is on, wakeup.
  */
+void
 iunlock(ip)
 	register struct inode *ip;
 {

@@ -33,29 +33,35 @@
  *	$Id: ufs_alloc.c,v 1.1 94/10/20 10:56:35 root Exp $
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/syslog.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "buf.h"
-#include "proc.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/syslog.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <buf.h>
+#include <proc.h>
 
-#include "vnode.h"
-#include "ufs_quota.h"
-#include "ufs_inode.h"
-#include "ufs.h"
-#include "prototypes.h"
+#include <vnode.h>
+#include <ufs_quota.h>
+#include <ufs_inode.h>
+#include <ufs.h>
+#include <prototypes.h>
 
 extern u_long		hashalloc();
-extern ino_t		ialloccg();
-extern daddr_t		alloccg();
-extern daddr_t		alloccgblk();
-extern daddr_t		fragextend();
-extern daddr_t		blkpref();
-extern daddr_t		mapsearch();
 extern int		inside[], around[];
 extern unsigned char	*fragtbl[];
+
+extern int		isblock(struct fs*, unsigned char*, daddr_t);
+extern void		clrblock(struct fs*, u_char*, daddr_t);
+extern void		setblock(struct fs*, unsigned char*, daddr_t);
+extern void		fragacct(struct fs*, int, int fraglist[], int);
+
+static void		fserr(struct fs*, uid_t, char *);
+static ino_t	ialloccg(struct inode*, int, daddr_t, int);
+static daddr_t	alloccg(struct inode *, int, daddr_t, int);
+static daddr_t	alloccgblk(struct fs*, struct cg*, daddr_t);
+static daddr_t	fragextend(struct inode*, int, long, int, int);
+static daddr_t	mapsearch(struct fs*, struct cg*, daddr_t, int);
 
 /*
  * Allocate a block in the file system.
@@ -76,6 +82,7 @@ extern unsigned char	*fragtbl[];
  *   2) quadradically rehash into other cylinder groups, until an
  *      available block is located.
  */
+int
 alloc(ip, lbn, bpref, size, bnp)
 	register struct inode *ip;
 	daddr_t lbn, bpref;
@@ -109,8 +116,7 @@ alloc(ip, lbn, bpref, size, bnp)
 		cg = itog(fs, ip->i_number);
 	else
 		cg = dtog(fs, bpref);
-	bno = (daddr_t)hashalloc(ip, cg, (long)bpref, size,
-		(u_long (*)())alloccg);
+	bno = (daddr_t)hashalloc(ip, cg, (long)bpref, size, alloccg);
 	if (bno > 0) {
 		ip->i_blocks += btodb(size);
 		ip->i_flag |= IUPD|ICHG;
@@ -137,6 +143,7 @@ nospace:
  * the original block. Failing that, the regular block allocator is
  * invoked to get an appropriate block.
  */
+int
 realloccg(ip, lbprev, bpref, osize, nsize, bpp)
 	register struct inode *ip;
 	off_t lbprev;
@@ -241,8 +248,7 @@ realloccg(ip, lbprev, bpref, osize, nsize, bpp)
 		panic("realloccg: bad optim");
 		/* NOTREACHED */
 	}
-	bno = (daddr_t)hashalloc(ip, cg, (long)bpref, request,
-		(u_long (*)())alloccg);
+	bno = (daddr_t)hashalloc(ip, cg, (long)bpref, request, alloccg);
 	if (bno > 0) {
 		bp->b_blkno = fsbtodb(fs, bno);
 		(void) vnode_pager_uncache(ITOV(ip));
@@ -289,6 +295,7 @@ nospace:
  *   2) quadradically rehash into other cylinder groups, until an
  *      available inode is located.
  */
+int
 ialloc(pip, ipref, mode, cred, ipp)
 	register struct inode *pip;
 	ino_t ipref;
@@ -473,7 +480,7 @@ hashalloc(ip, cg, pref, size, allocator)
 	int cg;
 	long pref;
 	int size;	/* size for data blocks, mode for inodes */
-	u_long (*allocator)();
+	u_long (*allocator)(struct inode *, int, daddr_t, int);
 {
 	register struct fs *fs;
 	long result;
@@ -872,6 +879,7 @@ gotit:
  * free map. If a fragment is deallocated, a possible 
  * block reassembly is checked.
  */
+void
 blkfree(ip, bno, size)
 	register struct inode *ip;
 	daddr_t bno;
@@ -974,6 +982,7 @@ blkfree(ip, bno, size)
  *
  * The specified inode is placed back in the free map.
  */
+void
 ifree(ip, ino, mode)
 	struct inode *ip;
 	ino_t ino;
@@ -1096,6 +1105,7 @@ mapsearch(fs, cgp, bpref, allocsiz)
  * The form of the error message is:
  *	fs: error message
  */
+void
 fserr(fs, uid, cp)
 	struct fs *fs;
 	uid_t uid;

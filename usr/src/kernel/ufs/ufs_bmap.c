@@ -33,20 +33,23 @@
  *	$Id: ufs_bmap.c,v 1.1 94/10/20 10:56:37 root Exp $
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "uio.h"
-#include "ucred.h"
-#include "sys/time.h"
-#include "sys/errno.h"
-#include "buf.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <uio.h>
+#include <ucred.h>
+#include <sys/time.h>
+#include <sys/errno.h>
+#include <buf.h>
 
-#include "vnode.h"
-#include "ufs_quota.h"
-#include "ufs_inode.h"
-#include "ufs.h"
+#include <vnode.h>
+#include <ufs_quota.h>
+#include <ufs_inode.h>
+#include <ufs.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+
+extern int	   realloccg(struct inode*, off_t, daddr_t, int, int, struct buf**);
+extern int	   alloc(struct inode*, daddr_t, daddr_t, int, daddr_t*);
 
 /*
  * Bmap converts a the logical block number of a file
@@ -54,6 +57,7 @@
  * is done by using the logical block number to index into
  * the array of block pointers described by the dinode.
  */
+int
 bmap(ip, bn, bnp)
 	register struct inode *ip;
 	register daddr_t bn;
@@ -129,6 +133,7 @@ bmap(ip, bn, bnp)
  * by allocating the physical blocks on a device given
  * the inode and the logical block number in a file.
  */
+int
 balloc(ip, bn, size, bpp, flags)
 	register struct inode *ip;
 	register daddr_t bn;

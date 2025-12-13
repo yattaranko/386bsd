@@ -49,10 +49,10 @@
  * $Id: ufsboot_fs.c,v 1.1 94/10/20 10:56:49 root Exp $
  */
 
-#include "sys/param.h"
-#include "ufs.h"
-#include "ufs_dir.h"
-#include "ufs_dinode.h"
+#include <sys/param.h>
+#include <ufs.h>
+#include <ufs_dir.h>
+#include <ufs_dinode.h>
 #include "saio.h"
 
 int bdev;

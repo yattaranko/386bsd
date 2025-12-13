@@ -35,51 +35,52 @@
 
 static char *ufs_config = "ufs 1.";
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/mount.h"
-#include "privilege.h"
-#include "sys/ioctl.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "specdev.h"
-#include "buf.h"
-#include "malloc.h"
-#include "modconfig.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/mount.h>
+#include <privilege.h>
+#include <sys/ioctl.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <specdev.h>
+#include <buf.h>
+#include <malloc.h>
+#include <modconfig.h>
 
-#include "machine/cpu.h"	/* inittodr() */
+#include <machine/cpu.h>	/* inittodr() */
 
-#include "dkbad.h"	/* XXX */
-#include "disklabel.h"
+#include <dkbad.h>	/* XXX */
+#include <disklabel.h>
 
-#include "namei.h"
-#include "vnode.h"
-#include "ufs_quota.h"
-#include "ufs.h"
-#include "ufs_mount.h"
-#include "ufs_inode.h"
+#include <namei.h>
+#include <vnode.h>
+#include <ufs_quota.h>
+#include <ufs.h>
+#include <ufs_mount.h>
+#include <ufs_inode.h>
  
-#include "prototypes.h"
+#include <prototypes.h>
 
+extern int ufs_init(void);
+
+static int	sbupdate(struct ufsmount*, int);
 static int ufs_mountroot(void);
-static int ufs_mount(struct mount *mp, char *path, caddr_t data,
-	struct nameidata *ndp, struct proc *p);
+static int ufs_mount(struct mount *, char *, caddr_t,
+	struct nameidata *, struct proc *);
 /* used by mfs until mfs independant of ufs */
-/*static*/ int mountfs(struct vnode *devvp, struct mount *mp, struct proc *p);
+/*static*/ int mountfs(struct vnode *, struct mount *, struct proc *);
 
-static int ufs_mount(struct mount *mp, char *path, caddr_t data,
-	struct nameidata *ndp, struct proc *p);
-static int ufs_start(struct mount *mp, int flags, struct proc *p);
-static int ufs_unmount(struct mount *mp, int mntflags, struct proc *p);
-static int ufs_root(struct mount *mp, struct vnode **vpp);
-static int ufs_quotactl(struct mount *mp, int cmds, uid_t uid,
-	caddr_t arg, struct proc *p);
-static int ufs_statfs(struct mount *mp, struct statfs *sbp, struct proc *p);
-static int ufs_sync(struct mount *mp, int waitfor);
-static int ufs_fhtovp(struct mount *mp, struct fid *fhp, struct vnode **vpp);
-static int ufs_vptofh(struct vnode *vp, struct fid *fhp);
-int ufs_init(void);
+static int ufs_mount(struct mount *, char *, caddr_t,
+	struct nameidata *, struct proc *);
+static int ufs_start(struct mount *, int, struct proc *);
+static int ufs_unmount(struct mount *, int, struct proc *);
+static int ufs_root(struct mount *, struct vnode **);
+static int ufs_quotactl(struct mount *, int, uid_t, caddr_t, struct proc *);
+static int ufs_statfs(struct mount *, struct statfs *, struct proc *);
+static int ufs_sync(struct mount *, int);
+static int ufs_fhtovp(struct mount *, struct fid *, struct vnode **);
+static int ufs_vptofh(struct vnode *, struct fid *);
 
 struct vfsops ufs_vfsops = {
 	"ufs", 0, 0,
@@ -598,6 +599,7 @@ loop:
 /*
  * Write a superblock and associated information back to disk.
  */
+int
 sbupdate(mp, waitfor)
 	struct ufsmount *mp;
 	int waitfor;

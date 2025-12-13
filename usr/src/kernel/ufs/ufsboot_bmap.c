@@ -33,10 +33,10 @@
  *	$Id: ufsboot_bmap.c,v 1.1 94/10/20 10:56:48 root Exp $
  */
 
-#include "sys/param.h"
-#include "sys/errno.h"
-#include "ufs_dinode.h"
-#include "ufs.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <ufs_dinode.h>
+#include <ufs.h>
 
 /*
  * Bmap converts a the logical block number of a file

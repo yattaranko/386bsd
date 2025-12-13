@@ -35,10 +35,10 @@
 
 #include <sys/param.h>
 
-#include "ufs.h"
+#include <ufs.h>
 #ifdef KERNEL
-#include "sys/errno.h"
-#include "prototypes.h"
+#include <sys/errno.h>
+#include <prototypes.h>
 #endif
 
 
@@ -50,6 +50,7 @@ extern	u_char *fragtbl[];
  * Update the frsum fields to reflect addition or deletion 
  * of some frags.
  */
+void
 fragacct(fs, fragmap, fraglist, cnt)
 	struct fs *fs;
 	int fragmap;
@@ -85,6 +86,7 @@ fragacct(fs, fragmap, fraglist, cnt)
  *
  * check if a block is available
  */
+int
 isblock(fs, cp, h)
 	struct fs *fs;
 	unsigned char *cp;
@@ -113,6 +115,7 @@ isblock(fs, cp, h)
 /*
  * take a block out of the map
  */
+void
 clrblock(fs, cp, h)
 	struct fs *fs;
 	u_char *cp;
@@ -140,6 +143,7 @@ clrblock(fs, cp, h)
 /*
  * put a block into the map
  */
+void
 setblock(fs, cp, h)
 	struct fs *fs;
 	unsigned char *cp;

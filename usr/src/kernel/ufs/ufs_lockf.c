@@ -36,20 +36,20 @@
  *	$Id: ufs_lockf.c,v 1.1 94/10/20 10:56:39 root Exp Locker: bill $
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/fcntl.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "malloc.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/fcntl.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <malloc.h>
 
-#include "vnode.h"
-#include "ufs_lockf.h"
-#include "ufs_quota.h"
-#include "ufs_inode.h"
+#include <vnode.h>
+#include <ufs_lockf.h>
+#include <ufs_quota.h>
+#include <ufs_inode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
 
 /*
  * This variable controls the maximum number of processes that will
@@ -66,9 +66,18 @@ int	lockf_debug = -1;
 #define SELF	0x1
 #define OTHERS	0x2
 
+static void lf_print(char *, struct lockf*);
+static void lf_addblock(struct lockf*, struct lockf*);
+static void lf_printlist(char *, struct lockf*);
+static int lf_findoverlap(struct lockf* lf, struct lockf* lock,
+						  int type, struct lockf*** prev, struct lockf** overlap);
+static void lf_wakelock(struct lockf* listhead);
+static void lf_split(struct lockf*, struct lockf*);
+
 /*
  * Set a byte-range lock.
  */
+int
 lf_setlock(lock)
 	register struct lockf *lock;
 {
@@ -291,6 +300,7 @@ lf_setlock(lock)
  * Generally, find the lock (or an overlap to that lock)
  * and remove it (or shrink it), then wakeup anyone we can.
  */
+int
 lf_clearlock(unlock)
 	register struct lockf *unlock;
 {
@@ -359,6 +369,7 @@ lf_clearlock(unlock)
  * Check whether there is a blocking lock,
  * and if so return its process identifier.
  */
+int
 lf_getlock(lock, fl)
 	register struct lockf *lock;
 	register struct flock *fl;
@@ -423,6 +434,7 @@ lf_getblock(lock)
  * NOTE: this returns only the FIRST overlapping lock.  There
  *	 may be more than one.
  */
+int
 lf_findoverlap(lf, lock, type, prev, overlap)
 	register struct lockf *lf;
 	struct lockf *lock;
@@ -531,6 +543,7 @@ lf_findoverlap(lf, lock, type, prev, overlap)
 /*
  * Add a lock to the end of the blocked list.
  */
+void
 lf_addblock(lock, blocked)
 	struct lockf *lock;
 	struct lockf *blocked;
@@ -559,6 +572,7 @@ lf_addblock(lock, blocked)
  * Split a lock and a contained region into
  * two or three locks as necessary.
  */
+void
 lf_split(lock1, lock2)
 	register struct lockf *lock1;
 	register struct lockf *lock2;
@@ -605,6 +619,7 @@ lf_split(lock1, lock2)
 /*
  * Wakeup a blocklist
  */
+void
 lf_wakelock(listhead)
 	struct lockf *listhead;
 {
@@ -629,6 +644,7 @@ lf_wakelock(listhead)
 /*
  * Print out a lock.
  */
+void
 lf_print(tag, lock)
 	char *tag;
 	register struct lockf *lock;
@@ -653,6 +669,7 @@ lf_print(tag, lock)
 		printf("\n");
 }
 
+void
 lf_printlist(tag, lock)
 	char *tag;
 	struct lockf *lock;
