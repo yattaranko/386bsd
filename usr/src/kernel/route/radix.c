@@ -37,11 +37,11 @@
  * Routines to build and maintain radix trees for routing lookups.
  */
 #ifndef RNF_NORMAL
-#include "sys/param.h"
-#include "sys/errno.h"
-#include "radix.h"
-#include "malloc.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <sys/errno.h>
+#include <radix.h>
+#include <malloc.h>
+#include <prototypes.h>
 #define	M_DONTWAIT M_NOWAIT
 #endif
 struct radix_node_head *mask_rnhead;
@@ -213,6 +213,7 @@ int	rn_saveinfo;
 struct radix_node *
 rn_newpair(v, b, nodes)
 	caddr_t v;
+	int b;
 	struct radix_node nodes[2];
 {
 	register struct radix_node *tt = nodes, *t = tt + 1;
@@ -293,7 +294,8 @@ on1:
 
 struct radix_node *
 rn_addmask(netmask, search, skip)
-caddr_t netmask;
+	caddr_t netmask;
+	int search, skip;
 {
 	register struct radix_node *x;
 	register caddr_t cp, cplim;
@@ -599,9 +601,10 @@ out:
 }
 char rn_zeros[MAXKEYLEN], rn_ones[MAXKEYLEN];
 
+int
 rn_inithead(head, off, af)
-struct radix_node_head **head;
-int off;
+	struct radix_node_head **head;
+	int off, af;
 {
 	register struct radix_node_head *rnh;
 	register struct radix_node *t, *tt, *ttt;

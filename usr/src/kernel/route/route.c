@@ -32,34 +32,34 @@
  *
  * $Id: route.c,v 1.1 94/10/20 10:55:41 root Exp Locker: bill $
  */
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/ioctl.h"
-#include "sys/errno.h"
-#include "privilege.h"
-#include "proc.h"
-#include "mbuf.h"
-#include "socketvar.h"
-#include "domain.h"
-#include "protosw.h"
-#include "modconfig.h"
-#include "prototypes.h"
-#include "esym.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/ioctl.h>
+#include <sys/errno.h>
+#include <privilege.h>
+#include <proc.h>
+#include <mbuf.h>
+#include <socketvar.h>
+#include <domain.h>
+#include <protosw.h>
+#include <modconfig.h>
+#include <prototypes.h>
+#include <esym.h>
 
-#include "if.h"
-#include "af.h"
+#include <if.h>
+#include <af.h>
 #define	_ROUTE_PROTOTYPES
-#include "route.h"
+#include <route.h>
 #undef	_ROUTE_PROTOTYPES
-#include "raw_cb.h"
+#include <raw_cb.h>
 
-#include "in.h"
-#include "in_var.h"
+#include <in.h>
+#include <in_var.h>
 
 #ifdef NS
-#include "ns.h"
+#include <ns.h>
 #endif
-#include "netisr.h"
+#include <netisr.h>
 
 #define	SA(p) ((struct sockaddr *)(p))
 
@@ -73,13 +73,16 @@ struct rtstat rtstat;
 
 static int rtinits_done = 0;
 struct radix_node_head *ns_rnhead, *in_rnhead;
-struct radix_node *rn_match(), *rn_delete(), *rn_addroute();
+extern struct radix_node* rn_match(caddr_t, struct radix_node*);
+extern struct radix_node* rn_delete(caddr_t, caddr_t, struct radix_node*);
+extern struct radix_node* rn_addroute(caddr_t, caddr_t, struct radix_node*, struct radix_node[2]);
+extern int	rn_inithead(struct radix_node_head**, int, int);
 
 /*extern void
 rt_missmsg(int type, struct sockaddr *dst, struct sockaddr *gate,
 	struct sockaddr *mask, struct sockaddr *src, int flags, int error) asm("rtmissmsg");*/
 
-
+void
 rtinitheads()
 {
 	if (rtinits_done == 0 &&

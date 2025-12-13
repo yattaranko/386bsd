@@ -35,32 +35,41 @@
 
 static char *route_config = "route 17.";	/* AF_ROUTE */
 
-#include "sys/param.h"
-#include "mbuf.h"
-#include "proc.h"
-#include "sys/file.h"
-#include "sys/errno.h"
-#include "sys/kinfo.h"
-#include "socketvar.h"
-#include "domain.h"
-#include "protosw.h"
-#include "modconfig.h"
-#include "prototypes.h"
+#include <sys/param.h>
+#include <mbuf.h>
+#include <proc.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+#include <sys/kinfo.h>
+#include <socketvar.h>
+#include <domain.h>
+#include <protosw.h>
+#include <modconfig.h>
+#include <prototypes.h>
 
-#include "af.h"
-#include "if.h"
+#include <af.h>
+#include <if.h>
 #define _ROUTE_PROTOTYPES
-#include "route.h"
+#include <route.h>
 #undef _ROUTE_PROTOTYPES
 /*#include "route_.h"*/
-#include "raw_cb.h"
+#include <raw_cb.h>
 
 struct sockaddr route_dst = { 2, PF_ROUTE, };
 struct sockaddr route_src = { 2, PF_ROUTE, };
 struct sockproto route_proto = { PF_ROUTE, };
 struct route_cb route_cb;
 
+extern void soisconnected(struct socket*);
+extern struct rtentry* rtalloc1(struct sockaddr *, int);
+
+static void rt_setmetrics(u_long, struct rt_metrics *, struct rt_metrics *);
+static void m_copyback(struct	mbuf *, int, int, caddr_t);
+struct walkarg;
+static int rt_walk(struct radix_node *, int (*f)(struct radix_node *, struct walkarg *), struct walkarg *);
+
 /*ARGSUSED*/
+int
 route_usrreq(so, req, m, nam, control)
 	register struct socket *so;
 	int req;
@@ -114,6 +123,7 @@ route_usrreq(so, req, m, nam, control)
 #define ADVANCE(x, n) (x += ROUNDUP((n)->sa_len))
 
 /*ARGSUSED*/
+int
 route_output(m, so)
 	register struct mbuf *m;
 	struct socket *so;
@@ -372,6 +382,7 @@ cleanup:
 	return (error);
 }
 
+void
 rt_setmetrics(which, in, out)
 	u_long which;
 	register struct rt_metrics *in, *out;
@@ -393,6 +404,7 @@ rt_setmetrics(which, in, out)
  * starting "off" bytes from the beginning, extending the mbuf
  * chain if necessary.
  */
+void
 m_copyback(m0, off, len, cp)
 	struct	mbuf *m0;
 	register int off;
@@ -513,6 +525,7 @@ struct walkarg {
 /*
  * This is used in dumping the kernel table via getkinfo().
  */
+int
 rt_dumpentry(rn, w)
 	struct radix_node *rn;
 	register struct walkarg *w;
@@ -580,6 +593,7 @@ rt_dumpentry(rn, w)
 #undef next
 }
 
+int
 kinfo_rtable(op, where, given, arg, needed)
 	int	op, arg;
 	caddr_t	where;
@@ -623,6 +637,7 @@ kinfo_rtable(op, where, given, arg, needed)
 	return (error);
 }
 
+int
 rt_walk(rn, f, w)
 	register struct radix_node *rn;
 	register int (*f)();
@@ -641,6 +656,7 @@ rt_walk(rn, f, w)
 		}
 		rn = rn->rn_p->rn_r;		/* otherwise, go right*/
 	}
+	return 0;
 }
 
 /*
