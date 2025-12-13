@@ -41,7 +41,7 @@ math.a: $(OBJS)
 	sync
 
 clean:
-	rm -f core *.o *.a *.s
+	rm -f core *.o *.a *.S
 
 dep:
 	$(CPP) -M *.c *.S > .depend

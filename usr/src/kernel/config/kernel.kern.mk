@@ -7,10 +7,10 @@ MACH_C?= 	${CC} -c -I$S/kern/${MACHINE} ${CFLAGS} ${PROF} ${DEBUG} \
 			${.IMPSRC} -o ${.TARGET}
 MACH_DBGC?= 	${CC} -c -I$S/kern/${MACHINE} ${DBGCFLAGS} ${PROF} ${DEBUG} \
 			${.IMPSRC} -o ${.TARGET}
-MACH_AS?= 	${CPP} -I. -I$S/kern/${MACHINE} -DLOCORE ${COPTS} ${.IMPSRC} | \
+MACH_AS?= 	${CPP} -E -I. -I$S/kern/${MACHINE} -DLOCORE ${COPTS} ${.IMPSRC} | \
 		${AS} ${ASFLAGS} -o ${.TARGET}
 
-.SUFFIXES: .${KMODULE}o .${KMODULE}co .${KMODULE}mo .${KMODULE}do .${KMODULE}mdo
+.SUFFIXES: .c .cc .S .${KMODULE}o .${KMODULE}co .${KMODULE}mo .${KMODULE}do .${KMODULE}mdo
 
 OBJS+=  ${KERN_SRCS:R:S/$/.${KMODULE}o/g}
 OBJS+=  ${KERN_SRCS_DBGC:R:S/$/.${KMODULE}do/g}
@@ -34,7 +34,7 @@ OBJS+=  ${MACH_SRCS_S:R:S/$/.${KMODULE}mo/g}
 .c.${KMODULE}mdo:
 	${MACH_DBGC}
 
-.s.${KMODULE}mo:
+.S.${KMODULE}mo:
 	${MACH_AS}
 
 DEPEND+= depend_kern depend_mach

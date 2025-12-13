@@ -7,14 +7,17 @@
 .SUFFIXES: .symbols .9 .8 .7 .6 .5 .4 .3 .2 .1 .0
 
 TOUCH?=	touch -f -c
-LD?=	/usr/bin/ld
-CC?=	cc 
-CPP?=	cpp
+LD?=	/usr/local/bin/i386-unknown-freebsd14.3-ld
+CC?=	/usr/local/bin/i386-unknown-freebsd14.3-gcc14
+CPP?=	/usr/local/bin/i386-unknown-freebsd14.3-g++14
+AS?=	/usr/local/bin/i386-unknown-freebsd14.3-as
 
 # XXX overkill, revise include scheme
-INCLUDES= -I$S/include
+INCLUDES= -I$S/include -I. -I$S/../include
 
-COPTS+=	${INCLUDES} ${IDENT} -DKERNEL -Di386
+#COPTS+=	${INCLUDES} ${IDENT} -DKERNEL -Di386
+COPTS+=	${INCLUDES} ${IDENT} -DKERNEL -nostdinc -fno-builtin -fleading-underscore
+COPTS+= -ffreestanding -fno-exceptions -fno-pie -fno-omit-frame-pointer -fvisibility=hidden
 DEPEND= depend_mk
 
 ASFLAGS= ${DEBUG}
@@ -57,12 +60,14 @@ _KERNS+=	${KERNEL}.kgdb
 
 all: ${_KERNS}	${ALLMAN}
 
-assym.s: $S/include/sys/param.h $S/include/buf.h $S/include/vmmeter.h \
+assym.S: $S/include/sys/param.h $S/include/buf.h $S/include/vmmeter.h \
 	$S/include/proc.h $S/include/msgbuf.h machine/vmparam.h \
 	$S/config/genassym.c
-	${CC} ${INCLUDES} -DKERNEL ${IDENT} ${PARAM} ${BASE} \
+#	${CC} ${INCLUDES} -DKERNEL ${IDENT} ${PARAM} ${BASE} \
 		 $S/config/genassym.c -o genassym
-	./genassym >assym.s
+	/usr/bin/clang -m32 ${INCLUDES} ${IDENT} ${PARAM} ${BASE} \
+		 $S/config/genassym.c -o genassym
+	./genassym >assym.S
 
 isym.o: $S/config/isym.c
 	find $S/include -name "*.h" -a -type f -exec grep -h "^__ISYM__" {} \; > isym
@@ -103,12 +108,14 @@ ${KERNEL}: Makefile symbols.sort ${FIRSTOBJ} ${OBJS} isym.o
 	nroff -mandoc ${.IMPSRC} > ${.TARGET}
 
 clean:
-	rm -f eddep 386bsd* tags ${OBJS} errs linterrs makelinks
+	rm -f eddep 386bsd* tags ${KOBJS} errs linterrs makelinks vers.o isym.o \
+	locore.o assym.S genassym .depend ${DEPEND} ${.TARGET}
+	unlink machine
 
 depend: ${DEPEND}
 	cat ${DEPEND} >> .depend
 
-depend_mk: assym.s
+depend_mk: assym.S
 	mkdep ${COPTS} ${.ALLSRC}
 	mkdep -a -p ${INCLUDES} ${IDENT} ${PARAM} $S/config/genassym.c
 	mv .depend depend_mk
