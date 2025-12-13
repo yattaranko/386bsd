@@ -40,22 +40,24 @@
 static char *pty_config =
 	"pty 5 6	8.		# pseudo tty driver $Revision: 1.9 $";
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/ioctl.h"
-#include "sys/errno.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/ioctl.h>
+#include <sys/errno.h>
 
-#include "systm.h"
-#include "tty.h"
-#include "uio.h"
-#include "proc.h"
-#include "kernel.h"
-#include "malloc.h"
-#include "modconfig.h"
+#include <systm.h>
+#include <tty.h>
+#include <uio.h>
+#include <proc.h>
+#include <kernel.h>
+#include <malloc.h>
+#include <modconfig.h>
+#include <signalvar.h>
 
-#include "vnode.h"
+#include <vnode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <spl.h>
 
 
 #define BUFSIZ 100		/* Chunk size iomoved to/from user */
@@ -82,6 +84,12 @@ extern struct tty *constty;		/* temporary virtual console */
 #define	PF_REMOTE	0x20		/* remote and flow controlled input */
 #define	PF_NOSTOP	0x40
 #define PF_UCNTL	0x80		/* user control mode */
+
+extern int	ttyclose(struct tty *);
+
+static void ptcwakeup(struct tty *, int);
+static int	ptsstart(struct tty *);
+static void	ptsstop(struct tty *, int);
 
 /*ARGSUSED*/
 int
@@ -214,12 +222,13 @@ ptswrite(dev_t dev, struct uio *uio, int flag)
  * Start output on pseudo-tty.
  * Wake up process selecting or sleeping for input from controlling tty.
  */
+int
 ptsstart(struct tty *tp)
 {
 	register struct pt_ioctl *pti = &pt_ioctl[minor(tp->t_dev)];
 
 	if (tp->t_state & TS_TTSTOP)
-		return;
+		return EINVAL;
 
 	if (pti->pt_flags & PF_STOPPED) {
 		pti->pt_flags &= ~PF_STOPPED;
@@ -227,6 +236,8 @@ ptsstart(struct tty *tp)
 	}
 
 	ptcwakeup(tp, FREAD);
+
+	return (0);
 }
 
 int
@@ -235,6 +246,7 @@ ptsselect(dev_t dev, int rw, struct proc *p) {
 	return (ttselect(pt_tty + minor(dev), rw, p));
 }
 
+void
 ptcwakeup(struct tty *tp, int flag)
 {
 	struct pt_ioctl *pti = &pt_ioctl[minor(tp->t_dev)];
@@ -328,7 +340,7 @@ ptcread(dev_t dev, struct uio *uio, int flag)
 				if (pti->pt_send & TIOCPKT_IOCTL) {
 					cc = min(uio->uio_resid,
 						sizeof(tp->t_termios));
-					uiomove(&tp->t_termios, cc, uio);
+					uiomove((caddr_t)&tp->t_termios, cc, uio);
 				}
 				pti->pt_send = 0;
 				return (0);
@@ -397,6 +409,7 @@ ptcread(dev_t dev, struct uio *uio, int flag)
 	return (error);
 }
 
+void
 ptsstop(struct tty *tp, int flush)
 {
 	struct pt_ioctl *pti = &pt_ioctl[minor(tp->t_dev)];

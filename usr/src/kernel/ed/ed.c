@@ -21,55 +21,58 @@
 static char *ed_config = /*"ed.	# ns derivative ethernet $Revision: 1.1 $";*/
 "ed 2	(0x250	5 -1 0xd8000 8192) (0x280	9 -1 0xd0000 8192).       # two ns ethernets";
 
-#include "sys/param.h"
-#include "systm.h"
-#include "sys/errno.h"
-#include "sys/ioctl.h"
-#include "mbuf.h"
-#include "sys/socket.h"
-#include "sys/syslog.h"
-#include "esym.h"
-#include "vm.h"
-#include "kmem.h"
-#include "modconfig.h"
+#include <sys/param.h>
+#include <systm.h>
+#include <sys/errno.h>
+#include <sys/ioctl.h>
+#include <mbuf.h>
+#include <sys/socket.h>
+#include <sys/syslog.h>
+#include <esym.h>
+#include <vm.h>
+#include <kmem.h>
+#include <modconfig.h>
+#include <strings.h>
 
-#include "if.h"
-#include "if_dl.h"
-#include "if_types.h"
-#include "netisr.h"
+#include <if.h>
+#include <if_dl.h>
+#include <if_types.h>
+#include <netisr.h>
 
 #ifdef INET
-#include "in.h"
-#include "in_systm.h"
-#include "in_var.h"
-#include "ip.h"
-#include "if_ether.h"
+#include <in.h>
+#include <in_systm.h>
+#include <in_var.h>
+#include <ip.h>
+#include <if_ether.h>
 #endif
 
 #ifdef NS
-#include "ns.h"
-#include "ns_if.h"
+#include <ns.h>
+#include <ns_if.h>
 #endif
 
 /* #if NBPFILTER > 0 */
-#include "bpf.h"
-#include "bpfdesc.h"
+#include <bpf.h>
+#include <bpfdesc.h>
 /* #endif*/
 
-#include "isa_irq.h"
-#include "isa_driver.h"
-#include "machine/icu.h"
+#include <isa_irq.h>
+#include <isa_driver.h>
+#include <machine/icu.h>
 #include "edreg.h"
 
-#include "prototypes.h"
-#include "machine/inline/io.h"
+#include <prototypes.h>
+#include <machine/inline/io.h>
+#include <domain/in.h>
+#include <domain/if_ether.h>
 
 
 /* For backwards compatibility */
 #ifndef IFF_ALTPHYS
 #define IFF_ALTPHYS IFF_LLC0
 #endif
-static const int zero = 0;
+/* static */ const int zero = 0;
  
 /*
  * ed_softc: per line info and status
@@ -116,14 +119,14 @@ struct	ed_softc {
 
 static int ned;
 
-void	ed_attach(struct isa_device *);
-void	ed_init(int);
-void	edintr(int);
-int	ed_ioctl(struct ifnet *, int, caddr_t);
-int	ed_probe(struct isa_device *);
-void	ed_start(struct ifnet *);
-void	ed_reset(int, int);
-void	ed_watchdog(int);
+static void	ed_attach(struct isa_device *);
+static void	ed_init(int);
+static void	edintr(int);
+static int	ed_ioctl(struct ifnet *, int, caddr_t);
+static int	ed_probe(struct isa_device *);
+static void	ed_start(struct ifnet *);
+static void	ed_reset(int, int);
+static void	ed_watchdog(int);
   
 static void ed_get_packet(struct ed_softc *, char *, int /*u_short*/);
 static void ed_stop(int);
@@ -132,8 +135,12 @@ static inline void ed_rint();
 static inline void ed_xmit();
 static inline char *ed_ring_copy();
 
-void ed_pio_readmem(), ed_pio_writemem();
-u_short ed_pio_write_mbufs();
+static void ed_pio_readmem(struct ed_softc *, u_short, unsigned char *, u_short);
+static void ed_pio_writemem(struct ed_softc *, char*, u_short, u_short);
+static u_short ed_pio_write_mbufs(struct ed_softc *, struct mbuf *, u_short);
+static int ed_probe_WD80x3(struct isa_device *);
+static int ed_probe_3Com(struct isa_device *);
+static int ed_probe_Novell(struct isa_device *);
 
 
 struct trailer_header {
@@ -197,7 +204,7 @@ ed_probe(isa_dev)
 	struct isa_device *isa_dev;
 {
 	struct ed_softc *sc;
-	static lastunit;
+	static int lastunit;
 	int nports;
 
 	/* wildcard unit? */
@@ -1496,7 +1503,7 @@ outloop:
 			}
 		}
 	} else {
-		len = ed_pio_write_mbufs(sc, m, buffer);
+		len = ed_pio_write_mbufs(sc, m, (unsigned short)buffer);
 	}
 		
 	sc->txb_len[sc->txb_new] = max(len, ETHER_MIN_LEN);
@@ -1631,7 +1638,7 @@ ed_rint(unit)
 		if (sc->mem_shared)
 			packet_hdr = *(struct ed_ring *)packet_ptr;
 		else
-			ed_pio_readmem(sc, packet_ptr, (char *) &packet_hdr,
+			ed_pio_readmem(sc, (u_short)packet_ptr, (char *) &packet_hdr,
 				sizeof(packet_hdr));
 		len = packet_hdr.count;
 		if ((len >= ETHER_MIN_LEN) && (len <= ETHER_MAX_LEN)) {
@@ -2074,7 +2081,7 @@ ed_get_packet(sc, buf, len)
 	if (sc->mem_shared)
 		memcpy(mtod(head, caddr_t), buf, sizeof(struct ether_header));
 	else
-		ed_pio_readmem(sc, buf, mtod(head, caddr_t),
+		ed_pio_readmem(sc, (u_short)buf, mtod(head, caddr_t),
 			sizeof(struct ether_header));
 	buf += sizeof(struct ether_header);
 	head->m_len += sizeof(struct ether_header);
@@ -2108,7 +2115,7 @@ ed_get_packet(sc, buf, len)
 		} else {
 			struct trailer_header trailer_header;
 			ed_pio_readmem(sc,
-				ringoffset(sc, buf, off, caddr_t),
+				ringoffset(sc, buf, off, /* caddr_t */ u_short),
 				(char *) &trailer_header,
 				sizeof(trailer_header));
 			eh->ether_type = trailer_header.ether_type;
@@ -2394,7 +2401,7 @@ ed_ring_copy(sc,src,dst,amount)
 		if (sc->mem_shared)
 			memcpy(dst, src, tmp_amount);
 		else
-			ed_pio_readmem(sc,src,dst,tmp_amount);
+			ed_pio_readmem(sc, (u_short)src, dst, tmp_amount);
 
 		amount -= tmp_amount;
 		src = sc->mem_ring;
@@ -2404,7 +2411,7 @@ ed_ring_copy(sc,src,dst,amount)
 	if (sc->mem_shared)
 		memcpy(dst, src, amount);
 	else
-		ed_pio_readmem(sc, src, dst, amount);
+		ed_pio_readmem(sc, (u_short)src, dst, amount);
 
 	return(src + amount);
 }

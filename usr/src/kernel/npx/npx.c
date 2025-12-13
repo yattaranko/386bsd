@@ -38,43 +38,46 @@
 static	char *npx_config =
 	"npx (0 13).	# hardware floating point $Revision: 1.1 $";
 
-#include "sys/param.h"
-#include "systm.h"
-#include "sys/file.h"
-#include "proc.h"
-#include "sys/user.h"
-#include "prototypes.h"
-#include "machine/cpu.h"
-#include "machine/trap.h"
-#include "machine/inline/io.h"
-#include "sys/ioctl.h"
+#include <sys/param.h>
+#include <systm.h>
+#include <sys/file.h>
+#include <proc.h>
+#include <sys/user.h>
+#include <prototypes.h>
+#include <machine/cpu.h>
+#include <machine/trap.h>
+#include <machine/inline/io.h>
+#include <sys/ioctl.h>
 #include "../kern/i386/specialreg.h" /* XXX */
-#include "modconfig.h"
-#include "isa_driver.h"
-#include "isa_irq.h"
-#include "machine/icu.h"
+#include <modconfig.h>
+#include <isa_driver.h>
+#include <isa_irq.h>
+#include <machine/icu.h>
 
 /*
  * 387 and 287 Numeric Coprocessor Extension (NPX) Driver.
  */
 
-int	npxprobe();
-void	npxattach();
-void	npxintr();
-struct	isa_driver npxdriver = {
-	npxprobe, npxattach, npxintr, "npx", 0
-};
-
 struct proc *npxproc;	/* process who owns device, otherwise zero */
 int npxexists, npxlasterror;
+
+static int	npxprobe(struct isa_device *);
+static void	npxattach(struct isa_device *);
+static void	npxintr(struct intrframe);
+extern int	npxerror();
+
+struct	isa_driver npxdriver = {
+	npxprobe, npxattach, (void (*)(int))npxintr, "npx", 0
+};
 
 
 /*
  * Probe routine - look device, otherwise set emulator bit
  */
+int
 npxprobe(dvp)
 	struct isa_device *dvp;
-{	static status, control;
+{	static int status, control;
 
 #ifdef lint
 	npxintr();
@@ -125,7 +128,8 @@ npxattach(dvp)
 /*
  * Initialize floating point unit.
  */
-npxinit(control) {
+void
+npxinit(int control) {
 	static short wd;
 
 	if (npxexists == 0) return;
@@ -147,6 +151,7 @@ npxinit(control) {
 /*
  * Load floating point context and record ownership to suite
  */
+void
 npxload() {
 
 	if (npxproc) panic ("npxload");
@@ -157,6 +162,7 @@ npxload() {
 /*
  * Unload floating point context and relinquish ownership
  */
+void
 npxunload() {
 
 	if (npxproc == 0)
@@ -223,7 +229,7 @@ npxintr(frame) struct intrframe frame; {
 int
 npxerror() {
 	int cr0 = rcr(0), code;
-	static status;
+	static int status;
 
 	/* emulating instructions? */
 	/* if (cr0 & CR0_EM)
@@ -289,7 +295,7 @@ DRIVER_MODCONFIG() {
 		return;
 
 	/* configure driver into kernel program */
-	(int *)cpu_dna = (int *)npxdna;
+	cpu_dna = (int (*)(void *))npxdna;
 
 	/* probe for hardware */
 	new_isa_configure(&cfg_string, &npxdriver);

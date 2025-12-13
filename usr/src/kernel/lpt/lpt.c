@@ -56,22 +56,23 @@ static char *lpt_config =
 	"lpt 15	(0x378 7).	# parallel port $Revision$";
 #define NLPT	1		/* XXX dynamic config */
 
-#include "sys/param.h"
-#include "proc.h"
-/*#include "sys/user.h"*/
-#include "sys/errno.h"
-#include "buf.h"
-#include "systm.h"
-#include "kernel.h"
-#include "sys/ioctl.h"
-#include "tty.h"
-#include "uio.h"
-#include "modconfig.h"
+#include <sys/param.h>
+#include <proc.h>
+/*#include <sys/user.h>*/
+#include <sys/errno.h>
+#include <buf.h>
+#include <systm.h>
+#include <kernel.h>
+#include <sys/ioctl.h>
+#include <tty.h>
+#include <uio.h>
+#include <modconfig.h>
 
-#include "prototypes.h"
-#include "machine/inline/io.h"
-#include "isa_driver.h"
+#include <prototypes.h>
+#include <machine/inline/io.h>
+#include <isa_driver.h>
 #include "lptreg.h"
+#include <spl.h>
 
 #define	LPINITRDY	4	/* wait up to 4 seconds for a ready */
 #define	LPTOUTTIME	4	/* wait up to 4 seconds for a ready */
@@ -84,13 +85,15 @@ static char *lpt_config =
 #define lprintf		if (lpflag) printf
 #endif
 
-int lptout();
 #ifdef DEBUGx
 int lpflag = 1;
 #endif
 
-int lptprobe(struct isa_device *);
-void lptattach(struct isa_device *), lptintr(int);
+static int	lptprobe(struct isa_device *);
+static int	lptprobe(struct isa_device *);
+static void	lptattach(struct isa_device *);
+static void	lptintr(int);
+static int lptout();
 
 struct	isa_driver lptdriver = {
 	lptprobe, lptattach, lptintr, "lpt", 0
@@ -127,6 +130,7 @@ struct lpt_softc {
 #define TOUT		(1<<5)	/* timeout while not selected	*/
 #define INIT		(1<<6)	/* waiting to initialize for open */
 
+int
 lptprobe(idp)
 	struct isa_device *idp;
 {	unsigned v;
@@ -152,8 +156,8 @@ void
 lptattach(isdp)
 	struct isa_device *isdp;
 {
-	struct	lpt_softc *sc;
-	static lastunit;
+	struct lpt_softc *sc;
+	static int lastunit;
 
 	if (isdp->id_unit == '?')
 		isdp->id_unit = lastunit;
@@ -234,6 +238,7 @@ lprintf("opened.\n");
 	return(0);
 }
 
+int
 lptout (sc)
 	struct lpt_softc *sc;
 {	int pl;
@@ -257,6 +262,8 @@ lprintf ("T %x ", inb(sc->sc_port+lpt_status));
 		sc->sc_state &= ~OBUSY;
 		wakeup((caddr_t)sc);
 	}
+
+	return (0);
 }
 
 /*

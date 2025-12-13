@@ -37,48 +37,52 @@
  * Loopback interface driver for protocol testing and timing.
  */
 
-#include "sys/param.h"
-#include "sys/ioctl.h"
-#include "sys/errno.h"
-#include "mbuf.h"
-#include "modconfig.h"
-#include "esym.h"
+#include <sys/param.h>
+#include <sys/ioctl.h>
+#include <sys/errno.h>
+#include <mbuf.h>
+#include <modconfig.h>
+#include <esym.h>
 
-#include "machine/cpu.h"
+#include <machine/cpu.h>
 
-#include "socketvar.h"
-#include "if.h"
-#include "if_types.h"
-#include "netisr.h"
+#include <socketvar.h>
+#include <if.h>
+#include <if_types.h>
+#include <netisr.h>
 #define	_ROUTE_PROTOTYPES /* XXX */
-#include "route.h"
+#include <route.h>
 #undef	_ROUTE_PROTOTYPES /* XXX */
 
 #ifdef	INET
-#include "in.h"
-#include "in_systm.h"
-#include "in_var.h"
-#include "ip.h"
+#include <in.h>
+#include <in_systm.h>
+#include <in_var.h>
+#include <ip.h>
 #endif
 
 #ifdef NS
-#include "ns.h"
-#include "ns_if.h"
+#include <ns.h>
+#include <ns_if.h>
 #endif
 
 #ifdef ISO
-#include "iso.h"
-#include "iso_var.h"
+#include <iso.h>
+#include <iso_var.h>
 #endif
+#include <spl.h>
 
 #define	LOMTU	(1024+512)
 
 static struct	ifnet loif;
-static int looutput(struct ifnet *ifp, struct mbuf *m, struct sockaddr *dst,
-	struct rtentry *rt);
-static int loioctl(struct ifnet *ifp, int cmd, caddr_t data);
-static void loattach(void);
-static int lortrequest(int cmd, struct rtentry *rt, struct sockaddr *sa);
+
+extern void	panic(char*);
+extern void	printf(const char*, ...);
+
+static int	looutput(struct ifnet *, struct mbuf *, struct sockaddr *, struct rtentry *);
+static int	loioctl(struct ifnet *, int, caddr_t);
+static void	loattach(void);
+static void	lortrequest(int, struct rtentry *, struct sockaddr *);
 
 static void
 loattach(void)
@@ -161,7 +165,7 @@ x = m->m_pkthdr.time;
 	return (0);
 }
 
-static int
+static void
 lortrequest(int cmd, struct rtentry *rt, struct sockaddr *sa)
 {
 	if (rt)
