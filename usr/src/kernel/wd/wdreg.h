@@ -140,4 +140,4 @@ static int wdioctl(dev_t, int, caddr_t, int, struct proc *p);
 static int wdsize(dev_t);
 static int wddump(dev_t);
 
-#endif KERNEL
+#endif	/* !KERNEL */

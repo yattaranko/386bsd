@@ -352,7 +352,7 @@ tcp_close(tp)
 				rt->rt_rmx.rmx_ssthresh = i;
 		}
 	}
-#endif RTV_RTT
+#endif	/* !RTV_RTT */
 	/* free the reassembly queue, if any */
 	t = tp->seg_next;
 	while (t != (struct tcpiphdr *)tp) {

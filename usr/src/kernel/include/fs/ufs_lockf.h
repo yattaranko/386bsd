@@ -68,5 +68,5 @@ extern int lf_clearlock(struct lockf *unlock);
 
 #ifdef	LOCKF_DEBUG
 extern int lockf_debug;
-#endif	LOCKF_DEBUG
-#endif	KERNEL
+#endif	/* !LOCKF_DEBUG */
+#endif	/* !KERNEL */
