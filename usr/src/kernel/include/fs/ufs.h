@@ -266,7 +266,7 @@ struct	cg {
 	long	cg_rotor;		/* position of last used block */
 	long	cg_frotor;		/* position of last used frag */
 	long	cg_irotor;		/* position of last used inode */
-	long	cg_frsum[MAXFRAG];	/* counts of available frags */
+	int		cg_frsum[MAXFRAG];	/* counts of available frags */
 	long	cg_btotoff;		/* (long) block totals per cylinder */
 	long	cg_boff;		/* (short) free block positions */
 	long	cg_iusedoff;		/* (char) used inode map */
@@ -314,7 +314,7 @@ struct	ocg {
 	long	cg_rotor;		/* position of last used block */
 	long	cg_frotor;		/* position of last used frag */
 	long	cg_irotor;		/* position of last used inode */
-	long	cg_frsum[8];		/* counts of available frags */
+	int		cg_frsum[8];		/* counts of available frags */
 	long	cg_btot[32];		/* block totals per cylinder */
 	short	cg_b[32][8];		/* positions of free blocks */
 	char	cg_iused[256];		/* used inode map */

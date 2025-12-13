@@ -85,7 +85,7 @@ extern inline void
 in_sockmaskof(struct in_addr in, struct sockaddr_in *sockmask) {
 	void (*f)(struct in_addr in, struct sockaddr_in *);
 
-	(const void *) f = esym_fetch(in_sockmaskof);
+	f = esym_fetch(in_sockmaskof);
 	if (f)
 		(*f)(in, sockmask);
 }

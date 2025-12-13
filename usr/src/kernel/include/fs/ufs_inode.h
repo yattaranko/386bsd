@@ -179,6 +179,17 @@ struct ufid {
 	long	ufid_gen;	/* generation number */
 };
 
+extern void	iput(struct inode*);
+extern int	iget(struct inode *, ino_t, struct inode **);
+extern void ilock(struct inode *);
+extern void	iunlock(struct inode*);
+extern int	itrunc(struct inode*, u_long, int);
+extern int	balloc(struct inode*, daddr_t, int, struct buf**, int);
+extern void	blkfree(struct inode*, daddr_t, off_t);
+extern int	ialloc(struct inode *, ino_t, int, struct ucred *, struct inode **);
+extern void	ifree(struct inode*, ino_t, int);
+extern int	iupdat(struct inode*, struct timeval*, struct timeval*, int);
+
 /*
  * Prototypes for UFS vnode operations
  */
