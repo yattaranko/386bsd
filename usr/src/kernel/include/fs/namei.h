@@ -179,4 +179,6 @@ struct	nchstats {
 	long	ncs_pass2;		/* names found with passes == 2 */
 	long	ncs_2passes;		/* number of times we attempt it */
 };
+extern struct	nchstats nchstats;		/* cache effectiveness statistics */
+
 #endif /* !_NAMEI_H_ */

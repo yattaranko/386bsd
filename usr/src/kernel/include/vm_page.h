@@ -167,11 +167,11 @@ boolean_t
 void	vm_page_copy(vm_page_t src_m, vm_page_t dest_m);
 /* "internal" functions used externally by device_pager: */
 void	vm_page_remove(vm_page_t mem);
-void	vm_page_init(vm_page_t mem, vm_object_t object, vm_offset_t offset);
+/* void	vm_page_init(vm_page_t mem, vm_object_t object, vm_offset_t offset); */
 void	vm_page_insert(vm_page_t mem, vm_object_t object, vm_offset_t offset);
 
 /* set logical page to default state on allocation. */
-extern inline void
+static inline void
 vm_page_init(vm_page_t mem, vm_object_t object, vm_offset_t offset)
 {
 	mem->busy = TRUE;
@@ -207,5 +207,5 @@ vm_page_init(vm_page_t mem, vm_object_t object, vm_offset_t offset)
 }
 
 #define vm_page_set_modified(m)	{ (m)->clean = FALSE; }
-#endif	KERNEL
-#endif	_VM_PAGE_
+#endif	/* !KERNEL */
+#endif	/* !_VM_PAGE_ */

@@ -59,21 +59,22 @@
 #include <prototypes.h>
 #include <spl.h>
 
+int		lbolt;
 
-static int proc_compare (struct proc *, struct proc *);
-static int ttnread(struct tty *);
-static void ttyrubo(struct tty *, int);
-static void ttyretype(struct tty *);
+static int	proc_compare (struct proc *, struct proc *);
+static int	ttnread(struct tty *);
+static void	ttyrubo(struct tty *, int);
+static void	ttyretype(struct tty *);
 /* void ttypend(struct tty *tp); */
-static void ttyrub(int c, struct tty *);
-extern int ttcompat(struct tty *, int, caddr_t, int, struct proc *);
+/* static void ttyrub(int c, struct tty *); */
+extern int	ttcompat(struct tty *, int, caddr_t, int, struct proc *);
 
 /* symbolic sleep message strings */
-char ttyin[] = "ttyin";
+char ttyin[]  = "ttyin";
 char ttyout[] = "ttyout";
 char ttopen[] = "ttyopn";
 char ttclos[] = "ttycls";
-char ttybg[] = "ttybg";
+char ttybg[]  = "ttybg";
 char ttybuf[] = "ttybuf";
 char ttyopa[] = "ttyopa";
 
@@ -92,18 +93,18 @@ char ttyopa[] = "ttyopa";
 #define	CCLASSMASK	0x3f
 #define	CCLASS(c)	(partab[c] & CCLASSMASK)
 
-#define	E	0x00	/* even parity */
-#define	O	0x80	/* odd parity */
-#define	ALPHA	0x40	/* alpha or underscore */
+#define	E			0x00	/* even parity */
+#define	O			0x80	/* odd parity */
+#define	ALPHA		0x40	/* alpha or underscore */
 
-#define	NO	ORDINARY
-#define	NA	ORDINARY|ALPHA
-#define	CC	CONTROL
-#define	BS	BACKSPACE
-#define	NL	NEWLINE
-#define	TB	TAB
-#define	VT	VTAB
-#define	CR	RETURN
+#define	NO			ORDINARY
+#define	NA			ORDINARY|ALPHA
+#define	CC			CONTROL
+#define	BS			BACKSPACE
+#define	NL			NEWLINE
+#define	TB			TAB
+#define	VT			VTAB
+#define	CR			RETURN
 
 char partab[] = {
 	E|CC, O|CC, O|CC, E|CC, O|CC, E|CC, E|CC, O|CC,	/* nul - bel */
@@ -709,7 +710,7 @@ ttspeedtab(int speed, register struct speedtab *table)
  * from hi to low water.
  * 
  */
-int
+void
 ttsetwater(struct tty *tp)
 {
 	int cps = tp->t_ospeed / 10;

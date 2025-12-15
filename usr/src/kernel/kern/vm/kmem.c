@@ -62,6 +62,7 @@
 #include <modconfig.h>
 #define	__NO_INLINES
 #include <prototypes.h>
+#include <spl.h>
 
 static int kmem_needed;
 vm_map_t kernel_map, kmem_map, mb_map, pager_map, phys_map;

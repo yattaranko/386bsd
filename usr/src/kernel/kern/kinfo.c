@@ -51,12 +51,13 @@
 #include <prototypes.h>
 
 #define snderr(e) { error = (e); goto release;}
-static int
-kinfo_doproc(int op, char *where, int *acopysize, int arg, int *aneeded);
-static int
-kinfo_file(int op, char *where, int *acopysize, int arg, int *aneeded);
+
+static int kinfo_doproc(int, char *, int *, int, int *);
+static int kinfo_file(int, char *, int *, int, int *);
 struct kinfo_lock kinfo_lock;
 struct kinfoif *kinfo_servers;
+
+extern char *strncpy(char *, const char *, size_t);
 
 /* ARGSUSED */
 int

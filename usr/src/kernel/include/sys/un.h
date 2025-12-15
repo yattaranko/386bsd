@@ -43,7 +43,7 @@ struct	sockaddr_un {
 };
 
 #ifdef KERNEL
-int	unp_discard();
+/* int	unp_discard(struct file *); */
 #else
 
 /* actual length of an initialized sockaddr_un */

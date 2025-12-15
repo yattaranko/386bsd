@@ -285,9 +285,9 @@ struct vnodeops {
 /*
  * public vnode manipulation functions
  */
-int 	bdevvp __P((dev_t dev, struct vnode **vpp));
-int 	vcount __P((struct vnode *vp));	/* total references to a device */
-void 	vgoneall __P((struct vnode *vp));/* recycle vnode and all its aliases */
+int	bdevvp __P((dev_t dev, struct vnode **vpp));
+int	vcount __P((struct vnode *vp));	/* total references to a device */
+void vgoneall __P((struct vnode *vp));/* recycle vnode and all its aliases */
 void vfsinit(void);
 void vwakeup(struct buf *bp);
 void bgetvp(struct vnode *vp, struct buf *bp);
@@ -308,7 +308,7 @@ __ISYM__(struct vattr, va_null,) /* predefined null vattr structure */
 __ISYM__(long, desiredvnodes,)	/* number of vnodes desired */
 __ISYM__(struct vnode *, rootvp,)	/* root vnode */
 #if defined(DEBUG) || defined(DIAGNOSTIC)
-__ISYM__(int, prtactive,)	/* diagnostic flag */
+// __ISYM__(int, prtactive,)	/* diagnostic flag */
 #endif
 
 /* functions used in modules */
@@ -327,7 +327,7 @@ __ISYM__(void, vattr_null, (struct vattr *vap))
 __ISYM__(void, vhold, (struct vnode *vp))
 __ISYM__(void, vref, (struct vnode *vp))	/* increase reference to a vnode */
 __ISYM__(void, holdrele, (struct vnode *vp))
-__ISYM__(void, vprint, (char *string, struct vnode *vp))
+// __ISYM__(void, vprint, (char *string, struct vnode *vp))
 __ISYM__(void, cache_purge, (struct vnode *vp))
 /* XXX temp vm interface */
 __ISYM__(int, vnode_pager_uncache, (struct vnode *vp))

@@ -77,7 +77,7 @@ static dev_t swapdev;
 
 struct rlist *swapmap;	/* swap resource */
 struct	buf *swbuf;	/* swap I/O headers */
-int	nswbuf;
+/* int	nswbuf; */
 struct	buf bswlist;	/* head of free swap header list */
 
 /*

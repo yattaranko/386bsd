@@ -49,6 +49,7 @@ fixpt_t	averunnable[3];		/* load average, of runnable procs */
 int	maxslp = MAXSLP;
 int	saferss = SAFERSS;
 
+struct	vmtotal total;
 
 void
 vmmeter()

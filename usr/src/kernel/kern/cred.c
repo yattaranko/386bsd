@@ -312,10 +312,11 @@ setgroups(p, uap, retval)
 int
 groupmember(gid_t gid, const struct ucred *cred)
 {
-	gid_t *gp, *egp = &(cred->cr_groups[cred->cr_ngroups]);
+	gid_t *gp;
+	const gid_t  *egp = &(cred->cr_groups[cred->cr_ngroups]);
 
 	/* sift through supplimental group set array in user credentials */
-	for (gp = cred->cr_groups; gp < egp; gp++)
+	for (gp = (gid_t *)cred->cr_groups; gp < egp; gp++)
 		if (*gp == gid)
 			return (1);
 

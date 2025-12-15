@@ -73,6 +73,7 @@
 #include <vm.h>
 #include <vm_pageout.h>
 #include <prototypes.h>
+#include <spl.h>
 
 /*
  * Each unit of physical memory has a logical page (vm_page) entry.

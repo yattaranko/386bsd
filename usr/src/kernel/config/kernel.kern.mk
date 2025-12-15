@@ -7,7 +7,7 @@ MACH_C?= 	${CC} -c -I$S/kern/${MACHINE} ${CFLAGS} ${PROF} ${DEBUG} \
 			${.IMPSRC} -o ${.TARGET}
 MACH_DBGC?= 	${CC} -c -I$S/kern/${MACHINE} ${DBGCFLAGS} ${PROF} ${DEBUG} \
 			${.IMPSRC} -o ${.TARGET}
-MACH_AS?= 	${CPP} -E -I. -I$S/kern/${MACHINE} -DLOCORE ${COPTS} ${.IMPSRC} | \
+MACH_AS?= 	${CPP} -E -I. -I$S/kern/${MACHINE} -DLOCORE ${COPTS} ${CROSS} ${.IMPSRC} | \
 		${AS} ${ASFLAGS} -o ${.TARGET}
 
 .SUFFIXES: .c .cc .S .${KMODULE}o .${KMODULE}co .${KMODULE}mo .${KMODULE}do .${KMODULE}mdo

@@ -81,7 +81,7 @@ static void in_sockmaskof(struct in_addr in, struct sockaddr_in *sockmask);
 
 /* inline external symbol table function stubs */
 /*#include "esym.h"*/
-extern inline void
+static inline void
 in_sockmaskof(struct in_addr in, struct sockaddr_in *sockmask) {
 	void (*f)(struct in_addr in, struct sockaddr_in *);
 

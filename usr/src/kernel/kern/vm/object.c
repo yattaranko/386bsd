@@ -97,11 +97,20 @@ struct vm_object kernel_object_store, kmem_object_store;
 
 #define	VM_OBJECT_HASH_COUNT	157
 
-int		vm_cache_max = 100;	/* can patch if necessary */
+int				vm_cache_max = 100;	/* can patch if necessary */
 queue_head_t	vm_object_hashtable[VM_OBJECT_HASH_COUNT];
 
-long	object_collapses;
-long	object_bypasses;
+long			object_collapses;
+long			object_bypasses;
+
+queue_head_t	vm_object_cached_list;	/* list of objects persisting */
+int				vm_object_cached;	/* size of cached list */
+long			vm_object_count;	/* count of all objects */
+
+vm_statistics_data_t	vm_stat;
+
+vm_object_t		kernel_object;		/* the single kernel object */
+vm_object_t		kmem_object;
 
 static void _vm_object_allocate(vm_size_t size, vm_object_t object);
 static void vm_object_cache_trim(void);

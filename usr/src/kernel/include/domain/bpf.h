@@ -217,7 +217,7 @@ static void bpf_tap(caddr_t arg, u_char *pkt, u_int pktlen);
 
 /* inline external symbol table function stubs */
 #ifndef _BPF_PROTOTYPES
-extern inline void
+static inline void
 bpfattach(caddr_t *driverp, struct ifnet *ifp, u_int dlt, u_int hdrlen) {
 	void (*f)(caddr_t *, struct ifnet *, u_int, u_int);
 
@@ -229,7 +229,7 @@ bpfattach(caddr_t *driverp, struct ifnet *ifp, u_int dlt, u_int hdrlen) {
 	(*f)(driverp, ifp, dlt, hdrlen);
 }
 
-extern inline void
+static inline void
 bpf_mtap(caddr_t arg, struct mbuf *m) {
 	void (*f)(caddr_t, struct mbuf *);
 
@@ -239,7 +239,7 @@ bpf_mtap(caddr_t arg, struct mbuf *m) {
 	(*f)(arg, m);
 }
 
-extern inline void
+static inline void
 bpf_tap(caddr_t arg, u_char *pkt, u_int pktlen) {
 	void (*f)(caddr_t, u_char *, u_int);
 

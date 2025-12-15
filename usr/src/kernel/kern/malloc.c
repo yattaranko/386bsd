@@ -41,6 +41,7 @@
 #include <kmem.h>
 
 #include <prototypes.h>
+#include <spl.h>
 
 struct kmembuckets bucket[MINBUCKET + 16];
 struct kmemstats kmemstats[M_LAST];

@@ -46,6 +46,7 @@ static char *route_config = "route 17.";	/* AF_ROUTE */
 #include <protosw.h>
 #include <modconfig.h>
 #include <prototypes.h>
+#include <spl.h>
 
 #include <af.h>
 #include <if.h>

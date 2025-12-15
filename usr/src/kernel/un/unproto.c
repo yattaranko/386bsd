@@ -35,12 +35,12 @@
 
 static char *un_config = "un 1.";	/* AF_UNIX */
 
-#include "sys/param.h"
-#include "sys/socket.h"
-#include "protosw.h"
-#include "domain.h"
-#include "mbuf.h"
-#include "modconfig.h"
+#include <sys/param.h>
+#include <sys/socket.h>
+#include <protosw.h>
+#include <domain.h>
+#include <mbuf.h>
+#include <modconfig.h>
 
 /*
  * Definitions of protocols supported in the UNIX domain.

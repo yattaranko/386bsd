@@ -53,6 +53,7 @@ static char *log_config =
 #include <vnode.h>	/* IO_NDELAY */
 
 #include <prototypes.h>
+#include <spl.h>
 
 #define LOG_RDPRI	(PWAIT + 1)
 

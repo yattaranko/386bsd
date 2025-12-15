@@ -17,7 +17,7 @@ __END_DECLS */
 
 #undef	__INLINE
 #ifndef __NO_INLINES_BUT_EMIT_CODE
-#define	__INLINE	extern inline
+#define	__INLINE	static inline
 #else
 #define	__INLINE
 #endif
@@ -28,14 +28,14 @@ __END_DECLS */
 #include <machine/inline/inet/ntohl.h>
 #include <machine/inline/inet/ntohs.h>
 #else
-#include "machine/inline/inet/htonl.h"
-#include "machine/inline/inet/htons.h"
-#include "machine/inline/inet/ntohl.h"
-#include "machine/inline/inet/ntohs.h"
+#include <machine/inline/inet/htonl.h>
+#include <machine/inline/inet/htons.h>
+#include <machine/inline/inet/ntohl.h>
+#include <machine/inline/inet/ntohs.h>
 
-u_short in_cksumiphdr(void *ip);
+/* u_short in_cksumiphdr(void *ip); */ /* リンク時にMultiple definitionとなることへの対処 */
 
-#include "machine/inline/inet/in_cksumiphdr.h"
+#include <machine/inline/inet/in_cksumiphdr.h>
 #endif
 
 #undef	__INLINE

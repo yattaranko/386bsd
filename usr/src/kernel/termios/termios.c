@@ -56,6 +56,11 @@ static char *tty_config = "termios 0. # POSIX/BSD line discipline $Revision: 1.1
 #include <prototypes.h>
 #include <spl.h>
 
+long tk_cancc;
+long tk_nin;
+long tk_nout;
+long tk_rawcc;
+
 extern void ttypend(struct tty *tp);
 
 static void ttyrubo(struct tty *, int);

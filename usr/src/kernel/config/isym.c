@@ -1,5 +1,6 @@
+#define	sonewconn	sonewconn1
 
-dummy() {}
+int dummy() { return (0); }
 #define	__ISYM__(a,b,c)	b(),
 int
 #include "./isym"
@@ -11,11 +12,7 @@ const struct tbl {
 	const char *name;
 	int (*func)();
 } kernpermsym[] = {
-
-#include "./isym"
-
-0,
-
-dummy
-
+	#include "./isym"
+	0,
+	dummy
 };

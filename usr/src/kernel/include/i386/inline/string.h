@@ -17,18 +17,24 @@ __END_DECLS */
 
 #undef	__INLINE
 #ifndef __NO_INLINES_BUT_EMIT_CODE
-#define	__INLINE	extern inline
+#define	__INLINE	static inline
 #else
 #define	__INLINE
 #endif
 
 #ifdef KERNEL
-/* #include "machine/inline/string/ffs.h" */
-/* #include "machine/inline/string/memcmp.h" */
+#if 0
+#include "machine/inline/string/ffs.h"
+#include "machine/inline/string/memcmp.h"
 #include "machine/inline/string/memcpy.h"
 #include "machine/inline/string/memset.h"
-/* #include "machine/inline/string/memmove.h" */
-/* #include "machine/inline/string/strlen.h" */
+#include "machine/inline/string/memmove.h"
+#include "machine/inline/string/strlen.h"
+#endif
+#include "machine/inline/string/memcmp.h"
+#include "machine/inline/string/memcpy.h"
+#include "machine/inline/string/memset.h"
+#include "machine/inline/string/strlen.h"
 #else
 #include <machine/inline/string/bcopy.h>
 #include <machine/inline/string/bcmp.h>

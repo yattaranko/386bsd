@@ -13,7 +13,7 @@ locore.o: assym.S ${I386}/locore.S $S/include/${MACHINE}/trap.h \
 	$S/include/${MACHINE}/psl.h \
 	$S/include/${MACHINE}/pmap.h $S/include/dev/isa_stdports.h \
 	$S/include/dev/isa_irq.h
-	${CPP} -I. -DLOCORE ${COPTS} ${I386}/locore.S | \
+	${CPP} -E -I. -DLOCORE ${COPTS} ${I386}/locore.S | \
 		${AS} ${ASFLAGS} -o locore.o
 
 # symbols

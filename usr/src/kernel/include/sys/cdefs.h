@@ -95,11 +95,13 @@
  * GCC 2 assumes alignment as needed for performance, this upsets bitfields
  * in drivers, page tables, file formats ... Defeat this feature.
  */
+/*
 #ifdef __GNUC__
 #if __GNUC__ >= 2
 #pragma pack(1)
 #endif
 #endif
+*/
 
 #ifdef notyet
 /*

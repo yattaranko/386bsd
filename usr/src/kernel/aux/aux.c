@@ -61,6 +61,7 @@ static char *aux_config =
 /* #include <i386/isa/isa.h> */
 /* #include <i386/isa/ic/82c710.h> */
 #include <prototypes.h>
+#include <spl.h>
 #include <machine/inline/io.h>
 
 int auxprobe(struct isa_device *);

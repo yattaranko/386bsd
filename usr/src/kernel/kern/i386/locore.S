@@ -53,18 +53,18 @@
  */
 
 #include "assym.S"
-#include "sys/errno.h"
+#include <sys/errno.h>
 
-#include "machine/psl.h"
-#include "machine/pmap.h"
-#include "machine/trap.h"
+#include <machine/psl.h>
+#include <machine/pmap.h>
+#include <machine/trap.h>
 
 #include "specialreg.h"
 #include "sel.h"
 #include "asm.h"
 
-#include "isa_stdports.h"
-#include "isa_irq.h"
+#include <isa_stdports.h>
+#include <isa_irq.h>
 
 	.globl	_KERNBASE
 	.set	_KERNBASE, KERNBASE
@@ -1268,14 +1268,16 @@ _imen:	.word	0xffff - 2	/* interrupt mask enable (all off) */
 
 netsirqsem: .word 0	/* network software interrupt request semaphore */
 
-	.globl	_highmask
-_highmask:	.long	IRHIGH - 2
-	.globl	_ttymask
-_ttymask:	.long	0
-	.globl	_biomask
-_biomask:	.long	0
-	.globl	_netmask
-_netmask:	.long	0
+	.globl		_highmask
+_highmask:		.long	IRHIGH - 2
+	.globl		_ttymask
+_ttymask:		.long	0
+	.globl		_biomask
+_biomask:		.long	0
+	.globl		_netmask
+_netmask:		.long	0
+	.globl		_sclkpending
+_sclkpending:	.long	0
 
 /*
  * low-level interrupt semaphore operations
@@ -1382,7 +1384,7 @@ je	9f*/
 	jmp		8b			/* return at base pri */
 
 	
-#include "netisr.h"
+#include <netisr.h>
 
 4:
 	movl	$IRNET|IRSCLK, _cpl	/* mask net and softclock */

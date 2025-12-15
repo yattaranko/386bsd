@@ -82,6 +82,9 @@
 
 extern int npxlasterror;
 
+int (*cpu_dna)(void *);
+int (*cpu_dna_em)(void *);
+
 extern int iret, syscall_entry, syscall_lret;	/* see locore.s */
 static void trapexcept(struct trapframe *tf, int *);
 #ifdef DDB

@@ -131,7 +131,7 @@ static int arpresolve(struct arpcom *ac, struct mbuf *m, struct in_addr *destip,
 	u_char *desten, int *usetrailers);
 
 /* inline external symbol table function stubs */
-extern inline void
+static inline void
 arpwhohas(struct arpcom *a, struct in_addr *i) {
 	void (*f)(struct arpcom *, struct in_addr *);
 
@@ -140,7 +140,7 @@ arpwhohas(struct arpcom *a, struct in_addr *i) {
 		return;
 	(*f)(a, i);
 }
-extern inline void
+static inline void
 arpinput(struct arpcom *a, struct mbuf *m) {
 	void (*f)(struct arpcom *, struct mbuf *);
 
@@ -149,7 +149,7 @@ arpinput(struct arpcom *a, struct mbuf *m) {
 		return;
 	(*f)(a, m);
 }
-extern inline int
+static inline int
 arpresolve(struct arpcom *a, struct mbuf *m, struct in_addr *d, u_char *c, int *u) {
 	int (*f)(struct arpcom *, struct mbuf *, struct in_addr *, u_char *, int *);
 

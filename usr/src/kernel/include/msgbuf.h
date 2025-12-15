@@ -42,5 +42,5 @@ struct	msgbuf {
 	char	msg_bufc[MSG_BSIZE];	/* buffer */
 };
 #ifdef KERNEL
-struct	msgbuf *msgbufp;
+extern struct	msgbuf *msgbufp;
 #endif

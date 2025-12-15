@@ -40,6 +40,10 @@
 #include <proc.h>
 #include <prototypes.h>
 
+char	hostname[MAXHOSTNAMELEN];
+int		hostnamelen;
+long	hostid;
+
 /* BSD get host id */
 int
 gethostid(p, uap, retval)

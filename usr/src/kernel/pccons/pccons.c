@@ -140,7 +140,7 @@ static int	char_count;
 #define	CN_TIMERVAL	(hz)		/* frequency at which to check cons */
 #define	CN_TIMO		(2*60)		/* intervals to allow for output char */
 
-char	partab[];
+/* char	partab[]; */
 
 extern void	kbd_drain();
 extern u_char kbd_rd();

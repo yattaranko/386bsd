@@ -147,7 +147,7 @@ int sigprop[NSIG + 1] = {
 
 #ifdef KERNEL
 void	siginit(struct proc *p);
-void	signalpid(pid_t pid);
+/* void	signalpid(pid_t pid); */
 void	execsigs(struct proc *p);
 /* void	gsignal(int pgid, int sig); */
 void	pgsignal(struct pgrp *pgrp, int sig, int checkctty);
@@ -160,7 +160,7 @@ int	coredump(struct proc *p);
 /*
  * Signal either a process or process group, depending on sign.
  */
-extern inline void
+static inline void
 signalpid(pid_t pid) {
 	struct proc *p;
 	struct pgrp *pgrp;

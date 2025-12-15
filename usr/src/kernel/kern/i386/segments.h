@@ -207,7 +207,7 @@ void expanddesctable(void);
  * Allocate a global descriptor to the kernel. If no free descriptors,
  * expand the table.
  */
-extern inline struct segment_descriptor *
+static inline struct segment_descriptor *
 allocdesc(void)
 {
 	struct segment_descriptor *sdp;
@@ -250,7 +250,7 @@ tryagain:
 /*
  * Return a Global descriptor to free status, so it may be reused.
  */
-extern inline void
+static inline void
 freedesc(struct segment_descriptor *sdp)
 {
 	sdp->sd_p = 0;		/* will generate an invalid tss if used */
@@ -271,7 +271,7 @@ freedesc(struct segment_descriptor *sdp)
  * Allocate a TSS descriptor to a kernel thread, in the course of
  * creating a new thread. Special version of allocdesc().
  */
-extern inline void
+static inline void
 alloctss(struct proc *p) {
 	struct segment_descriptor *sdp = allocdesc();
 	sdp->sd_lolimit = sizeof(struct i386tss) - 1;
@@ -288,7 +288,7 @@ alloctss(struct proc *p) {
  * Return to the free pool the TSS descriptor of a thread being
  * deallocated. Special case of freedesc().
  */
-extern inline void
+static inline void
 freetss(sel_t tss_sel) {
 	
 	/*

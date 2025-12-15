@@ -40,6 +40,7 @@
 #include <sys/param.h>
 #include <sys/ioctl.h>
 #include <sys/errno.h>
+#include <sys/file.h>
 #include <mbuf.h>
 #include <modconfig.h>
 #include <esym.h>

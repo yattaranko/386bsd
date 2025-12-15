@@ -9,6 +9,7 @@
 
 __BEGIN_DECLS
 /* kernel <-> user process primatives */
+#if 0
 int copyin(struct proc *p, void *from, void *toaddr, u_int maxlength);
 int copyin_(struct proc *p, const void *from, void *toaddr, const u_int size);
 int copyinstr(struct proc *p, void *from, void *to, u_int maxlength, u_int *lencopied);
@@ -16,6 +17,7 @@ int copyout(struct proc *p, void *from, void *toaddr, u_int maxlength);
 int copyout_(struct proc *p, const void *from, void *toaddr, const u_int size);
 int copyoutstr(struct proc *p, void *from, void *to, u_int maxlength, u_int *lencopied);
 int copystr(void *from, void *to, u_int maxlength, u_int *lencopied);
+#endif
 
 #if	!defined(i486)
 /* minimized 386 write protection bug workaround functions */
@@ -24,6 +26,7 @@ int copyout_2(short value, void *toaddr);
 int copyout_1(char value, void *toaddr);
 #endif
 
+#if 0
 /* min/max functions */
 int imax(int i1, int i2);
 int imin(int i1, int i2);
@@ -41,13 +44,14 @@ void _remque(queue_t element);
 /* process run queue functions */
 void setrq(struct proc *p);
 void remrq(struct proc *p);
+#endif
 __END_DECLS
 
 #ifndef __NO_INLINES
 
 #undef	__INLINE
 #ifndef __NO_INLINES_BUT_EMIT_CODE
-#define	__INLINE	extern inline
+#define	__INLINE	static inline
 #else
 #define	__INLINE
 #endif

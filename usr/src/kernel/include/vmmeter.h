@@ -78,7 +78,7 @@ struct vmmeter
 };
 
 #ifdef KERNEL
-struct	vmmeter cnt, rate, sum;
+extern struct	vmmeter cnt/* , rate, sum */;
 void vmmeter();
 void vmtotal();
 void loadav(fixpt_t *avg, int n);
@@ -102,8 +102,10 @@ struct vmtotal
 	long	t_armtxt;	/* active real memory used by text */
 	long	t_free;		/* free memory pages */
 };
+#if 0
 #ifdef KERNEL
 struct	vmtotal total;
+#endif
 #endif
 
 /*
@@ -122,7 +124,7 @@ struct	vmtotal total;
 #define	NPMON	64
 
 #define	RMONMIN	130
-#define	RRES	5
+#define	RRES	5sum
 #define	NRMON	64
 
 /* data and stack size distribution counters */

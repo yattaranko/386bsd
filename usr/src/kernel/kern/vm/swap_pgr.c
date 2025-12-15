@@ -85,6 +85,7 @@ extern struct vnode *swapdev_vp;
 queue_head_t	swap_pager_inuse;	/* list of pending page cleans */
 queue_head_t	swap_pager_free;	/* list of free pager clean structs */
 queue_head_t	swap_pager_list;	/* list of "named" anon regions */
+struct	vmmeter cnt;
 
 static int swap_pager_io(sw_pager_t swp, vm_page_t m, int flags);
 static void swap_pager_iodone(struct buf *bp);

@@ -7,7 +7,7 @@
 KERN_SRCS+= \
 	disklabel.c disksort.c esym.c nullop.c printf.c ring.c rlist.c uio.c
 
-KERN_SRCS+= strcat.c strcpy.c strncpy.c strcmp.c # strlen.c
+KERN_SRCS+= strcat.c strcpy.c strncpy.c strcmp.c rel.c ffs.c # strlen.c
 # XXX should be conditional.
 MACH_SRCS_S+= \
 	memmove_${MACHINE}.S scanc_${MACHINE}.S skpc_${MACHINE}.S locc_${MACHINE}.S
@@ -42,7 +42,7 @@ ${ERROR}: $S/include/sys/errno.h
 	@echo creating ${.PREFIX}.o
 	@printf '#include "sys/errno.h"\nint _${.PREFIX}_(){ return(${.PREFIX});}\n' \
 	    > ${.PREFIX}.c
-	@$(CC) -c ${.PREFIX}.c
+	@$(CC) ${CFLAGS} -c ${.PREFIX}.c
 	@rm ${.PREFIX}.c
 
 # symbols

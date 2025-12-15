@@ -6,21 +6,29 @@
  * POSIX block memory compare.
  */
 
+#ifndef	_MEMCMP_H_
+#define	_MEMCMP_H_
+
 __INLINE int
 memcmp(const void *s1, const void *s2, size_t len) {
-	extern const int zero;		/* compiler bug workaround */
-	const void *s2p = s2 + zero;	/* compiler bug workaround */
+	// extern const int zero;		/* compiler bug workaround */
+	// const void *s2p = s2 + zero;	/* compiler bug workaround */
 
 	/* compare by words, then by bytes */
-	asm volatile ("cld ; repe ; cmpsl ; jne 1f" :
-	    "=D" (s1), "=S" (s2p) :
-	    "0" (s1), "1" (s2p), "c" (len / 4));
-	asm volatile ("repe ; cmpsb ; jne 1f" :
-	    "=D" (s1), "=S" (s2p) :
-	    "0" (s1), "1" (s2p), "c" (len & 3));
+	/* __asm__ volatile ("cld ; repe ; cmpsl ; jne 1f" : */
+	asm volatile ("cld ; repe ; cmpsl ; jne _exit" :
+	    "=D" (s1), "=S" (s2) :
+	    "0" (s1), "1" (s2), "c" (len / 4));
+	/* __asm__ volatile ("repe ; cmpsb ; jne 1f" : */
+	asm volatile ("repe ; cmpsb ; jne _exit" :
+	    "=D" (s1), "=S" (s2) :
+	    "0" (s1), "1" (s2), "c" (len & 3));
 
 	return (0);	/* exact match */
 
-	asm volatile ("1:");
+	/* __asm__ volatile ("1:"); */
+	asm volatile ("_exit:");
 	return (1);	/* failed match */
 }
+
+#endif	/* _MEMCMP_H_ */

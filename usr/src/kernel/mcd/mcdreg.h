@@ -46,11 +46,13 @@
 #ifndef MCD_H
 #define MCD_H
 
+/*
 #ifdef __GNUC__
 #if __GNUC__ >= 2
 #pragma pack(1)
 #endif
 #endif
+*/
 
 typedef unsigned char	bcd_t;
 #define M_msf(msf) msf[0]

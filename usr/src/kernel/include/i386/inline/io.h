@@ -29,7 +29,7 @@ __END_DECLS*/
 
 #undef	__INLINE
 #ifndef __NO_INLINES_BUT_EMIT_CODE
-#define	__INLINE	extern inline
+#define	__INLINE	static inline
 #else
 #define	__INLINE
 #endif

@@ -44,6 +44,7 @@
 #include <protosw.h>
 #include <modconfig.h>
 #include <prototypes.h>
+#include <spl.h>
 #include <esym.h>
 
 #include <if.h>

@@ -15,20 +15,21 @@ AS?=	/usr/local/bin/i386-unknown-freebsd14.3-as
 # XXX overkill, revise include scheme
 INCLUDES= -I$S/include -I. -I$S/../include
 
+CROSS+=	-nostdinc -fno-builtin -fleading-underscore \
+		-ffreestanding -fno-exceptions -fno-pie -fno-omit-frame-pointer -fvisibility=hidden
 #COPTS+=	${INCLUDES} ${IDENT} -DKERNEL -Di386
-COPTS+=	${INCLUDES} ${IDENT} -DKERNEL -nostdinc -fno-builtin -fleading-underscore
-COPTS+= -ffreestanding -fno-exceptions -fno-pie -fno-omit-frame-pointer -fvisibility=hidden
+COPTS+=	${INCLUDES} ${IDENT} -DKERNEL
 DEPEND= depend_mk
 
 ASFLAGS= ${DEBUG}
 .if defined(GDB)
 # CFLAGS=	-m486 -O ${COPTS} -g
-CFLAGS=	-O ${COPTS} -g
+CFLAGS=	-O ${COPTS} ${CROSS} -g
 .else
 # CFLAGS=	-m486 -O ${COPTS}
-CFLAGS=	-O ${COPTS}
+CFLAGS=	-O ${COPTS} ${CROSS}
 .endif
-DBGCFLAGS= -O ${COPTS}
+DBGCFLAGS= -O ${COPTS} ${CROSS}
 
 .if defined(KERNBASE)
 CFLAGS+= -DKERNBASE=0x${KERNBASE}
@@ -72,7 +73,7 @@ assym.S: $S/include/sys/param.h $S/include/buf.h $S/include/vmmeter.h \
 isym.o: $S/config/isym.c
 	find $S/include -name "*.h" -a -type f -exec grep -h "^__ISYM__" {} \; > isym
 	cp $S/config/isym.c isym.c
-	${CC} -c -DKERNEL ${IDENT} ${PARAM} ${BASE} isym.c -o isym.o
+	${CC} -c -DKERNEL ${IDENT} ${PARAM} ${BASE} ${CROSS} isym.c -o isym.o
 	rm isym isym.c
 
 .include "$S/config/kernel.kern.mk"
@@ -86,18 +87,22 @@ ${KERNEL}: Makefile symbols.sort ${FIRSTOBJ} ${OBJS} isym.o
 	@echo loading $@
 	@rm -f $@
 	@$S/config/newvers.sh
-	@${CC} -c ${CFLAGS} ${PROF} ${DEBUG} vers.c
+	@${CC} -c ${CFLAGS} ${PROF} ${DEBUG} ${CROSS} vers.c
 .if defined(DEBUGSYM)
-	@${LD} -z -T ${KERNBASE} -o $@ -X ${FIRSTOBJ} ${OBJS} vers.o isym.o
+#	@${LD} -z -T ${KERNBASE} -o $@ -X ${FIRSTOBJ} ${OBJS} vers.o isym.o
+	@${LD} -N --image-base ${KERNBASE} -o $@ -X ${FIRSTOBJ} ${OBJS} vers.o isym.o \
+	-nostdlib
 .else
-	@${LD} -z -T ${KERNBASE} -o $@ -x ${FIRSTOBJ} ${OBJS} vers.o isym.o
+#	@${LD} -z -T ${KERNBASE} -o $@ -x ${FIRSTOBJ} ${OBJS} vers.o isym.o
+	@${LD} -N --image-base ${KERNBASE} -o $@ -x ${FIRSTOBJ} ${OBJS} vers.o isym.o \
+	-nostdlib
 .endif
 	@echo rearranging symbols
 .if defined(GDB)
 	cp $@ $@.gdb
 	strip -d $@
 .endif
-	@symorder ${SYMORDER} symbols.sort $@
+#	@symorder ${SYMORDER} symbols.sort $@
 .if defined(DBSYM)
 	@${DBSYM} $@
 .endif

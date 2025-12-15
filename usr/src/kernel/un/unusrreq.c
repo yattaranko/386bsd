@@ -33,23 +33,47 @@
  *	$Id: unusrreq.c,v 2.1 94/05/25 22:18:12 bill Exp Locker: bill $
  */
 
-#include "sys/param.h"
-#include "sys/stat.h"
-#include "sys/un.h"
-#include "uio.h"
-#include "sys/errno.h"
-#include "proc.h"
-#include "filedesc.h"
-#include "domain.h"
-#include "mbuf.h"
-#include "socketvar.h"
-#include "protosw.h"
-#include "unpcb.h"
+#include <sys/param.h>
+#include <sys/stat.h>
+#include <sys/un.h>
+#include <uio.h>
+#include <sys/errno.h>
+#include <proc.h>
+#include <filedesc.h>
+#include <domain.h>
+#include <mbuf.h>
+#include <socketvar.h>
+#include <protosw.h>
+#include <unpcb.h>
 
-#include "namei.h"
-#include "vnode.h"
+#include <namei.h>
+#include <vnode.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+
+extern int	unp_connect2(struct socket*, struct socket*);
+extern int	sbappendaddr(struct sockbuf*, struct sockaddr*, struct mbuf*, struct mbuf*);
+extern int	sbappendcontrol(struct sockbuf*, struct mbuf*, struct mbuf*);
+extern void	sbappend(struct sockbuf*, struct mbuf*);
+extern int	soreserve(struct socket*, u_long, u_long);
+extern void	soisdisconnected(struct socket*);
+extern void	soisconnected(struct socket*);
+extern void	socantrcvmore(struct socket*);
+extern void	sofree(struct socket*);
+
+static int	unp_attach(struct socket*);
+static int	unp_bind(struct unpcb*, struct mbuf*, struct proc*);
+static int	unp_connect(struct socket*, struct mbuf*, struct proc*);
+static void	unp_detach(struct unpcb*);
+static void unp_disconnect(struct unpcb *unp);
+extern void	socantsendmore(struct socket*);
+static void	unp_shutdown(struct unpcb*);
+static int	unp_internalize(struct mbuf*, struct proc*);
+static void	unp_drop(struct unpcb*, int);
+static void unp_gc();
+static void	unp_scan(struct mbuf*, void (*)(struct file*));
+static void	unp_mark(struct file*);
+static void	unp_discard(struct file*);
 
 /*
  * Unix communications domain.
@@ -63,6 +87,7 @@ struct	sockaddr sun_noname = { sizeof(sun_noname), AF_UNIX };
 ino_t	unp_ino;			/* prototype for fake inode numbers */
 
 /*ARGSUSED*/
+int
 uipc_usrreq(so, req, m, nam, control)
 	struct socket *so;
 	int req;
@@ -317,6 +342,7 @@ u_long	unpdg_recvspace = 4*1024;
 
 int	unp_rights;			/* file descriptors in flight */
 
+int
 unp_attach(so)
 	struct socket *so;
 {
@@ -347,6 +373,7 @@ unp_attach(so)
 	return (0);
 }
 
+void
 unp_detach(unp)
 	register struct unpcb *unp;
 {
@@ -368,6 +395,7 @@ unp_detach(unp)
 		unp_gc();
 }
 
+int
 unp_bind(unp, nam, p)
 	struct unpcb *unp;
 	struct mbuf *nam;
@@ -417,6 +445,7 @@ unp_bind(unp, nam, p)
 	return (0);
 }
 
+int
 unp_connect(so, nam, p)
 	struct socket *so;
 	struct mbuf *nam;
@@ -476,6 +505,7 @@ bad:
 	return (error);
 }
 
+int
 unp_connect2(so, so2)
 	register struct socket *so;
 	register struct socket *so2;
@@ -507,6 +537,7 @@ unp_connect2(so, so2)
 	return (0);
 }
 
+void
 unp_disconnect(unp)
 	struct unpcb *unp;
 {
@@ -552,6 +583,7 @@ unp_abort(unp)
 }
 #endif
 
+void
 unp_shutdown(unp)
 	struct unpcb *unp;
 {
@@ -562,6 +594,7 @@ unp_shutdown(unp)
 		socantrcvmore(so);
 }
 
+void
 unp_drop(unp, errno)
 	struct unpcb *unp;
 	int errno;
@@ -585,6 +618,7 @@ unp_drain()
 }
 #endif
 
+int
 unp_externalize(struct mbuf *rights, struct proc *p)
 {
 	int i;
@@ -620,6 +654,7 @@ unp_externalize(struct mbuf *rights, struct proc *p)
 	return (0);
 }
 
+int
 unp_internalize(control, p)
 	struct mbuf *control;
 	struct proc *p;
@@ -662,9 +697,10 @@ int error;
 }
 
 int	unp_defer, unp_gcing;
-int	unp_mark();
+/* int	unp_mark(); */
 extern	struct domain unixdomain;
 
+void
 unp_gc()
 {
 	register struct file *fp;
@@ -726,18 +762,20 @@ restart:
 	unp_gcing = 0;
 }
 
+void
 unp_dispose(m)
 	struct mbuf *m;
 {
-	int unp_discard();
+	/* int unp_discard(); */
 
 	if (m)
 		unp_scan(m, unp_discard);
 }
 
+void
 unp_scan(m0, op)
 	register struct mbuf *m0;
-	int (*op)();
+	void (*op)(struct file*);
 {
 	register struct mbuf *m;
 	register struct file **rp;
@@ -764,6 +802,7 @@ unp_scan(m0, op)
 	}
 }
 
+void
 unp_mark(fp)
 	struct file *fp;
 {
@@ -774,6 +813,7 @@ unp_mark(fp)
 	fp->f_flag |= (FMARK|FDEFER);
 }
 
+void
 unp_discard(fp)
 	struct file *fp;
 {

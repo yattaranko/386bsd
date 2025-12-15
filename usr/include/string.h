@@ -50,20 +50,20 @@ typedef	_SIZE_T_	size_t;
 
 __BEGIN_DECLS
 void	*memchr __P((const void *, int, size_t));
-int	 memcmp __P((const void *, const void *, size_t));
-void	*memcpy __P((void *, const void *, size_t));
+// int 	 memcmp __P((const void *, const void *, size_t));
+// void	*memcpy __P((void *, const void *, size_t));
 void	*memmove __P((void *, const void *, size_t));
-void	*memset __P((void *, int, size_t));
+// void	*memset __P((void *, int, size_t));
 char	*strcat __P((char *, const char *));
 char	*strchr __P((const char *, int));
-int	 strcmp __P((const char *, const char *));
-int	 strcoll __P((const char *, const char *));
+int 	 strcmp __P((const char *, const char *));
+int 	 strcoll __P((const char *, const char *));
 char	*strcpy __P((char *, const char *));
 size_t	 strcspn __P((const char *, const char *));
 char	*strerror __P((int));
-size_t	 strlen __P((const char *));
+// size_t	 strlen __P((const char *));
 char	*strncat __P((char *, const char *, size_t));
-int	 strncmp __P((const char *, const char *, size_t));
+int 	 strncmp __P((const char *, const char *, size_t));
 char	*strncpy __P((char *, const char *, size_t));
 char	*strpbrk __P((const char *, const char *));
 char	*strrchr __P((const char *, int));

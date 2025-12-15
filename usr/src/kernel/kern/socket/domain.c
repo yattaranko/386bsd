@@ -47,6 +47,7 @@
 #include <prototypes.h>
 
 struct domain *domains;		/* head of list of domains */
+int netisr = NETISR_RAW;
 
 /* add a domain module into the domains list */
 void

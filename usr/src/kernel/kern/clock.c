@@ -52,6 +52,10 @@
 #include <prototypes.h>
 #include <spl.h>
 
+struct timeval	time;
+
+static int		phz;
+
 /*
  * Clock handling routines.
  *
@@ -85,6 +89,13 @@
 		tp->tv_sec++; \
 	} \
 }
+
+long cp_time[CPUSTATES];
+long dk_time[DK_NDRIVE];
+int dk_busy;
+int dk_ndrive;
+
+struct callout *callfree, *callout, calltodo;
 
 /*
  * The hz hardware interval timer.

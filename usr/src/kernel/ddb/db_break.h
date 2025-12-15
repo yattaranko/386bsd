@@ -53,8 +53,8 @@
 #ifndef	_DDB_DB_BREAK_H_
 #define	_DDB_DB_BREAK_H_
 
-#include "vm.h"
-#include "machine/db/db_machdep.h"
+#include <vm.h>
+#include <machine/db/db_machdep.h>
 
 /*
  * Breakpoint.

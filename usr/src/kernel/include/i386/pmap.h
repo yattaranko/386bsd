@@ -82,16 +82,16 @@ struct pte
 unsigned int	
 		pg_v:1,			/* valid bit */
 		pg_prot:2,		/* access control */
-		/*pg_mbz1:1,		/* reserved, must be zero */
+		/*pg_mbz1:1, */		/* reserved, must be zero */
 		pg_wt:1,		/* 'write thru' bit */
 		pg_cd:1,		/* 'uncacheable page' bit */
-		/*pg_mbz1:2,		/* reserved, must be zero */
+		/*pg_mbz1:2, */		/* reserved, must be zero */
 		pg_u:1,			/* hardware maintained 'used' bit */
 		pg_m:1,			/* hardware maintained modified bit */
 		pg_mbz2:2,		/* reserved, must be zero */
 		pg_w:1,			/* software, wired down page */
 		:1,			/* software (unused) */
-		/* pg_nc:1,		/* 'uncacheable page' bit */
+		/* pg_nc:1, */		/* 'uncacheable page' bit */
 		:1,			/* software (unused) */
 		pg_pfnum:20;		/* physical page frame number */
 };
@@ -103,7 +103,7 @@ unsigned int
 #define	PG_u		0x00000004
 #define	PG_PROT		0x00000006 /* all protection bits . */
 #define	PG_W		0x00000200
-/*#define PG_N		0x00000800 /* Non-cacheable */
+/*#define PG_N		0x00000800 */ /* Non-cacheable */
 #define PG_CD		0x00000010 /* Non-cacheable */
 #define PG_WT		0x00000008 /* write thru */
 #define	PG_M		0x00000040
@@ -223,14 +223,14 @@ typedef struct pv_entry {
 
 #ifdef	KERNEL
 
-pv_entry_t	pv_table;		/* array of entries, one per page */
+extern pv_entry_t	pv_table;		/* array of entries, one per page */
 
 #define pa_index(pa)		atop(pa - vm_first_phys)
 #define pa_to_pvh(pa)		(&pv_table[pa_index(pa)])
 
 #define	pmap_resident_count(pmap)	((pmap)->pm_stats.resident_count)
 
-#endif	KERNEL
-#endif	LOCORE
+#endif	/* !KERNEL */
+#endif	/* !LOCORE */
 
-#endif	_PMAP_MACHINE_
+#endif	/* !_PMAP_MACHINE_ */

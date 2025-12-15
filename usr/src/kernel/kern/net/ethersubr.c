@@ -48,6 +48,7 @@
 #include <strings.h>
 
 #include <machine/cpu.h>
+#include <prototypes.h>
 #include <spl.h>
 
 extern void panic(const char *);

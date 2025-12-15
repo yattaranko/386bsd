@@ -42,12 +42,14 @@
 #include <sys/cdefs.h>
 #endif
 
+#if 0   /* リンク時にMultiple definitionとなることへの対処 */
 __BEGIN_DECLS
 unsigned long	htonl __P((unsigned long));
 unsigned short	htons __P((unsigned short));
 unsigned long	ntohl __P((unsigned long));
 unsigned short	ntohs __P((unsigned short));
 __END_DECLS
+#endif
 
 /*
  * Macros for network/external number representation conversion.

@@ -219,7 +219,7 @@ static int looutput(struct ifnet *ifp, struct mbuf *m, struct sockaddr *dst,
 
 /* inline external symbol table function stubs */
 #include "esym.h"
-extern inline int
+static inline int
 rtinit(struct ifaddr *ifa, int cmd, int flags) {
 	int (*f)(struct ifaddr *, int, int);
 
@@ -231,7 +231,7 @@ rtinit(struct ifaddr *ifa, int cmd, int flags) {
 	return ((*f)(ifa, cmd, flags));
 }
 
-extern inline void
+static inline void
 rtalloc(struct route *ro)
 {
 	void (*f)(struct route *);
@@ -243,7 +243,7 @@ rtalloc(struct route *ro)
 		(*f)(ro);
 }
 
-extern inline void
+static inline void
 rtfree(struct rtentry *rt)
 {
 	void (*f)(struct rtentry *);
@@ -256,7 +256,7 @@ rtfree(struct rtentry *rt)
 		(*f)(rt);
 }
 
-extern inline void
+static inline void
 rtredirect(struct sockaddr *dst, struct sockaddr *gateway,
     struct sockaddr *netmask, int flags, struct sockaddr *src,
     struct rtentry **rtp)
@@ -272,7 +272,7 @@ rtredirect(struct sockaddr *dst, struct sockaddr *gateway,
 		(*f)(dst, gateway, netmask, flags, src, rtp);
 }
 
-extern inline int
+static inline int
 rtioctl(int req, caddr_t data, struct proc *p)
 {
 	int (*f)(int, caddr_t , struct proc *);
@@ -284,7 +284,7 @@ rtioctl(int req, caddr_t data, struct proc *p)
 		return ((*f)(req, data, p));
 }
 
-extern inline int
+static inline int
 rtrequest(int req, struct sockaddr *dst, struct sockaddr *gateway,
    struct sockaddr *netmask, int flags, struct rtentry **ret_nrt)
 {
@@ -298,7 +298,7 @@ rtrequest(int req, struct sockaddr *dst, struct sockaddr *gateway,
 		return ((*f)(req, dst, gateway, netmask, flags, ret_nrt));
 }
 
-extern inline void
+static inline void
 rtmissmsg(int type, struct sockaddr *dst, struct sockaddr *gate,
     struct sockaddr *mask, struct sockaddr *src, int flags, int error)
 {
@@ -313,7 +313,7 @@ rtmissmsg(int type, struct sockaddr *dst, struct sockaddr *gate,
 		(*f)(type, dst, gate, mask, src, flags, error);
 }
 
-extern inline int
+static inline int
 looutput(struct ifnet *ifp, struct mbuf *m, struct sockaddr *dst,
 	struct rtentry *rt)
 {

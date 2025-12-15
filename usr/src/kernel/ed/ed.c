@@ -24,6 +24,7 @@ static char *ed_config = /*"ed.	# ns derivative ethernet $Revision: 1.1 $";*/
 #include <sys/param.h>
 #include <systm.h>
 #include <sys/errno.h>
+#include <sys/file.h>
 #include <sys/ioctl.h>
 #include <mbuf.h>
 #include <sys/socket.h>
@@ -33,6 +34,7 @@ static char *ed_config = /*"ed.	# ns derivative ethernet $Revision: 1.1 $";*/
 #include <kmem.h>
 #include <modconfig.h>
 #include <strings.h>
+#include <socketvar.h>
 
 #include <if.h>
 #include <if_dl.h>
@@ -72,7 +74,7 @@ static char *ed_config = /*"ed.	# ns derivative ethernet $Revision: 1.1 $";*/
 #ifndef IFF_ALTPHYS
 #define IFF_ALTPHYS IFF_LLC0
 #endif
-/* static */ const int zero = 0;
+/* static const int zero = 0; */
  
 /*
  * ed_softc: per line info and status

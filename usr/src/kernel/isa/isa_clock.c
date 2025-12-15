@@ -51,6 +51,7 @@ static	char *clk_config =
 #include <malloc.h>
 #include <modconfig.h>
 #include <prototypes.h>
+#include <spl.h>
 
 #include <machine/cpu.h>
 #include <machine/pcb.h>
@@ -64,7 +65,8 @@ static	char *clk_config =
 
 #define DAYST 119
 #define DAYEN 303
-unsigned long it_ticks, it_ticksperintr;
+
+extern unsigned long it_ticks, it_ticksperintr;
 
 extern void hardclock(clockframe frame);
 

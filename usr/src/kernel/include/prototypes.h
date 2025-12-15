@@ -22,7 +22,7 @@ struct pcb;
 
 /* interface symbols */
 #define	__ISYM_VERSION__ "1"	/* XXX RCS major revision number of hdr file */
-#include "isym.h"		/* this header has interface symbols */
+#include <isym.h>		/* this header has interface symbols */
 
 __ISYM__(int, nullop, (void))
 int	_ENODEV_ (void);	/* XXX: need to generate dynamically */
@@ -42,6 +42,7 @@ __ISYM__(void, uprintf, (const char *, ...))
 int	sprintf (char *buf, const char *, ...);
 void	ttyprintf (struct tty *, const char *, ...);
 
+#if 0
 int	 memcmp (const void *, const void *, size_t);
 void	*memcpy (void *, const void *, size_t);
 __ISYM__(void *, memmove, (void *, const void *, size_t))
@@ -57,6 +58,9 @@ int	copyinstr (struct proc *, void *udaddr, void *kaddr, u_int len, u_int *done)
 int	copyoutstr (struct proc *, void *kaddr, void *udaddr, u_int len, u_int *done);
 __ISYM__(int, copyin, (struct proc *, void *udaddr, void *kaddr, u_int len))
 __ISYM__(int, copyout, (struct proc *, void *kaddr, void *udaddr, u_int len))
+#endif
+__ISYM__(void *, memmove, (void *, const void *, size_t))
+extern char	*strncpy (char *, const char *, size_t);
 
 #ifdef notdef
 int	fubyte (void *base);
@@ -96,12 +100,12 @@ void timevalfix(struct timeval *t1);
 /*
  * Machine dependant function prototypes
  */
-#include "machine/prototypes.h"
+#include <machine/prototypes.h>
 
 /*
  * Inline functions
  */
-#include "queue.h"
+#include <queue.h>
 #define	insque(n, h)	_insque((queue_t) n, (queue_t) h)
 #define	remque(n)	_remque((queue_t) n)
 
@@ -112,5 +116,5 @@ __END_DECLS */
 #undef __ISYM_ALIAS__
 #undef __ISYM_VERSION__
 
-#include "machine/inline/string.h"
-#include "machine/inline/kernel.h"
+#include <machine/inline/string.h>
+#include <machine/inline/kernel.h>

@@ -36,6 +36,7 @@
 #ifndef _SYS_STAT_H_
 #define _SYS_STAT_H_
 
+#pragma pack(1)
 struct stat
 {
 	dev_t	st_dev;			/* inode's device */
@@ -57,6 +58,7 @@ struct stat
 	u_long	st_flags;		/* user defined flags for file */
 	u_long	st_gen;			/* file generation number */
 };
+#pragma pack()
 
 #define	S_ISUID	0004000			/* set user id on execution */
 #define	S_ISGID	0002000			/* set group id on execution */

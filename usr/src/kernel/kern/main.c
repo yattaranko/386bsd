@@ -60,7 +60,7 @@ static char *kern_config =
 
 
 char	copyright1[] =
-"386BSD Release 1.0 by William & Lynne Jolitz.";
+"386BSD Release 2.0 by William & Lynne Jolitz.";
 char	copyright2[] =
 "Copyright (c) 1989-1994 William F. Jolitz. All rights reserved.\n";
 
@@ -71,29 +71,30 @@ int	nprocs = 1;
  * Components of process 0;
  * never freed.
  */
-struct	session session0;
-struct	pgrp pgrp0;
-struct	proc proc0;
+struct	session		session0;
+struct	pgrp		pgrp0;
+struct	proc		proc0;
 /* credentials never to be freed, superuser, role all, group wheel */
-struct	ucred ucred0 = { 2, 0, 0, 1, { 0 } };
-struct	pcred cred0 = { &ucred0, 0, 0, 0, 0, 1 };
-struct	filedesc0 filedesc0;
-struct	plimit limit0;
-struct	vmspace vmspace0, kernspace;
-struct	pstats pstat0;
-struct	proc *curproc = &proc0;
-struct	proc *initproc, *pageproc;
+struct	ucred		ucred0 = { 2, 0, 0, 1, { 0 } };
+struct	pcred		cred0 = { &ucred0, 0, 0, 0, 0, 1 };
+struct	filedesc0	filedesc0;
+struct	plimit		limit0;
+struct	vmspace		vmspace0, kernspace;
+struct	pstats		pstat0;
+struct	proc		*curproc = &proc0;
+/* struct	proc *initproc, *pageproc; */
+struct	timeval		boottime;
 
-int	cmask = CMASK;
-extern	struct user *proc0paddr;
-extern	int (*mountroot)();
+int					cmask = CMASK;
+extern struct user	*proc0paddr;
+extern int			(*mountroot)();
 
-struct vfsops *rootvfs;
-struct vnode *rootvp;
-struct vnode *rootdir;
-extern int boothowto;
-extern int bootdev;
-extern int cold;
+struct vfsops		*rootvfs;
+struct vnode		*rootvp;
+struct vnode		*rootdir;
+extern int			boothowto;
+extern int			bootdev;
+extern int			cold;
 
 /*
  * Configurable parameters
@@ -107,23 +108,25 @@ struct proc *pidhash[64];
 struct pgrp *pgrphash[64];
 int pidhashmask = 64 -1;
 
+int ncallout;
+
 /* virtual memory */
 static int pgsz, kmemsz, kmemall;
 
 struct namelist kern_options[] =
 {
-	"maxusers",		&maxusers,	NUMBER,
-	"hz", 			&hz,		NUMBER,
-	"maxproc",		&maxproc,	NUMBER,
+	"maxusers",			&maxusers,		NUMBER,
+	"hz", 				&hz,			NUMBER,
+	"maxproc",			&maxproc,		NUMBER,
 	"desiredvnodes",	&desiredvnodes,	NUMBER,
-	"maxfiles",		&maxfiles,	NUMBER,
-	"ncallout",		&ncallout,	NUMBER,
-	"tz",			&tzh,		NUMBER,
-	"dst",			&dst,		NUMBER,
-	"pagesize",		&pgsz,		NUMBER,
-	"kmemsize",		&kmemsz,	NUMBER,
-	"kmemalloc",		&kmemall,	NUMBER,
-	0,			0,		0
+	"maxfiles",			&maxfiles,		NUMBER,
+	"ncallout",			&ncallout,		NUMBER,
+	"tz",				&tzh,			NUMBER,
+	"dst",				&dst,			NUMBER,
+	"pagesize",			&pgsz,			NUMBER,
+	"kmemsize",			&kmemsz,		NUMBER,
+	"kmemalloc",		&kmemall,		NUMBER,
+	0,					0,				0
 };
 
 /*
@@ -229,7 +232,7 @@ void main()
 	/* configure any extended module services before rest of modules */
 	modscaninit(MODT_EXTDMOD);
 	cpu_startup();
-isa_configure();
+	isa_configure();
 
 	modscaninit(MODT_LDISC);
 
@@ -389,18 +392,18 @@ isa_configure();
 	fdp->fd_fd.fd_rdir = NULL;
 
 	{
-		volatile int sstart, send;
+		int sstart, send;
 		if (load_module("inet", &sstart, &send)) {
-		printf("\n init ");
-		smodscaninit(__MODT_ALL__, &sstart, &send);
+			printf("\n init ");
+			smodscaninit(__MODT_ALL__, &sstart, &send);
 		}
 		if(load_module("ed", &sstart, &send)) {
-		printf("\n init ");
-		smodscaninit(__MODT_ALL__, &sstart, &send);
+			printf("\n init ");
+			smodscaninit(__MODT_ALL__, &sstart, &send);
 		}
 		if(load_module("nfs", &sstart, &send)) {
-		printf("\n init ");
-		smodscaninit(__MODT_ALL__, &sstart, &send);
+			printf("\n init ");
+			smodscaninit(__MODT_ALL__, &sstart, &send);
 		}
 		printf("after init\n");
 		/*ifinit();*/

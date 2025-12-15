@@ -141,14 +141,14 @@ struct	proc {
 /* end area that is copied on creation */
 #define	p_endcopy	p_wmesg
 	char	*p_wmesg;	/* reason for sleep */
-	/* int	p_thread;	/* id for this "thread" (Mach glue) XXX */
+	/* int	p_thread; */	/* id for this "thread" (Mach glue) XXX */
 	struct	user *p_addr;	/* kernel virtual addr of u-area (PROC ONLY) */
-	/* swblk_t	p_swaddr;	/* disk address of u area when swapped */
+	/* swblk_t	p_swaddr; */	/* disk address of u area when swapped */
 	struct	mdproc p_md;	/* any machine-dependent fields */
 
-	/* u_short	p_xstat;	/* Exit status for wait; also stop signal */
+	/* u_short	p_xstat; */	/* Exit status for wait; also stop signal */
 	short	p_dupfd;	/* sideways return value from fdopen XXX */
-	/* u_short	p_acflag;	/* accounting flags */
+	/* u_short	p_acflag; */	/* accounting flags */
 	u_short	p_stksz;	/* size of per process at p_addr */
 
 	long	p_spare[6];	/* tmp spares to avoid shifting eproc */
@@ -236,12 +236,12 @@ struct	pcred {
 #define	PIDHASH(pid)	((pid) & pidhashmask)
 extern	int pidhashmask;
 extern	struct proc *pidhash[];
-void enterpidhash(struct proc *p);
-void leavepidhash(struct proc *p);
-struct proc *pfind(pid_t pid);
+/* void enterpidhash(struct proc *p); */
+/* void leavepidhash(struct proc *p); */
+/* struct proc *pfind(pid_t pid); */
 
 /* enter process into the process id hash table so pfind() can locate it */
-extern inline void
+static inline void
 enterpidhash(struct proc *p)
 {
 	struct proc **hash = &pidhash[PIDHASH(p->p_pid)];
@@ -251,7 +251,7 @@ enterpidhash(struct proc *p)
 }
 
 /* process to leave pid locate hash table, and is no longer pfind()able. */
-extern inline void
+static inline void
 leavepidhash(struct proc *p)
 {
 	struct proc **pp;
@@ -268,7 +268,7 @@ leavepidhash(struct proc *p)
 }
 
 /* Locate a process by id, returning process pointer if valid process. */
-extern inline struct proc *
+static inline struct proc *
 pfind(pid_t pid)
 {
 	struct proc *p = pidhash[PIDHASH(pid)];

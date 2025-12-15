@@ -33,7 +33,7 @@
  *	$Id: strncpy.c,v 1.1 94/10/19 18:33:47 bill Exp $
  */
 
-#include "sys/types.h"
+#include <sys/types.h>
 
 char *
 strncpy(char *to, const char *from, size_t cnt)

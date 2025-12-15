@@ -110,8 +110,8 @@ void	(*isa_vec[16])();
 int	isa_unit[16];
 extern	char *intrnames[16];
 
-unsigned volatile it_ticks;
-unsigned it_ticksperintr;
+unsigned volatile long it_ticks;
+unsigned long it_ticksperintr;
 int loops_per_usec;
 
 extern void setirq(int, void *);
@@ -717,7 +717,7 @@ void
 microtime(tvp)
 	register struct timeval *tvp;
 {
-	extern unsigned it_ticksperintr;
+	/* extern unsigned it_ticksperintr; */
 	register unsigned val;
 
 	/* minimize clock sampling skew by latching counter immediately after blocking interrupts */

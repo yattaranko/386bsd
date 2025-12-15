@@ -195,7 +195,7 @@ int ttselect(struct tty *, int, struct proc *);
 int ttycheckoutq(struct tty *, int);
 void ttwakeup(struct tty *tp);
 int ttspeedtab(int, struct speedtab *);
-int ttsetwater(struct tty *);
+void ttsetwater(struct tty *);
 void ttyinfo(struct tty *);
 int tputchar(int, struct tty *);
 int ttysleep(struct tty *, caddr_t, int, char *, int);

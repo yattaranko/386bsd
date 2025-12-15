@@ -41,6 +41,6 @@ struct callout {
 };
 
 #ifdef KERNEL
-struct callout *callfree, *callout, calltodo;
-int ncallout;
+extern struct callout *callfree, *callout, calltodo;
+extern int ncallout;
 #endif

@@ -50,6 +50,7 @@
 #include <socketvar.h>
 #include <protosw.h>
 #include <prototypes.h>
+#include <spl.h>
 
 /* strings for sleep message: */
 char	netio[] = "netio";

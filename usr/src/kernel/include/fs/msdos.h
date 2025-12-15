@@ -48,6 +48,7 @@ struct bootsector {
 #define	DOSPARTOFF	446
 #define NDOSPART	4
 
+#if 0
 struct dos_partition {
 	unsigned char	dp_flag;	/* bootstrap flags */
 	unsigned char	dp_shd;		/* starting head */
@@ -61,3 +62,4 @@ struct dos_partition {
 	unsigned long	dp_start;	/* absolute starting sector number */
 	unsigned long	dp_size;	/* partition size in sectors */
 } dos_partitions[NDOSPART];
+#endif

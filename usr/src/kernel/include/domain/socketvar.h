@@ -102,7 +102,7 @@ struct socket {
 /*
  * Socket state bits.
  */
-#define	SS_NOFDREF		0x001	/* no file table ref any more */
+#define	SS_NOFDREF			0x001	/* no file table ref any more */
 #define	SS_ISCONNECTED		0x002	/* socket connected to a peer */
 #define	SS_ISCONNECTING		0x004	/* in process of connecting to peer */
 #define	SS_ISDISCONNECTING	0x008	/* in process of disconnecting */
@@ -110,9 +110,9 @@ struct socket {
 #define	SS_CANTRCVMORE		0x020	/* can't receive more data from peer */
 #define	SS_RCVATMARK		0x040	/* at mark on input */
 
-#define	SS_PRIV			0x080	/* privileged for broadcast, raw... */
-#define	SS_NBIO			0x100	/* non-blocking ops */
-#define	SS_ASYNC		0x200	/* async i/o notify */
+#define	SS_PRIV				0x080	/* privileged for broadcast, raw... */
+#define	SS_NBIO				0x100	/* non-blocking ops */
+#define	SS_ASYNC			0x200	/* async i/o notify */
 #define	SS_ISCONFIRMING		0x400	/* deciding to accept connection req */
 
 
@@ -152,7 +152,7 @@ sbspace(struct sockbuf *sb) {
      (so)->so_error)
 
 /* adjust counters in sb reflecting allocation of m */
-extern inline void
+static inline void
 sballoc(struct sockbuf *sb, struct mbuf *m)
 {
 
@@ -167,7 +167,7 @@ sballoc(struct sockbuf *sb, struct mbuf *m)
 }
 
 /* adjust counters in sb reflecting freeing of m */
-extern inline void
+static inline void
 sbfree(struct sockbuf *sb, struct mbuf *m) {
 
 	sb->sb_cc -= m->m_len;
@@ -198,7 +198,7 @@ sbfree(struct sockbuf *sb, struct mbuf *m) {
 }
 
 #ifdef NDFILE
-extern inline int
+static inline int
 getsock(struct filedesc *fdp, int fdes, struct file **fpp)
 {
 	struct file *fp;

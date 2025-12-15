@@ -78,6 +78,7 @@
 #include <vm.h>
 #include <kmem.h>
 #include <prototypes.h>
+#include <spl.h>
 
 extern struct pagerops swappagerops;
 extern struct pagerops vnodepagerops;
@@ -97,7 +98,7 @@ struct pagerops *dfltpagerops = NULL;	/* default pager */
  * Used by pagers where KVAs are needed for IO.
  */
 #define PAGER_MAP_SIZE	(256 * PAGE_SIZE)
-vm_map_t pager_map;
+/* vm_map_t pager_map; */
 vm_offset_t pager_sva, pager_eva;
 
 void

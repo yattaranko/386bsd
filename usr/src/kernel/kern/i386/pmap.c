@@ -94,6 +94,7 @@
 #include "specialreg.h"
 
 #include <prototypes.h>
+#include <spl.h>
 #define	DEBUG
 
 
@@ -136,7 +137,7 @@ tlbflush(void) {
 #define BSDVM_COMPAT	1
 
 extern vm_offset_t pager_sva, pager_eva;
-long	atdevbase;	/* XXX */
+extern u_int	atdevbase;	/* XXX */
 extern struct vmspace kernspace;
 
 #ifdef DEBUG
@@ -215,16 +216,18 @@ int	protection_codes[8];
 
 pmap_t		kernel_pmap;
 
-vm_offset_t    	avail_start;	/* PA of first available physical page */
+vm_offset_t avail_start;	/* PA of first available physical page */
 vm_offset_t	avail_end;	/* PA of last available physical page */
 vm_size_t	mem_size;	/* memory size in bytes */
 vm_offset_t	virtual_avail;  /* VA of first avail page (after kernel bss)*/
 vm_offset_t	virtual_end;	/* VA of last avail page (end of kernel AS) */
 vm_offset_t	vm_first_phys;	/* PA of first managed page */
 vm_offset_t	vm_last_phys;	/* PA just past last managed page */
-int		i386pagesperpage;	/* PAGE_SIZE / I386_PAGE_SIZE */
+int			i386pagesperpage;	/* PAGE_SIZE / I386_PAGE_SIZE */
 boolean_t	pmap_initialized = FALSE;	/* Has pmap_init completed? */
 char		*pmap_attributes;	/* reference and modify bits */
+
+pv_entry_t	pv_table;		/* array of entries, one per page */
 
 extern void	vm_page_wait(char const *, int);
 extern void pmap_clear_modify(vm_offset_t);

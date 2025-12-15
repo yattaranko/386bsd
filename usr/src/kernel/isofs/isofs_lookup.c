@@ -54,7 +54,7 @@
 #include "isofs_rrip.h"
 #include <prototypes.h>
 
-struct	nchstats nchstats;
+/* struct	nchstats nchstats; */
 
 extern int iso_blkatoff(struct iso_node*, off_t, char**, struct buf**);
 

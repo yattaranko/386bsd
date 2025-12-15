@@ -54,31 +54,33 @@
  * into the kernel to extend its functionality.
  */
 
-#include "sys/param.h"
-#include "sys/file.h"
-#include "sys/mount.h"
-/*#include "sys/exec.h" */
-#include "sys/stat.h"
-#include "sys/wait.h"
-#include "sys/mman.h"
-#include "sys/errno.h"
+#include <sys/param.h>
+#include <sys/file.h>
+#include <sys/mount.h>
+/*#include <sys/exec.h> */
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <sys/mman.h>
+#include <sys/errno.h>
 
-#include "malloc.h"
-#include "systm.h"
-#include "proc.h"
-/* #include "resourcevar.h" */
-#include "uio.h"
-#include "vm.h"
-#include "kmem.h"
-/* #include "vmspace.h"*/
+#include <malloc.h>
+#include <systm.h>
+#include <proc.h>
+/* #include <resourcevar.h> */
+#include <uio.h>
+#include <vm.h>
+#include <kmem.h>
+/* #include <vmspace.h>*/
 
-#include "namei.h"
-#include "vnode.h"
+#include <namei.h>
+#include <vnode.h>
 
-#include "machine/reg.h"
-#include "machine/cpu.h"
+#include <machine/reg.h>
+#include <machine/cpu.h>
 
-#include "prototypes.h"
+#include <prototypes.h>
+#include <string.h>
+
 /* TODO
 	1.  symtab search/merge
 		local and global, no merges
@@ -378,7 +380,9 @@ printf("fail\n");
 	if (ndp->ni_nameiop & LOCKLEAF)
 		vput(ndp->ni_vp);
 
+#ifdef	DDB
 	db_add_symbol_table(sym_start, sym_end, s, (char *)0);
+#endif	/* DDB */
 
 printf("\n");
 	return (base);
